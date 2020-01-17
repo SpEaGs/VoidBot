@@ -1,0 +1,42 @@
+{
+  "name": "voidbot",
+  "version": "2.0.0",
+  "description": "A Discord Bot.\r This is like the fourth or so version of the bot... had to re-write it a few times to keep up with changing APIs and now I'm at it again.",
+  "main": "main.js",
+  "scripts": {
+    "start": "cross-env NODE_ENV=production electron .",
+    "dev": "cross-env NODE_ENV=development electron . --enable-logging",
+    "dist-win": "build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SpEaGs/VoidBot.git"
+  },
+  "author": {
+    "name": "Zachry R. Speagle",
+    "email": "speags557k4@gmail.com"
+  },
+  "bugs": {
+    "url": "https://github.com/SpEaGs/VoidBot/issues"
+  },
+  "homepage": "https://github.com/SpEaGs/VoidBot#readme",
+  "dependencies": {
+    "cross-env": "^6.0.3",
+    "discord.js": "^11.5.1",
+    "winston": "^3.2.1",
+    "ytdl-core": "^1.0.6"
+  },
+  "devDependencies": {
+    "electron": "^7.1.9",
+    "electron-builder": "^22.2.0"
+  },
+  "build": {
+    "files": [
+      "**/*",
+      "assets/*",
+      "package.json",
+      "tokens.json",
+      "playlists/*"
+    ]
+  }
+}
