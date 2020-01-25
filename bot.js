@@ -3,7 +3,7 @@ const Discord = require('discord.js');
 const EventEmitter = require('events');
 
 const utils = require('./utils.js');
-const token = require('./tokens.json');
+const token = require('./tokens.json').TOKEN;
 
 class Bot extends EventEmitter {
     constructor(guild, status) {

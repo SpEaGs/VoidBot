@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>VoidBot</title>
+  </head>
+  <body>
+    <script type="text/javascript" src="renderer.js"></script>
+    <link rel="stylesheet" type="text/css" href="index.css">
+    <div id="titleBar"><strong id="titleText">VoidBot v
+        <script>
+          const appVersion = require('./package.json').version;
+          document.write(appVersion);
+        </script></strong>
+      <div class="titleButtonContainer">
+        <div class="titleButton" id="titleButtonClose" onclick="cl()"></div>
+        <div class="titleButton" id="titleButtonMaximize" onclick="max()"></div>
+        <div class="titleButton" id="titleButtonMinimize" onclick="min()"></div>
+      </div>
+    </div>
+    <div class="contentBody" id="windowContent">
+      <div class="navbarContainer">
+        <div class="navbarButton navbarButtonSelected" id="navbarButtonConsole" onclick="selectTab('Console')"> 
+          <div class="navbarButtonText">Console</div>
+        </div>
+        <div class="navbarButton" id="navbarButtonSharding" onclick="selectTab('Sharding')"> 
+          <div class="navbarButtonText">Sharding</div>
+        </div>
+      </div>
+      <div class="navbarMenuContainer" id="navbarMenuConsole">
+        <div class="navbarMenuButton" id="navbarButtonRefCMDs" onclick="executeCmd('refreshcmds', '')">
+          <div class="navbarMenuButtonText">Refresh Commands</div>
+        </div>
+        <div class="navbarMenuButton" id="navbarButtonRefAdmin" onclick="executeCmd('refreshadmin', '')">
+          <div class="navbarMenuButtonText">Refresh Admin</div>
+        </div>
+      </div>
+      <div class="mainContentContainer" id="mainContentConsole">
+        <div class="mainContentItem" id="mainContentItemSTDOUT"></div>
+      </div>
+    </div>
+  </body>
+</html>

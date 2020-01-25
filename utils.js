@@ -1,6 +1,38 @@
 
 const fs = require('fs');
-const config = require('./config.json');
+let config = {};
+if(!fs.existsSync('./config.json')) {
+    config = {
+        "prefix": "~",
+        "welcomeMsgPre": "A new pawn for my schemes!?!?",
+        "botadmin": [
+            "125759724707774464",
+            "125758417934483456"
+        ],
+        "commands": [
+            "announcements.js",  "help.js",        "join.js",
+            "leave.js",          "nowplaying.js",  "pause.js",
+            "ping.js",           "play.js",        "playlist.js",
+            "prune.js",          "resume.js",      "role.js",
+            "skip.js",           "slap.js",        "stop.js",
+            "tts.js",            "volume.js",      "welcome.js"
+        ],
+        "sharding": {
+            "default": {
+                "name": "",                "localMusic": false,
+                "voiceChannel": false,     "commandChannel": false,
+                "defaultVolume": "15",     "announcementsRole": false,
+                "newUserRole": false,      "defaultTextChannel": false,
+                "ruleTextChannel": false,  "localMusicVC": false
+            }
+        }
+    }
+    dumpJSON('config.json', config, 2);
+}
+else {
+    config = require('./config.json');
+}
+
 
 module.exports = {
     config: config,
@@ -16,9 +48,6 @@ module.exports = {
     dumpJSON: dumpJSON,
     cleanChannelName: cleanChannelName
 }
-
-let log = global.log;
-
 
 //handles the welcome message when a new member joins a server
 function welcome(mem, anno) {
@@ -71,7 +100,7 @@ function findMemberFromGuild(username, guild) {
 
 //populates an internal list of admin for a given server
 function populateAdmin(status, guild) {
-    log(`[${status.guildName}] Populating list of admin roles...`);
+    global.log(`[${status.guildName}] Populating list of admin roles...`);
     let roles = guild.roles.array();
     for (let r of roles) {
         if (r.hasPermission("ADMINISTRATOR")) {
@@ -80,20 +109,20 @@ function populateAdmin(status, guild) {
             }
         }
     }
-    log(`[${status.guildName}] Admin role population done!`);
+    global.log(`[${status.guildName}] Admin role population done!`);
 }
 
 //populates an internal list of commands
 function populateCmds(status) {
-    log('[MAIN] Populating commands list...');
+    global.log('[MAIN] Populating commands list...');
     let cmdFiles = config.commands;
     for (let file of cmdFiles) {
         let command = require(`./commands/${file}`);
         command.status = status;
         status.client.cmds.set(command.name, command);
-        log(`[MAIN] Found command: ${command.name}`);
+        global.log(`[MAIN] Found command: ${command.name}`);
     }
-    log('[MAIN] Command population done!');
+    global.log('[MAIN] Command population done!');
 }
 
 //checks internal list of commands for a given alias
@@ -141,4 +170,13 @@ function systemCMDs(status, cmd) {
         }
     }
     return sysCmd;
+}
+
+//dumps a given object's JSON to a json file
+function dumpJSON(filename, data, spaces=0) {
+    fs.writeFile(filename, JSON.stringify(data, null, spaces), (err) => {
+        if (err) {
+            console.error(err);
+        }
+    });
 }

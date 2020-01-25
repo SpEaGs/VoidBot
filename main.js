@@ -32,8 +32,8 @@ logger.add(new winston.transports.Console({
 
 //init some vars & export
 module.exports = {
-    eSender = false,
-    client = false,
+    eSender: false,
+    client: false,
     fs: fs,
     systemUIPopulated: false,
     settingsUIPopulated: false
@@ -90,7 +90,7 @@ status.client.on('ready', () => {
                 let cleanRoleName = utils.cleanChannelName(role.name);
                 bot.roleArray.push({id: role.id, name: role.name, cName: cleanRoleName });
             }
-            status.eSender.send('add-client', bot);
+            //status.eSender.send('add-client', bot);
             log(`[${bot.guildName}] Ready!`);
         });
     }
@@ -171,6 +171,9 @@ status.client.on('guildMemberAdd', member => {
 //set up electron window
 function createWindow(wid = 1080, hei = 620) {
     mainWindow = new BrowserWindow({
+        webPreferences: {
+            nodeIntegration: true
+        },
         width: wid,
         height: hei,
         minWidth: 1080,
@@ -179,7 +182,7 @@ function createWindow(wid = 1080, hei = 620) {
     });
     if (process.env.NODE_ENV == 'development') mainWindow.webContents.openDevTools();
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname,'index.html'),
         protocol: 'file',
         slashes: true
     }));
@@ -202,7 +205,7 @@ app.on('activate', () => {
 
 //UI & backend communication event handlers (not really sure how else to word this)
 ipcMain.on('command', (event, arg) => {
-    switch (arg0) {
+    switch (arg[0]) {
         case 'refreshcmds': {
             utils.populateCmds(status);
             break;
