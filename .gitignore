@@ -107,3 +107,4 @@ dist
 tokens.json
 config.json
 pug/
+*.code-workspace
