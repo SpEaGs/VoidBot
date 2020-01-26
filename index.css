@@ -83,8 +83,14 @@ p {
     position:fixed;
     top: 2em;
 }
+.flex {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    align-content: flex-start;
+}
 .hidden {
-    display:none;
+    display: none;
 }
 
 .navbar {
@@ -151,6 +157,9 @@ p {
     left: 0.5em;
     text-align: left;
     cursor: inherit;
+}
+.navbarMenuButtonSelected {
+    background-color: var(--main-bg-color);
 }
 
 .mainContentContainer {
@@ -250,7 +259,7 @@ p {
     background-size: contain;
 }
 .dropdownButton {
-    padding: 0px;
+    padding: 10px;
     width: 100%;
     height: 100%;
     color: white;

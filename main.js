@@ -90,7 +90,7 @@ status.client.on('ready', () => {
                 let cleanRoleName = utils.cleanChannelName(role.name);
                 bot.roleArray.push({id: role.id, name: role.name, cName: cleanRoleName });
             }
-            //status.eSender.send('add-client', bot);
+            status.eSender.send('add-client', bot);
             log(`[${bot.guildName}] Ready!`);
         });
     }
