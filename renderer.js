@@ -3,10 +3,13 @@ const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
 const utils = require('./utils.js');
 
-let test = "this is a test"
+//--------------------------------------------------------------------------------------------------------------
+//This file handles the rendering of the HTML.
+//Note that when changing the pugs you must compile index.pug to index.html as the pugs are not rendered
+//I recommend using a vscode plugin called "Pug to HTML" (hotkey is "ctrl + k, p" then copy/paste the preview)
+//--------------------------------------------------------------------------------------------------------------
 
-function getTest() {return test;};
-
+//window controls (minimize, maximize, and close)
 function min() {
     remote.getCurrentWindow().minimize();
 }
@@ -20,10 +23,12 @@ function cl() {
     remote.getCurrentWindow().close();
 }
 
+//appends a new line of text to a given element
 function appendText(elementID, str) {
     document.getElementById(elementID).innerHTML += (' > '+str+'<br>');
 }
 
+//creates a new element with given tag, classes, and id
 function createElement(tag='div', classes=[], id='') {
     toReturn = document.createElement(tag)
     if (classes !== []) { for (i of classes) { toReturn.classList.add(i); } }
@@ -31,6 +36,7 @@ function createElement(tag='div', classes=[], id='') {
     return toReturn;
 }
 
+//template for creating a new item in the list of settings for each guild
 function createSettingItem(guildID='', settingName='placeholder setting name', type='dropdown', subtype='voiceChannel', value) {
     let tag = ''
     switch (subtype) {
@@ -75,6 +81,7 @@ function createSettingItem(guildID='', settingName='placeholder setting name', t
     return toReturn;
 }
 
+//selects a navbar tab
 function selectTab(str) {
     for (let i of document.getElementsByClassName('navbarButton')) {
         if (i.id == ('navbarButton'+str)) { i.classList.add('navbarButtonSelected'); }
@@ -90,6 +97,7 @@ function selectTab(str) {
     }
 }
 
+//selects a navbar menu tab (navbar tabs can contain any number of menu tabs... this is basically just for sharding menus atm)
 function selectSubTab(str) {
     for (let i of document.getElementsByClassName('navbarMenuButton')) {
         if (i.id == ('navbarMenuButton'+str)) { i.classList.add('navbarMenuButtonSelected'); }
@@ -101,10 +109,12 @@ function selectSubTab(str) {
     }
 }
 
+//toggles visibility of a given element (used literally only for the dropdown menus in shard settings)
 function showDropdown(elID) {
     document.getElementById(elID).classList.toggle('hidden');
 }
 
+//selects and sets an item clicked on in a dropdown menu
 function dropdownSelectItem(elID, iName, iID, guildID, iType, channel) {
     document.getElementById(elID).innerHTML = iName;
     switch (iType) {
@@ -142,6 +152,7 @@ function dropdownSelectItem(elID, iName, iID, guildID, iType, channel) {
     utils.dumpJSON('./config.json', utils.config, 2);
 }
 
+//tells main to execute a command
 function executeCmd(str, args = []) {
     if (typeof args !=="string") {
         arg = args.splice(0, 0, str);
@@ -152,12 +163,15 @@ function executeCmd(str, args = []) {
     ipcRenderer.send('command', arg);
 }
 
+//listens for main's stdout messages and appends the contents to the console tab
 ipcRenderer.on('stdout', (event, arg) => {
     appendText('mainContentItemSTDOUT', arg);
     document.getElementById('mainContentItemSTDOUT').scrollTop = document.getElementById('mainContentItemSTDOUT').scrollHeight;
 });
 
+//adds a bot client's shard menu to the UI
 ipcRenderer.on('add-client', (event, bot) => {
+    //create the button on the sharding tab menu
     shardBtn = createElement('div', ['navbarMenuButton'], `navbarMenuButtonShard${bot.guildID}`);
         shardBtn.onclick = () => { selectSubTab(`Shard${bot.guildID}`); }
         shardBtnTxt = createElement('div', ['navbarMenuButtonText']);
@@ -165,6 +179,7 @@ ipcRenderer.on('add-client', (event, bot) => {
             shardBtn.appendChild(shardBtnTxt);
         document.getElementById('navbarMenuSharding').appendChild(shardBtn);
 
+    //create the UI elements of a shard's settings menu
     shardContent = createElement('div', ['mainContentSubContainer', 'flex', 'hidden'], `mainContentSubShard${bot.guildID}`);
         shardContent.appendChild(createSettingItem(bot.guildID, 'Default Voice Channel', 'dropdown', 'voiceChannel'));
         shardContent.appendChild(createSettingItem(bot.guildID, 'Music Volume', 'slider', 'vol', bot.defaultVolume));
@@ -175,6 +190,7 @@ ipcRenderer.on('add-client', (event, bot) => {
         
         document.getElementById('mainContentSharding').appendChild(shardContent);
     
+    //input handling for the slider
     document.getElementById(`sliderDV${bot.guildID}`).oninput = () => {
         let val = document.getElementById(`sliderDV${bot.guildID}`).value;
         document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerHTML = val;
@@ -182,6 +198,7 @@ ipcRenderer.on('add-client', (event, bot) => {
         utils.config.sharding[bot.guildID].defaultVolume = val;
         utils.dumpJSON('./config.json', utils.config, 2);
     }
+    //build dropdown list for voice channel setting
     for (let i of bot.voiceChannelArray) {
         let dropdownItem = createElement('a');
             dropdownItem.href = `#${i.id}`;
@@ -190,6 +207,7 @@ ipcRenderer.on('add-client', (event, bot) => {
         document.getElementById(`dropdownContentVC${bot.guildID}`).appendChild(dropdownItem);
         if (i.id == utils.config.sharding[bot.guildID].localMusicVC.id) { document.getElementById(`voiceChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
+    //build dropdown list for text channel settings
     for (let i of bot.textChannelArray) {
         let dropdown1Item = createElement('a');
             dropdown1Item.href = `#${i.id}`;
@@ -204,6 +222,7 @@ ipcRenderer.on('add-client', (event, bot) => {
         if (i.id == utils.config.sharding[bot.guildID].defaultTextChannel.id) { document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
         if (i.id == utils.config.sharding[bot.guildID].ruleTextChannel.id) { document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
+    //build dropdown list for role settings
     for (let i of bot.roleArray) {
         let dropdown1Item = createElement('a');
             dropdown1Item.href = `#${i.id}`;
@@ -220,6 +239,8 @@ ipcRenderer.on('add-client', (event, bot) => {
     }
 });
 
+//closes dropdowns when clicking outside the button for one. (multiples can be opened but only one will actually change
+//if an item is selected)
 window.onclick = (e) => {
     if (!e.target.matches('.dropdownButton')) {
         let dropdowns = document.getElementsByClassName('dropdownContent');
@@ -231,4 +252,5 @@ window.onclick = (e) => {
     }
 }
 
+//init eSender so that main can send messages here at it's own discretion. (basically just for sending stdout to the UI)
 ipcRenderer.send('init-eSender', 'main');

@@ -1,5 +1,7 @@
 
 const fs = require('fs');
+
+//init config (create with defaults if not exists)
 let config = {};
 if(!fs.existsSync('./config.json')) {
     config = {
