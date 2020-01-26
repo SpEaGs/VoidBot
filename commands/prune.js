@@ -27,7 +27,7 @@ module.exports = {
             case 0: return params.msg.reply('H... Hokay... deleting 0 messages then...');
             case 1: return params.msg.reply('Pruning currently only works for 2 or more messages.');
             case 2:
-                params.msg.channel.bulkDelete(amount, true).catch(err => {
+                params.msg.channel.bulkDelete((amount+1), true).catch(err => {
                     console.error(err);
                     params.msg.reply('Pruning error. Likely that all applicable messages are too (2 weeks) old.');
                 });

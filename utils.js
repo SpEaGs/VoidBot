@@ -162,8 +162,8 @@ function systemCMDs(status, cmd) {
         }
         case 'kill': {
             sysCmd = true;
-            status.client.destroy();
             for (bot of status.client.children.array()) bot.client.destroy();
+            status.client.destroy();
             process.exit();
         }
         default: {
