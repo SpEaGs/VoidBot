@@ -7,7 +7,7 @@ if(!fs.existsSync('./config.json')) {
     config = {
         "prefix": "~",
         "welcomeMsgPre": "A new pawn for my schemes!?!?",
-        "botadmin": [
+        "botAdmin": [
             "125759724707774464",
             "125758417934483456"
         ],

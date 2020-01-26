@@ -43,6 +43,7 @@ module.exports = {
 const status = require('./main.js');
 status.client = new Discord.Client();
 status.client.children = new Discord.Collection();
+status.client.cmds = new Discord.Collection();
 
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str) {
@@ -101,7 +102,7 @@ status.client.on('ready', () => {
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 
 to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
 status.client.on('message', msg => {
-    for ( let bot in status.client.children.array()) {
+    for ( let bot of status.client.children.array()) {
         if (msg.guild.id == bot.guildID) {
             //log incoming message & check for bot message or command
             log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
@@ -121,7 +122,7 @@ status.client.on('message', msg => {
             //check system commands & run if found (these are commands related to the bot, not things it does.)
             if (botadmin) {
                 var sysCmd = utils.systemCMDs(status, cmdName);
-                if (sysCMD) return;
+                if (sysCmd) return;
             }
 
             //check for command alias, arguments, and admin
