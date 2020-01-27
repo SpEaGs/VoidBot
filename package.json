@@ -6,7 +6,8 @@
   "scripts": {
     "start": "cross-env NODE_ENV=production electron .",
     "dev": "cross-env NODE_ENV=development electron . --enable-logging",
-    "dist-win": "build"
+    "dist-win": "electron-builder build",
+    "dist-ras": "electron-builder build --linux"
   },
   "repository": {
     "type": "git",
