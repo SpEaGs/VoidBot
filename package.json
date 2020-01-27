@@ -32,12 +32,18 @@
     "electron-builder": "^22.2.0"
   },
   "build": {
+    "appId": "Void.Bot",
     "files": [
       "**/*",
       "assets/*",
       "package.json",
-      "tokens.json",
-      "playlists/*"
-    ]
+      "tokens.json"
+    ],
+    "linux": {
+      "target": {
+        "target": "appimage",
+        "arch": ["armv7l"]
+      }
+    }
   }
 }
