@@ -1,7 +1,7 @@
 
 //Prune command. Deletes given number of messages from the channel in which the command was sent.
 
-const utils = require('../Utils.js');
+const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
 module.exports = {

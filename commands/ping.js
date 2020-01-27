@@ -1,7 +1,7 @@
 
 //Ping command. Returns 'Pong!'
 
-const utils = require('../Utils.js');
+const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
 module.exports = {

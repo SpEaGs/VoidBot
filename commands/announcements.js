@@ -1,6 +1,6 @@
 //Announcements command. Lets the user opt in or out of the announcements role on the server they use this command in (if enabled)
 
-const utils = require('../Utils.js');
+const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
 module.exports = {
