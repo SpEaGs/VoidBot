@@ -12,20 +12,16 @@ if(!fs.existsSync('./config.json')) {
             "125758417934483456"
         ],
         "commands": [
-            "announcements.js",  "help.js",        "join.js",
-            "leave.js",          "nowplaying.js",  "pause.js",
-            "ping.js",           "play.js",        "playlist.js",
-            "prune.js",          "resume.js",      "role.js",
-            "skip.js",           "slap.js",        "stop.js",
-            "tts.js",            "volume.js",      "welcome.js"
+            "help.js",    "announcements.js",    "ping.js",
+            "slap.js",    "prune.js"
         ],
         "sharding": {
             "default": {
-                "name": "",                "localMusic": false,
-                "voiceChannel": false,     "commandChannel": false,
-                "defaultVolume": "15",     "announcementsRole": false,
-                "newUserRole": false,      "defaultTextChannel": false,
-                "ruleTextChannel": false,  "localMusicVC": false
+                "name": "",                  "localMusic": false,
+                "voiceChannel": false,       "commandChannel": false,
+                "defaultVolume": "15",       "announcementsRole": false,
+                "newUserRole": false,        "defaultTextChannel": false,
+                "ruleTextChannel": false,    "localMusicVC": false
             }
         }
     }
