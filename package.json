@@ -24,9 +24,10 @@
   "dependencies": {
     "cross-env": "^6.0.3",
     "discord.js": "^11.5.1",
+    "opusscript": "0.0.7",
     "superagent": "^5.2.1",
     "winston": "^3.2.1",
-    "ytdl-core": "^1.0.6"
+    "ytdl-core": "^1.0.7"
   },
   "devDependencies": {
     "electron": "^7.1.9",
@@ -43,7 +44,9 @@
     "linux": {
       "target": {
         "target": "appimage",
-        "arch": ["armv7l"]
+        "arch": [
+          "armv7l"
+        ]
       }
     }
   }

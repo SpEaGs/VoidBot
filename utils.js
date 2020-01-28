@@ -13,7 +13,12 @@ if(!fs.existsSync('./config.json')) {
         ],
         "commands": [
             "help.js",    "announcements.js",    "ping.js",
-            "slap.js",    "prune.js"
+            "slap.js",    "prune.js",            "role.js",
+            "join.js",    "leave.js",            "play.js",
+            "pause.js",   "resume.js",           "stop.js",
+            "skip.js",    "volume.js",           "nowplaying.js",
+            "playlist.js"
+
         ],
         "sharding": {
             "default": {
