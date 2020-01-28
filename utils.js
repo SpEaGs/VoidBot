@@ -12,12 +12,12 @@ if(!fs.existsSync('./config.json')) {
             "125758417934483456"
         ],
         "commands": [
-            "help.js",    "announcements.js",    "ping.js",
-            "slap.js",    "prune.js",            "role.js",
-            "join.js",    "leave.js",            "play.js",
-            "pause.js",   "resume.js",           "stop.js",
-            "skip.js",    "volume.js",           "nowplaying.js",
-            "playlist.js"
+            "help.js",        "announcements.js",    "ping.js",
+            "slap.js",        "prune.js",            "role.js",
+            "join.js",        "leave.js",            "play.js",
+            "pause.js",       "resume.js",           "stop.js",
+            "skip.js",        "volume.js",           "nowplaying.js",
+            "playlist.js",    "welcome.js"
 
         ],
         "sharding": {
