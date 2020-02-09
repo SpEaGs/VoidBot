@@ -5,6 +5,9 @@ const fs = require('fs');
 let config = {};
 if(!fs.existsSync('./config.json')) {
     config = {
+        "windowState": {
+            "bounds": {}
+        },
         "prefix": "~",
         "welcomeMsgPre": "A new pawn for my schemes!?!?",
         "botAdmin": [

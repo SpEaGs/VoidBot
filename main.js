@@ -192,11 +192,32 @@ status.client.on('voiceStateUpdate', (oldMember, newMember) => {
 })
 
 //set up electron window
-function createWindow(wid = 1080, hei = 620) {
+function createWindow() {
+    let bounds = utils.config.windowState.bounds
+    let x, y, wid, hei;
+    if (bounds) {
+        let area = electron.screen.getDisplayMatching(bounds).workArea;
+        if (
+            bounds.x >= area.x &&
+            bounds.y >= area.y &&
+            bounds.x + bounds.width <= area.x + area.width &&
+            bounds.y + bounds.height <= area.y + area.height
+        ) {
+            x = bounds.x;
+            y = bounds.y
+        }
+        if (bounds.width <= area.width || bounds.height <= area.height) {
+            wid = bounds.width;
+            hei = bounds.height;
+        }
+        else { wid = 1080, hei = 720 }
+    }
     mainWindow = new BrowserWindow({
         webPreferences: {
             nodeIntegration: true
         },
+        x: x,
+        y: y,
         width: wid,
         height: hei,
         minWidth: 1080,
@@ -211,6 +232,8 @@ function createWindow(wid = 1080, hei = 620) {
     }));
     mainWindow.webContents.once('dom-ready', () => { clientLogin(token); });
     mainWindow.on('closed', () => { mainWindow = null; });
+    mainWindow.on('resize', saveBoundsSoon);
+    mainWindow.on('move', saveBoundsSoon);
 }
 
 //event handlers for electron window
@@ -225,6 +248,16 @@ app.on('window-all-closed', () => {
 app.on('activate', () => {
     if (mainWindow === null) createWindow();
 });
+
+let saveBoundsCookie;
+function saveBoundsSoon() {
+    if (saveBoundsCookie) clearTimeout(saveBoundsCookie);
+    saveBoundsCookie = setTimeout(() => {
+        saveBoundsCookie = undefined;
+        utils.config.windowState.bounds = mainWindow.getNormalBounds();
+        utils.dumpJSON('config.json', utils.config, 2);
+    }, 1000);
+}
 
 //UI & backend communication event handlers (not really sure how else to word this)
 ipcMain.on('command', (event, arg) => {
