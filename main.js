@@ -169,6 +169,28 @@ status.client.on('guildMemberAdd', member => {
     }
 });
 
+//discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
+status.client.on('voiceStateUpdate', (oldMember, newMember) => {
+    for (let bot of status.client.children.array()) {
+        if (!oldMember.voiceChannel) return;
+        if (oldMember.guild.id == bot.guildID
+            && oldMember.voiceChannel
+            && newMember.voiceChannel != oldMember.voiceChannel
+            && bot.guild.channels.find(val => val.id===oldMember.voiceChannel.id).members.array().length == 1
+            && bot.voiceChannel) {
+            if (bot.dispatcher) {
+                bot.audioQueue = [];
+                bot.dispatcher.end();
+                bot.dispatcher = false;
+            }
+            bot.voiceChannel.leave();
+            bot.voiceChannel = false;
+            bot.voiceConnection = false;
+            return;
+        }
+    }
+})
+
 //set up electron window
 function createWindow(wid = 1080, hei = 620) {
     mainWindow = new BrowserWindow({

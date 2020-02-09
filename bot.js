@@ -16,7 +16,7 @@ class Bot extends EventEmitter {
         this.fs = require('fs');
         this.client = new Discord.Client();
         this.client.visAdminRoles = new Discord.Collection();
-        this.guild = false;
+        this.guild = guild;
         this.dispatcher = false;
         this.voiceChannel = false;
         this.defaultVolume = 0;
