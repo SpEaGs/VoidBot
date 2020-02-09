@@ -2,8 +2,29 @@
 A Discord Bot.
 This is like the fourth or so version of the bot... had to re-write it a few times to keep up with changing APIs and now I'm at it again.
 
+***Note that in order for the play command to work properly, you'll have to install [ffmpeg](https://www.ffmpeg.org/) first***
+
+Before you try to run this you'll have to provide a text file in the main directory called `tokens.json` that contains a login token for discord, and an API key for google's youtubeV3 API. The file should look like the following:
+``` 
+{
+  "TOKEN": "your discord token here",
+  "TOKEN_YT": "your youtubeV3 API key here"
+}
+```
+For obvious reasons, I wont be providing mine. Once you have the file in there, you can run with the following:
+
 `npm install`
 then run: `npm start` or debug: `npm run dev`
+
+The config will auto-generate on first run and will have all of the default settings and commands. And no, you don't need to run the bot before packaging. 
+
+If you want the bot as-is, just get your [discord user ID](https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) and put it in the botAdmin list in the config defaults, then skip to the packaging part.
+
+You can view the config defaults in lines 7-32 of `utils.js`
+
+Feel free to write and use your own commands (use existing ones to see the format), just make sure to place them in the commands folder and add them to your config. (and refresh cmds if already running the bot)                                            
+**You'll have to rebuild the package if you add more commands as they get bundled into the exe/appimage so keep that in mind.*
+
 
 **Packaging:**
 
