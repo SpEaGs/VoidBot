@@ -210,7 +210,7 @@ function createWindow() {
             wid = bounds.width;
             hei = bounds.height;
         }
-        else { wid = 1080, hei = 720 }
+        else { wid = 1080, hei = 720, x = 0, y = 0 }
     }
     mainWindow = new BrowserWindow({
         webPreferences: {
