@@ -158,7 +158,7 @@ function systemCMDs(cmd, status=require('main.js')) {
         }
         case 'refreshadmin': {
             sysCmd = true;
-            populateAdmin(status);
+            populateAdmin(status, status.guild);
             break;
         }
         case 'kill': {

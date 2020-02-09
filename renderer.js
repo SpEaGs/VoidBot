@@ -166,7 +166,7 @@ function executeCmd(str, args = []) {
 //listens for main's stdout messages and appends the contents to the console tab
 ipcRenderer.on('stdout', (event, arg) => {
     appendText('mainContentItemSTDOUT', arg);
-    document.getElementById('mainContentItemSTDOUT').scrollTop = document.getElementById('mainContentItemSTDOUT').scrollHeight;
+    document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
 });
 
 //adds a bot client's shard menu to the UI
