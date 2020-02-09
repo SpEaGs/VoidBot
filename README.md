@@ -20,7 +20,7 @@ The config will auto-generate on first run and will have all of the default sett
 
 If you want the bot as-is, just get your [discord user ID](https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-) and put it in the botAdmin list in the config defaults, then skip to the packaging part.
 
-You can view the config defaults in lines 7-32 of `utils.js`
+You can view the config defaults starting at line 7 of `utils.js`
 
 Feel free to write and use your own commands (use existing ones to see the format), just make sure to place them in the commands folder and add them to your config. (and refresh cmds if already running the bot)                                            
 **You'll have to rebuild the package if you add more commands as they get bundled into the exe/appimage so keep that in mind.*
