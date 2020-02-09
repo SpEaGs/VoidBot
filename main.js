@@ -196,7 +196,7 @@ function createWindow() {
     let bounds = utils.config.windowState.bounds
     let x, y, wid, hei;
     if (bounds) {
-        let area = electron.screen.getDisplayMatching(bounds).workArea;
+        let area = electron.screen.getPrimaryDisplay().workArea;
         if (
             bounds.x >= area.x &&
             bounds.y >= area.y &&
