@@ -20,7 +20,7 @@ function max() {
     }
 }
 function cl() {
-    remote.getCurrentWindow().close();
+    executeCmd('kill', '');
 }
 
 //appends a new line of text to a given element

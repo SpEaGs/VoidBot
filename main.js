@@ -121,7 +121,7 @@ status.client.on('message', msg => {
 
             //check system commands & run if found (these are commands related to the bot, not things it does.)
             if (botadmin) {
-                var sysCmd = utils.systemCMDs(status, cmdName);
+                var sysCmd = utils.systemCMDs(cmdName, status);
                 if (sysCmd) return;
             }
 
@@ -230,13 +230,17 @@ app.on('activate', () => {
 ipcMain.on('command', (event, arg) => {
     switch (arg[0]) {
         case 'refreshcmds': {
-            utils.populateCmds(status);
+            utils.systemCMDs(arg[0], status);
             break;
         }
         case 'refreshadmin': {
             for (let bot of status.client.children.array()) {
-                utils.populateAdmin(bot, bot.guild);
+                utils.systemCMDs(arg[0], bot);
             }
+            break;
+        }
+        case 'kill': {
+            utils.systemCMDs(arg[0], status);
             break;
         }
         default: return;

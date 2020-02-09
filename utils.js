@@ -148,7 +148,7 @@ function cleanChannelName(name) {
 }
 
 //handles all system commands (commands related to the bot, not things it does)
-function systemCMDs(status, cmd) {
+function systemCMDs(cmd, status=require('main.js')) {
     let sysCmd;
     switch (cmd) {
         case 'refreshcmds': {
