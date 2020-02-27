@@ -18,9 +18,11 @@ module.exports = {
             case true: {
                 params.bot.dispatcher.resume()
                 params.msg.reply(`Audio stream resumed.`);
+                break;
             }
             case false: {
                 params.msg.reply(`Audio stream is already playing.`);
+                break;
             }
         }
     },
