@@ -36,3 +36,4 @@ Feel free to write and use your own commands (use existing ones to see the forma
 npm uninstall electron
 npm install -D electron --arch=armv7l
 ```
+**Also note that when building for Raspbian you'll have to run the build ON the Raspberry Pi since* `electron-builder`*'s remote linux build is no longer a thing, and cannot (to my knowledge) be worked around. The build takes < 1 min on the Pi 4.*
