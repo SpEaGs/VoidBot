@@ -226,38 +226,6 @@ p {
     -webkit-user-select:none;
     cursor:pointer;
 }
-.songButtonPlay {
-    margin: 0px;
-    padding: 0px;
-    position:relative;
-    left: calc(100% - 3em);
-    top: -4.875em;
-    height: 2em;
-    width: 2em;
-    background: url('assets/mediaButton/play.png');
-    background-size: contain;
-    transition: ease 0.3s all;
-}
-.songButtonPlay:hover {
-    background: url('assets/mediaButton/playDark.png');
-    background-size: contain;
-}
-.songButtonAddPl {
-    margin: 0px;
-    padding: 0px;
-    position: relative;
-    left: calc(100% - 6em);
-    top: -6.825em;
-    height: 2em;
-    width: 2em;
-    background: url('assets/mediaButton/playlistAdd.png');
-    background-size: contain;
-    transition: ease 0.3 all;
-}
-.songButtonAddPl:hover {
-    background: url('assets/mediaButton/playlistAddDark.png');
-    background-size: contain;
-}
 .dropdownButton {
     padding: 10px;
     width: 100%;
@@ -378,10 +346,4 @@ p {
 #mainContentItemSTDOUT:hover {
     background: var(--main-bg-color);
     cursor: default;
-}
-#playlistsDropdownButton {
-    background-color: transparent;
-}
-#playlistsDropdownButton:hover {
-    background-color: transparent;
 }
