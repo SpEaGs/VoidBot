@@ -10,6 +10,7 @@ if(!fs.existsSync('./config.json')) {
         },
         "prefix": "~",
         "welcomeMsgPre": "A new pawn for my schemes!?!?",
+        "sendoffMsgPre": "Aww... there goes another pawn...",
         "botAdmin": [
             "125759724707774464",
             "125758417934483456"
@@ -43,6 +44,7 @@ else {
 module.exports = {
     config: config,
     welcome: welcome,
+    sendoff: sendoff,
     adminCheck: adminCheck,
     botAdminCheck: botAdminCheck,
     findMemberFromGuild: findMemberFromGuild,
@@ -60,6 +62,12 @@ function welcome(mem, anno) {
     let toReturn = (`${config.welcomeMsgPre} Welcome ${mem.toString()} to ${mem.guild.name}!`
                     +"\nI'm a bot! You can use `"+config.prefix+"help` or `"+config.prefix+"?` to view a list of commands or `"+config.prefix+"? (command)` without the parentheses to get help with a specific command.");
     if (anno) toReturn += ("\nIf you would like to receive notifications for announcements from this server, do `"+config.prefix+"announcements in`. You can op out at any time by doing `"+config.prefix+"announcements out`.");
+    return toReturn;
+}
+
+//handles the sendoff message when a member leaves a server
+function sendoff(mem) {
+    let toReturn = (`${config.sendoffMsgPre} ${mem.toString()} has left the server.`)
     return toReturn;
 }
 

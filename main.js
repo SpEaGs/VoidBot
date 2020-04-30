@@ -151,8 +151,9 @@ status.client.on('message', msg => {
 
 //discord.js client event for new members joining a server
 status.client.on('guildMemberAdd', member => {
-    for (let bot in status.client.children.array()) {
+    for (let bot of status.client.children.array()) {
         if (member.guild.id == bot.guildID) {
+            log(`-----------NewMember [${bot.guildID}] [${bot.guildName}] ${member.id} ${member.username}`);
             if (bot.defaultTextChannel != false) {
                 let anno = false;
                 if (bot.announcementsRole != false) anno = true;
@@ -164,6 +165,17 @@ status.client.on('guildMemberAdd', member => {
             };
             if (utils.config.sharding[bot.guildID].newUserRole != false) {
                 member.addRole(utils.config.sharding[bot.guildID].newUserRole.id);
+            }
+        }
+    }
+});
+
+//discord.js client event for when a member leaves a server
+status.client.on('guildMemberRemove', member => {
+    for (let bot of status.client.children.array()) {
+        if (member.guild.id == bot.guildID) {
+            if (bot.defaultTextChannel != false) {
+                bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.sendoff(member));
             }
         }
     }
