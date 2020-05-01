@@ -153,7 +153,7 @@ status.client.on('message', msg => {
 status.client.on('guildMemberAdd', member => {
     for (let bot of status.client.children.array()) {
         if (member.guild.id == bot.guildID) {
-            if (!config.sharding[bot.guildID].welcomeMsg) return;
+            if (!utils.config.sharding[bot.guildID].welcomeMsg) return;
             if (bot.defaultTextChannel != false) {
                 let anno = false;
                 if (bot.announcementsRole != false) anno = true;
