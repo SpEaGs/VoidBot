@@ -42,10 +42,12 @@ function createSettingItem(guildID='', settingName='placeholder setting name', t
     switch (subtype) {
         case 'voiceChannel': { tag = 'VC'; break; }
         case 'textChannel': { tag = 'TX'; break; }
+        case 'wtextChannel': { tag = 'WT'; break; }
         case 'rtextChannel': { tag = 'RT'; break; }
         case 'role': { tag = 'RO'; break; }
         case 'arole': { tag= 'AR'; break; }
         case 'vol': { tag = 'DV'; break; }
+        case 'welcome': {tag = 'WE'; break; }
     }
     let toReturn = createElement('div', ['mainContentSettingItem'], `mainContentSettingItem${tag}${guildID}`);
         let maintxt = createElement('div', ['mainContentSettingItemText']);
@@ -75,6 +77,17 @@ function createSettingItem(guildID='', settingName='placeholder setting name', t
                         sliderText.innerHTML = value;
                         slider.appendChild(sliderText);
                     toReturn.appendChild(slider);
+                break;
+            }
+            case 'toggle': {
+                let toggle = createElement('label', ['toggleSwitchContainer'], `toggleSwitchContainer${tag}${guildID}`);
+                    let toggleInput = createElement('input', ['toggle'], `toggle${tag}${guildID}`);
+                        toggleInput.type = 'checkbox';
+                        toggleInput.checked = false;
+                        toggle.appendChild(toggleInput);
+                    let toggleSpan = createElement('span', ['toggleSlider'], `toggleSlider${tag}${guildID}`);
+                        toggle.appendChild(toggleSpan);
+                    toReturn.appendChild(toggle);
                 break;
             }
         }
@@ -115,7 +128,7 @@ function showDropdown(elID) {
 }
 
 //selects and sets an item clicked on in a dropdown menu
-function dropdownSelectItem(elID, iName, iID, guildID, iType, channel) {
+function dropdownSelectItem(elID, iName, iID, guildID, iType, channel, bool=false) {
     document.getElementById(elID).innerHTML = iName;
     switch (iType) {
         case 'voiceChannel': {
@@ -130,6 +143,10 @@ function dropdownSelectItem(elID, iName, iID, guildID, iType, channel) {
                 }
                 case 'rules': {
                     utils.config.sharding[guildID].ruleTextChannel = { id: iID, name: iName };
+                    break;
+                }
+                case 'welcome': {
+                    utils.config.sharding[guildID].welcomeTextChannel = { id: iID, name: iName };
                     break;
                 }
             }
@@ -147,6 +164,9 @@ function dropdownSelectItem(elID, iName, iID, guildID, iType, channel) {
                 }
             }
             break;
+        }
+        case 'welcomeBool': {
+            utils.config.sharding[guildID].welcomeMsg = bool
         }
     }
     utils.dumpJSON('./config.json', utils.config, 2);
@@ -186,6 +206,8 @@ ipcRenderer.on('add-client', (event, bot) => {
         shardContent.appendChild(createSettingItem(bot.guildID, 'Announcements Role', 'dropdown', 'arole'));
         shardContent.appendChild(createSettingItem(bot.guildID, 'New Member Role', 'dropdown', 'role'));
         shardContent.appendChild(createSettingItem(bot.guildID, 'Default Text Channel', 'dropdown', 'textChannel'));
+        shardContent.appendChild(createSettingItem(bot.guildID, 'Welcome Message', 'toggle', 'welcome'));
+        shardContent.appendChild(createSettingItem(bot.guildID, 'Welcome Text Channel', 'dropdown', 'wtextChannel'));
         shardContent.appendChild(createSettingItem(bot.guildID, 'Rules Text Channel', 'dropdown', 'rtextChannel'));
         
         document.getElementById('mainContentSharding').appendChild(shardContent);
@@ -198,6 +220,18 @@ ipcRenderer.on('add-client', (event, bot) => {
         utils.config.sharding[bot.guildID].defaultVolume = val;
         utils.dumpJSON('./config.json', utils.config, 2);
     }
+    document.getElementById(`sliderDV${bot.guildID}`).value = utils.config.sharding[bot.guildID].defaultVolume;
+    
+    //input handling for the toggle
+    document.getElementById(`toggleWE${bot.guildID}`).oninput = () => {
+        if (document.getElementById(`toggleWE${bot.guildID}`).checked == true) {
+            utils.config.sharding[bot.guildID].welcomeMsg = true;
+        }
+        else { utils.config.sharding[bot.guildID].welcomeMsg = false; }
+        utils.dumpJSON('./config.json', utils.config, 2);
+    }
+    document.getElementById(`toggleWE${bot.guildID}`).checked = utils.config.sharding[bot.guildID].welcomeMsg;
+
     //build dropdown list for voice channel setting
     for (let i of bot.voiceChannelArray) {
         let dropdownItem = createElement('a');
@@ -219,8 +253,14 @@ ipcRenderer.on('add-client', (event, bot) => {
             dropdown2Item.innerHTML = i.name;
             dropdown2Item.onclick = () => { dropdownSelectItem(`rtextChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'textChannel', 'rules'); }
         document.getElementById(`dropdownContentRT${bot.guildID}`).appendChild(dropdown2Item);
+        let dropdown3Item = createElement('a');
+            dropdown3Item.href = `#${i.id}`;
+            dropdown3Item.innerHTML = i.name;
+            dropdown3Item.onclick = () => { dropdownSelectItem(`wtextChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'textChannel', 'welcome'); }
+        document.getElementById(`dropdownContentWT${bot.guildID}`).appendChild(dropdown3Item);
         if (i.id == utils.config.sharding[bot.guildID].defaultTextChannel.id) { document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
         if (i.id == utils.config.sharding[bot.guildID].ruleTextChannel.id) { document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
+        if (i.id == utils.config.sharding[bot.guildID].welcomeTextChannel.id) { document.getElementById(`wtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
     //build dropdown list for role settings
     for (let i of bot.roleArray) {

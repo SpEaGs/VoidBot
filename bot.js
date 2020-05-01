@@ -27,6 +27,7 @@ class Bot extends EventEmitter {
         this.announcementsRole = false;
         this.newMemberRole = false;
         this.defaultTextChannel = false;
+        this.welcomeTextChannel = false;
         this.ruleTextChannel = false;
         this.textChannelArray = [];
         this.roleArray = [];
@@ -46,6 +47,7 @@ class Bot extends EventEmitter {
         this.announcementsRole = utils.config.sharding[this.guildID].announcementsRole;
         this.newMemberRole = utils.config.sharding[this.guildID].newMemberRole;
         this.defaultTextChannel = utils.config.sharding[this.guildID].defaultTextChannel;
+        this.welcomeTextChannel = utils.config.sharding[this.guildID].welcomeTextChannel;
         this.ruleTextChannel = utils.config.sharding[this.guildID].ruleTextChannel;
 
         //save config (should be done after every edit to the config object)

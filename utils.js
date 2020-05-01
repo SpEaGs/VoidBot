@@ -30,7 +30,8 @@ if(!fs.existsSync('./config.json')) {
                 "voiceChannel": false,       "commandChannel": false,
                 "defaultVolume": "15",       "announcementsRole": false,
                 "newUserRole": false,        "defaultTextChannel": false,
-                "ruleTextChannel": false,    "localMusicVC": false
+                "welcomeTextChannel": false, "ruleTextChannel": false, 
+                "localMusicVC": false,       "welcomeMsg": false
             }
         }
     }
