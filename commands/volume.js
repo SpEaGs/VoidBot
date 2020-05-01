@@ -3,6 +3,7 @@
 
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
+const eSender = require('../main.js').eSender;
 
 module.exports = {
     name: 'volume',
@@ -38,4 +39,5 @@ function returnVolume(volume, params, regBool) {
     if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(volume / 100));
     params.msg.channel.send(returnMsg);
     utils.config.sharding[params.bot.guildID].defaultVolume = volume;
+    eSender.send('updateVol', volume);
 }

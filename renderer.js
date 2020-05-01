@@ -279,6 +279,10 @@ ipcRenderer.on('add-client', (event, bot) => {
     }
 });
 
+ipcRenderer.on('updateVol', (event, bot) => {
+    document.getElementById(`sliderDV${bot.guildID}`).value = utils.config.sharding[bot.guildID].defaultVolume;
+});
+
 //closes dropdowns when clicking outside the button for one. (multiples can be opened but only one will actually change
 //if an item is selected)
 window.onclick = (e) => {
