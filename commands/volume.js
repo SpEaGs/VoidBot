@@ -38,6 +38,6 @@ function returnVolume(volume, params, regBool) {
     else { returnMsg = `Set the current volume to ${volume}%.` };
     if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(volume / 100));
     params.msg.channel.send(returnMsg);
-    utils.config.sharding[params.bot.guildID].defaultVolume = volume;
+    params.bot.defaultVolume = volume;
     eSender.send('updateVol', params.bot);
 }
