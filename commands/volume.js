@@ -35,6 +35,7 @@ function returnVolume(volume, params, regBool) {
     var returnMsg = '';
     if (regBool) { returnMsg = `Set the current volume to :100:` }
     else { returnMsg = `Set the current volume to ${volume}%.` };
-    params.bot.dispatcher.setVolume(parseFloat(volume / 100));
+    if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(volume / 100));
     params.msg.channel.send(returnMsg);
+    utils.config.sharding[params.bot.guildID].defaultVolume = volume;
 }
