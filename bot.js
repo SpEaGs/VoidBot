@@ -19,6 +19,7 @@ class Bot extends EventEmitter {
         this.guild = guild;
         this.dispatcher = false;
         this.voiceChannel = false;
+        this.defaultVoiceChannel = false;
         this.defaultVolume = 0;
         this.voiceChannelArray = [];
         this.voiceConnection = false;
@@ -27,6 +28,7 @@ class Bot extends EventEmitter {
         this.announcementsRole = false;
         this.newMemberRole = false;
         this.defaultTextChannel = false;
+        this.welcomeMsg = false;
         this.welcomeTextChannel = false;
         this.ruleTextChannel = false;
         this.textChannelArray = [];
@@ -48,7 +50,9 @@ class Bot extends EventEmitter {
         this.newMemberRole = utils.config.sharding[this.guildID].newMemberRole;
         this.defaultTextChannel = utils.config.sharding[this.guildID].defaultTextChannel;
         this.welcomeTextChannel = utils.config.sharding[this.guildID].welcomeTextChannel;
+        this.welcomeMsg = utils.config.sharding[this.guildID].welcomeMsg;
         this.ruleTextChannel = utils.config.sharding[this.guildID].ruleTextChannel;
+        this.defaultVoiceChannel = utils.config.sharding[this.guildID].defaultVoiceChannel;
 
         //save config (should be done after every edit to the config object)
         utils.dumpJSON('./config.json', utils.config, 2);

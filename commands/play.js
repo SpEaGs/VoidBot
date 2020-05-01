@@ -24,7 +24,7 @@ module.exports = {
         if (params.msg.channel.type == 'voice') return;
         params.bot.voiceChannel = params.msg.member.voiceChannel;
         if (!params.bot.voiceChannel) {
-            params.bot.voiceChannel = params.bot.guild.channels.get(utils.config.sharding[params.bot.guildID].localMusicVC.id);
+            params.bot.voiceChannel = params.bot.guild.channels.get(params.bot.defaultVoiceChannel.id);
         };
         if (!params.bot.voiceChannel) {
             log(`[${params.bot.guildName}] No voice channel specified and no default.`);

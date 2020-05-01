@@ -26,12 +26,11 @@ if(!fs.existsSync('./config.json')) {
         ],
         "sharding": {
             "default": {
-                "name": "",                  "localMusic": false,
-                "voiceChannel": false,       "commandChannel": false,
-                "defaultVolume": "15",       "announcementsRole": false,
-                "newUserRole": false,        "defaultTextChannel": false,
-                "welcomeTextChannel": false, "ruleTextChannel": false, 
-                "localMusicVC": false,       "welcomeMsg": false
+                "name": "",                   "defaultVolume": "15",
+                "announcementsRole": false,   "newMemberRole": false,
+                "defaultTextChannel": false,  "welcomeTextChannel": false,
+                "ruleTextChannel": false,     "welcomeMsg": false,
+                "defaultVoiceChannel": false
             }
         }
     }
@@ -44,6 +43,7 @@ else {
 
 module.exports = {
     config: config,
+    saveConfig: saveConfig,
     welcome: welcome,
     sendoff: sendoff,
     adminCheck: adminCheck,
@@ -157,6 +157,20 @@ function cleanChannelName(name) {
         return cleanName;
     }
     else return name;
+}
+
+//saves given bot's settings to config file
+function saveConfig(bot) {
+    config.sharding[bot.guildID].guildName = bot.guildName;
+    config.sharding[bot.guildID].defaultVolume = bot.defaultVolume;
+    config.sharding[bot.guildID].defaultVoiceChannel = bot.defaultVoiceChannel;
+    config.sharding[bot.guildID].announcementsRole = bot.announcementsRole;
+    config.sharding[bot.guildID].newMemberRole = bot.newMemberRole;
+    config.sharding[bot.guildID].defaultTextChannel = bot.defaultTextChannel;
+    config.sharding[bot.guildID].welcomeTextChannel = bot.welcomeTextChannel;
+    config.sharding[bot.guildID].welcomeMsg = bot.welcomeMsg;
+    config.sharding[bot.guildID].ruleTextChannel = bot.ruleTextChannel;
+    dumpJSON('./config.json', config, 2);
 }
 
 //handles all system commands (commands related to the bot, not things it does)

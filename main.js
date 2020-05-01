@@ -153,18 +153,19 @@ status.client.on('message', msg => {
 status.client.on('guildMemberAdd', member => {
     for (let bot of status.client.children.array()) {
         if (member.guild.id == bot.guildID) {
-            if (!utils.config.sharding[bot.guildID].welcomeMsg) return;
-            if (bot.defaultTextChannel != false) {
+            log(bot.welcomeMsg);
+            if (bot.welcomeMsg == false) return;
+            if (bot.wlecomeTextChannel != false) {
                 let anno = false;
                 if (bot.announcementsRole != false) anno = true;
                 if (bot.ruleTextChannel != false) {
-                    bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.welcome(member, anno)
+                    bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno)
                     +`\nPlease read the rules in ${bot.guild.channels.get(bot.ruleTextChannel.id).toString()}`);
                 }
-                else bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.welcome(member, anno));
+                else bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno));
             };
-            if (utils.config.sharding[bot.guildID].newUserRole != false) {
-                member.addRole(utils.config.sharding[bot.guildID].newUserRole.id);
+            if (bot.newMemberRole != false) {
+                member.addRole(bot.newMemberRole.id);
             }
         }
     }
@@ -174,9 +175,10 @@ status.client.on('guildMemberAdd', member => {
 status.client.on('guildMemberRemove', member => {
     for (let bot of status.client.children.array()) {
         if (member.guild.id == bot.guildID) {
-            if (!utils.config.sharding[bot.guildID].welcomeMsg) return;
-            if (bot.defaultTextChannel != false) {
-                bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.sendoff(member));
+            log(bot.welcomeMsg);
+            if (bot.welcomeMsg == false) return;
+            if (bot.welcomeTextChannel != false) {
+                bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.sendoff(member));
             }
         }
     }
@@ -268,7 +270,6 @@ function saveBoundsSoon() {
     saveBoundsCookie = setTimeout(() => {
         saveBoundsCookie = undefined;
         utils.config.windowState.bounds = mainWindow.getNormalBounds();
-        utils.dumpJSON('config.json', utils.config, 2);
     }, 1000);
 }
 
@@ -293,6 +294,15 @@ ipcMain.on('command', (event, arg) => {
     }
     return;
 });
+
+ipcMain.on('updateBot', (event, bot) => {
+    for (let i of status.client.children.array()) {
+        if (i.guildID == bot.guildID) {
+            i = bot;
+            utils.saveConfig(i);
+        }
+    }
+})
 
 ipcMain.on('init-eSender', (event, arg) => { status.eSender = event.sender; });
 

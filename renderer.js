@@ -1,7 +1,6 @@
 
 const remote = require('electron').remote;
 const ipcRenderer = require('electron').ipcRenderer;
-const utils = require('./utils.js');
 
 //--------------------------------------------------------------------------------------------------------------
 //This file handles the rendering of the HTML.
@@ -128,25 +127,29 @@ function showDropdown(elID) {
 }
 
 //selects and sets an item clicked on in a dropdown menu
-function dropdownSelectItem(elID, iName, iID, guildID, iType, channel, bool=false) {
+function dropdownSelectItem(elID, iName, iID, bot, iType, channel) {
     document.getElementById(elID).innerHTML = iName;
     switch (iType) {
         case 'voiceChannel': {
-            utils.config.sharding[guildID].localMusicVC = { id: iID, name: iName };
+            bot.defaultVoiceChannel = { id: iID, name: iName };
+            ipcRenderer.send('updateBot', bot);
             break;
         }
         case 'textChannel': {
             switch (channel) {
                 case 'default': {
-                    utils.config.sharding[guildID].defaultTextChannel = { id: iID, name: iName };
+                    bot.defaultTextChannel = { id: iID, name: iName };
+                    ipcRenderer.send('updateBot', bot);
                     break;
                 }
                 case 'rules': {
-                    utils.config.sharding[guildID].ruleTextChannel = { id: iID, name: iName };
+                    bot.ruleTextChannel = { id: iID, name: iName };
+                    ipcRenderer.send('updateBot', bot);
                     break;
                 }
                 case 'welcome': {
-                    utils.config.sharding[guildID].welcomeTextChannel = { id: iID, name: iName };
+                    bot.welcomeTextChannel = { id: iID, name: iName };
+                    ipcRenderer.send('updateBot', bot);
                     break;
                 }
             }
@@ -154,22 +157,20 @@ function dropdownSelectItem(elID, iName, iID, guildID, iType, channel, bool=fals
         }
         case 'role': {
             switch (channel) {
-                case 'newUser': {
-                    utils.config.sharding[guildID].newUserRole = { id: iID, name: iName };
+                case 'newMember': {
+                    bot.newMemberRole = { id: iID, name: iName };
+                    ipcRenderer.send('updateBot', bot);
                     break;
                 }
                 case 'announcement': {
-                    utils.config.sharding[guildID].announcementsRole = { id: iID, name: iName };
+                    bot.announcementsRole = { id: iID, name: iName };
+                    ipcRenderer.send('updateBot', bot);
                     break;
                 }
             }
             break;
         }
-        case 'welcomeBool': {
-            utils.config.sharding[guildID].welcomeMsg = bool
-        }
     }
-    utils.dumpJSON('./config.json', utils.config, 2);
 }
 
 //tells main to execute a command
@@ -213,77 +214,73 @@ ipcRenderer.on('add-client', (event, bot) => {
         document.getElementById('mainContentSharding').appendChild(shardContent);
     
     //input handling for the slider
+    document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
     document.getElementById(`sliderDV${bot.guildID}`).oninput = () => {
         let val = document.getElementById(`sliderDV${bot.guildID}`).value;
         document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerHTML = val;
         if (!bot.dispatcher == false) { bot.dispatcher.setVolume(parseFloat(val)/100); }
-        utils.config.sharding[bot.guildID].defaultVolume = val;
-        utils.dumpJSON('./config.json', utils.config, 2);
+        bot.defaultVolume = val;
+        ipcRenderer.send('updateBot', bot);
     }
-    document.getElementById(`sliderDV${bot.guildID}`).value = utils.config.sharding[bot.guildID].defaultVolume;
     
     //input handling for the toggle
+    document.getElementById(`toggleWE${bot.guildID}`).checked = bot.welcomeMsg;
     document.getElementById(`toggleWE${bot.guildID}`).oninput = () => {
-        if (document.getElementById(`toggleWE${bot.guildID}`).checked == true) {
-            utils.config.sharding[bot.guildID].welcomeMsg = true;
-        }
-        else { utils.config.sharding[bot.guildID].welcomeMsg = false; }
-        utils.dumpJSON('./config.json', utils.config, 2);
+        let checked = document.getElementById(`toggleWE${bot.guildID}`).checked;
+        bot.welcomeMsg = checked;
+        ipcRenderer.send('updateBot', bot);
     }
-    document.getElementById(`toggleWE${bot.guildID}`).checked = utils.config.sharding[bot.guildID].welcomeMsg;
 
     //build dropdown list for voice channel setting
     for (let i of bot.voiceChannelArray) {
         let dropdownItem = createElement('a');
             dropdownItem.href = `#${i.id}`;
-            dropdownItem.onclick = () => { dropdownSelectItem(`voiceChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'voiceChannel', ''); }
+            dropdownItem.onclick = () => { dropdownSelectItem(`voiceChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot, 'voiceChannel', ''); }
             dropdownItem.innerHTML = i.name;
         document.getElementById(`dropdownContentVC${bot.guildID}`).appendChild(dropdownItem);
-        if (i.id == utils.config.sharding[bot.guildID].localMusicVC.id) { document.getElementById(`voiceChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
+        if (i.id == bot.defaultVoiceChannel.id) { document.getElementById(`voiceChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
     //build dropdown list for text channel settings
     for (let i of bot.textChannelArray) {
         let dropdown1Item = createElement('a');
             dropdown1Item.href = `#${i.id}`;
             dropdown1Item.innerHTML = i.name;
-            dropdown1Item.onclick = () => { dropdownSelectItem(`textChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'textChannel', 'default'); }
+            dropdown1Item.onclick = () => { dropdownSelectItem(`textChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot, 'textChannel', 'default'); }
         document.getElementById(`dropdownContentTX${bot.guildID}`).appendChild(dropdown1Item);
         let dropdown2Item = createElement('a');
             dropdown2Item.href = `#${i.id}`;
             dropdown2Item.innerHTML = i.name;
-            dropdown2Item.onclick = () => { dropdownSelectItem(`rtextChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'textChannel', 'rules'); }
+            dropdown2Item.onclick = () => { dropdownSelectItem(`rtextChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot, 'textChannel', 'rules'); }
         document.getElementById(`dropdownContentRT${bot.guildID}`).appendChild(dropdown2Item);
         let dropdown3Item = createElement('a');
             dropdown3Item.href = `#${i.id}`;
             dropdown3Item.innerHTML = i.name;
-            dropdown3Item.onclick = () => { dropdownSelectItem(`wtextChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'textChannel', 'welcome'); }
+            dropdown3Item.onclick = () => { dropdownSelectItem(`wtextChannelDropdownButton${bot.guildID}`, i.cName, i.id, bot, 'textChannel', 'welcome'); }
         document.getElementById(`dropdownContentWT${bot.guildID}`).appendChild(dropdown3Item);
-        if (i.id == utils.config.sharding[bot.guildID].defaultTextChannel.id) { document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
-        if (i.id == utils.config.sharding[bot.guildID].ruleTextChannel.id) { document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
-        if (i.id == utils.config.sharding[bot.guildID].welcomeTextChannel.id) { document.getElementById(`wtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
+        if (i.id == bot.defaultTextChannel.id) { document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
+        if (i.id == bot.ruleTextChannel.id) { document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
+        if (i.id == bot.welcomeTextChannel.id) { document.getElementById(`wtextChannelDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
     //build dropdown list for role settings
     for (let i of bot.roleArray) {
         let dropdown1Item = createElement('a');
             dropdown1Item.href = `#${i.id}`;
             dropdown1Item.innerHTML = i.name;
-            dropdown1Item.onclick = () => { dropdownSelectItem(`aroleDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'role', 'announcement'); }
+            dropdown1Item.onclick = () => { dropdownSelectItem(`aroleDropdownButton${bot.guildID}`, i.cName, i.id, bot, 'role', 'announcement'); }
         document.getElementById(`dropdownContentAR${bot.guildID}`).appendChild(dropdown1Item);
         let dropdown2Item = createElement('a');
             dropdown2Item.href = `#${i.id}`;
             dropdown2Item.innerHTML = i.name;
-            dropdown2Item.onclick = () => { dropdownSelectItem(`roleDropdownButton${bot.guildID}`, i.cName, i.id, bot.guildID, 'role', 'newUser'); }
+            dropdown2Item.onclick = () => { dropdownSelectItem(`roleDropdownButton${bot.guildID}`, i.cName, i.id, bot, 'role', 'newMember'); }
         document.getElementById(`dropdownContentRO${bot.guildID}`).appendChild(dropdown2Item);
-            if (i.id == utils.config.sharding[bot.guildID].announcementsRole.id) { document.getElementById(`aroleDropdownButton${bot.guildID}`).textContent = i.cName; }
-            if (i.id == utils.config.sharding[bot.guildID].newUserRole.id) { document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = i.cName; }
+            if (i.id == bot.announcementsRole.id) { document.getElementById(`aroleDropdownButton${bot.guildID}`).textContent = i.cName; }
+            if (i.id == bot.newMemberRole.id) { document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
 });
 
 ipcRenderer.on('updateVol', (event, bot) => {
     document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
     document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerHTML = bot.defaultVolume;
-    utils.config.sharding[bot.guildID].defaultVolume = bot.defaultVolume;
-    utils.dumpJSON('./config.json', utils.config, 2);
 });
 
 //closes dropdowns when clicking outside the button for one. (multiples can be opened but only one will actually change
