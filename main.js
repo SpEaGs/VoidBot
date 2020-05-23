@@ -270,6 +270,7 @@ function saveBoundsSoon() {
     saveBoundsCookie = setTimeout(() => {
         saveBoundsCookie = undefined;
         utils.config.windowState.bounds = mainWindow.getNormalBounds();
+        utils.dumpJSON('./config.json', utils.config, 2)
     }, 1000);
 }
 
