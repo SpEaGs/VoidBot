@@ -58,4 +58,5 @@ function returnVolume(volume='', params, regBool) {
     if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(params.bot.defaultVolume / 100));
     params.msg.channel.send(returnMsg);
     eSender.send('updateVol', params.bot);
+    utils.saveConfig(params.bot);
 }
