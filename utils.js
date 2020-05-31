@@ -15,15 +15,6 @@ if(!fs.existsSync('./config.json')) {
             "125759724707774464",
             "125758417934483456"
         ],
-        "commands": [
-            "help.js",        "announcements.js",    "ping.js",
-            "slap.js",        "prune.js",            "role.js",
-            "join.js",        "leave.js",            "play.js",
-            "pause.js",       "resume.js",           "stop.js",
-            "skip.js",        "volume.js",           "nowplaying.js",
-            "playlist.js",    "welcome.js"
-
-        ],
         "sharding": {
             "default": {
                 "name": "",                   "defaultVolume": "15",
@@ -130,10 +121,10 @@ function populateAdmin(status, guild) {
 //populates an internal list of commands
 function populateCmds(status) {
     global.log('[MAIN] Populating commands list...');
-    let cmdFiles = config.commands;
+    let cmdFiles = fs.readdirSync('./commands/');
+    status.client.cmds.clear();
     for (let file of cmdFiles) {
         let command = require(`./commands/${file}`);
-        command.status = status;
         status.client.cmds.set(command.name, command);
         global.log(`[MAIN] Found command: ${command.name}`);
     }
