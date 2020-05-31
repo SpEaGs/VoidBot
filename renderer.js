@@ -219,7 +219,7 @@ ipcRenderer.on('add-client', (event, bot) => {
         let val = document.getElementById(`sliderDV${bot.guildID}`).value;
         document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerHTML = val;
         if (!bot.dispatcher == false) { bot.dispatcher.setVolume(parseFloat(val)/100); }
-        bot.defaultVolume = val;
+        bot.defaultVolume = parseInt(val);
         ipcRenderer.send('updateBot', bot);
     }
     

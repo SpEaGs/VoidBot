@@ -17,7 +17,7 @@ if(!fs.existsSync('./config.json')) {
         ],
         "sharding": {
             "default": {
-                "name": "",                   "defaultVolume": "15",
+                "name": "",                   "defaultVolume": 15,
                 "announcementsRole": false,   "newMemberRole": false,
                 "defaultTextChannel": false,  "welcomeTextChannel": false,
                 "ruleTextChannel": false,     "welcomeMsg": false,

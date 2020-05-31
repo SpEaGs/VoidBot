@@ -31,13 +31,31 @@ module.exports = {
     }
 };
 
-function returnVolume(volume, params, regBool) {
-    if (volume > 100 ) { volume = 100 };
-    var returnMsg = '';
+function returnVolume(volume='', params, regBool) {
+    let returnMsg = '';
+    switch (volume[0]) {
+        case '+': {
+            let volMod = volume.replace('+', '');
+            let newVol = (params.bot.defaultVolume+parseInt(volMod));
+            if (newVol > 100) { newVol = 100 };
+            params.bot.defaultVolume = parseInt(newVol);
+            break;
+        }
+        case '-': {
+            let volMod = volume.replace('-', '');
+            let newVol = (params.bot.defaultVolume-parseInt(volMod));
+            if (newVol < 0) { newVol = 0 };
+            params.bot.defaultVolume = parseInt(newVol);
+            break;
+        }
+    }
+    if (volume[0] != '+' && volume[0] != '-') {
+        if (volume > 100) { volume = 100 };
+        params.bot.defaultVolume = parseInt(volume);
+    }
     if (regBool) { returnMsg = `Set the current volume to :100:` }
-    else { returnMsg = `Set the current volume to ${volume}%.` };
-    if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(volume / 100));
+    else { returnMsg = `Set the current volume to ${params.bot.defaultVolume}%.` };
+    if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(params.bot.defaultVolume / 100));
     params.msg.channel.send(returnMsg);
-    params.bot.defaultVolume = volume;
     eSender.send('updateVol', params.bot);
 }
