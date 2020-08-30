@@ -42,6 +42,7 @@ module.exports = {
     botAdminCheck: botAdminCheck,
     findMemberFromGuild: findMemberFromGuild,
     findRoleFromGuild: findRoleFromGuild,
+    findChanFromGuild: findChanFromGuild,
     systemCMDs: systemCMDs,
     populateCmds: populateCmds,
     populateAdmin: populateAdmin,
@@ -107,6 +108,14 @@ function findRoleFromGuild(rolename, guild) {
 function findMemberFromGuild(username, guild) {
     for (let mem of guild.members.array()) {
         if (mem.user.username.toLowerCase() === username.toLowerCase()) return mem;
+    }
+    return false;
+}
+
+//finds a channel in a given server from a given channel name
+function findChanFromGuild(channel, guild, chanType = 'text') {
+    for (let chan of guild.channels.array()) {
+        if (chan.type === chanType && chan.name.toLowerCase().includes(channel.toLowerCase())) return channel;
     }
     return false;
 }

@@ -24,14 +24,10 @@ module.exports = {
             joinVoice(voiceChannel, params.bot);
             return;
         }
-        for (chan of params.bot.guild.channels.array()) {
-            if (chan.type === 'voice' && chan.name.toLowerCase().includes(params.args.join(' ').toLowerCase())) {
-                if (chan === params.bot.voiceChannel) return params.msg.reply(`I'm already in that voice channel...`);
-                joinVoice(chan, params.bot);
-                return;
-            }
-        }
-        return params.msg.reply(`That channel doesn't exist or isn't a voice channel!`);
+        let chan = utils.findChanFromGuild(params.args.join(' '), params.bot.guild, 'voice');
+        if (chan === params.bot.voiceChannel) return params.msg.reply(`I'm already in that voice channel...`);
+        try { joinVoice(chan, params.bot); return; }
+        catch { return params.msg.reply(`That channel doesn't exist or isn't a voice channel!`); }
     }
 };
 
