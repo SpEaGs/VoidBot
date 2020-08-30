@@ -56,6 +56,7 @@ function welcome(mem, anno) {
     let toReturn = (`${config.welcomeMsgPre} Welcome ${mem.toString()} to ${mem.guild.name}!`
                     +"\nI'm a bot! You can use `"+config.prefix+"help` or `"+config.prefix+"?` to view a list of commands or `"+config.prefix+"? (command)` without the parentheses to get help with a specific command.");
     if (anno) toReturn += ("\nIf you would like to receive notifications for announcements from this server, do `"+config.prefix+"announcements in`. You can op out at any time by doing `"+config.prefix+"announcements out`.");
+    toReturn += "\nIf you encounter any bugs or issues with me, or have any suggestions for new features, DM `SpEaGs#2936`."
     return toReturn;
 }
 
