@@ -115,7 +115,7 @@ function findMemberFromGuild(username, guild) {
 //finds a channel in a given server from a given channel name
 function findChanFromGuild(channel, guild, chanType = 'text') {
     for (let chan of guild.channels.array()) {
-        if (chan.type === chanType && chan.name.toLowerCase().includes(channel.toLowerCase())) return channel;
+        if (chan.type === chanType && chan.name.toLowerCase().includes(channel.toLowerCase())) return chan;
     }
     return false;
 }
