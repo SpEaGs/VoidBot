@@ -108,6 +108,12 @@ status.client.on('message', msg => {
             log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
             if (msg.author.id == status.client.user.id) return;
             if (!msg.content.startsWith(utils.config.prefix)) return;
+            if (msg.channel.id != bot.defaultTextChannel.id) {
+                let opts = {reason:"Wrong channel for bot commands."}
+                msg.delete(opts);
+                bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
+                return;
+            }
 
             //parse for command arguments
             const args = msg.content.slice(utils.config.prefix.length).split(/ +/);

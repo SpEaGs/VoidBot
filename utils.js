@@ -37,6 +37,7 @@ module.exports = {
     saveConfig: saveConfig,
     welcome: welcome,
     sendoff: sendoff,
+    wrongChannel: wrongChannel,
     adminCheck: adminCheck,
     botAdminCheck: botAdminCheck,
     findMemberFromGuild: findMemberFromGuild,
@@ -60,6 +61,12 @@ function welcome(mem, anno) {
 //handles the sendoff message when a member leaves a server
 function sendoff(mem) {
     let toReturn = (`${config.sendoffMsgPre} ${mem.toString()} has left the server.`)
+    return toReturn;
+}
+
+//handles the 'wrong channel' message if a member posts a command in the wrong channel
+function wrongChannel(mem) {
+    let toReturn = (`${mem} Please post your bot commands here!`);
     return toReturn;
 }
 
