@@ -62,7 +62,7 @@ function welcome(mem, anno) {
 
 //handles the sendoff message when a member leaves a server
 function sendoff(mem) {
-    let toReturn = (`${config.sendoffMsgPre} ${mem.toString()} has left the server.`)
+    let toReturn = (`${config.sendoffMsgPre} ${mem.user.username} has left the server.`)
     return toReturn;
 }
 
