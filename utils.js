@@ -6,7 +6,8 @@ let config = {};
 if(!fs.existsSync('./config.json')) {
     config = {
         "windowState": {
-            "bounds": {}
+            "bounds": {},
+            "max": false
         },
         "prefix": "~",
         "welcomeMsgPre": "A new pawn for my schemes!?!?",

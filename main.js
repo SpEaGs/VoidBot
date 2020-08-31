@@ -214,7 +214,8 @@ status.client.on('voiceStateUpdate', (oldMember, newMember) => {
 
 //set up electron window
 function createWindow() {
-    let bounds = utils.config.windowState.bounds
+    let bounds = utils.config.windowState.bounds;
+    let max = utils.config.windowState.max;
     let x, y, wid, hei;
     if (bounds) {
         let area = electron.screen.getPrimaryDisplay().workArea;
@@ -225,7 +226,7 @@ function createWindow() {
             bounds.y + bounds.height <= area.y + area.height
         ) {
             x = bounds.x;
-            y = bounds.y
+            y = bounds.y;
         }
         if (bounds.width <= area.width || bounds.height <= area.height) {
             wid = bounds.width;
@@ -245,6 +246,7 @@ function createWindow() {
         minHeight: 620,
         frame: false
     });
+    if (max) mainWindow.maximize();
     if (process.env.NODE_ENV == 'development') mainWindow.webContents.openDevTools();
     mainWindow.loadURL(url.format({
         pathname: path.join(__dirname,'index.html'),
@@ -276,6 +278,7 @@ function saveBoundsSoon() {
     saveBoundsCookie = setTimeout(() => {
         saveBoundsCookie = undefined;
         utils.config.windowState.bounds = mainWindow.getNormalBounds();
+        utils.config.windowState.max = mainWindow.isMaximized();
         utils.dumpJSON('./config.json', utils.config, 2)
     }, 1000);
 }
