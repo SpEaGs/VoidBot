@@ -181,7 +181,6 @@ status.client.on('guildMemberAdd', member => {
 status.client.on('guildMemberRemove', member => {
     for (let bot of status.client.children.array()) {
         if (member.guild.id == bot.guildID) {
-            log(bot.welcomeMsg);
             if (bot.welcomeMsg == false) return;
             if (bot.welcomeTextChannel != false) {
                 bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.sendoff(member));
