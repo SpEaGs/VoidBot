@@ -47,9 +47,9 @@ status.client.cmds = new Discord.Collection();
 
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str) {
-    logger.info(str);
+    logger.info(utils.getTime()+str);
     if (status.eSender !== false) {
-        status.eSender.send('stdout', str);
+        status.eSender.send('stdout', utils.getTime()+str);
     };
 };
 global.log = log;

@@ -36,6 +36,7 @@ else {
 module.exports = {
     config: config,
     saveConfig: saveConfig,
+    getTime: getTime,
     welcome: welcome,
     sendoff: sendoff,
     wrongChannel: wrongChannel,
@@ -50,6 +51,13 @@ module.exports = {
     aliasCheck: aliasCheck,
     dumpJSON: dumpJSON,
     cleanChannelName: cleanChannelName
+}
+
+//gets the current date/time and formats it
+function getTime() {
+    let cTime = new Date(Date.now());
+    let timeStr = `[${cTime.getMonth()+1}/${cTime.getDate()} ${cTime.getHours()}:${cTime.getMinutes()}:${cTime.getSeconds()}] `;
+    return timeStr;
 }
 
 //handles the welcome message when a new member joins a server
