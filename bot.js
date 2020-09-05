@@ -14,8 +14,7 @@ class Bot extends EventEmitter {
         this.guildID = guild.id;
         this.guildName = guild.name;
         this.fs = require('fs');
-        this.client = new Discord.Client();
-        this.client.visAdminRoles = new Discord.Collection();
+        this.visAdminRoles = new Discord.Collection();
         this.guild = guild;
         this.dispatcher = false;
         this.voiceChannel = false;
@@ -35,8 +34,8 @@ class Bot extends EventEmitter {
         this.roleArray = [];
 
         //login
-        log(`[${this.guildName}] Logging in...`);
-        this.client.login(token);
+        log(`[${this.guildName}] Initializing...`);
+        //this.client.login(token);
 
         //check for previously saved config & create from defaults if not found
         if (!utils.config.sharding[this.guildID]) utils.config.sharding[this.guildID] = Object.assign({}, utils.config.sharding.default);

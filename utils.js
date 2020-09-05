@@ -82,9 +82,9 @@ function wrongChannel(mem) {
 }
 
 //checks if a given user has admin permissions for a given server
-function adminCheck(client, user) {
+function adminCheck(bot, user) {
     let toReturn = false;
-    for (let u of client.visAdminRoles.array()) {
+    for (let u of bot.visAdminRoles.array()) {
         if (u === user.id) {
             toReturn = true;
             break;
@@ -131,7 +131,8 @@ function findChanFromGuild(channel, guild, chanType = 'text') {
 }
 
 //populates an internal list of admin for a given server
-function populateAdmin(status, guild) {
+function populateAdmin(status) {
+    let guild = status.guild;
     global.log(`[${status.guildName}] Populating list of admin roles...`);
     let roles = guild.roles.array();
     for (let r of roles) {

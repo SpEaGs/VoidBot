@@ -63,37 +63,25 @@ status.client.once('ready', () => {
     for (let i of guilds) {
         let id = i.id;
         status.client.children.set(id, new bot.Bot(i, status));
-    }
-
-    //init child clients
-    for (let bot of status.client.children.array()) {
-        log(`[MAIN] Setting event listeners for client in: [${bot.guildName}]`);
-
-        //discord.js client ready event handler (child clients)
-        bot.client.once('ready', () => {
-            log(`[${bot.guildName}] Successfully logged in!`);
-            bot.guild = status.client.guilds.get(bot.guildID);
-            utils.populateAdmin(bot, bot.guild);
-            for (let chan of bot.guild.channels.array()) {
-                let cleanChanName = utils.cleanChannelName(chan.name);
-                switch (chan.type) {
-                    case "voice": {
-                        bot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName });
-                        break;
-                    }
-                    case "text": {
-                        bot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName });
-                        break;
-                    }
+        let bot = status.client.children[id];
+        utils.populateAdmin(bot);
+        for (let chan of bot.guild.channels.array()) {
+            let cleanChanName = utils.cleanChannelName(chan.name);
+            switch (chan.type) {
+                case "voice": {
+                    bot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+                }
+                case "text": {
+                    bot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
                 }
             }
-            for (let role of bot.guild.roles.array()) {
-                let cleanRoleName = utils.cleanChannelName(role.name);
-                bot.roleArray.push({id: role.id, name: role.name, cName: cleanRoleName });
-            }
-            status.eSender.send('add-client', bot);
-            log(`[${bot.guildName}] Ready!`);
-        });
+        }
+        for (let role of bot.guild.roles.array()) {
+            let cleanRoleName = utils.cleanChannelName(role.name);
+            bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+        }
+        status.eSender.send('add-client', bot);
+        log(`[${bot.guildName}] Initialization complete! Ready for commands!`);
     }
 
     log('[MAIN] Master Client Ready! Hello World!');
@@ -109,9 +97,8 @@ status.client.on('message', msg => {
             if (msg.author.id == status.client.user.id) return;
             if (!msg.content.startsWith(utils.config.prefix)) return;
             if (msg.channel.id != bot.defaultTextChannel.id) {
-                let opts = {reason:"Wrong channel for bot commands."}
-                msg.delete(opts);
-                bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
+                msg.delete({reason:"Wrong channel for bot commands."});
+                status.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
                 return;
             }
 
@@ -120,7 +107,7 @@ status.client.on('message', msg => {
             const cmdName = args.shift().toLowerCase();
 
             //fetch admin lists & compare user id
-            let admin = utils.adminCheck(bot.client, msg.author);
+            let admin = utils.adminCheck(bot, msg.author);
             let botadmin = utils.botAdminCheck(msg.author.id);
             let admincheck = false;
             if (admin || botadmin) admincheck = true;
