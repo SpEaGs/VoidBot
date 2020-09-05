@@ -55,7 +55,7 @@ function log(str) {
 global.log = log;
 
 //discord.js client ready event handler (master client)
-status.client.on('ready', () => {
+status.client.once('ready', () => {
     utils.populateCmds(status);
 
     //populate info for child clients
@@ -70,7 +70,7 @@ status.client.on('ready', () => {
         log(`[MAIN] Setting event listeners for client in: [${bot.guildName}]`);
 
         //discord.js client ready event handler (child clients)
-        bot.client.on('ready', () => {
+        bot.client.once('ready', () => {
             log(`[${bot.guildName}] Successfully logged in!`);
             bot.guild = status.client.guilds.get(bot.guildID);
             utils.populateAdmin(bot, bot.guild);
@@ -259,9 +259,9 @@ function createWindow() {
 }
 
 //event handlers for electron window
-app.on('ready', () => { createWindow(); });
+app.once('ready', () => { createWindow(); });
 
-app.on('window-all-closed', () => {
+app.once('window-all-closed', () => {
     if (process.platform !== 'darwin') {
         app.quit();
     }
@@ -313,7 +313,7 @@ ipcMain.on('updateBot', (event, bot) => {
     }
 })
 
-ipcMain.on('init-eSender', (event, arg) => { status.eSender = event.sender; });
+ipcMain.once('init-eSender', (event, arg) => { status.eSender = event.sender; });
 
 //discord.js client login (called when the electron window is open and ready)
 function clientLogin(t) {
