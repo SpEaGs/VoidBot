@@ -134,7 +134,7 @@ status.client.on('message', msg => {
                 cmd.execute(params);
             }
             catch (error) {
-                console.error(error);
+                log(error);
                 msg.reply('There was an error executing that command! Please check the logs for more info.');
             }
         }
