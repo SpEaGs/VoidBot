@@ -13,7 +13,7 @@ const url = require('url');
 const token = require('./tokens.json').TOKEN;
 
 const utils = require('./utils.js');
-const bot = require('./bot.js');
+const Bot = require('./bot.js');
 
 let mainWindow;
 
@@ -62,29 +62,28 @@ status.client.once('ready', () => {
     let guilds = status.client.guilds.array();
     for (let i of guilds) {
         let id = i.id;
-        status.client.children.set(id, new bot.Bot(i, status));
-        let bot = status.client.children[id];
-        utils.populateAdmin(bot);
-        for (let chan of bot.guild.channels.array()) {
+        let newBot = new Bot.Bot(i, status);
+        status.client.children.set(id, newBot);
+        utils.populateAdmin(newBot);
+        for (let chan of newBot.guild.channels.array()) {
             let cleanChanName = utils.cleanChannelName(chan.name);
             switch (chan.type) {
                 case "voice": {
-                    bot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+                    newBot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
                 }
                 case "text": {
-                    bot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+                    newBot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
                 }
             }
         }
-        for (let role of bot.guild.roles.array()) {
+        for (let role of newBot.guild.roles.array()) {
             let cleanRoleName = utils.cleanChannelName(role.name);
-            bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+            newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
         }
-        status.eSender.send('add-client', bot);
-        log(`[${bot.guildName}] Initialization complete! Ready for commands!`);
+        status.eSender.send('add-client', newBot);
+        log(`[${newBot.guildName}] Initialization complete!`);
     }
-
-    log('[MAIN] Master Client Ready! Hello World!');
+    log('[MAIN] VoidBot Ready! Hello World!');
 });
 
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 

@@ -138,7 +138,7 @@ function populateAdmin(status) {
     for (let r of roles) {
         if (r.hasPermission("ADMINISTRATOR")) {
             for (let u of r.members.array()) {
-                status.client.visAdminRoles.set(u, u.id);
+                status.visAdminRoles.set(u, u.id);
             }
         }
     }
@@ -207,7 +207,6 @@ function systemCMDs(cmd, status=require('main.js')) {
         }
         case 'kill': {
             sysCmd = true;
-            for (bot of status.client.children.array()) bot.client.destroy();
             status.client.destroy();
             process.exit();
         }
