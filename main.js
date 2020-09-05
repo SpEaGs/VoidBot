@@ -13,7 +13,7 @@ const url = require('url');
 const token = require('./tokens.json').TOKEN;
 
 const utils = require('./utils.js');
-const bot = require('./bot.js');
+const Bot = require('./bot.js');
 
 let mainWindow;
 
@@ -62,41 +62,28 @@ status.client.once('ready', () => {
     let guilds = status.client.guilds.array();
     for (let i of guilds) {
         let id = i.id;
-        status.client.children.set(id, new bot.Bot(i, status));
-    }
-
-    //init child clients
-    for (let bot of status.client.children.array()) {
-        log(`[MAIN] Setting event listeners for client in: [${bot.guildName}]`);
-
-        //discord.js client ready event handler (child clients)
-        bot.client.once('ready', () => {
-            log(`[${bot.guildName}] Successfully logged in!`);
-            bot.guild = status.client.guilds.get(bot.guildID);
-            utils.populateAdmin(bot, bot.guild);
-            for (let chan of bot.guild.channels.array()) {
-                let cleanChanName = utils.cleanChannelName(chan.name);
-                switch (chan.type) {
-                    case "voice": {
-                        bot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName });
-                        break;
-                    }
-                    case "text": {
-                        bot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName });
-                        break;
-                    }
+        let newBot = new Bot.Bot(i, status);
+        status.client.children.set(id, newBot);
+        utils.populateAdmin(newBot);
+        for (let chan of newBot.guild.channels.array()) {
+            let cleanChanName = utils.cleanChannelName(chan.name);
+            switch (chan.type) {
+                case "voice": {
+                    newBot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+                }
+                case "text": {
+                    newBot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
                 }
             }
-            for (let role of bot.guild.roles.array()) {
-                let cleanRoleName = utils.cleanChannelName(role.name);
-                bot.roleArray.push({id: role.id, name: role.name, cName: cleanRoleName });
-            }
-            status.eSender.send('add-client', bot);
-            log(`[${bot.guildName}] Ready!`);
-        });
+        }
+        for (let role of newBot.guild.roles.array()) {
+            let cleanRoleName = utils.cleanChannelName(role.name);
+            newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+        }
+        status.eSender.send('add-client', newBot);
+        log(`[${newBot.guildName}] Initialization complete!`);
     }
-
-    log('[MAIN] Master Client Ready! Hello World!');
+    log('[MAIN] VoidBot Ready! Hello World!');
 });
 
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 
@@ -109,9 +96,8 @@ status.client.on('message', msg => {
             if (msg.author.id == status.client.user.id) return;
             if (!msg.content.startsWith(utils.config.prefix)) return;
             if (msg.channel.id != bot.defaultTextChannel.id) {
-                let opts = {reason:"Wrong channel for bot commands."}
-                msg.delete(opts);
-                bot.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
+                msg.delete({reason:"Wrong channel for bot commands."});
+                status.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
                 return;
             }
 
@@ -120,7 +106,7 @@ status.client.on('message', msg => {
             const cmdName = args.shift().toLowerCase();
 
             //fetch admin lists & compare user id
-            let admin = utils.adminCheck(bot.client, msg.author);
+            let admin = utils.adminCheck(bot, msg.author);
             let botadmin = utils.botAdminCheck(msg.author.id);
             let admincheck = false;
             if (admin || botadmin) admincheck = true;
@@ -148,7 +134,7 @@ status.client.on('message', msg => {
                 cmd.execute(params);
             }
             catch (error) {
-                console.error(error);
+                log(error);
                 msg.reply('There was an error executing that command! Please check the logs for more info.');
             }
         }

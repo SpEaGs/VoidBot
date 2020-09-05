@@ -6,7 +6,7 @@ const prefix = utils.config.prefix;
 
 module.exports = {
     name: 'welcome',
-    description: 'Sends a welcome message for the given user',
+    description: 'Sends a welcome message for the given user.',
     alias: [],
     args: true,
     usage: `\`${prefix}welcome <user>\``,
