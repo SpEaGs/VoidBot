@@ -89,113 +89,100 @@ status.client.once('ready', () => {
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 
 to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
 status.client.on('message', msg => {
-    for ( let bot of status.client.children.array()) {
-        if (msg.guild.id == bot.guildID) {
-            //log incoming message & check for bot message or command
-            log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
-            if (msg.author.id == status.client.user.id) return;
-            if (!msg.content.startsWith(utils.config.prefix)) return;
-            if (msg.channel.id != bot.defaultTextChannel.id) {
-                msg.delete({reason:"Wrong channel for bot commands."});
-                status.client.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
-                return;
-            }
+    let bot = status.client.children.get(msg.guild.id);
+    //log incoming message & check for bot message or command
+    log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
+    if (msg.author.id == status.client.user.id) return;
+    if (!msg.content.startsWith(utils.config.prefix)) return;
+    if (msg.channel.id != bot.defaultTextChannel.id) {
+        msg.delete({reason:"Wrong channel for bot commands."});
+        bot.guild.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
+        return;
+    }
 
-            //parse for command arguments
-            const args = msg.content.slice(utils.config.prefix.length).split(/ +/);
-            const cmdName = args.shift().toLowerCase();
+    //parse for command arguments
+    const args = msg.content.slice(utils.config.prefix.length).split(/ +/);
+    const cmdName = args.shift().toLowerCase();
 
-            //fetch admin lists & compare user id
-            let admin = utils.adminCheck(bot, msg.author);
-            let botadmin = utils.botAdminCheck(msg.author.id);
-            let admincheck = false;
-            if (admin || botadmin) admincheck = true;
+    //fetch admin lists & compare user id
+    let admin = utils.adminCheck(bot, msg.author);
+    let botadmin = utils.botAdminCheck(msg.author.id);
+    let admincheck = false;
+    if (admin || botadmin) admincheck = true;
 
-            //check system commands & run if found (these are commands related to the bot, not things it does.)
-            if (botadmin) {
-                var sysCmd = utils.systemCMDs(cmdName, status);
-                if (sysCmd) return;
-            }
+    //check system commands & run if found (these are commands related to the bot, not things it does.)
+    if (botadmin) {
+        var sysCmd = utils.systemCMDs(cmdName, status);
+        if (sysCmd) return;
+    }
 
-            //check for command alias, arguments, and admin
-            let aliCheck = utils.aliasCheck(cmdName, status);
-            if (!status.client.cmds.has(cmdName) && !aliCheck) return msg.reply('Command not recognized.');
-            let cmd = aliCheck;
-            let needAdmin = false;
-            if (cmd.botadmin || cmd.admin) needAdmin = true;
-            if (!aliCheck) cmd = status.client.cmds.get(cmdName);
-            if (cmd.server && msg.channel.type !== 'text') return msg.reply('That command only works on a server!');
-            if (cmd.args && !args.length) return msg.reply(`That command needs arguments.\nUsage: ${cmd.usage}`);
-            if (needAdmin && !adminCheck) return msg.reply('You do not have sufficient permissions to use that command you fool!');
+    //check for command alias, arguments, and admin
+    let aliCheck = utils.aliasCheck(cmdName, status);
+    if (!status.client.cmds.has(cmdName) && !aliCheck) return msg.reply('Command not recognized.');
+    let cmd = aliCheck;
+    let needAdmin = false;
+    if (cmd.botadmin || cmd.admin) needAdmin = true;
+    if (!aliCheck) cmd = status.client.cmds.get(cmdName);
+    if (cmd.server && msg.channel.type !== 'text') return msg.reply('That command only works on a server!');
+    if (cmd.args && !args.length) return msg.reply(`That command needs arguments.\nUsage: ${cmd.usage}`);
+    if (needAdmin && !adminCheck) return msg.reply('You do not have sufficient permissions to use that command you fool!');
             
-            //run command
-            try {
-                let params = { msg, args, bot };
-                cmd.execute(params);
-            }
-            catch (error) {
-                log(error);
-                msg.reply('There was an error executing that command! Please check the logs for more info.');
-            }
-        }
+    //run command
+    try {
+        let params = { msg, args, bot };
+        cmd.execute(params);
+    }
+    catch (error) {
+        log(error);
+        msg.reply('There was an error executing that command! Please check the logs for more info.');
     }
 });
 
 //discord.js client event for new members joining a server
 status.client.on('guildMemberAdd', member => {
-    for (let bot of status.client.children.array()) {
-        if (member.guild.id == bot.guildID) {
-            log(bot.welcomeMsg);
-            if (bot.welcomeMsg == false) return;
-            if (bot.wlecomeTextChannel != false) {
-                let anno = false;
-                if (bot.announcementsRole != false) anno = true;
-                if (bot.ruleTextChannel != false) {
-                    bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno)
-                    +`\nPlease read the rules in ${bot.guild.channels.get(bot.ruleTextChannel.id).toString()}`);
-                }
-                else bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno));
-            };
-            if (bot.newMemberRole != false) {
-                member.addRole(bot.newMemberRole.id);
-            }
+    let bot = status.client.children.get(member.guild.id);
+    if (bot.welcomeMsg == false) return;
+    if (bot.wlecomeTextChannel != false) {
+        let anno = false;
+        if (bot.announcementsRole != false) anno = true;
+        if (bot.ruleTextChannel != false) {
+            bot.guild.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno)
+            +`\nPlease read the rules in ${bot.guild.channels.get(bot.ruleTextChannel.id).toString()}`);
         }
+        else bot.guild.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno));
+    };
+    if (bot.newMemberRole != false) {
+        member.addRole(bot.newMemberRole.id);
     }
 });
 
 //discord.js client event for when a member leaves a server
 status.client.on('guildMemberRemove', member => {
-    for (let bot of status.client.children.array()) {
-        if (member.guild.id == bot.guildID) {
-            if (bot.welcomeMsg == false) return;
-            if (bot.welcomeTextChannel != false) {
-                bot.client.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.sendoff(member));
-            }
-        }
+    let bot = status.client.children.get(member.guild.id);
+    if (bot.welcomeMsg == false) return;
+    if (bot.welcomeTextChannel != false) {
+        bot.guild.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.sendoff(member));
     }
 });
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
 status.client.on('voiceStateUpdate', (oldMember, newMember) => {
-    for (let bot of status.client.children.array()) {
-        if (!oldMember.voiceChannel) return;
-        if (oldMember.guild.id == bot.guildID
-            && oldMember.voiceChannel
-            && newMember.voiceChannel != oldMember.voiceChannel
-            && bot.guild.channels.find(val => val.id===oldMember.voiceChannel.id).members.array().length == 1
-            && bot.voiceChannel) {
-            if (bot.dispatcher) {
-                bot.audioQueue = [];
-                bot.dispatcher.end();
-                bot.dispatcher = false;
-            }
-            bot.voiceChannel.leave();
-            bot.voiceChannel = false;
-            bot.voiceConnection = false;
-            return;
+    if (!oldMember.voiceChannel) return;
+    let bot = status.client.children.get(newMember.guild.id);
+    if (newMember.voiceChannel != oldMember.voiceChannel
+        && bot.guild.channels.get(oldMember.voiceChannel.id).members.array().length == 1
+        && bot.voiceChannel) {
+        if (bot.dispatcher) {
+            bot.audioQueue = [];
+            bot.dispatcher.end();
+            bot.dispatcher = false;
         }
+        bot.voiceChannel.leave();
+        bot.voiceChannel = false;
+        bot.voiceConnection = false;
+        return;
     }
-})
+});
 
 //set up electron window
 function createWindow() {
