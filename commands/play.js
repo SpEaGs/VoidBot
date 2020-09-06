@@ -18,13 +18,14 @@ module.exports = {
     admin: false,
     botadmin: false,
     server: true,
+    playNextInQueue: playNextInQueue,
     execute(params) {
         let url = params.args;
         let log = global.log;
         if (params.msg.channel.type == 'voice') return;
-        params.bot.voiceChannel = params.msg.member.voiceChannel;
+        params.bot.voiceChannel = params.msg.member.voice.channel;
         if (!params.bot.voiceChannel) {
-            params.bot.voiceChannel = params.bot.guild.channels.get(params.bot.defaultVoiceChannel.id);
+            params.bot.voiceChannel = params.bot.guild.channels.cache.get(params.bot.defaultVoiceChannel.id);
         };
         if (!params.bot.voiceChannel) {
             log(`[${params.bot.guildName}] No voice channel specified and no default.`);
@@ -106,8 +107,8 @@ function play(info, status, msg) {
 function createStream(status, url, msg) {
     const stream = ytdl(url, { filter: 'audioonly' });
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
-    status.dispatcher = status.voiceConnection.playStream(stream, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
-    status.dispatcher.on('end', () => { endDispatcher(status, msg); });
+    status.dispatcher = status.voiceConnection.play(stream, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
+    status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
 };
 
 function endDispatcher(status, msg) {

@@ -23,16 +23,16 @@
   },
   "homepage": "https://github.com/SpEaGs/VoidBot#readme",
   "dependencies": {
-    "cross-env": "^6.0.3",
-    "discord.js": "^11.6.4",
+    "cross-env": "^7.0.2",
+    "discord.js": "^12.3.1",
     "opusscript": "0.0.7",
-    "superagent": "^5.2.2",
-    "winston": "^3.2.1",
-    "ytdl-core": "^2.1.5"
+    "superagent": "^5.3.1",
+    "winston": "^3.3.3",
+    "ytdl-core": "^2.1.7"
   },
   "devDependencies": {
-    "electron": "^7.2.4",
-    "electron-builder": "^22.6.0"
+    "electron": "^7.3.3",
+    "electron-builder": "^22.8.0"
   },
   "build": {
     "appId": "Void.Bot",

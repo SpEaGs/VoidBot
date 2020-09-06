@@ -30,7 +30,7 @@ module.exports = {
                     var rolenames = []
                     for (const r of roles) { rolenames.splice((rolenames.length), 0, r.name); };
                     params.msg.reply(`Adding roles: \`${rolenames}\`\n to User: \`${mem.user.username}\``);
-                    adds(mem, roles);
+                    add(mem, roles);
                 }
                 else {
                     var role = utils.findRoleFromGuild(params.args[2], params.msg.guild);
@@ -56,7 +56,7 @@ module.exports = {
                     }; var rolenames = []
                     for (const r of roles) { rolenames.splice((rolenames.length), 0, r.name); };
                     params.msg.reply(`Removing roles: \`${rolenames}\`\n from User: \`${mem.user.username}\``);
-                    rems(mem, roles);
+                    rem(mem, roles);
                 }
                 else {
                     var role = utils.findRoleFromGuild(params.args[2], params.msg.guild);
@@ -72,18 +72,10 @@ module.exports = {
     },
 };
 
-function add(mem, role) {
-    mem.addRole(role);
+function add(mem, roleRes) {
+    mem.roles.add(roleRes);
 };
 
-function adds(mem, roles) {
-    mem.addRoles(roles);
-};
-
-function rem(mem, role) {
-    mem.removeRole(role);
-};
-
-function rems(mem, roles) {
-    mem.removeRoles(roles);
+function rem(mem, roleRes) {
+    mem.roles.remove(roleRes);
 };

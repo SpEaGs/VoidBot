@@ -17,7 +17,7 @@ module.exports = {
         let client = params.bot.status.client;
         let toSend = params.args.join(' ')
         for (let bot of client.children.array()) {
-            client.channels.get(bot.defaultTextChannel.id).sendMessage(`[BOT AUTHOR BROADCAST] ${toSend}`);
+            client.channels.cache.get(bot.defaultTextChannel.id).send(`[BOT AUTHOR BROADCAST] ${toSend}`);
         }
     }
 }

@@ -21,12 +21,12 @@ module.exports = {
         else if (params.args.length >= 1) {
             switch (params.args[0].toLowerCase()) {
                 case 'in': {
-                    mem.addRole(utils.config.sharding[params.bot.guildID].announcementsRole.id);
+                    mem.roles.add(utils.config.sharding[params.bot.guildID].announcementsRole.id);
                     return params.msg.reply(`You've successfully opted IN to ${params.bot.guildName} announcements!`);
                 }
                 case 'out': {
-                    mem.removeRole(utils.config.sharding[params.bot.guildID].announcementsRole.id);
-                    return params.msg.reply(`You've successfully opten OUT of ${params.bot.guildName} announcements!`);
+                    mem.roles.remove(utils.config.sharding[params.bot.guildID].announcementsRole.id);
+                    return params.msg.reply(`You've successfully opted OUT of ${params.bot.guildName} announcements!`);
                 }
             }
         }

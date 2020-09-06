@@ -2,6 +2,7 @@
 //stop command. Ends the bot's active audio stream, paused or otherwise.
 
 const utils = require('../utils.js');
+const play = require('./play.js');
 const prefix = utils.config.prefix;
 
 module.exports = {
@@ -17,6 +18,9 @@ module.exports = {
         let log = global.log
         try {
             stopAudio(params.bot.dispatcher, params.msg);
+            params.bot.dispatcher = false;
+            params.bot.nowPlaying = false;
+            if (params.bot.audioQueue.length != 0) play.playNextInQueue(params.bot, params.msg);
         }
         catch (error) {
             log(error);
@@ -25,6 +29,6 @@ module.exports = {
 };
 
 function stopAudio(dispatcher, msg) {
-    dispatcher.end();
+    dispatcher.pause();
     msg.reply(`Skipping...`);
 }

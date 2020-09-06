@@ -59,13 +59,13 @@ status.client.once('ready', () => {
     utils.populateCmds(status);
 
     //populate info for child clients
-    let guilds = status.client.guilds.array();
+    let guilds = status.client.guilds.cache.array();
     for (let i of guilds) {
         let id = i.id;
         let newBot = new Bot.Bot(i, status);
         status.client.children.set(id, newBot);
         utils.populateAdmin(newBot);
-        for (let chan of newBot.guild.channels.array()) {
+        for (let chan of newBot.guild.channels.cache.array()) {
             let cleanChanName = utils.cleanChannelName(chan.name);
             switch (chan.type) {
                 case "voice": {
@@ -76,7 +76,7 @@ status.client.once('ready', () => {
                 }
             }
         }
-        for (let role of newBot.guild.roles.array()) {
+        for (let role of newBot.guild.roles.cache.array()) {
             let cleanRoleName = utils.cleanChannelName(role.name);
             newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
         }
@@ -96,7 +96,7 @@ status.client.on('message', msg => {
     if (!msg.content.startsWith(utils.config.prefix)) return;
     if (msg.channel.id != bot.defaultTextChannel.id) {
         msg.delete({reason:"Wrong channel for bot commands."});
-        bot.guild.channels.get(bot.defaultTextChannel.id).sendMessage(utils.wrongChannel(msg.author));
+        bot.guild.channels.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author));
         return;
     }
 
@@ -146,10 +146,10 @@ status.client.on('guildMemberAdd', member => {
         let anno = false;
         if (bot.announcementsRole != false) anno = true;
         if (bot.ruleTextChannel != false) {
-            bot.guild.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno)
+            bot.guild.channels.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno)
             +`\nPlease read the rules in ${bot.guild.channels.get(bot.ruleTextChannel.id).toString()}`);
         }
-        else bot.guild.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.welcome(member, anno));
+        else bot.guild.channels.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
     };
     if (bot.newMemberRole != false) {
         member.addRole(bot.newMemberRole.id);
@@ -161,7 +161,7 @@ status.client.on('guildMemberRemove', member => {
     let bot = status.client.children.get(member.guild.id);
     if (bot.welcomeMsg == false) return;
     if (bot.welcomeTextChannel != false) {
-        bot.guild.channels.get(bot.welcomeTextChannel.id).sendMessage(utils.sendoff(member));
+        bot.guild.channels.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
     }
 });
 
@@ -170,7 +170,7 @@ status.client.on('voiceStateUpdate', (oldMember, newMember) => {
     if (!oldMember.voiceChannel) return;
     let bot = status.client.children.get(newMember.guild.id);
     if (newMember.voiceChannel != oldMember.voiceChannel
-        && bot.guild.channels.get(oldMember.voiceChannel.id).members.array().length == 1
+        && bot.guild.channels.cache.get(oldMember.voiceChannel.id).members.array().length == 1
         && bot.voiceChannel) {
         if (bot.dispatcher) {
             bot.audioQueue = [];

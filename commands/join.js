@@ -16,7 +16,7 @@ module.exports = {
     execute(params) {
         let log = global.log;
         if (params.args.length < 1) {
-            const { voiceChannel } = params.msg.member;
+            let voiceChannel = params.msg.member.voice.channel;
             if (voiceChannel === params.bot.voiceChannel) return params.msg.reply(`I'm already in that voice channel...`);
             if (!voiceChannel && (!params.bot.dispatcher.playing || !params.bot.dispatcher)) {
                 return params.msg.reply(`You're not in a voice channel and none were given...`);

@@ -107,7 +107,7 @@ function botAdminCheck(id) {
 
 //finds a role in a given server from a given role name
 function findRoleFromGuild(rolename, guild) {
-    for (const role of guild.roles.array()) {
+    for (const role of guild.roles.cache.array()) {
         let check = role.name.toLowerCase().includes(rolename.toLowerCase());
         if (check) return role;
     }
@@ -116,7 +116,7 @@ function findRoleFromGuild(rolename, guild) {
 
 //finds a member in a given server from a given username
 function findMemberFromGuild(username, guild) {
-    for (let mem of guild.members.array()) {
+    for (let mem of guild.members.cache.array()) {
         if (mem.user.username.toLowerCase() === username.toLowerCase()) return mem;
     }
     return false;
@@ -124,7 +124,7 @@ function findMemberFromGuild(username, guild) {
 
 //finds a channel in a given server from a given channel name
 function findChanFromGuild(channel, guild, chanType = 'text') {
-    for (let chan of guild.channels.array()) {
+    for (let chan of guild.channels.cache.array()) {
         if (chan.type === chanType && chan.name.toLowerCase().includes(channel.toLowerCase())) return chan;
     }
     return false;
@@ -134,9 +134,9 @@ function findChanFromGuild(channel, guild, chanType = 'text') {
 function populateAdmin(status) {
     let guild = status.guild;
     global.log(`[${status.guildName}] Populating list of admin roles...`);
-    let roles = guild.roles.array();
+    let roles = guild.roles.cache.array();
     for (let r of roles) {
-        if (r.hasPermission("ADMINISTRATOR")) {
+        if (r.permissions.has("ADMINISTRATOR")) {
             for (let u of r.members.array()) {
                 status.visAdminRoles.set(u, u.id);
             }

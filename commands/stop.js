@@ -18,6 +18,8 @@ module.exports = {
         try {
             params.bot.audioQueue = [];
             stopAudio(params.bot.dispatcher, params.msg);
+            params.bot.dispatcher = false;
+            params.bot.nowPlaying = false;
         }
         catch (error) {
             log(error);
@@ -26,6 +28,6 @@ module.exports = {
 };
 
 function stopAudio(dispatcher, msg) {
-    dispatcher.end();
+    dispatcher.pause();
     msg.reply(`Audio stream ended.`);
 }

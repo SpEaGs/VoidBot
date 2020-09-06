@@ -14,6 +14,9 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
+        if (params.args.length <2) {
+            return params.msg.reply('Please specify the channel to prune.');
+        }
         const amount = parseInt(params.args[0]);
         const chan = utils.findChanFromGuild(params.args[1], params.bot.guild);
         if (isNaN(amount)) {
