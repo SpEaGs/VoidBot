@@ -16,8 +16,7 @@ module.exports = {
     execute(params) {
         let item = parseInt(params.args)
         if (!params.args.length) {
-            return params.msg.reply(`You need to tell me which song to remove... Use \`${prefix}playlist\` 
-                              to see a list then give me the number of the song you want to remove.`);
+            return params.msg.reply(`You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`);
         }
         else if (isNaN(item)) return params.msg.reply(`That's not a number you fool.`);
         else {
