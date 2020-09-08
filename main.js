@@ -96,7 +96,7 @@ status.client.on('message', msg => {
     if (!msg.content.startsWith(utils.config.prefix)) return;
     if (msg.channel.id != bot.defaultTextChannel.id) {
         msg.delete({reason:"Wrong channel for bot commands."});
-        bot.guild.channels.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author));
+        bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author));
         return;
     }
 
@@ -146,10 +146,10 @@ status.client.on('guildMemberAdd', member => {
         let anno = false;
         if (bot.announcementsRole != false) anno = true;
         if (bot.ruleTextChannel != false) {
-            bot.guild.channels.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno)
-            +`\nPlease read the rules in ${bot.guild.channels.get(bot.ruleTextChannel.id).toString()}`);
+            bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno)
+            +`\nPlease read the rules in ${bot.guild.channels.cache.get(bot.ruleTextChannel.id).toString()}`);
         }
-        else bot.guild.channels.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
+        else bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
     };
     if (bot.newMemberRole != false) {
         member.addRole(bot.newMemberRole.id);
@@ -161,7 +161,7 @@ status.client.on('guildMemberRemove', member => {
     let bot = status.client.children.get(member.guild.id);
     if (bot.welcomeMsg == false) return;
     if (bot.welcomeTextChannel != false) {
-        bot.guild.channels.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
+        bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
     }
 });
 
