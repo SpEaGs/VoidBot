@@ -208,7 +208,7 @@ function systemCMDs(cmd, status=require('main.js')) {
         case 'kill': {
             sysCmd = true;
             status.client.destroy();
-            process.exit();
+            process.exit(0);
         }
         default: {
             sysCmd = false;

@@ -17,7 +17,7 @@ const Bot = require('./bot.js');
 
 let mainWindow;
 
-//this is just a log formatting thing
+//log formatting and pipes to log files
 var logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
@@ -52,39 +52,52 @@ function log(str) {
         status.eSender.send('stdout', utils.getTime()+str);
     };
 };
+function error(str) {
+    logger.error(utils.getTime()+str);
+    if (status.eSender !== false) {
+        status.eSender.send('stdout', utils.getTime()+str);
+    };
+};
 global.log = log;
+global.error = error;
 
 //discord.js client ready event handler (master client)
-status.client.once('ready', () => {
-    utils.populateCmds(status);
+try {
+    status.client.once('ready', () => {
+        utils.populateCmds(status);
 
-    //populate info for child clients
-    let guilds = status.client.guilds.cache.array();
-    for (let i of guilds) {
-        let id = i.id;
-        let newBot = new Bot.Bot(i, status);
-        status.client.children.set(id, newBot);
-        utils.populateAdmin(newBot);
-        for (let chan of newBot.guild.channels.cache.array()) {
-            let cleanChanName = utils.cleanChannelName(chan.name);
-            switch (chan.type) {
-                case "voice": {
-                    newBot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
-                }
-                case "text": {
-                    newBot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+        //populate info for child clients
+        let guilds = status.client.guilds.cache.array();
+        for (let i of guilds) {
+            let id = i.id;
+            let newBot = new Bot.Bot(i, status);
+            status.client.children.set(id, newBot);
+            utils.populateAdmin(newBot);
+            for (let chan of newBot.guild.channels.cache.array()) {
+                let cleanChanName = utils.cleanChannelName(chan.name);
+                switch (chan.type) {
+                    case "voice": {
+                        newBot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+                    }
+                    case "text": {
+                        newBot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+                    }
                 }
             }
+            for (let role of newBot.guild.roles.cache.array()) {
+                let cleanRoleName = utils.cleanChannelName(role.name);
+                newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+            }
+            status.eSender.send('add-client', newBot);
+            log(`[${newBot.guildName}] Initialization complete!`);
         }
-        for (let role of newBot.guild.roles.cache.array()) {
-            let cleanRoleName = utils.cleanChannelName(role.name);
-            newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
-        }
-        status.eSender.send('add-client', newBot);
-        log(`[${newBot.guildName}] Initialization complete!`);
-    }
-    log('[MAIN] VoidBot Ready! Hello World!');
-});
+        log('[MAIN] VoidBot Ready! Hello World!');
+    });
+}
+catch (error) {
+    error(`Error initializing client:\n`+error);
+    process.exit(1);
+};
 
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 
 to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
@@ -133,55 +146,70 @@ status.client.on('message', msg => {
         cmd.execute(params);
     }
     catch (error) {
-        log(error);
-        msg.reply('There was an error executing that command! Please check the logs for more info.');
-    }
+        error(`Error executing command:\n`+error);
+        msg.reply('There was an error executing that command! Please ask `SpEaGs#2936` to check the logs.');
+    };
 });
 
 //discord.js client event for new members joining a server
 status.client.on('guildMemberAdd', member => {
-    let bot = status.client.children.get(member.guild.id);
-    if (bot.welcomeMsg == false) return;
-    if (bot.wlecomeTextChannel != false) {
-        let anno = false;
-        if (bot.announcementsRole != false) anno = true;
-        if (bot.ruleTextChannel != false) {
-            bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno)
-            +`\nPlease read the rules in ${bot.guild.channels.cache.get(bot.ruleTextChannel.id).toString()}`);
+    try {
+        let bot = status.client.children.get(member.guild.id);
+        if (bot.welcomeMsg == false) return;
+        if (bot.wlecomeTextChannel != false) {
+            let anno = false;
+            if (bot.announcementsRole != false) anno = true;
+            if (bot.ruleTextChannel != false) {
+                bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno)
+                +`\nPlease read the rules in ${bot.guild.channels.cache.get(bot.ruleTextChannel.id).toString()}`);
+            }
+            else bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
+        };
+        if (bot.newMemberRole != false) {
+            member.role.add(bot.newMemberRole.id);
         }
-        else bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
-    };
-    if (bot.newMemberRole != false) {
-        member.role.add(bot.newMemberRole.id);
     }
+    catch (error) {
+        error(`Error handling guildMemberAdd event:\n`+error);
+    };
 });
 
 //discord.js client event for when a member leaves a server
 status.client.on('guildMemberRemove', member => {
-    let bot = status.client.children.get(member.guild.id);
-    if (bot.welcomeMsg == false) return;
-    if (bot.welcomeTextChannel != false) {
-        bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
+    try {
+        let bot = status.client.children.get(member.guild.id);
+        if (bot.welcomeMsg == false) return;
+        if (bot.welcomeTextChannel != false) {
+            bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
+        }
     }
+    catch (error) {
+        error(`Error handling guildMemberRemove event:\n`+error);
+    };
 });
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
 status.client.on('voiceStateUpdate', (oldMember, newMember) => {
-    if (!oldMember.voiceChannel) return;
-    let bot = status.client.children.get(newMember.guild.id);
-    if (newMember.voiceChannel != oldMember.voiceChannel
-        && bot.guild.channels.cache.get(oldMember.voiceChannel.id).members.array().length == 1
-        && bot.voiceChannel) {
-        if (bot.dispatcher) {
-            bot.audioQueue = [];
-            bot.dispatcher.end();
-            bot.dispatcher = false;
+    try {
+        if (!oldMember.voiceChannel) return;
+        let bot = status.client.children.get(newMember.guild.id);
+        if (newMember.voiceChannel != oldMember.voiceChannel
+            && bot.guild.channels.cache.get(oldMember.voiceChannel.id).members.array().length == 1
+            && bot.voiceChannel) {
+            if (bot.dispatcher) {
+                bot.audioQueue = [];
+                bot.dispatcher.end();
+                bot.dispatcher = false;
+            }
+            bot.voiceChannel.leave();
+            bot.voiceChannel = false;
+            bot.voiceConnection = false;
+            return;
         }
-        bot.voiceChannel.leave();
-        bot.voiceChannel = false;
-        bot.voiceConnection = false;
-        return;
     }
+    catch (error) {
+        error(`Error handling voiceStateUpdate event"\n`+error);
+    };
 });
 
 //set up electron window
@@ -289,6 +317,18 @@ ipcMain.on('updateBot', (event, bot) => {
 ipcMain.once('init-eSender', (event, arg) => { status.eSender = event.sender; });
 
 //discord.js client login (called when the electron window is open and ready)
+let loginAtt = 0
 function clientLogin(t) {
-    status.client.login(t);
+    loginAtt++;
+    log(`[MAIN] Logging in... attempt: ${loginAtt}`)
+    try {
+        status.client.login(t);
+    }
+    catch (error) {
+        if (loginAtt <= 5) {
+            error(`Error logging in client. Trying again in 5s...`);
+            setTimeout(function(){clientLogin(t)}, 5000);
+        }
+        else error(`Error logging in client:\n`+error);
+    }
 }
