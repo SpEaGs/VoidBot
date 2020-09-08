@@ -320,9 +320,10 @@ ipcMain.once('init-eSender', (event, arg) => { status.eSender = event.sender; })
 let loginAtt = 0
 function clientLogin(t) {
     loginAtt++;
-    log(`[MAIN] Logging in... attempt: ${loginAtt}`)
+    log(`[MAIN] Logging in... attempt: ${loginAtt}`);
     try {
         status.client.login(t);
+        log(`[MAIN] Login successful!`);
     }
     catch (error) {
         if (loginAtt <= 5) {
