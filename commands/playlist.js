@@ -24,5 +24,5 @@ module.exports = {
             output.push(`${i}) - \`${item['title']} [${parseInt(item.length_seconds / 60)}:${(item.length_seconds % 60).toString().padStart(2, "0")}] (added by: ${item.added_by})\``);
         };
         params.msg.reply(`Playlist: ${output.join('\n')}`);
-    },
+    }
 };
