@@ -166,7 +166,7 @@ status.client.on('guildMemberAdd', member => {
             else bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
         };
         if (bot.newMemberRole != false) {
-            member.role.add(bot.newMemberRole.id);
+            member.roles.add(bot.newMemberRole.id);
         }
     }
     catch (error) {
