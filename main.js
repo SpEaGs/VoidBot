@@ -52,20 +52,20 @@ function log(str) {
         status.eSender.send('stdout', utils.getTime()+str);
     };
 };
-function error(str) {
+function logErr(str) {
     logger.error(utils.getTime()+str);
     if (status.eSender !== false) {
         status.eSender.send('stdout', utils.getTime()+str);
     };
 };
 global.log = log;
-global.error = error;
+global.logErr = logErr;
 
 //discord.js client ready event handler (master client)
 try {
     status.client.once('ready', () => {
         utils.populateCmds(status);
-
+        
         //populate info for child clients
         let guilds = status.client.guilds.cache.array();
         for (let i of guilds) {
@@ -95,7 +95,7 @@ try {
     });
 }
 catch (error) {
-    error(`Error initializing client:\n`+error);
+    logErr(`[MAIN] Error initializing client:\n`+error);
     process.exit(1);
 };
 
@@ -146,15 +146,15 @@ status.client.on('message', msg => {
         cmd.execute(params);
     }
     catch (error) {
-        error(`Error executing command:\n`+error);
+        logErr(`[${bot.guildName}] Error executing command:\n`+error);
         msg.reply('There was an error executing that command! Please ask `SpEaGs#2936` to check the logs.');
     };
 });
 
 //discord.js client event for new members joining a server
 status.client.on('guildMemberAdd', member => {
+    let bot = status.client.children.get(member.guild.id);
     try {
-        let bot = status.client.children.get(member.guild.id);
         if (bot.welcomeMsg == false) return;
         if (bot.wlecomeTextChannel != false) {
             let anno = false;
@@ -170,29 +170,29 @@ status.client.on('guildMemberAdd', member => {
         }
     }
     catch (error) {
-        error(`Error handling guildMemberAdd event:\n`+error);
+        logErr(`[${bot.guildName}] Error handling guildMemberAdd event:\n`+error);
     };
 });
 
 //discord.js client event for when a member leaves a server
 status.client.on('guildMemberRemove', member => {
+    let bot = status.client.children.get(member.guild.id);
     try {
-        let bot = status.client.children.get(member.guild.id);
         if (bot.welcomeMsg == false) return;
         if (bot.welcomeTextChannel != false) {
             bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
         }
     }
     catch (error) {
-        error(`Error handling guildMemberRemove event:\n`+error);
+        logErr(`[${bot.guildName}] Error handling guildMemberRemove event:\n`+error);
     };
 });
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
 status.client.on('voiceStateUpdate', (oldMember, newMember) => {
+    let bot = status.client.children.get(newMember.guild.id);
     try {
         if (!oldMember.voiceChannel) return;
-        let bot = status.client.children.get(newMember.guild.id);
         if (newMember.voiceChannel != oldMember.voiceChannel
             && bot.guild.channels.cache.get(oldMember.voiceChannel.id).members.array().length == 1
             && bot.voiceChannel) {
@@ -208,7 +208,7 @@ status.client.on('voiceStateUpdate', (oldMember, newMember) => {
         }
     }
     catch (error) {
-        error(`Error handling voiceStateUpdate event"\n`+error);
+        logErr(`[${bot.guildName}]Error handling voiceStateUpdate event"\n`+error);
     };
 });
 
@@ -327,9 +327,9 @@ function clientLogin(t) {
     }
     catch (error) {
         if (loginAtt <= 5) {
-            error(`Error logging in client. Trying again in 5s...`);
+            logErr(`Error logging in client. Trying again in 5s...`);
             setTimeout(function(){clientLogin(t)}, 5000);
         }
-        else error(`Error logging in client:\n`+error);
+        else logErr(`[MAIN] Error logging in client:\n`+error);
     }
 }

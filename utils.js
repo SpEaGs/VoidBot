@@ -222,7 +222,7 @@ function systemCMDs(cmd, status=require('main.js')) {
 function dumpJSON(filename, data, spaces=0) {
     fs.writeFile(filename, JSON.stringify(data, null, spaces), (err) => {
         if (err) {
-            console.error(err);
+            logErr(err);
         }
     });
 }
