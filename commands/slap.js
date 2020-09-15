@@ -14,7 +14,7 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
-        let slappee = utils.findMemberFromGuild(params.args[0], params.bot.guild)
+        let slappee = utils.findMemberFromGuild(params.args.join(' '), params.bot.guild)
         params.msg.reply(`I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`);
     },
 };
