@@ -117,7 +117,7 @@ function findRoleFromGuild(rolename, guild) {
 //finds a member in a given server from a given username
 function findMemberFromGuild(username, guild) {
     for (let mem of guild.members.cache.array()) {
-        if (mem.user.username.toLowerCase() === username.toLowerCase()) return mem;
+        if (mem.user.username.toLowerCase().includes(username.toLowerCase())) return mem;
     }
     return false;
 }
