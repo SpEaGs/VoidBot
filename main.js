@@ -1,4 +1,6 @@
 
+const appVersion = require('./package.json').version;
+
 const Discord = require('discord.js');
 const winston = require('winston');
 const fs = require('fs');
@@ -9,6 +11,15 @@ const BrowserWindow = electron.BrowserWindow;
 const ipcMain = electron.ipcMain;
 const path = require('path');
 const url = require('url');
+
+const http = require('http');
+const express = require('express');
+const exApp = express();
+const port = 7777;
+
+let server = http.createServer(exApp);
+
+const io = require('socket.io').listen(server);
 
 const token = require('./tokens.json').TOKEN;
 
@@ -32,34 +43,107 @@ logger.add(new winston.transports.Console({
 
 //init some vars & export
 module.exports = {
-    eSender: false,
-    client: false,
+    eSender: {
+        socket: false,
+        ipc: false
+    },
+    client: new Discord.Client(),
     fs: fs,
     systemUIPopulated: false,
-    settingsUIPopulated: false
+    settingsUIPopulated: false,
+    updateVol: updateVol
 }
 
 //set up basic structure for calling/storing discord.js clients (master + children)
 const status = require('./main.js');
-status.client = new Discord.Client();
+const { getHeapCodeStatistics } = require('v8');
+
+//status.client = new Discord.Client();
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
 
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str) {
     logger.info(utils.getTime()+str);
-    if (status.eSender !== false) {
-        status.eSender.send('stdout', utils.getTime()+str);
+    if (status.eSender.socket !== false) {
+        status.eSender.socket.emit('stdout', utils.getTime()+str);
+    };
+    if (status.eSender.ipc !== false) {
+        status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
 function logErr(str) {
     logger.error(utils.getTime()+str);
-    if (status.eSender !== false) {
-        status.eSender.send('stdout', utils.getTime()+str);
+    if (status.eSender.socket !== false) {
+        status.eSender.socket.emit('stdout', utils.getTime()+str);
+    };
+    if (status.eSender.ipc !== false) {
+        status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
 global.log = log;
 global.logErr = logErr;
+
+//webserver
+function launchWebServer() {
+
+    let guilds = {}
+    for (i of status.client.children.array()) {
+        guilds[i.guildID] = []
+        for (e of i.visAdminRoles.array()) {
+            guilds[i.guildID].push(e.id);
+        }
+    }
+
+    exApp.set('view engine', 'pug');
+    exApp.set('views', './pug');
+
+    exApp.use('/node_modules', express.static('./node_modules'));
+    exApp.use('/assets', express.static('./assets'));
+
+    exApp.get('/', (req, res) => {
+        res.render('auth', {appVersion, guilds});
+    });
+    exApp.get('/renderer.js', (req, res) => {
+        res.sendFile(path.join(__dirname + '/renderer.js'));
+    });
+    exApp.get('/index.css', (req, res) => {
+        res.sendFile(path.join(__dirname + '/index.css'));
+    });
+
+    server.listen(port, () => {
+        log(`[WEBSERVER] Active and listening on port ${port}`);
+    });
+
+    io.on('connection', (socket) => {
+        status.eSender.socket = socket;
+        socket.emit('ready', 'ready');
+
+        socket.on('command', cmd);
+        socket.on('updateBot', updateBot);
+
+        socket.once('initConnect', () => {
+            for( let i of status.client.children.array()) {
+                let bot = {
+                    guildID: i.guildID,
+                    guildName: i.guildName,
+                    voiceChannelArray: i.voiceChannelArray,
+                    defaultVoiceChannel: i.defaultVoiceChannel,
+                    textChannelArray: i.textChannelArray,
+                    defaultTextChannel: i.defaultTextChannel,
+                    ruleTextChannel: i.ruleTextChannel,
+                    welcomeTextChannel: i.welcomeTextChannel,
+                    roleArray: i.roleArray,
+                    announcementsRole: i.announcementsRole,
+                    newMemberRole: i.newMemberRole,
+                    defaultVolume: i.defaultVolume
+                    
+                }
+                socket.emit('add-client', bot);
+            }
+        });
+    });
+}
 
 //discord.js client ready event handler (master client)
 try {
@@ -88,9 +172,13 @@ try {
                 let cleanRoleName = utils.cleanChannelName(role.name);
                 newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
             }
-            status.eSender.send('add-client', newBot);
+            status.eSender.ipc.send('add-client', newBot);
             log(`[${newBot.guildName}] Initialization complete!`);
         }
+        setTimeout(() => {
+            launchWebServer(guilds)
+        }, 200);
+
         log('[MAIN] VoidBot Ready! Hello World!');
     });
 }
@@ -102,7 +190,7 @@ catch (error) {
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 
 to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
 status.client.on('message', msg => {
-    let bot = status.client.children.get(msg.guild.id);
+    let bot = status.client.children[msg.guild.id];
     //log incoming message & check for bot message or command
     log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
     if (msg.author.id == status.client.user.id) return;
@@ -156,7 +244,7 @@ status.client.on('guildMemberAdd', member => {
     let bot = status.client.children.get(member.guild.id);
     try {
         if (bot.welcomeMsg == false) return;
-        if (bot.wlecomeTextChannel != false) {
+        if (bot.welcomeTextChannel != false) {
             let anno = false;
             if (bot.announcementsRole != false) anno = true;
             if (bot.ruleTextChannel != false) {
@@ -212,8 +300,9 @@ status.client.on('voiceStateUpdate', (oldMember, newMember) => {
     };
 });
 
-//set up electron window
+//set up electron window, login client, and launch web UI
 function createWindow() {
+
     let bounds = utils.config.windowState.bounds;
     let max = utils.config.windowState.max;
     let x, y, wid, hei;
@@ -284,7 +373,8 @@ function saveBoundsSoon() {
 }
 
 //UI & backend communication event handlers (not really sure how else to word this)
-ipcMain.on('command', (event, arg) => {
+function cmd(e, arg) {
+    if(!arg) arg=e;
     switch (arg[0]) {
         case 'refreshcmds': {
             utils.systemCMDs(arg[0], status);
@@ -303,18 +393,25 @@ ipcMain.on('command', (event, arg) => {
         default: return;
     }
     return;
-});
+}
+ipcMain.on('command', cmd);
 
-ipcMain.on('updateBot', (event, bot) => {
+function updateBot(e, bot) {
+    if(!bot) bot=e;
     for (let i of status.client.children.array()) {
         if (i.guildID == bot.guildID) {
             i = bot;
             utils.saveConfig(i);
         }
     }
-})
+}
+ipcMain.on('updateBot', updateBot);
 
-ipcMain.once('init-eSender', (event, arg) => { status.eSender = event.sender; });
+function updateVol(bot){
+    status.eSender.ipc.send('updateVol', bot);
+}
+
+ipcMain.once('init-eSender', (event, arg) => { status.eSender.ipc = event.sender; });
 
 //discord.js client login (called when the electron window is open and ready)
 let loginAtt = 0
