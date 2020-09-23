@@ -120,8 +120,9 @@ status.client.on('message', msg => {
     //fetch admin lists & compare user id
     let admin = utils.adminCheck(bot, msg.author);
     let botadmin = utils.botAdminCheck(msg.author.id);
-    let admincheck = false;
-    if (admin || botadmin) admincheck = true;
+    let adminCheck = false;
+    if (admin || botadmin) adminCheck = true;
+    log(`[MAIN] Admin: ${admin} | Botadmin: ${botadmin}`);
 
     //check system commands & run if found (these are commands related to the bot, not things it does.)
     if (botadmin) {
@@ -133,12 +134,10 @@ status.client.on('message', msg => {
     let aliCheck = utils.aliasCheck(cmdName, status);
     if (!status.client.cmds.has(cmdName) && !aliCheck) return msg.reply('Command not recognized.');
     let cmd = aliCheck;
-    let needAdmin = false;
-    if (cmd.botadmin || cmd.admin) needAdmin = true;
     if (!aliCheck) cmd = status.client.cmds.get(cmdName);
     if (cmd.server && msg.channel.type !== 'text') return msg.reply('That command only works on a server!');
     if (cmd.args && !args.length) return msg.reply(`That command needs arguments.\nUsage: ${cmd.usage}`);
-    if (needAdmin && !adminCheck) return msg.reply('You do not have sufficient permissions to use that command you fool!');
+    if (cmd.admin && !adminCheck) return msg.reply('You do not have sufficient permissions to use that command you fool!');
             
     //run command
     try {
