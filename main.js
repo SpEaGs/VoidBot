@@ -22,6 +22,7 @@ let server = http.createServer(exApp);
 const io = require('socket.io').listen(server);
 
 const token = require('./tokens.json').TOKEN;
+const hostname = require('./tokens.json').HOSTNAME;
 
 const utils = require('./utils.js');
 const Bot = require('./bot.js');
@@ -111,7 +112,7 @@ function launchWebServer() {
         res.sendFile(path.join(__dirname + '/index.css'));
     });
 
-    server.listen(port, () => {
+    server.listen(port, HOSTNAME, () => {
         log(`[WEBSERVER] Active and listening on port ${port}`);
     });
 
