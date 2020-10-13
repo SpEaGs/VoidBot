@@ -1,0 +1,81 @@
+doctype html
+html
+    head
+        title VoidBot Webapp
+    body
+        script#mainScript(attr1=guilds).
+            window.onload = () => {
+                let guilds = JSON.parse(document.getElementById('mainScript').getAttribute('attr1'));
+
+                let fragment = new URLSearchParams(window.location.hash.slice(1));
+                if (fragment.has("access_token")) {
+                    const accessToken = fragment.get("access_token");
+                    const tokenType = fragment.get("token_type");
+                    let user = {
+                        id: 0,
+                        name: '',
+                        discriminator: 0,
+                        guilds: {
+                            admin: [],
+                            member: []
+                        }
+                    }
+
+                    fetch('https://discordapp.com/api/users/@me', {
+                        headers: {
+                            Authorization: `${tokenType} ${accessToken}`
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(response => {
+                        const { username, discriminator, id } = response;
+                        user.id = id; user.name = username; user.discriminator = discriminator;
+                    })
+                    .catch(console.error);
+
+                    fetch('https://discordapp.com/api/users/@me/guilds', {
+                        headers: {
+                            Authorization: `${tokenType} ${accessToken}`
+                        }
+                    })
+                    .then(res => res.json())
+                    .then(response => {
+                        for(let botGuild of Object.keys(guilds)) {
+                            for (let i of response) {
+                                if (Object.values(i).includes(botGuild)) {
+                                    if(Object.values(guilds[botGuild]).includes(user.id)) {
+                                        user.guilds.admin.push(botGuild);
+                                    }
+                                    else {
+                                        user.guilds.member.push(botGuild);
+                                    }
+                                }
+                            }
+                        }
+                    })
+                    .catch(console.error);
+
+                    for(let i of user.guilds.member) {
+                        let e = document.getElementById(`navbarMenuButtonShard${i}`)
+                        e.parentNode.removeChild(e);
+                        let ee = document.getElementById(`mainContentContainerSubShard${i}`)
+                        e.parentNode.removeChild(e);
+                    }
+
+                    document.getElementById('authComplete').classList.remove('hidden');
+                }
+                else {
+                    document.getElementById('authComplete').classList.add('hidden');
+                }
+            };
+        #login You're not logged in.
+            a#login(href='https://discord.com/api/oauth2/authorize?client_id=428373411987980288&redirect_uri=http%3A%2F%2F67.255.75.81%3A7777&response_type=token&scope=identify%20guilds') IDENTIFY YOURSELF PLEBIAN!!!
+
+        #authComplete.hidden
+            include index.pug
+        script.
+            let user = JSON.parse(document.getElementById('mainScript').getAttribute('userOut'));
+            
+
+
+

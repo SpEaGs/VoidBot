@@ -1,0 +1,10 @@
+#errPopup.errPopup.hidden Error connecting to VoidBot.\nAttempting to reconnect...
+script(src='node_modules/socket.io-client/dist/socket.io.dev.js')
+script(type='text/javascript', src='renderer.js')
+link(rel='stylesheet', type='text/css', href='index.css')
+#titleBar
+    strong#titleText VoidBot v 
+        script#version(ver=appVersion).
+            document.write(document.getElementById('version').getAttribute('ver'));
+.contentBody#windowContent
+    include navbar.pug
