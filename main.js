@@ -112,7 +112,7 @@ function launchWebServer() {
         res.sendFile(path.join(__dirname + '/index.css'));
     });
 
-    server.listen(port, HOSTNAME, () => {
+    server.listen(port, hostname, () => {
         log(`[WEBSERVER] Active and listening on port ${port}`);
     });
 
