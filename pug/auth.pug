@@ -61,7 +61,7 @@ html
                         let ee = document.getElementById(`mainContentContainerSubShard${i}`)
                         e.parentNode.removeChild(e);
                     }
-                    document.getElementById('mainScript').setAttribute('userOut', user);
+                    document.getElementById('mainScript').setAttribute('userOut', JSON.stringify(user));
                     document.getElementById('authComplete').classList.remove('hidden');
                 }
                 else {
