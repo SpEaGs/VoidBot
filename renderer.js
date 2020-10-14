@@ -8,8 +8,7 @@ try {
     eleBool = true;
 }
 catch {
-    let hostname = document.location;
-    ipcRenderer = io(`http://${hostname}/:7777`);
+    ipcRenderer = io(`http://${window.location.hostname}:7777`);
     ipcRenderer.once('connect', () => {
         ipcRenderer.emit('initConnect');
     });
