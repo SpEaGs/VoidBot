@@ -2,14 +2,13 @@ let eleBool = false
 let remote;
 let ipcRenderer;
 
-let hostname = require('./tokens.json').HOSTNAME;
-
 try {
     remote = require('electron').remote;
     ipcRenderer = require('electron').ipcRenderer;
     eleBool = true;
 }
 catch {
+    let hostname = document.location;
     ipcRenderer = io(`http://${hostname}/:7777`);
     ipcRenderer.once('connect', () => {
         ipcRenderer.emit('initConnect');
