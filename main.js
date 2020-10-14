@@ -191,7 +191,7 @@ catch (error) {
 /*discord.js client message event handler (only need to listen to this once so the master sends the info 
 to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
 status.client.on('message', msg => {
-    let bot = status.client.children[msg.guild.id];
+    let bot = status.client.children.get(msg.guild.id);
     //log incoming message & check for bot message or command
     log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
     if (msg.author.id == status.client.user.id) return;
