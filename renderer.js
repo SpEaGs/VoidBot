@@ -7,7 +7,7 @@ try {
     eleBool = true;
 }
 catch {
-    ipcRenderer = io('http://67.255.75.81/:7777');
+    ipcRenderer = io(`http://${require('./tokens.json').HOSTNAME}/:7777`);
     ipcRenderer.once('connect', () => {
         ipcRenderer.emit('initConnect');
     });
