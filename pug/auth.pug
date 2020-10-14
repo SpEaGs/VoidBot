@@ -61,7 +61,7 @@ html
                         let ee = document.getElementById(`mainContentContainerSubShard${i}`)
                         e.parentNode.removeChild(e);
                     }
-                    document.getElementById('mainScript').setAttribute('userOut', JSON.stringify(user));
+                    document.getElementById('mainScript').setAttribute('userout', JSON.stringify(user));
                     document.getElementById('authComplete').classList.remove('hidden');
                 }
                 else {
@@ -74,7 +74,7 @@ html
         #authComplete.hidden
             include index.pug
         script.
-            let user = JSON.parse(document.getElementById('mainScript').getAttribute('userOut'));
+            let user = JSON.parse(document.getElementById('mainScript').getAttribute('userout'));
             console.log(JSON.stringify(user));
 
 
