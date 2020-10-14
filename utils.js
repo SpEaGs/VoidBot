@@ -37,6 +37,7 @@ module.exports = {
     config: config,
     saveConfig: saveConfig,
     getTime: getTime,
+    getTimeRaw: getTimeRaw,
     welcome: welcome,
     sendoff: sendoff,
     wrongChannel: wrongChannel,
@@ -58,6 +59,10 @@ function getTime() {
     let cTime = new Date(Date.now());
     let timeStr = `[${cTime.getMonth()+1}/${cTime.getDate()} ${cTime.getHours()}:${cTime.getMinutes()}:${cTime.getSeconds()}] `;
     return timeStr;
+}
+
+function getTimeRaw() {
+    return Date.now();
 }
 
 //handles the welcome message when a new member joins a server

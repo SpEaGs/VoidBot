@@ -278,12 +278,21 @@ status.client.on('guildMemberRemove', member => {
 });
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
-status.client.on('voiceStateUpdate', (oldMember, newMember) => {
-    let bot = status.client.children.get(newMember.guild.id);
+status.client.on('voiceStateUpdate', (oldState, newState) => {
+    let bot = status.client.children.get(newState.member.guild.id);
     try {
-        if (!oldMember.voiceChannel) return;
-        if (newMember.voiceChannel != oldMember.voiceChannel
-            && bot.guild.channels.cache.get(oldMember.voiceChannel.id).members.array().length == 1
+        bot.voiceStateCaching[newState.member.id] = {
+            timeStamp: utils.getTimeRaw()
+        }
+        if (!oldState.channel) return;
+        if (!newState.channel) {
+            if (utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp <= 3000) {
+                bot.defaultTextChannel.send(`Look at this twat ${newState.member} joining a voice chat then leaving immediately!`);
+            }
+            delete bot.voiceStateCaching[newState.member.id]
+        };
+        if (newState.channel != oldState.channel
+            && bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
             && bot.voiceChannel) {
             if (bot.dispatcher) {
                 bot.audioQueue = [];
@@ -294,7 +303,7 @@ status.client.on('voiceStateUpdate', (oldMember, newMember) => {
             bot.voiceChannel = false;
             bot.voiceConnection = false;
             return;
-        }
+        };
     }
     catch (error) {
         logErr(`[${bot.guildName}]Error handling voiceStateUpdate event"\n`+error);
