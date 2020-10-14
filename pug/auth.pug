@@ -75,7 +75,7 @@ html
             include index.pug
         script.
             let user = JSON.parse(document.getElementById('mainScript').getAttribute('userout'));
-            console.log(JSON.stringify(user));
+            console.log(document.getElementById('mainScript').getAttribute('userout'));
 
 
 
