@@ -32,7 +32,7 @@ class Bot extends EventEmitter {
         this.ruleTextChannel = false;
         this.textChannelArray = [];
         this.roleArray = [];
-        this.voiceStateCache = {};
+        this.voiceStateCaching = {};
 
         //login
         log(`[${this.guildName}] Initializing...`);
