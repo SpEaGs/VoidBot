@@ -9,10 +9,10 @@ passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-    let sql = `SELECT * FROM users WHERE id = ${id}`
+    /*let sql = `SELECT * FROM users WHERE id = ${id}`
     let findUser = db.query(sql, (err, result) => {
         done(err, result[0]);
-    });
+    });*/
 });
 
 passport.use( new Strategy({
