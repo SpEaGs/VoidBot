@@ -1,7 +1,7 @@
 
 const passport = require('passport');
 const keys = require('../tokens.json');
-const fetch = require('node-fetch');
+//const fetch = require('node-fetch');
 
 const { Strategy, Scope, snowflakeToDate } = require('@oauth-everything/passport-discord');
 
@@ -9,11 +9,10 @@ passport.serializeUser((user, done) => {
     done(null, user.id);
 });
 passport.deserializeUser((id, done) => {
-    /*let sql = `SELECT * FROM users WHERE id = ${id}`
+    let sql = `SELECT * FROM users WHERE snowflake = ${id}`
     let findUser = db.query(sql, (err, result) => {
         done(err, result[0]);
-    });*/
-    done(null, id)
+    });
 });
 
 passport.use( new Strategy({
@@ -25,11 +24,7 @@ passport.use( new Strategy({
     let user = {
         id: profile.id,
         name: profile.username,
-        discriminator: profile.displayName.split('#').pop(),
-        guilds: {
-            admin: [],
-            member: []
-        }
+        discriminator: profile.displayName.split('#').pop()
     }
     let findUserSQL = `SELECT * FROM users WHERE snowflake = "${user.id}"`
     let findUserQuery = db.query(findUserSQL, (err, result) => {
@@ -46,7 +41,7 @@ passport.use( new Strategy({
                 log(`New user entry successful!`);
             })
         }
-    })
+    })/*
     fetch('https://discordapp.com/api/users/@me/guilds', {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -69,6 +64,6 @@ passport.use( new Strategy({
     })
     .catch(err => {
         logErr(`[MAIN] Error handling discord API request for guilds: ${err}`);
-    });
+    });*/
     done(null, user);
 }))
