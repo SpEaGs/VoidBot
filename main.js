@@ -1,7 +1,7 @@
 
 const appVersion = require('./package.json').version;
 
-const keys = requrie('./tokens.json');
+const keys = require('./tokens.json');
 const token = keys.TOKEN;
 const hostname = keys.HOSTNAME;
 const cookieKey = keys.COOKIE_KEY;
