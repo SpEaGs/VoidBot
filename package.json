@@ -30,6 +30,7 @@
     "discord.js": "^12.3.1",
     "express": "^4.17.1",
     "is-electron": "^2.2.0",
+    "mysql": "^2.18.1",
     "opusscript": "0.0.7",
     "passport": "^0.4.1",
     "pug": "^3.0.0",
