@@ -95,6 +95,7 @@ style.
 
     .navlinkButton {
         width: 100%;
+        max-width: 100px;
         height: 40px;
         margin-left: 0.5em;
         margin-right: 0.5em;
@@ -112,10 +113,13 @@ style.
     }
 
     .mainContentContainer {
+        padding: 7px;
         display: flex;
+        flex-flow: column nowrap;
+        align-items: center;
         position: fixed;
         top: 50px;
         left: 0px;
-        width: 100%;
-        height: calc(100% - 50px);        
+        width: calc(100% - 14px);
+        height: calc(100% - 64px);
     }
