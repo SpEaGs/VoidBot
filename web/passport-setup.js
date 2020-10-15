@@ -13,6 +13,7 @@ passport.deserializeUser((id, done) => {
     let findUser = db.query(sql, (err, result) => {
         done(err, result[0]);
     });*/
+    done(null, id)
 });
 
 passport.use( new Strategy({
