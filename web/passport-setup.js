@@ -1,6 +1,6 @@
 
 const passport = require('passport');
-const keys = require('./tokens.json');
+const keys = require('../tokens.json');
 
 const { Strategy, Scope, snowflakeToDate } = require('@oauth-everything/passport-discord');
 
