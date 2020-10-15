@@ -1,0 +1,101 @@
+style.
+    :root {
+        --titlebar-color: rgb(20, 20, 25);
+        --toolbar-color: rgb(30, 30, 40);
+        --toolbar-hover-color: rgb(40, 40, 48);
+        --toolbar-selected-color: rgb(50, 50, 60);
+        --navbar-hover-color: rgb(58, 58, 65);
+        --main-bg-color: rgb(70, 70, 80);
+        --accent-color: rgb(35, 62, 216);
+        --accent-color-hover: rgb(70, 93, 225);
+        --track-color: rgb(173, 173, 173);
+        --track-color-hover: rgb(211, 211, 211);
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--track-color);
+    }
+    ::-webkit-scrollbar-track:hover {
+        background: var(--track-color-hover);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--accent-color);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color-hover);
+    }
+
+    html, body, head {
+        background: var(--main-bg-color);
+        color: white;
+    }
+
+    body {
+        position: fixed;
+        top: 0px;
+        left: 0px;
+        height: 100%;
+        width: 100%;
+        overflow: auto;
+    }
+
+    #webTitle {
+        padding: 7px;
+        margin: 0px;
+        width: 100%;
+        text-align: center;
+    }
+
+    .titlebar {
+        position: fixed;
+        padding-left: 10px;
+        padding-right: 10px;
+        height: 50px;
+        width: 15%;
+        min-width: 180px;
+        display: flex;
+        top: 0px;
+        left: 0px;
+        background: var(--titlebar-color);
+    }
+
+    .navbarContainer {
+        position: absolute;
+        height: 50px;
+        width: 100%;
+        top: -40px;
+        left: 0px;
+        padding-bottom: 40px;
+        background: none;
+        display: flex;
+        flex-flow: row nowrap;
+        align-items: center;
+        transition: top 0.3s, padding-bottom 0.3s, background-color 0.3s;
+    }
+    .navbarContainer:hover {
+        top: 0px;
+        padding-bottom: 0px;
+        background-color: var(--titlebar-color);
+    }
+
+    .navlinkButton {
+        width: 100em;
+        height: 40px;
+        margin-left: 0.5em;
+        margin-right: 0.5em;
+        color: white;
+        text-decoration: none;
+        background: var(--accent-color);
+        text-align: center;
+    }
+    .navlinkButton:hover {
+        background: var(--accent-color-hover)
+    }
+    .navlinkText {
+        position: relative;
+        top: 10px;
+    }

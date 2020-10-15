@@ -1,6 +1,12 @@
 
 const appVersion = require('./package.json').version;
 
+const keys = requrie('./tokens.json');
+const token = keys.TOKEN;
+const hostname = keys.HOSTNAME;
+const cookieKey = keys.COOKIE_KEY;
+const dbPass = keys.DB_PASS;
+
 const Discord = require('discord.js');
 const winston = require('winston');
 const fs = require('fs');
@@ -15,14 +21,24 @@ const url = require('url');
 const http = require('http');
 const express = require('express');
 const exApp = express();
+const cParse = require('cookie-parser');
+const cSession = require('cookie-session');
+const passport = require('passport');
+const passSetup = require('./web/passport-setup.js');
+
+global.db = require('mysql').createConnection({
+    host: 'localhost',
+    user: 'voidbot',
+    password: dbPass,
+    database: 'voidbot_db'
+})
 const port = 7777;
+
+const authRouter = require('./web/routers/auth.js');
 
 let server = http.createServer(exApp);
 
 const io = require('socket.io').listen(server);
-
-const token = require('./tokens.json').TOKEN;
-const hostname = require('./tokens.json').HOSTNAME;
 
 const utils = require('./utils.js');
 const Bot = require('./bot.js');
@@ -87,6 +103,21 @@ global.logErr = logErr;
 
 //webserver
 function launchWebServer() {
+    //connect to DB & init if needed
+    db.connect((err) => {
+        if (err) {
+            logErr(`[MAIN] Error connecting to DB: ${err}`)
+        }
+        else log('[MAIN] Successfully connected to DB!');
+    });
+    let initDBSQL = `CREATE TABLE IF NOT EXISTS users (
+                    uID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    username VARCHAR(30) NOT NULL,
+                    snowflake VARCHAR(18) NOT NULL
+                    )`;
+    db.query(initDBSQL, (err, result) => {
+        if(err) logErr(`[MAIN] Error initializing DB: ${err}`);
+    });
 
     let guilds = {}
     for (i of status.client.children.array()) {
@@ -102,15 +133,30 @@ function launchWebServer() {
     exApp.use('/node_modules', express.static('./node_modules'));
     exApp.use('/assets', express.static('./assets'));
 
+    exApp.use(cParse());
+    exApp.use(cSession({
+        maxAge: (30 * 24 * 60 * 60 * 1000),
+        keys: [cookieKey]
+    }))
+
+    exApp.use(passport.initialize());
+    exApp.use(passport.session());
+
+    exApp.use('/auth', authRouter);
+
     exApp.get('/', (req, res) => {
-        res.render('auth', {appVersion, guilds});
+        let user = req.user || false;
+        res.render('main', { appVersion, guilds, user });
     });
+
+    /*
     exApp.get('/renderer.js', (req, res) => {
         res.sendFile(path.join(__dirname + '/renderer.js'));
     });
     exApp.get('/index.css', (req, res) => {
         res.sendFile(path.join(__dirname + '/index.css'));
     });
+    */
 
     server.listen(port, hostname, () => {
         log(`[WEBSERVER] Active and listening on port ${port}`);
