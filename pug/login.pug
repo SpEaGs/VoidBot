@@ -5,8 +5,9 @@ html
         title Login to VoidCloud
         include ./header.pug
     body
-        h2 Login
-        a.navlinkButton(href="/auth/discord")
-            div.navlinkText Google
+        h2.pageTitle Login
+        div.mainContentContainer
+            a.navlinkButton(href="/auth/discord")
+                div.navlinkText Authenticate with Discord
     footer
         include ./footer.pug
