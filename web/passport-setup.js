@@ -17,7 +17,7 @@ passport.deserializeUser((id, done) => {
 passport.use( new Strategy({
     clientID: keys.CLIENT_ID,
     clientSecret: keys.CLIENT_SECRET,
-    callbackURL: `${keys.HOSTNAME}/auth/discord/callback`,
+    callbackURL: `/auth/discord/callback`,
     scope: [Scope.IDENTIFY, Scope.GUILDS]
 }, (accessToken, refreshToken, profile, done) => {
     let user = {
