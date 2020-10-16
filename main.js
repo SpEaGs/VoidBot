@@ -124,13 +124,15 @@ function launchWebServer() {
     db.query(initUDBSQL, (err, result) => {
         if(err) logErr(`[WEBSERVER] Error initializing UDB: ${err}`);
     });
-    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( gID VARCHAR(18) NOT NULL )`
+    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( gID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    snowflake VARCHAR(18) NOT NULL
+                    )`
     db.query(initGDBSQL, (err, result) => {
         if(err) logErr(`[WEBSERVER] Error initializing GDB: ${err}`);
     });
     for(i of status.client.children.array()) {
-        let pushGuildsSQL = `INSERT INTO guilds SELECT DISTINCT gID FROM ${JSON.stringify({gID: i.guildID})}`;
-        db.query(pushGuildsSQL, (err, result) => {
+        let pushGuildsSQL = `INSERT INTO guilds SET ?`;
+        db.query(pushGuildsSQL, {gID: i.guildID}, (err, result) => {
             if(err) logErr(`[WEBSERVER] Error pushing guild ${i.guildID} to guilds table: ${err}`);
         })
     }
