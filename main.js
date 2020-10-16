@@ -119,7 +119,10 @@ function launchWebServer() {
     let initDBSQL = `CREATE TABLE IF NOT EXISTS users (
                     uID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                     username VARCHAR(30) NOT NULL,
-                    snowflake VARCHAR(18) NOT NULL
+                    discriminator VARCHAR(5) NOT NULL,
+                    snowflake VARCHAR(18) NOT NULL,
+                    g_admin VARCHAR(2000),
+                    g_member VARCHAR(2000)
                     )`;
     db.query(initDBSQL, (err, result) => {
         if(err) logErr(`[MAIN] Error initializing DB: ${err}`);
