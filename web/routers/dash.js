@@ -38,7 +38,7 @@ router.get('/renderer.js', (req, res) => {
     }
     else {
         let filePath = __dirname.split('/');
-        let pathOut = filePath.slice(0, (filePath.length() - 2)).join('/');
+        let pathOut = filePath.slice(0, (filePath.length - 2)).join('/');
         res.sendFile(pathOut);
     };
 })
