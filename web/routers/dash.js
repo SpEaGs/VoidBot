@@ -2,6 +2,7 @@
 const router = require('express').Router();
 const path = require('path');
 const express = require('express');
+const { log } = require('util');
 
 router.use('/node_modules', express.static('./node_modules'));
 
@@ -28,6 +29,7 @@ router.get('/admin', (req, res) => {
 })
 
 router.get('/renderer.js', (req, res) => {
+    log(path);
     if (!req.user) {
         res.redirect('/auth/login');
     }
