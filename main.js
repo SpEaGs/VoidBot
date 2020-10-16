@@ -35,6 +35,7 @@ global.db = require('mysql').createConnection({
 const port = 7777;
 
 const authRouter = require('./web/routers/auth.js');
+const dashRouter = require('./web/routers/dash.js');
 
 let server = http.createServer(exApp);
 
@@ -143,10 +144,14 @@ function launchWebServer() {
     exApp.use(passport.session());
 
     exApp.use('/auth', authRouter);
+    exApp.use('/dash', dashRouter);
 
     exApp.get('/', (req, res) => {
         let user = req.user || false;
-        res.render('main', { appVersion, guilds, user });
+        if(!user) {
+            res.redirect('/auth/login');
+        }
+        else res.redirect('/dash');
     });
 
     /*
@@ -332,6 +337,7 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
         }
         if (!oldState.channel) return;
         if (!newState.channel) {
+            log(utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp);
             if (utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp <= 3000) {
                 bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Look at this twat ${newState.member} joining a voice chat then leaving immediately!`);
             }
