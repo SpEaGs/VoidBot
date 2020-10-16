@@ -132,7 +132,7 @@ function launchWebServer() {
     });
     for(i of status.client.children.array()) {
         let pushGuildsSQL = `INSERT INTO guilds SET ?`;
-        db.query(pushGuildsSQL, {gID: i.guildID}, (err, result) => {
+        db.query(pushGuildsSQL, {snowflake: i.guildID}, (err, result) => {
             if(err) logErr(`[WEBSERVER] Error pushing guild ${i.guildID} to guilds table: ${err}`);
         })
     }
