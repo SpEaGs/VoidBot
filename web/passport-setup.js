@@ -59,9 +59,9 @@ passport.use( new Strategy({
                 user.guilds.admin.push(i.id);
             }
         }
+        done(null, user);
     })
     .catch(err => {
         logErr(`[MAIN] Error handling discord API request for guilds: ${err}`);
     });
-    done(null, user);
 }))
