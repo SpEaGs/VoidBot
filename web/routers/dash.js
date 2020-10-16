@@ -14,6 +14,7 @@ router.get('/admin', (req, res) => {
     if (!req.user) {
         res.redirect('/auth/login');
     }
+    log(JSON.stringify(req.user));
     if (req.user.guilds.admin === []) {
         res.render('noAdmin');
         setTimeout(res.redirect('/dash'), 10 * 1000);
