@@ -27,7 +27,7 @@ router.get('/admin', (req, res) => {
     }
 })
 
-router.get('/admin/renderer.js', (req, res) => {
+router.get('/renderer.js', (req, res) => {
     log(path.join(__dirname + '/renderer.js'));
     if (!req.user) {
         res.redirect('/auth/login');
