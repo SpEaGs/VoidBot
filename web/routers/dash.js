@@ -33,7 +33,7 @@ router.get('/admin/renderer.js', (req, res) => {
     }
     else { res.sendFile('.../renderer.js') };
 })
-router.get('/admin/index.css', (req, res) => {
+/*router.get('/admin/index.css', (req, res) => {
     if (!req.user) {
         res.redirect('/auth/login');
     }
@@ -42,6 +42,6 @@ router.get('/admin/index.css', (req, res) => {
         setTimeout(res.redirect('/dash'), 10 * 10000);
     }
     else { res.sendFile('.../index.css') };
-})
+})*/
 
 module.exports = router;
