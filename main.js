@@ -332,9 +332,6 @@ status.client.on('guildMemberRemove', member => {
 status.client.on('voiceStateUpdate', (oldState, newState) => {
     let bot = status.client.children.get(newState.member.guild.id);
     try {
-        bot.voiceStateCaching[newState.member.id] = {
-            timeStamp: utils.getTimeRaw()
-        }
         if (!oldState.channel) return;
         if (!newState.channel) {
             log(utils.getTimeRaw());
@@ -344,6 +341,9 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
             }
             delete bot.voiceStateCaching[newState.member.id]
         };
+        bot.voiceStateCaching[newState.member.id] = {
+            timeStamp: utils.getTimeRaw()
+        }
         if (newState.channel != oldState.channel
             && bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
             && bot.voiceChannel) {
