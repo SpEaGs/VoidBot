@@ -62,8 +62,8 @@ function getTime() {
 }
 
 function getTimeRaw() {
-    let toReturn = new Date(Date.now());
-    return toReturn.getTime();
+    let toReturn = new Date().getTime();
+    return toReturn;
 }
 
 //handles the welcome message when a new member joins a server
