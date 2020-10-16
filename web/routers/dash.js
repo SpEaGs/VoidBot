@@ -3,6 +3,8 @@ const router = require('express').Router();
 const path = require('path');
 const { log } = require('util');
 
+router.use('/node_modules', express.static('./node_modules'));
+
 router.get('/', (req, res) => {
     if(!req.user) {
         res.redirect('/auth/login');

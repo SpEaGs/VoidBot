@@ -139,7 +139,6 @@ function launchWebServer() {
     exApp.set('view engine', 'pug');
     exApp.set('views', './pug');
 
-    exApp.use('/node_modules', express.static('./node_modules'));
     exApp.use('/assets', express.static('./assets'));
 
     exApp.use(cParse());
