@@ -29,7 +29,7 @@ router.get('/admin', (req, res) => {
 })
 
 router.get('/renderer.js', (req, res) => {
-    log(path);
+    log(__dirname);
     if (!req.user) {
         res.redirect('/auth/login');
     }
