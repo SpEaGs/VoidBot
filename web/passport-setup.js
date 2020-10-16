@@ -1,7 +1,5 @@
 
 const passport = require('passport');
-const main = require('../main.js');
-const status = main.getStatus;
 const keys = require('../tokens.json');
 const fetch = require('node-fetch');
 
@@ -55,14 +53,10 @@ passport.use( new Strategy({
             admin: [],
             member: []
         }
-        for(let bot of status.client.children.array()) {
-            if(bot.visAdminRoles.includes(user.snowflake)) {
-                user.guilds.admin.push(bot.guildID)
-            }
-            for (let i of response) {
-                if (Object.keys(status.client.children.array()).includes(i.id)) {
-                    user.guilds.member.push(i.id);
-                }
+        for (let i of response) {
+            user.guilds.member.push(i.id);
+            if ((i.permissions & 0x8) == 0x8) {
+                user.guilds.admin.push(i.id);
             }
         }
         log(JSON.stringify(user));
