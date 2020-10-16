@@ -128,10 +128,13 @@ function launchWebServer() {
     db.query(initGDBSQL, (err, result) => {
         if(err) logErr(`[WEBSERVER] Error initializing GDB: ${err}`);
     });
-    for(i of Object.keys(status.client.children.array())) {
-        let pushGuildsSQL = `INSERT INTO guilds (gID) SELECT ${i} WHERE NOT EXISTS(SELECT * FROM guilds WHERE gID = ${i})`;
+    for(i of status.client.children.array()) {
+        let pushGuildsSQL = `IF NOT EXISTS (SELECT * FROM guilds WHERE gID = ${i.guildID})
+                            BEGIN
+                            INSERT INTO guilds (gID) VALUES (${i.guildID})
+                            END`;
         db.query(pushGuildsSQL, (err, result) => {
-            if(err) logErr(`[WEBSERVER] Error pushing guild ${i} to guilds table: ${err}`);
+            if(err) logErr(`[WEBSERVER] Error pushing guild ${i.guildID} to guilds table: ${err}`);
         })
     }
 
