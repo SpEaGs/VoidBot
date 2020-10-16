@@ -3,7 +3,7 @@ const passport = require('passport');
 const keys = require('../tokens.json');
 const fetch = require('node-fetch');
 
-const { Strategy, Scope, snowflakeToDate } = require('@oauth-everything/passport-discord');
+const { Strategy, Scope } = require('@oauth-everything/passport-discord');
 
 passport.serializeUser((user, done) => {
     done(null, user.id);

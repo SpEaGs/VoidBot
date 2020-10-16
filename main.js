@@ -1,6 +1,4 @@
 
-const appVersion = require('./package.json').version;
-
 const keys = require('./tokens.json');
 const token = keys.TOKEN;
 const hostname = keys.HOSTNAME;
@@ -75,7 +73,6 @@ module.exports = {
 
 //set up basic structure for calling/storing discord.js clients (master + children)
 const status = require('./main.js');
-const { getHeapCodeStatistics } = require('v8');
 
 function getStatus() {
     return status;
@@ -112,11 +109,11 @@ function launchWebServer() {
     //connect to DB & init if needed
     db.connect((err) => {
         if (err) {
-            logErr(`[MAIN] Error connecting to DB: ${err}`)
+            logErr(`[WEBSERVER] Error connecting to DB: ${err}`)
         }
-        else log('[MAIN] Successfully connected to DB!');
+        else log('[WEBSERVER] Successfully connected to DB!');
     });
-    let initDBSQL = `CREATE TABLE IF NOT EXISTS users (
+    let initUDBSQL = `CREATE TABLE IF NOT EXISTS users (
                     uID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                     username VARCHAR(30) NOT NULL,
                     discriminator VARCHAR(5) NOT NULL,
@@ -124,16 +121,18 @@ function launchWebServer() {
                     g_admin VARCHAR(2000),
                     g_member VARCHAR(2000)
                     )`;
-    db.query(initDBSQL, (err, result) => {
-        if(err) logErr(`[MAIN] Error initializing DB: ${err}`);
+    db.query(initUDBSQL, (err, result) => {
+        if(err) logErr(`[WEBSERVER] Error initializing UDB: ${err}`);
     });
-
-    let guilds = {}
-    for (i of status.client.children.array()) {
-        guilds[i.guildID] = []
-        for (e of i.visAdminRoles.array()) {
-            guilds[i.guildID].push(e.id);
-        }
+    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( gID VARCHAR(18) NOT NULL )`
+    db.query(initGDBSQL, (err, result) => {
+        if(err) logErr(`[WEBSERVER] Error initializing GDB: ${err}`);
+    });
+    for(i of Object.keys(status.client.children.array())) {
+        let pushGuildsSQL = `INSERT INTO guilds (gID) SELECT ${i} WHERE NOT EXISTS(SELECT * FROM guilds WHERE gID = ${i})`;
+        db.query(pushGuildsSQL, (err, result) => {
+            if(err) logErr(`[WEBSERVER] Error pushing guild ${i} to guilds table: ${err}`);
+        })
     }
 
     exApp.set('view engine', 'pug');
