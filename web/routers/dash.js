@@ -40,7 +40,7 @@ router.get('/renderer.js', (req, res) => {
         let filePath = __dirname.split('/');
         let pathOut = filePath.slice(0, (filePath.length - 2)).join('/');
         log(pathOut);
-        res.sendFile(pathOut);
+        res.sendFile(pathOut+'/renderer.js');
     };
 })
 /*router.get('/admin/index.css', (req, res) => {
