@@ -37,7 +37,8 @@ router.get('/renderer.js', (req, res) => {
         setTimeout(res.redirect('/dash'), 10 * 10000);
     }
     else {
-        let pathOut = __dirname.split('/').slice(0, (filePath.length() - 2)).join('/');
+        let filePath = __dirname.split('/');
+        let pathOut = filePath.slice(0, (filePath.length() - 2)).join('/');
         res.sendFile(pathOut);
     };
 })
