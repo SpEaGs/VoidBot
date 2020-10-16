@@ -1,5 +1,6 @@
 
 const router = require('express').Router();
+const path = require('path');
 
 router.get('/', (req, res) => {
     if(!req.user) {
@@ -31,7 +32,7 @@ router.get('/admin/renderer.js', (req, res) => {
         res.render('noAdmin');
         setTimeout(res.redirect('/dash'), 10 * 10000);
     }
-    else { res.sendFile('.../renderer.js') };
+    else { res.sendFile(path.join(__dirname + '/renderer.js')) };
 })
 /*router.get('/admin/index.css', (req, res) => {
     if (!req.user) {
