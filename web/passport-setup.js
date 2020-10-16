@@ -1,5 +1,6 @@
 
 const passport = require('passport');
+const status = require('../main.js');
 const keys = require('../tokens.json');
 //const fetch = require('node-fetch');
 
@@ -41,7 +42,7 @@ passport.use( new Strategy({
                 log(`New user entry successful!`);
             })
         }
-    })/*
+    })
     fetch('https://discordapp.com/api/users/@me/guilds', {
         headers: {
             Authorization: `Bearer ${accessToken}`
@@ -49,6 +50,20 @@ passport.use( new Strategy({
     })
     .then(res => res.json())
     .then(response => {
+        user.guilds = {
+            admin: [],
+            member: []
+        }
+        for(let bot of status.client.children.array()) {
+            if(bot.visAdminRoles.includes(user.snowflake)) {
+                user.guilds.admin.push(bot.guildID)
+            }
+            for (let i of response) {
+                if (Object.keys(status.client.children.array()).includes(i.id)) {
+                    user.guilds.member.push(i.id);
+                }
+            }
+        }
         for(let botGuild of Object.keys(guilds)) {
             for (let i of response) {
                 if (Object.values(i).includes(botGuild)) {
@@ -64,6 +79,7 @@ passport.use( new Strategy({
     })
     .catch(err => {
         logErr(`[MAIN] Error handling discord API request for guilds: ${err}`);
-    });*/
+    });
+    log(JSON.stringify(user));
     done(null, user);
 }))
