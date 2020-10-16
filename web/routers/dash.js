@@ -28,7 +28,6 @@ router.get('/admin', (req, res) => {
 })
 
 router.get('/renderer.js', (req, res) => {
-    log(path.join(__dirname + '/renderer.js'));
     if (!req.user) {
         res.redirect('/auth/login');
     }
@@ -36,7 +35,7 @@ router.get('/renderer.js', (req, res) => {
         res.render('noAdmin');
         setTimeout(res.redirect('/dash'), 10 * 10000);
     }
-    else { res.sendFile(path.join(__dirname + '/renderer.js')) };
+    else { res.sendFile('.../renderer.js') };
 })
 /*router.get('/admin/index.css', (req, res) => {
     if (!req.user) {
