@@ -62,7 +62,7 @@ function getTime() {
 }
 
 function getTimeRaw() {
-    return Date.now();
+    return new Date.getTime();
 }
 
 //handles the welcome message when a new member joins a server
