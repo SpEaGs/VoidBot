@@ -69,12 +69,17 @@ module.exports = {
     fs: fs,
     systemUIPopulated: false,
     settingsUIPopulated: false,
-    updateVol: updateVol
+    updateVol: updateVol,
+    getStatus: getStatus
 }
 
 //set up basic structure for calling/storing discord.js clients (master + children)
 const status = require('./main.js');
 const { getHeapCodeStatistics } = require('v8');
+
+function getStatus() {
+    return status;
+}
 
 //status.client = new Discord.Client();
 status.client.children = new Discord.Collection();
