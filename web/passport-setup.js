@@ -64,22 +64,10 @@ passport.use( new Strategy({
                 }
             }
         }
-        for(let botGuild of Object.keys(guilds)) {
-            for (let i of response) {
-                if (Object.values(i).includes(botGuild)) {
-                    if(Object.values(guilds[botGuild]).includes(user.id)) {
-                        user.guilds.admin.push(botGuild);
-                    }
-                    else {
-                        user.guilds.member.push(botGuild);
-                    }
-                }
-            }
-        }
+        log(JSON.stringify(user));
     })
     .catch(err => {
         logErr(`[MAIN] Error handling discord API request for guilds: ${err}`);
     });
-    log(JSON.stringify(user));
     done(null, user);
 }))
