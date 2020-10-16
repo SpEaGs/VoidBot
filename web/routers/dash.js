@@ -1,6 +1,7 @@
 
 const router = require('express').Router();
 const path = require('path');
+const { log } = require('util');
 
 router.get('/', (req, res) => {
     if(!req.user) {
@@ -25,6 +26,7 @@ router.get('/admin', (req, res) => {
 })
 
 router.get('/admin/renderer.js', (req, res) => {
+    log(path.join(__dirname + '/renderer.js'));
     if (!req.user) {
         res.redirect('/auth/login');
     }
