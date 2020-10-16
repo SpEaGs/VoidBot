@@ -14,7 +14,6 @@ router.get('/admin', (req, res) => {
     if (!req.user) {
         res.redirect('/auth/login');
     }
-    log(JSON.stringify(req.user));
     if (req.user.guilds.admin === []) {
         res.render('noAdmin');
         setTimeout(res.redirect('/dash'), 10 * 1000);
@@ -22,6 +21,27 @@ router.get('/admin', (req, res) => {
     else {
         res.render('admin', {user: req.user});
     }
+})
+
+router.get('/admin/renderer.js', (req, res) => {
+    if (!req.user) {
+        res.redirect('/auth/login');
+    }
+    if (req.user.guilds.admin === []) {
+        res.render('noAdmin');
+        setTimeout(res.redirect('/dash'), 10 * 10000);
+    }
+    else { res.sendFile('.../renderer.js') };
+})
+router.get('/admin/index.css', (req, res) => {
+    if (!req.user) {
+        res.redirect('/auth/login');
+    }
+    if (req.user.guilds.admin === []) {
+        res.render('noAdmin');
+        setTimeout(res.redirect('/dash'), 10 * 10000);
+    }
+    else { res.sendFile('.../index.css') };
 })
 
 module.exports = router;
