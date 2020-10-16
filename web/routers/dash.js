@@ -1,7 +1,7 @@
 
 const router = require('express').Router();
 const path = require('path');
-const { log } = require('util');
+const express = require('express');
 
 router.use('/node_modules', express.static('./node_modules'));
 
