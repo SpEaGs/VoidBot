@@ -129,7 +129,7 @@ function launchWebServer() {
         if(err) logErr(`[WEBSERVER] Error initializing GDB: ${err}`);
     });
     for(i of status.client.children.array()) {
-        let pushGuildsSQL = `INSERT INTO guilds SELECT DISTINCT gID FROM ${{gID: i.guildID}}`;
+        let pushGuildsSQL = `INSERT INTO guilds SELECT DISTINCT gID FROM ${JSON.stringify({gID: i.guildID})}`;
         db.query(pushGuildsSQL, (err, result) => {
             if(err) logErr(`[WEBSERVER] Error pushing guild ${i.guildID} to guilds table: ${err}`);
         })
