@@ -1,7 +1,7 @@
 
 const passport = require('passport');
 const main = require('../main.js');
-const status = main.getStatus();
+const status = main.getStatus;
 const keys = require('../tokens.json');
 const fetch = require('node-fetch');
 
