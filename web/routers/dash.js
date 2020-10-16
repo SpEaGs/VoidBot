@@ -3,7 +3,11 @@ const router = require('express').Router();
 const path = require('path');
 const express = require('express');
 
-const appVersion = require('.../package.json').version;
+let dir = __dirname.split('/');
+let mainDir = dir.slice(0, (dir.length - 2)).join('/');
+delete dir;
+
+const appVersion = require(mainDir+'/package.json').version;
 
 router.use('/node_modules', express.static('./node_modules'));
 
@@ -41,9 +45,7 @@ router.get('/renderer.js', (req, res) => {
         setTimeout(res.redirect('/dash'), 10 * 10000);
     }
     else {
-        let filePath = __dirname.split('/');
-        let pathOut = filePath.slice(0, (filePath.length - 2)).join('/');
-        res.sendFile(pathOut+'/renderer.js');
+        res.sendFile(mainDir+'/renderer.js');
     };
 });
 
