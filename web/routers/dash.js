@@ -3,7 +3,7 @@ const router = require('express').Router();
 const path = require('path');
 const express = require('express');
 
-const appVersion = require('./package.json').version;
+const appVersion = require('.../package.json').version;
 
 router.use('/node_modules', express.static('./node_modules'));
 
