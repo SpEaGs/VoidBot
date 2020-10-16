@@ -337,7 +337,8 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
         }
         if (!oldState.channel) return;
         if (!newState.channel) {
-            log(utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp);
+            log(utils.getTimeRaw());
+            log(bot.voiceStateCaching[newState.member.id].timeStamp)
             if (utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp <= 3000) {
                 bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Look at this twat ${newState.member} joining a voice chat then leaving immediately!`);
             }
