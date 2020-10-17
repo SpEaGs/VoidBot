@@ -6,8 +6,16 @@ html
         include ./header.pug
     body
         h2.pageTitle Logout
-        div.mainContentContainer You are now Logged out. You will be redirected to the login page in 10 seconds...
+        div.mainContentContainer#mCCLogout You are now Logged out. You will be redirected to the login page in 10 seconds...
         script.
-            setTimeout(() => {document.location.href='/'}, 10 * 1000);
+            let i = 9;
+            redirInter = setInterval(() => {
+                document.getElementById('mCCLogout').innerText = `You are now logged out. You will be redirected to the login page in ${i} seconds...`;
+            }, 1 * 1000);
+            setTimeout(() => {
+                clearInterval(redirInter);
+                delete redirInter;
+                document.location.href='/';
+            }, 10 * 1000);
     footer
         include ./footer.pug
