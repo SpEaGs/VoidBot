@@ -91,7 +91,6 @@ function log(str) {
         status.eSender.socket.emit('stdout', utils.getTime()+str);
     };
     if (status.eSender.ipc !== false) {
-        backlog.push(utils.getTime()+str);
         status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
@@ -102,7 +101,6 @@ function logErr(str) {
         status.eSender.socket.emit('stdout', utils.getTime()+str);
     };
     if (status.eSender.ipc !== false) {
-        backlog.push(utils.getTime()+str);
         status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
