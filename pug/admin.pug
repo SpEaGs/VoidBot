@@ -15,7 +15,6 @@ script#g(g=guilds).
             delete interv
             let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
             for (i of gs) {
-                console.log(i);
                 let e = document.getElementById(`navbarMenuButtonShard${i}`)
                 e.parentNode.removeChild(e);
                 let ee = document.getElementById(`mainContentSubShard${i}`)
