@@ -9,7 +9,6 @@ router.get('/logout', (req, res) => {
     req.session = null;
     req.user = null;
     res.render('logout');
-    setTimeout(res.redirect('/'), 10 * 1000);
 });
 router.get('/discord', passport.authenticate('discord'));
 router.get('/discord/callback', passport.authenticate('discord', {
