@@ -144,6 +144,7 @@ function launchWebServer() {
 
     exApp.use(cParse());
     exApp.use(cSession({
+        name: 'session',
         maxAge: (30 * 24 * 60 * 60 * 1000),
         keys: [cookieKey]
     }))
