@@ -228,7 +228,7 @@ try {
         }
         setTimeout(() => {
             launchWebServer(guilds)
-            status.eSender.ipc.send('populated');
+            status.eSender.socket.emit('populated');
         }, 200);
 
         log('[MAIN] VoidBot Ready! Hello World!');
