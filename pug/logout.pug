@@ -8,11 +8,10 @@ html
         h2.pageTitle Logout
         div.mainContentContainer#mCCLogout You are now Logged out. You will be redirected to the login page in 10 seconds...
         script.
-            let i = 9;
+            let i = 10;
             redirInter = setInterval(() => {
-                if(i<0) i=0;
-                document.getElementById('mCCLogout').innerText = `You are now logged out. You will be redirected to the login page in ${i} seconds...`;
                 i--;
+                document.getElementById('mCCLogout').innerText = `You are now logged out. You will be redirected to the login page in ${i} seconds...`;
             }, 1 * 1000);
             setTimeout(() => {
                 document.location.href='/';
