@@ -162,15 +162,6 @@ function launchWebServer() {
         else res.redirect('/dash');
     });
 
-    /*
-    exApp.get('/renderer.js', (req, res) => {
-        res.sendFile(path.join(__dirname + '/renderer.js'));
-    });
-    exApp.get('/index.css', (req, res) => {
-        res.sendFile(path.join(__dirname + '/index.css'));
-    });
-    */
-
     server.listen(port, hostname, () => {
         log(`[WEBSERVER] Active and listening on port ${port}`);
     });

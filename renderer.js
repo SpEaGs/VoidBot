@@ -1,6 +1,7 @@
 let eleBool = false
 let remote;
 let ipcRenderer;
+let populated = false;
 
 try {
     remote = require('electron').remote;
@@ -331,6 +332,7 @@ ipcRenderer.on('add-client', (event, bot=null) => {
             if (i.id == bot.announcementsRole.id) { document.getElementById(`aroleDropdownButton${bot.guildID}`).textContent = i.cName; }
             if (i.id == bot.newMemberRole.id) { document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
+    populated = true;
 });
 
 ipcRenderer.on('updateVol', (event, bot=null) => {
