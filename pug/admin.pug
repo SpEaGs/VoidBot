@@ -9,12 +9,10 @@ include ./css/admin-css.pug
 .contentBody#windowContent
     include navbar.pug
 script#g(g=guilds).
-    document.onready = () => {
-        let gs = JSON.parse(document.getElementById('g').getAttribute('g'));
-        for (i of gs) {
-            let e = document.getElementById(`navbarMenuButtonShard${i}`)
-            e.parentNode.removeChild(e);
-            let ee = document.getElementById(`mainContentContainerSubShard${i}`)
-            ee.parentNode.removeChild(ee);                
-        }
+    let gs = JSON.parse(document.getElementById('g').getAttribute('g'));
+    for (i of gs) {
+        let e = document.getElementById(`navbarMenuButtonShard${i}`)
+        e.parentNode.removeChild(e);
+        let ee = document.getElementById(`mainContentContainerSubShard${i}`)
+        ee.parentNode.removeChild(ee);                
     }
