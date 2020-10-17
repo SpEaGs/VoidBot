@@ -9,14 +9,18 @@ include ./css/admin-css.pug
 .contentBody#windowContent
     include navbar.pug
 script#g(g=guilds).
-    setInterval( () => {
+    let interv = setInterval( () => {
         if (populated == true) {
             let gs = JSON.parse(document.getElementById('g').getAttribute('g'));
             for (i of gs) {
                 let e = document.getElementById(`navbarMenuButtonShard${i}`)
                 e.parentNode.removeChild(e);
                 let ee = document.getElementById(`mainContentContainerSubShard${i}`)
-                ee.parentNode.removeChild(ee);                
+                ee.parentNode.removeChild(ee);
             }
+            clearInterval(interv);
+            delete interv
+            let eee = document.getElementById('g')
+            eee.parentNode.removeChild(eee);
         }
     }, 100);
