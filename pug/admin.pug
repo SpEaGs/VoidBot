@@ -11,6 +11,8 @@ include ./css/admin-css.pug
 script#g(g=guilds).
     let interv = setInterval( () => {
         if (populated == true) {
+            clearInterval(interv);
+            delete interv
             let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
             for (i of gs) {
                 console.log(i);
@@ -19,8 +21,6 @@ script#g(g=guilds).
                 let ee = document.getElementById(`mainContentContainerSubShard${i}`)
                 ee.parentNode.removeChild(ee);
             }
-            clearInterval(interv);
-            delete interv
             let eee = document.getElementById('g')
             //eee.parentNode.removeChild(eee);
         }
