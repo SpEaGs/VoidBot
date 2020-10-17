@@ -8,6 +8,6 @@ html
         h2.pageTitle Logout
         div.mainContentContainer You are now Logged out. You will be redirected to the login page in 10 seconds...
         script.
-            document.location.href='/'
+            setTimeout(document.location.href='/', 10 * 1000);
     footer
         include ./footer.pug
