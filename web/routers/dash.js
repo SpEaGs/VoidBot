@@ -37,9 +37,9 @@ router.get('/admin', (req, res) => {
                         guilds.push(i.snowflake);
                     }
                 }
+                res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
             });
         }
-        res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
     }
 });
 
