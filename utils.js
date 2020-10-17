@@ -67,6 +67,7 @@ function zeroify(num) {
     if(num < 10) {
         return `0${num}`
     }
+    else return `${num}`
 }
 
 //handles the welcome message when a new member joins a server
