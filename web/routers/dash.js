@@ -30,7 +30,7 @@ router.get('/admin', (req, res) => {
     }
     else {
         let guilds = []
-        if (!isNull(req.user.admin)) {
+        if (!(req.user.admin === null || req.user.admin === undefined)) {
             db.query(`SELECT * FROM guilds`, (err, result) => {
                 for (let i of result) {
                     if(!req.user.admin.includes(i.snowflake)){
