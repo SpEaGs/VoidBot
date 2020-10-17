@@ -193,6 +193,9 @@ function launchWebServer() {
                 socket.emit('add-client', bot);
             }
         });
+        setTimeout(() => {
+            socket.once('populated');
+        }, 1000);
     });
 }
 
@@ -228,7 +231,6 @@ try {
         }
         setTimeout(() => {
             launchWebServer(guilds)
-            status.eSender.socket.emit('populated');
         }, 200);
 
         log('[MAIN] VoidBot Ready! Hello World!');
