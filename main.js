@@ -87,20 +87,20 @@ status.client.cmds = new Discord.Collection();
 function log(str) {
     logger.info(utils.getTime()+str);
     if (status.eSender.socket !== false) {
-        backlog.push(utils.getTime()+str);
         status.eSender.socket.emit('stdout', utils.getTime()+str);
     };
     if (status.eSender.ipc !== false) {
+        backlog.push(utils.getTime()+str);
         status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
 function logErr(str) {
     logger.error(utils.getTime()+str);
     if (status.eSender.socket !== false) {
-        backlog.push(utils.getTime()+str);
         status.eSender.socket.emit('stdout', utils.getTime()+str);
     };
     if (status.eSender.ipc !== false) {
+        backlog.push(utils.getTime()+str);
         status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
