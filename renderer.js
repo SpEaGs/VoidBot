@@ -338,6 +338,7 @@ ipcRenderer.on('updateBotUI', (event, bot) => {
     if(!bot) bot=event;
     document.getElementById(`voiceChannelDropdownButton${bot.guildID}`).textContent = bot.defaultVoiceChannel.name || 'Select one here';
     document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
+    document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerText = bot.defaultVolume;
     document.getElementById(`aroleDropdownButton${bot.guildID}`).textContent = bot.announcementsRole.name || 'Select one here';
     document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = bot.newMemberRole.name || 'Select one here';
     document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = bot.defaultTextChannel.name || 'Select one here';
