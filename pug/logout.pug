@@ -10,11 +10,10 @@ html
         script.
             let i = 9;
             redirInter = setInterval(() => {
+                i--;
                 document.getElementById('mCCLogout').innerText = `You are now logged out. You will be redirected to the login page in ${i} seconds...`;
             }, 1 * 1000);
             setTimeout(() => {
-                clearInterval(redirInter);
-                delete redirInter;
                 document.location.href='/';
             }, 10 * 1000);
     footer
