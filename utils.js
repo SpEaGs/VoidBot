@@ -57,12 +57,16 @@ module.exports = {
 //gets the current date/time and formats it
 function getTime() {
     let cTime = new Date(Date.now());
-    let timeStr = `[${cTime.getMonth()+1}/${cTime.getDate()} ${cTime.getHours()}:${cTime.getMinutes()}:${cTime.getSeconds()}] `;
+    let timeStr = `[${zeroify(cTime.getMonth()+1)}/${zeroify(cTime.getDate())} ${zeroify(cTime.getHours())}:${zeroify(cTime.getMinutes())}:${zeroify(cTime.getSeconds())}] `;
     return timeStr;
 }
-
 function getTimeRaw() {
     return new Date().getTime();
+}
+function zeroify(num) {
+    if(num < 10) {
+        return `0${num}`
+    }
 }
 
 //handles the welcome message when a new member joins a server
