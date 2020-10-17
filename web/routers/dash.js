@@ -30,7 +30,7 @@ router.get('/admin', (req, res) => {
     }
     else {
         let guilds = []
-        if (!(req.user.admin === null || req.user.admin === undefined)) {
+        if (!(req.user.guilds.admin === null || req.user.guilds.admin === undefined)) {
             db.query(`SELECT * FROM guilds`, (err, result) => {
                 for (let i of result) {
                     if(!req.user.admin.includes(i.snowflake)){
@@ -39,6 +39,10 @@ router.get('/admin', (req, res) => {
                 }
                 res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
             });
+        }
+        else {
+            res.render('noAdmin');
+            setTimeout(res.redirect('/dash'), 10 * 1000);
         }
     }
 });
