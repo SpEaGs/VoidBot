@@ -10,9 +10,9 @@ html
         script.
             let i = 9;
             redirInter = setInterval(() => {
-                i--;
                 if(i<0) i=0;
                 document.getElementById('mCCLogout').innerText = `You are now logged out. You will be redirected to the login page in ${i} seconds...`;
+                i--;
             }, 1 * 1000);
             setTimeout(() => {
                 document.location.href='/';
