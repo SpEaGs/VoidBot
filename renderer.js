@@ -272,7 +272,7 @@ ipcRenderer.on('add-client', (event, bot=null) => {
         bot.defaultVolume = parseInt(val);
         switch (eleBool) {
             case true: { ipcRenderer.send('updateBot', bot); break;}
-            case false: { ipcRenderer.emit('update-bot', bot); break;}
+            case false: { ipcRenderer.emit('updateBot', bot); break;}
         }
     }
     
@@ -283,7 +283,7 @@ ipcRenderer.on('add-client', (event, bot=null) => {
         bot.welcomeMsg = checked;
         switch (eleBool) {
             case true: { ipcRenderer.send('updateBot', bot); break;}
-            case false: { ipcRenderer.emit('update-bot', bot); break;}
+            case false: { ipcRenderer.emit('updateBot', bot); break;}
         }
     }
 
@@ -333,6 +333,18 @@ ipcRenderer.on('add-client', (event, bot=null) => {
             if (i.id == bot.newMemberRole.id) { document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = i.cName; }
     }
 });
+
+ipcRenderer.on('updateBotUI', (event, bot) => {
+    if(!bot) bot=event;
+    document.getElementById(`dropdownContentVC${bot.guildID}`).textContent = bot.defaultVoiceChannel.name || 'Select one here';
+    document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
+    document.getElementById(`dropdownContentAR${bot.guildID}`).textContent = bot.announcementsRole.name || 'Select one here';
+    document.getElementById(`dropdownContentRO${bot.guildID}`).textContent = bot.newMemberRole.name || 'Select one here';
+    document.getElementById(`dropdownContentTX${bot.guildID}`).textContent = bot.defaultTextChannel.name || 'Select one here';
+    document.getElementById(`toggleWE${bot.guildID}`).checked = bot.welcomeMsg;
+    document.getElementById(`dropdownContentWT${bot.guildID}`).textContent = bot.welcomeTextChannel.name || 'Select one here';
+    document.getElementById(`dropdownContentRT${bot.guildID}`).textContent = bot.ruleTextChannel.name || 'Select one here';
+})
 
 ipcRenderer.on('populated', () => {
     populated = true;    

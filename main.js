@@ -473,6 +473,12 @@ function updateBot(e, bot) {
             utils.saveConfig(i);
         }
     }
+    if (status.eSender.socket !== false) {
+        status.eSender.socket.emit('updateBotUI', bot);
+    };
+    if (status.eSender.ipc !== false) {
+        status.eSender.ipc.send('updateBotUI', bot);
+    };
 }
 ipcMain.on('updateBot', updateBot);
 
