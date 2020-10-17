@@ -336,14 +336,14 @@ ipcRenderer.on('add-client', (event, bot=null) => {
 
 ipcRenderer.on('updateBotUI', (event, bot) => {
     if(!bot) bot=event;
-    document.getElementById(`dropdownContentVC${bot.guildID}`).textContent = bot.defaultVoiceChannel.name || 'Select one here';
+    document.getElementById(`voiceChannelDropdownButton${bot.guildID}`).textContent = bot.defaultVoiceChannel.name || 'Select one here';
     document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
-    document.getElementById(`dropdownContentAR${bot.guildID}`).textContent = bot.announcementsRole.name || 'Select one here';
-    document.getElementById(`dropdownContentRO${bot.guildID}`).textContent = bot.newMemberRole.name || 'Select one here';
-    document.getElementById(`dropdownContentTX${bot.guildID}`).textContent = bot.defaultTextChannel.name || 'Select one here';
+    document.getElementById(`aroleDropdownButton${bot.guildID}`).textContent = bot.announcementsRole.name || 'Select one here';
+    document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = bot.newMemberRole.name || 'Select one here';
+    document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = bot.defaultTextChannel.name || 'Select one here';
     document.getElementById(`toggleWE${bot.guildID}`).checked = bot.welcomeMsg;
-    document.getElementById(`dropdownContentWT${bot.guildID}`).textContent = bot.welcomeTextChannel.name || 'Select one here';
-    document.getElementById(`dropdownContentRT${bot.guildID}`).textContent = bot.ruleTextChannel.name || 'Select one here';
+    document.getElementById(`wtextChannelDropdownButton${bot.guildID}`).textContent = bot.welcomeTextChannel.name || 'Select one here';
+    document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = bot.ruleTextChannel.name || 'Select one here';
 })
 
 ipcRenderer.on('populated', () => {
