@@ -12,8 +12,8 @@ script#g(g=guilds).
     let interv = setInterval( () => {
         if (populated == true) {
             let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
-            console.log(gs);
             for (i of gs) {
+                console.log(i);
                 let e = document.getElementById(`navbarMenuButtonShard${i}`)
                 e.parentNode.removeChild(e);
                 let ee = document.getElementById(`mainContentContainerSubShard${i}`)
