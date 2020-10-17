@@ -194,7 +194,7 @@ function launchWebServer() {
             }
         });
         setTimeout(() => {
-            socket.once('populated');
+            socket.emit('populated');
         }, 1000);
     });
 }
