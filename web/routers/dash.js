@@ -29,10 +29,15 @@ router.get('/admin', (req, res) => {
         setTimeout(res.redirect('/dash'), 10 * 1000);
     }
     else {
+        let guilds = []
         db.query(`SELECT * FROM guilds`, (err, result) => {
-            log(JSON.stringify(result));
+            for (let i of result) {
+                if(!req.user.admin.includes(i.snowflake)){
+                    guilds.push(i.snowflake);
+                }
+            }
         })
-        res.render('admin', {user: req.user, appVersion: appVersion});
+        res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
     }
 });
 

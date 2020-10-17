@@ -6,5 +6,13 @@ include ./css/admin-css.pug
     strong#titleText VoidBot v 
         script#version(ver=appVersion).
             document.write(document.getElementById('version').getAttribute('ver'));
+        script#g(g=guilds).
+            let gs = JSON.parse(document.getElementById('g').getAttribute('g'));
+            for (i of gs) {
+                let e = document.getElementById(`navbarMenuButtonShard${i}`)
+                e.parentNode.removeChild(e);
+                let ee = document.getElementById(`mainContentContainerSubShard${i}`)
+                ee.parentNode.removeChild(ee);
+            }
 .contentBody#windowContent
     include navbar.pug
