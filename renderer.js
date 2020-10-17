@@ -334,9 +334,16 @@ ipcRenderer.on('add-client', (event, bot=null) => {
     }
 });
 
-ipcRenderer.on('populated', (event) => {
+ipcRenderer.on('populated', () => {
     populated = true;    
 });
+
+ipcRenderer.on('init-backlog', (backlog) => {
+    for (let i of backlog) {
+        appendText('mainContentItemSTDOUT', i);
+        document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
+    }
+})
 
 ipcRenderer.on('updateVol', (event, bot=null) => {
     if(!eleBool) bot = event;

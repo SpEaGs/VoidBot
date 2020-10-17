@@ -45,6 +45,7 @@ const Bot = require('./bot.js');
 let mainWindow;
 
 //log formatting and pipes to log files
+var backlog = []
 var logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
@@ -86,18 +87,22 @@ status.client.cmds = new Discord.Collection();
 function log(str) {
     logger.info(utils.getTime()+str);
     if (status.eSender.socket !== false) {
+        backlog.push(utils.getTime()+str);
         status.eSender.socket.emit('stdout', utils.getTime()+str);
     };
     if (status.eSender.ipc !== false) {
+        backlog.push(utils.getTime()+str);
         status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
 function logErr(str) {
     logger.error(utils.getTime()+str);
     if (status.eSender.socket !== false) {
+        backlog.push(utils.getTime()+str);
         status.eSender.socket.emit('stdout', utils.getTime()+str);
     };
     if (status.eSender.ipc !== false) {
+        backlog.push(utils.getTime()+str);
         status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
@@ -196,6 +201,7 @@ function launchWebServer() {
         });
         setTimeout(() => {
             socket.emit('populated');
+            socket.emit('init-backlog', backlog);
         }, 2000);
     });
 }
