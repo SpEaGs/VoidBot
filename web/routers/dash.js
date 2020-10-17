@@ -30,13 +30,15 @@ router.get('/admin', (req, res) => {
     }
     else {
         let guilds = []
-        db.query(`SELECT * FROM guilds`, (err, result) => {
-            for (let i of result) {
-                if(!req.user.admin.includes(i.snowflake)){
-                    guilds.push(i.snowflake);
+        if (!isNull(req.user.admin)) {
+            db.query(`SELECT * FROM guilds`, (err, result) => {
+                for (let i of result) {
+                    if(!req.user.admin.includes(i.snowflake)){
+                        guilds.push(i.snowflake);
+                    }
                 }
-            }
-        })
+            });
+        }
         res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
     }
 });
