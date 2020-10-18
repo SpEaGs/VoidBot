@@ -162,6 +162,29 @@ style.
         background-color: var(--main-bg-color);
     }
 
+    .navlinkButton {
+        position: fixed;
+        top: 0.25em;
+        width: 100%;
+        max-width: 100px;
+        height: 1.5em;
+        margin-left: 1em;
+        color: white;
+        text-decoration: none;
+        background: var(--accent-color);
+        text-align: center;
+    }
+    .navlinkButton:hover {
+        background: var(--accent-color-hover)
+    }
+    .navlinkText {
+        position: relative;
+        top: 3px;
+    }
+    #navlinkLogout {
+        left: calc(1em + 222px);
+    }
+
     .mainContentContainer {
         height: calc(100% - 2em);
         width: 75%;

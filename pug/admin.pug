@@ -6,6 +6,10 @@ include ./css/admin-css.pug
     strong#titleText VoidBot v 
         script#version(ver=appVersion).
             document.write(document.getElementById('version').getAttribute('ver'));
+    a.navlinkButton#navlinkDash(href='/dash')
+        .navlinkText Dashboard
+    a.navlinkButton#navlinkLogout(href='/logout')
+        .navlinkText Logout
 .contentBody#windowContent
     include navbar.pug
 script#g(g=guilds).
