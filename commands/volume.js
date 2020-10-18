@@ -3,7 +3,7 @@
 
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
-const eSender = require('../main.js').eSender;
+const updateVol = require('../main.js').updateVol;
 
 module.exports = {
     name: 'volume',
@@ -57,6 +57,6 @@ function returnVolume(volume='', params, regBool) {
     else { returnMsg = `Set the current volume to ${params.bot.defaultVolume}%.` };
     if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(params.bot.defaultVolume / 100));
     params.msg.channel.send(returnMsg);
-    eSender.send('updateVol', params.bot);
+    updateVol(params.bot);
     utils.saveConfig(params.bot);
 }

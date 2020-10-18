@@ -1,0 +1,406 @@
+style.
+    @import url("https://fonts.googleapis.com/css?family=Cousine");
+
+    @font-face {
+        font-family: "Whitney A";
+        font-style: normal;
+        font-weight: 400;
+        src:url("data:application/x-font-woff;base64,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")
+    }
+
+    @font-face {
+        font-family: "Cousine", monospace;
+        font-style: normal;
+        font-weight: 400;
+    }
+
+    :root {
+        --titlebar-color: rgb(20, 20, 25);
+        --toolbar-color: rgb(30, 30, 40);
+        --toolbar-hover-color: rgb(40, 40, 48);
+        --toolbar-selected-color: rgb(50, 50, 60);
+        --navbar-hover-color: rgb(58, 58, 65);
+        --main-bg-color: rgb(70, 70, 80);
+        --accent-color: rgb(35, 62, 216);
+        --accent-color-hover: rgb(70, 93, 225);
+        --track-color: rgb(173, 173, 173);
+        --track-color-hover: rgb(211, 211, 211);
+    }
+
+    ::-webkit-scrollbar {
+        width: 8px;
+        height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+        background: var(--track-color);
+    }
+    ::-webkit-scrollbar-track:hover {
+        background: var(--track-color-hover);
+    }
+    ::-webkit-scrollbar-thumb {
+        background: var(--accent-color);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-color-hover);
+    }
+
+    html, body {
+        width: 100%;
+        height: 100%;
+        margin: 0;
+        background-color: var(--main-bg-color);
+        color: white;
+        font-family: "Whitney A";
+    }
+
+    p {
+        margin:0;
+        padding:0;
+    }
+
+    .titleButtonContainer {
+        height: 2em;
+        width: 6em;
+        position: fixed;
+        top: 0px;
+        left: calc(100% - 6em);
+        display: flex;
+        flex-flow: row-reverse nowrap;
+        justify-content: space-around;
+        align-items: center;
+    }
+    .titleButton {
+        height: calc(2em - 10px);
+        width: calc(2em - 10px);
+        -webkit-app-region: no-drag;
+        transition: ease 0.3s all;
+        cursor: pointer;
+    }
+
+    .contentBody {
+        display: flex;
+        height: calc(100% - 2em);
+        width: 100%;
+        position:fixed;
+        top: 2em;
+    }
+    .flex {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-content: flex-start;
+    }
+    .hidden {
+        display: none;
+    }
+
+    .navbar {
+        height: 2em;
+        width: 25%;
+        min-width: 180px;
+        position: fixed;
+        top: 2em;
+        left: 0px;
+        background-color: var(--toolbar-color);
+    }
+    .navbarContainer {
+        display: flex;
+        flex-flow: row nowrap;
+        justify-content: space-between;
+        align-items: center;
+        width: 25%;
+        min-width: 180px;
+        height: 2em;
+    }
+    .navbarButton {
+        height: 2em;
+        width: 50%;
+        cursor:pointer;
+        transition: ease 0.3s all;
+        background-color: var(--toolbar-color);
+    }
+    .navbarButton:hover {
+        background-color: var(--toolbar-hover-color);
+    }
+    .navbarButtonText {
+        position: relative;
+        top: 0.25em;
+        text-align: center;
+        cursor:inherit;
+    }
+    .navbarButtonSelected {
+        background-color: var(--toolbar-selected-color);
+    }
+
+    .navbarMenuContainer {
+        height: calc(100% - 4em);
+        width: 25%;
+        min-width: 180px;
+        position: fixed;
+        top: 4em;
+        left: 0px;
+        flex-flow: column nowrap;
+        background-color: var(--toolbar-selected-color);
+        overflow-y: auto;
+        overflow-x:hidden;
+    }
+    .navbarMenuButton {
+        height: 1.5em;
+        width: 100%;
+        cursor: pointer;
+    }
+    .navbarMenuButton:hover {
+        background-color: var(--navbar-hover-color);
+    }
+    .navbarMenuButtonText {
+        position: relative;
+        top: 0.125em;
+        left: 0.5em;
+        text-align: left;
+        cursor: inherit;
+    }
+    .navbarMenuButtonSelected {
+        background-color: var(--main-bg-color);
+    }
+
+    .navlinkButton {
+        position: fixed;
+        top: 0.25em;
+        width: 100%;
+        max-width: 100px;
+        height: 1.5em;
+        margin-left: 1em;
+        color: white;
+        text-decoration: none;
+        background: var(--accent-color);
+        text-align: center;
+    }
+    .navlinkButton:hover {
+        background: var(--accent-color-hover)
+    }
+    .navlinkText {
+        position: relative;
+        top: 3px;
+    }
+    #navlinkLogout {
+        left: calc(1em + 222px);
+    }
+
+    .mainContentContainer {
+        height: calc(100% - 2em);
+        width: 75%;
+        position: fixed;
+        left: 25%;
+        top: 2em;
+        overflow-y: auto;
+        cursor: default;
+    }
+
+    .mainContentItem {
+        height: 3.5em;
+        width: 100%;
+        top: 0px;
+        margin: 0px;
+        background-color:inherit;
+        transition: ease 0.3s all;
+        cursor: pointer;
+    }
+    .mainContentItem:hover {
+        background-color: var(--navbar-hover-color);
+    }
+    .navbarSubMenuContentContainerFlex{
+        height: calc(100% - 2em);
+        width: 75%;
+        position: fixed;
+        left: 25%;
+        top: 2em;
+        overflow-y: auto;
+        cursor: default;
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-around;
+        align-content: flex-start;
+    }
+    .mainContentSettingItem {
+        background-color: var(--toolbar-selected-color);
+        position: relative;
+        width: 300px;
+        height: 225px;
+        margin: 1em;
+    }
+    .mainContentSettingItemText {
+        position: relative;
+        padding-top: 1em;
+        padding-left: 1em;
+        padding-right: 1em;
+        font-size: 2em;
+        text-wrap: normal;
+        text-align: center;
+    }
+    .maincontentSettingItemSubtext {
+        font-size: 1em;
+        width: calc(100% - 50px);
+        text-wrap: normal;
+        text-align: left;
+    }
+    .mainContentItemText {
+        position:relative;
+        left: 3.5em;
+        width: calc(100% - 3.5em);
+        top: 0.6em;
+        -webkit-user-select:none;
+        cursor:pointer;
+    }
+    .dropdownButton {
+        padding: 10px;
+        width: 100%;
+        height: 2em;
+        color: white;
+        font-family: "Whitney A";
+        font-size: 1.5em;
+        text-align: center;
+        background-color: var(--toolbar-color);
+        transition: ease 0.3s all;
+        border: none;
+        cursor: pointer;
+    }
+    .dropdownButton:hover {
+        background-color: var(--toolbar-hover-color);
+    }
+    .dropdown {
+        width: calc(100% - 4em);
+        position: relative;
+        padding: 2em;
+        display: inline-block;
+    }
+    .dropdownContent {
+        position: absolute;
+        max-height: 15em;
+        overflow-y: auto;
+        background-color: var(--navbar-hover-color);
+        min-width: 50%;
+        z-index: 1;
+    }
+    .dropdownContent a {
+        display: block;
+        color: white;
+        text-decoration: none;
+        padding: 0.25em;
+        font-size:1em;
+    }
+    .dropdownContent a:hover {
+        background-color: var(--toolbar-selected-color)
+    }
+
+    .rangeSliderContainer {
+        padding: 1.5em;
+        padding-top: 3.5em;
+        width: 100%;
+        height: 1em;
+    }
+    .slider {
+        -webkit-appearance: none;
+        appearance: none;
+        width: calc(100% - 4em);
+        height: 25px;
+        background: var(--track-color);
+        outline: none;
+        opacity: 0.7;
+        -webkit-transition: .2s;
+        transition: opacity .2s;
+    }
+    .slider:hover {
+        opacity: 1;
+    }
+    .slider::-webkit-slider-thumb {
+        -webkit-appearance: none;
+        appearance: none;
+        width: 25px; /* Set a specific slider handle width */
+        height: 25px; /* Slider handle height */
+        background: var(--accent-color); /* Green background */
+        cursor: pointer; /* Cursor on hover */
+    }
+    .slider::-moz-range-thumb {
+        width: 25px; /* Set a specific slider handle width */
+        height: 25px; /* Slider handle height */
+        background: var(--accent-color); /* Green background */
+        cursor: pointer; /* Cursor on hover */
+    }
+
+    .toggleSwitchContainer {
+        position: relative;
+        display: inline-block;
+        width: 236px;
+        height: 49px;
+        left: calc(50% - (236px/2));
+        top: 33px;
+    }
+    .toggleSwitchContainer input {
+        opacity: 0;
+        width: 0;
+        height: 0;
+    }
+    .toggleSlider {
+        position: absolute;
+        cursor: pointer;
+        top: 0;
+        left: 0;
+        bottom: 0;
+        right: 0;
+        background-color: var(--toolbar-color);
+        -webkit-transition: 0.3s;
+        transition: 0.3s;
+        border-radius: 24px;
+    }
+    .toggleSlider:before {
+        position: absolute;
+        content: "";
+        height: 41px;
+        width: 114px;
+        left: 4px;
+        bottom: 4px;
+        background-color: white;
+        -webkit-transition: 0.3s;
+        transition: 0.3s;
+        border-radius: 24px;
+    }
+
+    input:checked + .toggleSlider {
+        background-color: var(--accent-color);
+    }
+    input:focus + .toggleSlider {
+        box-shadow: 0, 0, 1px, var(--accent-color);
+    }
+    input:checked + .toggleSlider:before {
+        -webkit-transform: translateX(114px);
+        -ms-transform: translateX(114px);
+        transform: translateX(114px);
+    }
+
+    #titleBar {
+        width: 100%;
+        height: 2em;
+        margin: 0;
+        position: fixed;
+        top: 0px;
+        background-color: var(--titlebar-color);
+        -webkit-user-select: none;
+        -webkit-app-region: drag;
+    }
+    #titleText {
+        position: relative;
+        margin-left: 1em;
+        top: 0.5em;
+    }
+
+    #mainContentItemSTDOUT {
+        font-family: "Cousine";
+        height: auto;
+        width: auto;
+        margin-top: 0.25em;
+        margin-left: 0.5em;
+    }
+    #mainContentItemSTDOUT:hover {
+        background: var(--main-bg-color);
+        cursor: default;
+    }

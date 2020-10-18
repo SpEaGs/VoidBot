@@ -1,21 +1,48 @@
+let eleBool = false
+let remote;
+let ipcRenderer;
+let populated = false;
 
-const remote = require('electron').remote;
-const ipcRenderer = require('electron').ipcRenderer;
+try {
+    remote = require('electron').remote;
+    ipcRenderer = require('electron').ipcRenderer;
+    eleBool = true;
+}
+catch {
+    ipcRenderer = io(`http://${window.location.hostname}:7777`);
+    ipcRenderer.once('connect', () => {
+        ipcRenderer.emit('initConnect');
+    });
+    ipcRenderer.on('connect_error', (err) => {
+        console.log('Connection Error: (Will attempt to reconnect)');
+        console.log(err);
+        document.getElementById('errPopup').classList.remove('hidden');
+    });
+    ipcRenderer.on('reconnect', (n) => {
+        console.log(`Reconnected after ${n} attempts.`);
+        document.getElementById('errPopup').classList.add('hidden');
+    });
+}
 
 //--------------------------------------------------------------------------------------------------------------
 //This file handles the rendering of the HTML.
-//Note that when changing the pugs you must compile index.pug to index.html as the pugs are not rendered
-//I recommend using a vscode plugin called "Pug to HTML" (hotkey is "ctrl + k, p" then copy/paste the preview)
+//Note that when changing the pugs you must compile index.pug to index.html as the pugs are not rendered for the
+//client. I recommend using a vscode plugin called "Pug to HTML" 
+//(hotkey is "ctrl + k, p" then copy/paste the preview)
 //--------------------------------------------------------------------------------------------------------------
 
 //window controls (minimize, maximize, and close)
 function min() {
-    remote.getCurrentWindow().minimize();
+    if(remote) {
+        remote.getCurrentWindow().minimize();
+    }
 }
 function max() {
-    switch (remote.getCurrentWindow().isMaximized()) {
-        case true: { remote.getCurrentWindow().unmaximize(); break; }
-        case false: { remote.getCurrentWindow().maximize(); break; }
+    if(remote) {
+        switch (remote.getCurrentWindow().isMaximized()) {
+            case true: { remote.getCurrentWindow().unmaximize(); break; }
+            case false: { remote.getCurrentWindow().maximize(); break; }
+        }
     }
 }
 function cl() {
@@ -132,24 +159,36 @@ function dropdownSelectItem(elID, iName, iID, bot, iType, channel) {
     switch (iType) {
         case 'voiceChannel': {
             bot.defaultVoiceChannel = { id: iID, name: iName };
-            ipcRenderer.send('updateBot', bot);
+            switch (eleBool) {
+                case true: { ipcRenderer.send('updateBot', bot); break;}
+                case false: { ipcRenderer.emit('updateBot', bot); break;}
+            }
             break;
         }
         case 'textChannel': {
             switch (channel) {
                 case 'default': {
                     bot.defaultTextChannel = { id: iID, name: iName };
-                    ipcRenderer.send('updateBot', bot);
+                    switch (eleBool) {
+                        case true: { ipcRenderer.send('updateBot', bot); break;}
+                        case false: { ipcRenderer.emit('updateBot', bot); break;}
+                    }
                     break;
                 }
                 case 'rules': {
                     bot.ruleTextChannel = { id: iID, name: iName };
-                    ipcRenderer.send('updateBot', bot);
+                    switch (eleBool) {
+                        case true: { ipcRenderer.send('updateBot', bot); break;}
+                        case false: { ipcRenderer.emit('updateBot', bot); break;}
+                    }
                     break;
                 }
                 case 'welcome': {
                     bot.welcomeTextChannel = { id: iID, name: iName };
-                    ipcRenderer.send('updateBot', bot);
+                    switch (eleBool) {
+                        case true: { ipcRenderer.send('updateBot', bot); break;}
+                        case false: { ipcRenderer.emit('updateBot', bot); break;}
+                    }
                     break;
                 }
             }
@@ -159,12 +198,18 @@ function dropdownSelectItem(elID, iName, iID, bot, iType, channel) {
             switch (channel) {
                 case 'newMember': {
                     bot.newMemberRole = { id: iID, name: iName };
-                    ipcRenderer.send('updateBot', bot);
+                    switch (eleBool) {
+                        case true: { ipcRenderer.send('updateBot', bot); break;}
+                        case false: { ipcRenderer.emit('updateBot', bot); break;}
+                    }
                     break;
                 }
                 case 'announcement': {
                     bot.announcementsRole = { id: iID, name: iName };
-                    ipcRenderer.send('updateBot', bot);
+                    switch (eleBool) {
+                        case true: { ipcRenderer.send('updateBot', bot); break;}
+                        case false: { ipcRenderer.emit('updateBot', bot); break;}
+                    }
                     break;
                 }
             }
@@ -181,17 +226,22 @@ function executeCmd(str, args = []) {
     else {
         arg = [str, args];
     }
-    ipcRenderer.send('command', arg);
+    switch (eleBool) {
+        case true: { ipcRenderer.send('command', arg); break;}
+        case false: { ipcRenderer.emit('command', arg); break;}
+    }
 }
 
 //listens for main's stdout messages and appends the contents to the console tab
-ipcRenderer.on('stdout', (event, arg) => {
+ipcRenderer.on('stdout', (event, arg=null) => {
+    if(!eleBool) arg = event;
     appendText('mainContentItemSTDOUT', arg);
     document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
 });
 
 //adds a bot client's shard menu to the UI
-ipcRenderer.on('add-client', (event, bot) => {
+ipcRenderer.on('add-client', (event, bot=null) => {
+    if(!eleBool) bot = event;
     //create the button on the sharding tab menu
     shardBtn = createElement('div', ['navbarMenuButton'], `navbarMenuButtonShard${bot.guildID}`);
         shardBtn.onclick = () => { selectSubTab(`Shard${bot.guildID}`); }
@@ -220,7 +270,10 @@ ipcRenderer.on('add-client', (event, bot) => {
         document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerHTML = val;
         if (!bot.dispatcher == false) { bot.dispatcher.setVolume(parseFloat(val)/100); }
         bot.defaultVolume = parseInt(val);
-        ipcRenderer.send('updateBot', bot);
+        switch (eleBool) {
+            case true: { ipcRenderer.send('updateBot', bot); break;}
+            case false: { ipcRenderer.emit('updateBot', bot); break;}
+        }
     }
     
     //input handling for the toggle
@@ -228,7 +281,10 @@ ipcRenderer.on('add-client', (event, bot) => {
     document.getElementById(`toggleWE${bot.guildID}`).oninput = () => {
         let checked = document.getElementById(`toggleWE${bot.guildID}`).checked;
         bot.welcomeMsg = checked;
-        ipcRenderer.send('updateBot', bot);
+        switch (eleBool) {
+            case true: { ipcRenderer.send('updateBot', bot); break;}
+            case false: { ipcRenderer.emit('updateBot', bot); break;}
+        }
     }
 
     //build dropdown list for voice channel setting
@@ -278,7 +334,32 @@ ipcRenderer.on('add-client', (event, bot) => {
     }
 });
 
-ipcRenderer.on('updateVol', (event, bot) => {
+ipcRenderer.on('updateBotUI', (event, bot) => {
+    if(!bot) bot=event;
+    document.getElementById(`voiceChannelDropdownButton${bot.guildID}`).textContent = bot.defaultVoiceChannel.name || 'Select one here';
+    document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
+    document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerText = bot.defaultVolume;
+    document.getElementById(`aroleDropdownButton${bot.guildID}`).textContent = bot.announcementsRole.name || 'Select one here';
+    document.getElementById(`roleDropdownButton${bot.guildID}`).textContent = bot.newMemberRole.name || 'Select one here';
+    document.getElementById(`textChannelDropdownButton${bot.guildID}`).textContent = bot.defaultTextChannel.name || 'Select one here';
+    document.getElementById(`toggleWE${bot.guildID}`).checked = bot.welcomeMsg;
+    document.getElementById(`wtextChannelDropdownButton${bot.guildID}`).textContent = bot.welcomeTextChannel.name || 'Select one here';
+    document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = bot.ruleTextChannel.name || 'Select one here';
+})
+
+ipcRenderer.on('populated', () => {
+    populated = true;    
+});
+
+ipcRenderer.on('init-backlog', (backlog) => {
+    for (let i of backlog) {
+        appendText('mainContentItemSTDOUT', i);
+        document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
+    }
+})
+
+ipcRenderer.on('updateVol', (event, bot=null) => {
+    if(!eleBool) bot = event;
     document.getElementById(`sliderDV${bot.guildID}`).value = bot.defaultVolume;
     document.getElementById(`mainContentSettingItemSubTextDV${bot.guildID}`).innerHTML = bot.defaultVolume;
 });
@@ -297,4 +378,4 @@ window.onclick = (e) => {
 }
 
 //init eSender so that main can send messages here at it's own discretion. (basically just for sending stdout to the UI)
-ipcRenderer.send('init-eSender', 'main');
+if(eleBool) ipcRenderer.send('init-eSender', 'main');

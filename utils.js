@@ -37,6 +37,7 @@ module.exports = {
     config: config,
     saveConfig: saveConfig,
     getTime: getTime,
+    getTimeRaw: getTimeRaw,
     welcome: welcome,
     sendoff: sendoff,
     wrongChannel: wrongChannel,
@@ -56,8 +57,17 @@ module.exports = {
 //gets the current date/time and formats it
 function getTime() {
     let cTime = new Date(Date.now());
-    let timeStr = `[${cTime.getMonth()+1}/${cTime.getDate()} ${cTime.getHours()}:${cTime.getMinutes()}:${cTime.getSeconds()}] `;
+    let timeStr = `[${zeroify(cTime.getMonth()+1)}/${zeroify(cTime.getDate())} ${zeroify(cTime.getHours())}:${zeroify(cTime.getMinutes())}:${zeroify(cTime.getSeconds())}] `;
     return timeStr;
+}
+function getTimeRaw() {
+    return new Date().getTime();
+}
+function zeroify(num) {
+    if(num < 10) {
+        return `0${num}`
+    }
+    else return `${num}`
 }
 
 //handles the welcome message when a new member joins a server
@@ -126,31 +136,31 @@ function findChanFromGuild(channel, guild, chanType = 'text') {
 }
 
 //populates an internal list of admin for a given server
-function populateAdmin(status) {
-    let guild = status.guild;
-    global.log(`[${status.guildName}] Populating list of admin roles...`);
+function populateAdmin(bot) {
+    let guild = bot.guild;
+    log(`[${bot.guildName}] Populating list of admin roles...`);
     let roles = guild.roles.cache.array();
     for (let r of roles) {
         if (r.permissions.has("ADMINISTRATOR")) {
             for (let u of r.members.array()) {
-                status.visAdminRoles.set(u, u.id);
+                bot.visAdminRoles.set(u.id, u);
             }
         }
     }
-    global.log(`[${status.guildName}] Admin role population done!`);
+    log(`[${bot.guildName}] Admin role population done!`);
 }
 
 //populates an internal list of commands
 function populateCmds(status) {
-    global.log('[MAIN] Populating commands list...');
+    log('[MAIN] Populating commands list...');
     let cmdFiles = fs.readdirSync('./commands/');
     status.client.cmds.clear();
     for (let file of cmdFiles) {
         let command = require(`./commands/${file}`);
         status.client.cmds.set(command.name, command);
-        global.log(`[MAIN] Found command: ${command.name}`);
+        log(`[MAIN] Found command: ${command.name}`);
     }
-    global.log('[MAIN] Command population done!');
+    log('[MAIN] Command population done!');
 }
 
 //checks internal list of commands for a given alias

@@ -1,0 +1,30 @@
+#errPopup.errPopup.hidden Error connecting to VoidBot.\nAttempting to reconnect...
+script(src='node_modules/socket.io-client/dist/socket.io.dev.js')
+script(type='text/javascript', src='renderer.js')
+include ./css/admin-css.pug
+#titleBar
+    strong#titleText VoidBot v 
+        script#version(ver=appVersion).
+            document.write(document.getElementById('version').getAttribute('ver'));
+    a.navlinkButton#navlinkDash(href='/dash')
+        .navlinkText Dashboard
+    a.navlinkButton#navlinkLogout(href='/auth/logout')
+        .navlinkText Logout
+.contentBody#windowContent
+    include navbar.pug
+script#g(g=guilds).
+    let interv = setInterval( () => {
+        if (populated == true) {
+            clearInterval(interv);
+            delete interv
+            let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
+            for (i of gs) {
+                let e = document.getElementById(`navbarMenuButtonShard${i}`)
+                e.parentNode.removeChild(e);
+                let ee = document.getElementById(`mainContentSubShard${i}`)
+                ee.parentNode.removeChild(ee);
+            }
+            let eee = document.getElementById('g')
+            eee.parentNode.removeChild(eee);
+        }
+    }, 200);
