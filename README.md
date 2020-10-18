@@ -16,7 +16,7 @@ Before you try to run this you'll have to provide a text file in the main direct
   "CLIENT_SECRET": "your discord app client secret here"
 }
 ```
-You'll have to set up a mysql server with a database named `voidbot_db` and a user named `voidbot`. There are a few places where you can learn how to do this, so google it.
+You'll also have to set up a mariaDB mysql server with a database named `voidbot_db` and a user named `voidbot`. There are a few places where you can learn how to do this, so google it.
 
 For obvious reasons, I wont be providing my tokens. Once you have the file in there and your mariaDB server set up, you can run with the following:
 
