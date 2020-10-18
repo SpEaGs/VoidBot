@@ -57,3 +57,5 @@ npm uninstall electron
 npm install -D electron --arch=armv7l
 ```
 **Also note that when building for Raspbian you'll have to run the build process itself on the Raspberry Pi since* `electron-builder`*'s remote linux build is no longer a thing, and cannot (to my knowledge) be worked around. The build takes ~1-3 mins on the Pi 4.*
+
+When adding the bot to a server, don't worry about permissions as whatever roles it gets in a server will determine what it can see and do, but if you want it to work as intended then the only permission it needs is admin.
