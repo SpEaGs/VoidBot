@@ -8,7 +8,7 @@ include ./css/admin-css.pug
             document.write(document.getElementById('version').getAttribute('ver'));
     a.navlinkButton#navlinkDash(href='/dash')
         .navlinkText Dashboard
-    a.navlinkButton#navlinkLogout(href='/logout')
+    a.navlinkButton#navlinkLogout(href='/auth/logout')
         .navlinkText Logout
 .contentBody#windowContent
     include navbar.pug
