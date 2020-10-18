@@ -94,12 +94,7 @@ function wrongChannel(mem) {
 //checks if a given user has admin permissions for a given server
 function adminCheck(bot, user) {
     let toReturn = false;
-    for (let u of bot.visAdminRoles.array()) {
-        if (u === user.id) {
-            toReturn = true;
-            break;
-        }
-    }
+    if (bot.visAdminRoles.get(user.id)) toReturn = true;
     return toReturn;
 }
 
@@ -127,7 +122,7 @@ function findRoleFromGuild(rolename, guild) {
 //finds a member in a given server from a given username
 function findMemberFromGuild(username, guild) {
     for (let mem of guild.members.cache.array()) {
-        if (mem.user.username.toLowerCase().includes(username.toLowerCase())) return mem;
+        if (mem.displayName.toLowerCase().includes(username.toLowerCase())) return mem;
     }
     return false;
 }
