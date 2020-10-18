@@ -1,0 +1,9 @@
+
+.navbarContainer
+    .navbarButton.navbarButtonSelected#navbarButtonConsole(onclick=`selectTab('Console')`) 
+        .navbarButtonText Console
+    .navbarButton#navbarButtonSharding(onclick=`selectTab('Sharding')`) 
+        .navbarButtonText Sharding
+include console.pug
+.navbarMenuContainer.hidden#navbarMenuSharding
+.mainContentContainer.hidden#mainContentSharding

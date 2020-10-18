@@ -1,4 +1,10 @@
 
+const keys = require('./tokens.json');
+const token = keys.TOKEN;
+const hostname = keys.HOSTNAME;
+const cookieKey = keys.COOKIE_KEY;
+const dbPass = keys.DB_PASS;
+
 const Discord = require('discord.js');
 const winston = require('winston');
 const fs = require('fs');
@@ -10,7 +16,28 @@ const ipcMain = electron.ipcMain;
 const path = require('path');
 const url = require('url');
 
-const token = require('./tokens.json').TOKEN;
+const http = require('http');
+const express = require('express');
+const exApp = express();
+const cParse = require('cookie-parser');
+const cSession = require('cookie-session');
+const passport = require('passport');
+const passSetup = require('./web/passport-setup.js');
+
+global.db = require('mysql').createConnection({
+    host: 'localhost',
+    user: 'voidbot',
+    password: dbPass,
+    database: 'voidbot_db'
+})
+const port = 7777;
+
+const authRouter = require('./web/routers/auth.js');
+const dashRouter = require('./web/routers/dash.js');
+
+let server = http.createServer(exApp);
+
+const io = require('socket.io').listen(server);
 
 const utils = require('./utils.js');
 const Bot = require('./bot.js');
@@ -18,6 +45,7 @@ const Bot = require('./bot.js');
 let mainWindow;
 
 //log formatting and pipes to log files
+var backlog = []
 var logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
@@ -32,34 +60,162 @@ logger.add(new winston.transports.Console({
 
 //init some vars & export
 module.exports = {
-    eSender: false,
-    client: false,
+    eSender: {
+        socket: false,
+        ipc: false
+    },
+    client: new Discord.Client(),
     fs: fs,
     systemUIPopulated: false,
-    settingsUIPopulated: false
+    settingsUIPopulated: false,
+    updateVol: updateVol,
+    getStatus: getStatus
 }
 
 //set up basic structure for calling/storing discord.js clients (master + children)
 const status = require('./main.js');
-status.client = new Discord.Client();
+
+function getStatus() {
+    return status;
+}
+
+//status.client = new Discord.Client();
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
 
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str) {
     logger.info(utils.getTime()+str);
-    if (status.eSender !== false) {
-        status.eSender.send('stdout', utils.getTime()+str);
+    if (status.eSender.socket !== false) {
+        status.eSender.socket.emit('stdout', utils.getTime()+str);
+    };
+    if (status.eSender.ipc !== false) {
+        backlog.push(utils.getTime()+str);
+        status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
 function logErr(str) {
     logger.error(utils.getTime()+str);
-    if (status.eSender !== false) {
-        status.eSender.send('stdout', utils.getTime()+str);
+    if (status.eSender.socket !== false) {
+        status.eSender.socket.emit('stdout', utils.getTime()+str);
+    };
+    if (status.eSender.ipc !== false) {
+        backlog.push(utils.getTime()+str);
+        status.eSender.ipc.send('stdout', utils.getTime()+str);
     };
 };
 global.log = log;
 global.logErr = logErr;
+
+//DB heartbeat
+function DBHeartbeat() {
+    db.query(`SELECT 1`, (err, result) => {
+        if (err) {
+            logErr(`[WEBSERVER] DB Heartbeat error. Attempting another query in 10 seconds.`);
+            setTimeout(DBHeartbeat, 10 * 1000);
+        }
+        log(`[WEBSERVER] DB Heartbeat successful.`)
+    })
+}
+
+//webserver
+function launchWebServer() {
+    //connect to DB & init if needed
+    db.connect((err) => {
+        if (err) {
+            logErr(`[WEBSERVER] Error connecting to DB: ${err}`)
+        }
+        else log('[WEBSERVER] Successfully connected to DB!');
+    });
+    global.dbhb = setInterval(DBHeartbeat, 6 * 60 * 60 * 1000);
+    let initUDBSQL = `CREATE TABLE IF NOT EXISTS users (
+                    uID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    username VARCHAR(30) NOT NULL,
+                    discriminator VARCHAR(5) NOT NULL,
+                    snowflake VARCHAR(18) NOT NULL,
+                    g_admin VARCHAR(2000),
+                    g_member VARCHAR(2000)
+                    )`;
+    db.query(initUDBSQL, (err, result) => {
+        if(err) logErr(`[WEBSERVER] Error initializing UDB: ${err}`);
+    });
+    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( gID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
+                    snowflake VARCHAR(18) NOT NULL
+                    )`
+    db.query(initGDBSQL, (err, result) => {
+        if(err) logErr(`[WEBSERVER] Error initializing GDB: ${err}`);
+    });
+    for(i of status.client.children.array()) {
+        let pushGuildsSQL = `INSERT INTO guilds SET ?`;
+        db.query(pushGuildsSQL, {snowflake: i.guildID}, (err, result) => {
+            if(err) logErr(`[WEBSERVER] Error pushing guild ${i.guildID} to guilds table: ${err}`);
+        })
+    }
+
+    exApp.set('view engine', 'pug');
+    exApp.set('views', './pug');
+
+    exApp.use('/assets', express.static('./assets'));
+
+    exApp.use(cParse());
+    exApp.use(cSession({
+        name: 'session',
+        maxAge: (30 * 24 * 60 * 60 * 1000),
+        keys: [cookieKey]
+    }))
+
+    exApp.use(passport.initialize());
+    exApp.use(passport.session());
+
+    exApp.use('/auth', authRouter);
+    exApp.use('/dash', dashRouter);
+
+    exApp.get('/', (req, res) => {
+        let user = req.user || false;
+        if(!user) {
+            res.redirect('/auth/login');
+        }
+        else res.redirect('/dash');
+    });
+
+    server.listen(port, hostname, () => {
+        log(`[WEBSERVER] Active and listening on port ${port}`);
+    });
+
+    io.on('connection', (socket) => {
+        status.eSender.socket = socket;
+        socket.emit('ready', 'ready');
+
+        socket.on('command', cmd);
+        socket.on('updateBot', updateBot);
+
+        socket.once('initConnect', () => {
+            for( let i of status.client.children.array()) {
+                let bot = {
+                    guildID: i.guildID,
+                    guildName: i.guildName,
+                    voiceChannelArray: i.voiceChannelArray,
+                    defaultVoiceChannel: i.defaultVoiceChannel,
+                    textChannelArray: i.textChannelArray,
+                    defaultTextChannel: i.defaultTextChannel,
+                    ruleTextChannel: i.ruleTextChannel,
+                    welcomeTextChannel: i.welcomeTextChannel,
+                    roleArray: i.roleArray,
+                    announcementsRole: i.announcementsRole,
+                    newMemberRole: i.newMemberRole,
+                    defaultVolume: i.defaultVolume,
+                    welcomeMsg: i.welcomeMsg
+                    
+                }
+                socket.emit('add-client', bot);
+            }
+        });
+        setTimeout(() => {
+            socket.emit('populated');
+            socket.emit('init-backlog', backlog);
+        }, 2000);
+    });
+}
 
 //discord.js client ready event handler (master client)
 try {
@@ -88,9 +244,13 @@ try {
                 let cleanRoleName = utils.cleanChannelName(role.name);
                 newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
             }
-            status.eSender.send('add-client', newBot);
+            status.eSender.ipc.send('add-client', newBot);
             log(`[${newBot.guildName}] Initialization complete!`);
         }
+        setTimeout(() => {
+            launchWebServer(guilds)
+        }, 200);
+
         log('[MAIN] VoidBot Ready! Hello World!');
     });
 }
@@ -155,7 +315,7 @@ status.client.on('guildMemberAdd', member => {
     let bot = status.client.children.get(member.guild.id);
     try {
         if (bot.welcomeMsg == false) return;
-        if (bot.wlecomeTextChannel != false) {
+        if (bot.welcomeTextChannel != false) {
             let anno = false;
             if (bot.announcementsRole != false) anno = true;
             if (bot.ruleTextChannel != false) {
@@ -189,8 +349,18 @@ status.client.on('guildMemberRemove', member => {
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
 status.client.on('voiceStateUpdate', (oldState, newState) => {
-    let bot = status.client.children.get(newState.guild.id);
+    let bot = status.client.children.get(newState.member.guild.id);
     try {
+        if (!newState.channel) {
+            if (!bot.voiceStateCaching[newState.member.id].timeStamp) return;
+            if (utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp <= 3000) {
+                bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Look at this twat ${newState.member} joining a voice chat then leaving immediately!`);
+            }
+            delete bot.voiceStateCaching[newState.member.id]
+        };
+        bot.voiceStateCaching[newState.member.id] = {
+            timeStamp: utils.getTimeRaw()
+        };
         if (!oldState.channel) return;
         if (newState.channel != oldState.channel
             && bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
@@ -204,15 +374,16 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
             bot.voiceChannel = false;
             bot.voiceConnection = false;
             return;
-        }
+        };
     }
     catch (error) {
         logErr(`[${bot.guildName}]Error handling voiceStateUpdate event"\n`+error);
     };
 });
 
-//set up electron window
+//set up electron window, login client, and launch web UI
 function createWindow() {
+
     let bounds = utils.config.windowState.bounds;
     let max = utils.config.windowState.max;
     let x, y, wid, hei;
@@ -283,7 +454,8 @@ function saveBoundsSoon() {
 }
 
 //UI & backend communication event handlers (not really sure how else to word this)
-ipcMain.on('command', (event, arg) => {
+function cmd(e, arg) {
+    if(!arg) arg=e;
     switch (arg[0]) {
         case 'refreshcmds': {
             utils.systemCMDs(arg[0], status);
@@ -302,18 +474,31 @@ ipcMain.on('command', (event, arg) => {
         default: return;
     }
     return;
-});
+}
+ipcMain.on('command', cmd);
 
-ipcMain.on('updateBot', (event, bot) => {
+function updateBot(e, bot) {
+    if(!bot) bot=e;
     for (let i of status.client.children.array()) {
         if (i.guildID == bot.guildID) {
             i = bot;
             utils.saveConfig(i);
         }
     }
-})
+    if (status.eSender.socket !== false) {
+        status.eSender.socket.emit('updateBotUI', bot);
+    };
+    if (status.eSender.ipc !== false) {
+        status.eSender.ipc.send('updateBotUI', bot);
+    };
+}
+ipcMain.on('updateBot', updateBot);
 
-ipcMain.once('init-eSender', (event, arg) => { status.eSender = event.sender; });
+function updateVol(bot){
+    status.eSender.ipc.send('updateVol', bot);
+}
+
+ipcMain.once('init-eSender', (event, arg) => { status.eSender.ipc = event.sender; });
 
 //discord.js client login (called when the electron window is open and ready)
 let loginAtt = 0
