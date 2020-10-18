@@ -22,30 +22,23 @@ router.get('/', (req, res) => {
 
 router.get('/admin', (req, res) => {
     if (!req.user) {
-        res.redirect('/auth/login');
+        return res.redirect('/auth/login');
     }
     log(JSON.stringify(req.user.guilds));
-    if (req.user.guilds.admin === [""]) {
-        res.render('noAdmin');
-        setTimeout(res.redirect('/dash'), 10 * 1000);
+    if (!req.user.guilds.admin) {
+        return res.render('noAdmin');
     }
     else {
         let guilds = []
-        if (!(req.user.guilds.admin === null || req.user.guilds.admin === undefined)) {
-            db.query(`SELECT * FROM guilds`, (err, result) => {
-                for (let i of result) {
-                    if(!req.user.guilds.admin.includes(i.snowflake)){
-                        guilds.push(i.snowflake);
-                    }
+        db.query(`SELECT * FROM guilds`, (err, result) => {
+            for (let i of result) {
+                if(!req.user.guilds.admin.includes(i.snowflake)){
+                    guilds.push(i.snowflake);
                 }
-                res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
-                log(`[WEBSERVER] User ${req.user.name}#${req.user.discriminator} connected to admin panel.`);
-            });
-        }
-        else {
-            res.render('noAdmin');
-            setTimeout(res.redirect('/dash'), 10 * 1000);
-        }
+            }
+            res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
+            log(`[WEBSERVER] User ${req.user.name}#${req.user.discriminator} connected to admin panel.`);
+        });
     }
 });
 
