@@ -24,7 +24,6 @@ router.get('/admin', (req, res) => {
     if (!req.user) {
         return res.redirect('/auth/login');
     }
-    log(JSON.stringify(req.user.guilds));
     if (!req.user.guilds.admin) {
         return res.render('noAdmin');
     }
