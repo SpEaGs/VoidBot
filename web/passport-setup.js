@@ -21,6 +21,7 @@ passport.deserializeUser((id, done) => {
                 member: userIn.g_member.split(',')
             }
         }
+        log(userIn.g_admin);
         done(null, userOut);
     });
 });
