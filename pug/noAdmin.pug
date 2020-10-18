@@ -1,0 +1,20 @@
+doctype html
+html
+    head
+        include ./css/main-css.pug
+        title VoidBot: Unauthorized
+        include ./header.pug
+    body
+        h2.pageTitle Unauthorized
+        div.mainContentContainer#mCCUnauth You are not authorized to access that page. You will be redirected to the home page in 10 seconds...
+        script.
+            let i = 10;
+            redirInter = setInterval(() => {
+                i--;
+                document.getElementById('mCCUnauth').innerText = `You are not authorized to access that page. You will be redirected to the home page in ${i} seconds...`;
+            }, 1 * 1000);
+            setTimeout(() => {
+                document.location.href='/';
+            }, 10 * 1000);
+    footer
+        include ./footer.pug
