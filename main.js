@@ -203,7 +203,8 @@ function launchWebServer() {
                     roleArray: i.roleArray,
                     announcementsRole: i.announcementsRole,
                     newMemberRole: i.newMemberRole,
-                    defaultVolume: i.defaultVolume
+                    defaultVolume: i.defaultVolume,
+                    welcomeMsg: i.welcomeMsg
                     
                 }
                 socket.emit('add-client', bot);

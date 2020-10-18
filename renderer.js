@@ -277,7 +277,6 @@ ipcRenderer.on('add-client', (event, bot=null) => {
     }
     
     //input handling for the toggle
-    console.log(bot.welcomeMsg);
     document.getElementById(`toggleWE${bot.guildID}`).checked = bot.welcomeMsg;
     document.getElementById(`toggleWE${bot.guildID}`).oninput = () => {
         let checked = document.getElementById(`toggleWE${bot.guildID}`).checked;
