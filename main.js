@@ -107,6 +107,17 @@ function logErr(str) {
 global.log = log;
 global.logErr = logErr;
 
+//DB heartbeat
+function DBHeartbeat() {
+    db.query(`SELECT 1`, (err, result) => {
+        if (err) {
+            logErr(`[WEBSERVER] DB Heartbeat error. Attempting another query in 10 seconds.`);
+            setTimeout(DBHeartbeat, 10 * 1000);
+        }
+        log(`[WEBSERVER] DB Heartbeat successful.`)
+    })
+}
+
 //webserver
 function launchWebServer() {
     //connect to DB & init if needed
@@ -116,6 +127,7 @@ function launchWebServer() {
         }
         else log('[WEBSERVER] Successfully connected to DB!');
     });
+    global.dbhb = setInterval(DBHeartbeat, 6 * 60 * 60 * 1000);
     let initUDBSQL = `CREATE TABLE IF NOT EXISTS users (
                     uID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                     username VARCHAR(30) NOT NULL,
