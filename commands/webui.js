@@ -9,7 +9,7 @@ module.exports = {
     name: 'webui',
     description: 'Sends a link to the WebUI page.',
     alias: [],
-    args: true,
+    args: false,
     usage: `\`${prefix}webui\``,
     admin: false,
     botadmin: false,
