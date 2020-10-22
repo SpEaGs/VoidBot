@@ -15,6 +15,6 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
-        params.msg.reply(`The web UI can be found here: https://${pubIP}:7777/dash`);
+        params.msg.reply(`The web UI can be found here: http://${pubIP}:7777/dash`);
     }
 }
