@@ -6,7 +6,7 @@ const prefix = utils.config.prefix;
 const pubIP = utils.config.pubIP;
 
 module.exports = {
-    name: 'webUI',
+    name: 'webui',
     description: 'Sends a link to the WebUI page.',
     alias: [],
     args: true,
