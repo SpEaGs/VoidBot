@@ -5,6 +5,7 @@ const fs = require('fs');
 let config = {};
 if(!fs.existsSync('./config.json')) {
     config = {
+        "pubIP": false,
         "windowState": {
             "bounds": {},
             "max": false
