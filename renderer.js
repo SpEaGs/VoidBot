@@ -345,7 +345,19 @@ ipcRenderer.on('updateBotUI', (event, bot) => {
     document.getElementById(`toggleWE${bot.guildID}`).checked = bot.welcomeMsg;
     document.getElementById(`wtextChannelDropdownButton${bot.guildID}`).textContent = bot.welcomeTextChannel.name || 'Select one here';
     document.getElementById(`rtextChannelDropdownButton${bot.guildID}`).textContent = bot.ruleTextChannel.name || 'Select one here';
-})
+});
+
+function removeClient(id) {
+    let e = document.getElementById(`navbarMenuButtonShard${id}`)
+    e.parentNode.removeChild(e);
+    let ee = document.getElementById(`mainContentSubShard${id}`)
+    ee.parentNode.removeChild(e);
+};
+
+ipcRenderer.on('rem-client', (event, id) => {
+    if(!id) id = event;
+    removeClient(id);
+});
 
 ipcRenderer.on('populated', () => {
     populated = true;    

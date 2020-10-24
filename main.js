@@ -217,6 +217,26 @@ function launchWebServer() {
     });
 }
 
+function initBot(bot) {
+    utils.populateAdmin(bot);
+    for (let chan of bot.guild.channels.cache.array()) {
+        let cleanChanName = utils.cleanChannelName(chan.name);
+        switch (chan.type) {
+            case "voice": {
+                bot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+            }
+            case "text": {
+                bot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
+            }
+        }
+    }
+    for (let role of bot.guild.roles.cache.array()) {
+        let cleanRoleName = utils.cleanChannelName(role.name);
+        bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+    }
+    status.eSender.ipc.send('add-client', bot);
+}
+
 //discord.js client ready event handler (master client)
 try {
     status.client.once('ready', () => {
@@ -228,23 +248,7 @@ try {
             let id = i.id;
             let newBot = new Bot.Bot(i, status);
             status.client.children.set(id, newBot);
-            utils.populateAdmin(newBot);
-            for (let chan of newBot.guild.channels.cache.array()) {
-                let cleanChanName = utils.cleanChannelName(chan.name);
-                switch (chan.type) {
-                    case "voice": {
-                        newBot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
-                    }
-                    case "text": {
-                        newBot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
-                    }
-                }
-            }
-            for (let role of newBot.guild.roles.cache.array()) {
-                let cleanRoleName = utils.cleanChannelName(role.name);
-                newBot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
-            }
-            status.eSender.ipc.send('add-client', newBot);
+            initBot(newBot);
             log(`[${newBot.guildName}] Initialization complete!`);
         }
         setTimeout(() => {
@@ -308,6 +312,22 @@ status.client.on('message', msg => {
         logErr(`[${bot.guildName}] Error executing command:\n`+error);
         msg.reply('There was an error executing that command! Please ask `SpEaGs#2936` to check the logs.');
     };
+});
+
+//discord.js client event for the bot entering a new server
+status.client.on('guildCreate', guild => {
+    let newBot = new Bot.Bot(guild, status);
+    status.client.children.set(guild.id, newBot);
+    initBot(newBot);
+});
+
+//discord.js client event for the bot leaving or being kicked from a server
+status.client.on('guildDelete', guild => {
+    status.client.children.delete(guild.id);
+    delete utils.config.sharding[guild.id];
+    utils.dumpJSON('config.json', utils.config, 2);
+    status.eSender.ipc.send('rem-client', guild.id);
+    status.eSender.socket.emit('rem-client', guild.id);
 });
 
 //discord.js client event for new members joining a server

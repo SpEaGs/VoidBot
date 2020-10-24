@@ -19,12 +19,9 @@ script#g(g=guilds).
             delete interv
             let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
             for (i of gs) {
-                let e = document.getElementById(`navbarMenuButtonShard${i}`)
-                e.parentNode.removeChild(e);
-                let ee = document.getElementById(`mainContentSubShard${i}`)
-                ee.parentNode.removeChild(ee);
+                removeClient(i);
             }
-            let eee = document.getElementById('g')
-            eee.parentNode.removeChild(eee);
+            let e = document.getElementById('g')
+            e.parentNode.removeChild(e);
         }
     }, 200);
