@@ -49,13 +49,13 @@ function ytSearch(args, msg, status) {
             msg.reply('Searching Youtube with your query...');
             request(requestUrl, (error, response) => {
                 if (error || !response.statusCode == 200) {
-                    throw 'Error getting video info';
+                    logErr(`[${status.guildName}] Error getting video info`);
                     return;
                 }
                 let body = response.body;
                 if (body.items.length == 0) {
                     msg.reply('I got nothing... try being less specific?');
-                    log("0 results from search.");
+                    log(`[${status.guildName}] 0 results from search.`);
                     return;
                 }
                 for (let i of body.items) {
@@ -75,7 +75,7 @@ function get_yt_info(url, msg, status) {
     let vidInfo = [];
     ytdl.getInfo(url, (error, info) => {
         if (error) {
-            log(`[${status.guildName}] Error ( ${url} ): ${error}`);
+            logErr(`[${status.guildName}] Error ( ${url} ): ${error}`);
             return;
         }
         vidInfo = info;
@@ -120,7 +120,7 @@ function endDispatcher(status, msg) {
 }
 
 function playNextInQueue(status, msg) {
-    log(`Playing next in queue - length:${status.audioQueue.length}`);
+    log(`[${status.guildName}] Playing next in queue - length:${status.audioQueue.length}`);
     let nextPlay = status.audioQueue[0];
     msg.channel.send(`Now Playing: \`${nextPlay['title']} [${parseInt(nextPlay.length_seconds / 60)}:${(nextPlay.length_seconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
     createStream(status, nextPlay.url, msg);
@@ -130,7 +130,7 @@ function playNextInQueue(status, msg) {
 
 function addToQueue(info, status, msg) {
     msg.channel.send(`Added \`${info.title} [${parseInt(info.length_seconds / 60)}:${(info.length_seconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
-    log(`Adding ${info.title} to queue.`);
+    log(`[${status.guildName}] Adding ${info.title} to queue.`);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
 }
