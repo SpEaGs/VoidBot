@@ -319,6 +319,7 @@ status.client.on('guildCreate', guild => {
     let newBot = new Bot.Bot(guild, status);
     status.client.children.set(guild.id, newBot);
     initBot(newBot);
+    status.eSender.socket.emit('add-client', newBot);
 });
 
 //discord.js client event for the bot leaving or being kicked from a server
