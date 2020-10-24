@@ -356,7 +356,7 @@ function removeClient(id) {
     let e = document.getElementById(`navbarMenuButtonShard${id}`)
     e.parentNode.removeChild(e);
     let ee = document.getElementById(`mainContentSubShard${id}`)
-    ee.parentNode.removeChild(e);
+    ee.parentNode.removeChild(ee);
 };
 
 ipcRenderer.on('rem-client', (event, id) => {
