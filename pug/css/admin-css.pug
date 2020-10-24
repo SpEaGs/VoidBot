@@ -25,6 +25,7 @@ style.
         --accent-color-hover: rgb(70, 93, 225);
         --track-color: rgb(173, 173, 173);
         --track-color-hover: rgb(211, 211, 211);
+        --popup-shade-color: rgba(20, 20, 25, 0.3);
     }
 
     ::-webkit-scrollbar {
@@ -56,6 +57,23 @@ style.
     p {
         margin:0;
         padding:0;
+    }
+
+    .popup {
+        transition: ease 0.3s all;
+        position: absolute;
+        z-index: -100;
+        width: 100%;
+        height: 100%;
+        background-color: var(--popup-shade-color);
+    }
+    .popupItem {
+        position: relative;
+        width: 20%;
+        height: 20%;
+        left: 40%;
+        top: 40%;
+        background-color: var(--toolbar-color);
     }
 
     .titleButtonContainer {
