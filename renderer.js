@@ -239,6 +239,11 @@ ipcRenderer.on('stdout', (event, arg=null) => {
     document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
 });
 
+ipcRenderer.on('new-guild', () => {
+    if(eleBool) return;
+    document.getElementById('popupNewGuild').classList.toggle('hidden');
+}) 
+
 //adds a bot client's shard menu to the UI
 ipcRenderer.on('add-client', (event, bot=null) => {
     if(!eleBool) bot = event;
