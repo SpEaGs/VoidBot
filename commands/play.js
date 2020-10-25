@@ -20,7 +20,6 @@ module.exports = {
     server: true,
     playNextInQueue: playNextInQueue,
     execute(params) {
-        let url = params.args;
         let log = global.log;
         if (params.msg.channel.type == 'voice') return;
         params.bot.voiceChannel = params.msg.member.voice.channel;
@@ -38,9 +37,13 @@ module.exports = {
 
 function ytSearch(args, msg, status) {
     let url = args.toString();
-    switch (url.toString().includes('http')){
+    switch (url.toString().includes('http')) {
         case true: {
-            get_yt_info(url, msg, status);
+            if (!url.toString().includes('youtube.com/')) {
+                try { return msg.reply(`That was not a youtube link.`)}
+                catch(any) { return }
+            }
+            else get_yt_info(url, msg, status);
             break;
         }
         case false: {
