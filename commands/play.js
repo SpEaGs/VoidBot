@@ -72,10 +72,18 @@ function ytSearch(args, msg, status) {
 }
 
 function get_yt_info(url, msg, status) {
+    let errcount = 0;
     let vidInfo = [];
     ytdl.getInfo(url, (error, info) => {
         if (error) {
             logErr(`[${status.guildName}] Error ( ${url} ): ${error}`);
+            if (errcount < 3) {
+                errcount++;
+                log(`[${status.guildName}] Retrying...`);
+                setTimeout(() => {
+                    get_yt_info(url, msg, status);
+                }, 100);
+            }
             return;
         }
         vidInfo = info;
