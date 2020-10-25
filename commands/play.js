@@ -39,7 +39,7 @@ function ytSearch(args, msg, status) {
     let url = args.toString();
     switch (url.toString().includes('http')) {
         case true: {
-            if (!url.toString().includes('youtube.com/')) {
+            if (!url.toString().includes('.youtube.com/')) {
                 try { return msg.reply(`That was not a youtube link.`)}
                 catch(any) { return }
             }
