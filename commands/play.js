@@ -71,8 +71,8 @@ function ytSearch(args, msg, status) {
     }
 }
 
+let errcount = 0
 function get_yt_info(url, msg, status) {
-    let errcount = 0;
     let vidInfo = [];
     ytdl.getInfo(url, (error, info) => {
         if (error) {
