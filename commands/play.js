@@ -82,7 +82,7 @@ function get_yt_info(url, msg, status) {
                 log(`[${status.guildName}] Retrying...`);
                 setTimeout(() => {
                     get_yt_info(url, msg, status);
-                }, 100);
+                }, 1 * 1000);
             }
             return;
         }
