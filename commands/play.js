@@ -91,6 +91,7 @@ function get_yt_info(url, msg, status) {
             }
             return;
         }
+        log('get_yt_info got info.')
         vidInfo = info;
         vidInfo.url = url;
         vidInfo.added_by = msg.author.username;
