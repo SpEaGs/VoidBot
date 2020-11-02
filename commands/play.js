@@ -113,6 +113,7 @@ function get_yt_info(url, msg, status) {
 }
 
 function play(info, status, msg) {
+    log('play called.')
     msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.length_seconds / 60)}:${(info.length_seconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info.url, msg);
