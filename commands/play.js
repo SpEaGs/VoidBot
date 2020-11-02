@@ -79,7 +79,7 @@ function ytSearch(args, msg, status) {
 let errcount = 0
 async function get_yt_info(url, msg, status) {
     let vidInfo = await ytdl.getInfo(url);
-    log(JSON.stringify(vidInfo, null, 2));
+    log(utils.dumpJSON('vidInfo', vidInfo, 2));
     vidInfo.url = url;
     vidInfo.added_by = msg.author.username;
     if (status.voiceConnection == false) {
