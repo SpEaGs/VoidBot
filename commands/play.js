@@ -118,11 +118,11 @@ function play(info, status, msg) {
     log('play called.')
     msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.length_seconds / 60)}:${(info.length_seconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
-    createStream(status, info.url, msg);
+    createStream(status, info, msg);
 }
 
-function createStream(status, url, msg) {
-    const stream = ytdl(url, { filter: 'audioonly' });
+function createStream(status, info, msg) {
+    const stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
     status.dispatcher = status.voiceConnection.play(stream, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
     status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
