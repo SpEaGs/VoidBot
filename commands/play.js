@@ -77,38 +77,29 @@ function ytSearch(args, msg, status) {
 }
 
 async function getytInfo(url) {
-    let ytInfoPromise = new Promise((resolve, reject) => {
-        try {
-            let info = await ytdl.getInfo(url);
-            resolve(info);
-        }
-        catch (err) {
-            reject(err);
-        }
-    })
+    let info = await ytdl.getInfo(url);
+    return info;
 }
 
 let errcount = 0
 function get_yt_info(url, msg, status) {
-    getytInfo(url).then((info) => {
-        let vidInfo = info;
-        vidInfo.url = url;
-        vidInfo.added_by = msg.author.username;
-        if (status.voiceConnection == false) {
-            status.voiceChannel.join().then(connection => {
-                status.voiceConnection = connection;
-                play(vidInfo, status, msg);
-            });
-            return;
-        }
-        if (status.dispatcher != false) {
-            addToQueue(vidInfo, status, msg);
-            return;
-        }
-        else {
+    let vidInfo = getytInfo(url);
+    vidInfo.url = url;
+    vidInfo.added_by = msg.author.username;
+    if (status.voiceConnection == false) {
+        status.voiceChannel.join().then(connection => {
+            status.voiceConnection = connection;
             play(vidInfo, status, msg);
-        }
-    })
+        });
+        return;
+    }
+    if (status.dispatcher != false) {
+        addToQueue(vidInfo, status, msg);
+        return;
+    }
+    else {
+        play(vidInfo, status, msg);
+    }
 }
 
 function play(info, status, msg) {
