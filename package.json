@@ -27,7 +27,7 @@
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
     "cross-env": "^7.0.2",
-    "discord.js": "^12.3.1",
+    "discord.js": "^12.4.1",
     "express": "^4.17.1",
     "is-electron": "^2.2.0",
     "mysql": "^2.18.1",
