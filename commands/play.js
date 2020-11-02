@@ -120,7 +120,7 @@ function playNextInQueue(status, msg) {
     log(`[${status.guildName}] Playing next in queue - length:${status.audioQueue.length}`);
     let nextPlay = status.audioQueue[0];
     msg.channel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
-    createStream(status, nextPlay.url, msg);
+    createStream(status, nextPlay, msg);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
 }
