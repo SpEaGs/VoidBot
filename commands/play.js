@@ -76,14 +76,9 @@ function ytSearch(args, msg, status) {
     }
 }
 
-async function getytInfo(url) {
-    let info = await ytdl.getInfo(url);
-    return info;
-}
-
 let errcount = 0
-function get_yt_info(url, msg, status) {
-    let vidInfo = getytInfo(url);
+async function get_yt_info(url, msg, status) {
+    let vidInfo = await ytdl.getInfo(url);
     vidInfo.url = url;
     vidInfo.added_by = msg.author.username;
     if (status.voiceConnection == false) {
