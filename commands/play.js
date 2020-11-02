@@ -51,6 +51,7 @@ function ytSearch(args, msg, status) {
             let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(searchKwds)}&key=${API_KEY}`;
             msg.reply('Searching Youtube with your query...');
             request(requestUrl, (error, response) => {
+                log('ytSearch req complete.')
                 if (error || !response.statusCode == 200) {
                     logErr(`[${status.guildName}] Error getting video info`);
                     return;
@@ -63,6 +64,7 @@ function ytSearch(args, msg, status) {
                 }
                 for (let i of body.items) {
                     if (i.id.kind == 'youtube#video') {
+                        log('ytSearch got link.')
                         url = ('https://www.youtube.com/watch?v='+i.id.videoId);
                         get_yt_info(url, msg, status);
                         break;
@@ -99,6 +101,7 @@ function get_yt_info(url, msg, status) {
             });
             return;
         };
+        errcount = 0;
         if (status.dispatcher != false) {
             addToQueue(vidInfo, status, msg);
             return;
