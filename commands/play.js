@@ -51,7 +51,6 @@ function ytSearch(args, msg, status) {
             let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(searchKwds)}&key=${API_KEY}`;
             msg.reply('Searching Youtube with your query...');
             request(requestUrl, (error, response) => {
-                log('ytSearch req complete.')
                 if (error || !response.statusCode == 200) {
                     logErr(`[${status.guildName}] Error getting video info`);
                     return;
@@ -64,7 +63,6 @@ function ytSearch(args, msg, status) {
                 }
                 for (let i of body.items) {
                     if (i.id.kind == 'youtube#video') {
-                        log('ytSearch got link.')
                         url = ('https://www.youtube.com/watch?v='+i.id.videoId);
                         get_yt_info(url, msg, status);
                         break;
@@ -98,8 +96,7 @@ async function get_yt_info(url, msg, status) {
 }
 
 function play(info, status, msg) {
-    log('play called.')
-    msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.lengthSeconds / 60)}:${(info.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
+    msg.channel.send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info, msg);
 }
@@ -122,15 +119,15 @@ function endDispatcher(status, msg) {
 function playNextInQueue(status, msg) {
     log(`[${status.guildName}] Playing next in queue - length:${status.audioQueue.length}`);
     let nextPlay = status.audioQueue[0];
-    msg.channel.send(`Now Playing: \`${nextPlay['title']} [${parseInt(nextPlay.length_seconds / 60)}:${(nextPlay.length_seconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
+    msg.channel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
     createStream(status, nextPlay.url, msg);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
 }
 
 function addToQueue(info, status, msg) {
-    msg.channel.send(`Added \`${info.title} [${parseInt(info.length_seconds / 60)}:${(info.length_seconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
-    log(`[${status.guildName}] Adding ${info.title} to queue.`);
+    msg.channel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
+    log(`[${status.guildName}] Adding ${info.videoDetails.title} to queue.`);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
 }
