@@ -76,25 +76,22 @@ function ytSearch(args, msg, status) {
     }
 }
 
+function getytInfo(url) {
+    let ytInfoPromise = new Promise((resolve, reject) => {
+        try {
+            let info = await ytdl.getInfo(url);
+            resolve(info);
+        }
+        catch (err) {
+            reject(err);
+        }
+    })
+}
+
 let errcount = 0
 function get_yt_info(url, msg, status) {
-    //let vidInfo = [];
-    log('get_yt_info calling getInfo.');
-    /*
-    ytdl.getInfo(url, (error, info) => {
-        if (error) {
-            logErr(`[${status.guildName}] Error ( ${url} ): ${error}`);
-            if (errcount < 3) {
-                errcount++;
-                log(`[${status.guildName}] Retrying...`);
-                setTimeout(() => {
-                    get_yt_info(url, msg, status);
-                }, 1 * 1000);
-            }
-            return;
-        }
-        log('get_yt_info got info.')
-        vidInfo = info;
+    getytInfo(url).then((info) => {
+        let vidInfo = info;
         vidInfo.url = url;
         vidInfo.added_by = msg.author.username;
         if (status.voiceConnection == false) {
@@ -103,26 +100,15 @@ function get_yt_info(url, msg, status) {
                 play(vidInfo, status, msg);
             });
             return;
-        };
-        errcount = 0;*/
-    let vidInfo = await ytdl.getInfo(url);
-    vidInfo.url = url;
-    vidInfo.added_by = msg.author.username;
-    if (status.voiceConnection == false) {
-        status.voiceChannel.join().then(connection => {
-            status.voiceConnection = connection;
+        }
+        if (status.dispatcher != false) {
+            addToQueue(vidInfo, status, msg);
+            return;
+        }
+        else {
             play(vidInfo, status, msg);
-        });
-        return;
-    }
-    if (status.dispatcher != false) {
-        addToQueue(vidInfo, status, msg);
-        return;
-    }
-    else {
-        play(vidInfo, status, msg);
-    }
-    //});
+        }
+    })
 }
 
 function play(info, status, msg) {
