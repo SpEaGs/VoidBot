@@ -79,7 +79,6 @@ function ytSearch(args, msg, status) {
 let errcount = 0
 async function get_yt_info(url, msg, status) {
     let vidInfo = await ytdl.getInfo(url);
-    log(utils.dumpJSON('vidInfo', vidInfo, 2));
     vidInfo.url = url;
     vidInfo.added_by = msg.author.username;
     if (status.voiceConnection == false) {
@@ -100,7 +99,7 @@ async function get_yt_info(url, msg, status) {
 
 function play(info, status, msg) {
     log('play called.')
-    msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.length_seconds / 60)}:${(info.length_seconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
+    msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.lengthSeconds / 60)}:${(info.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info, msg);
 }
