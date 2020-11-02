@@ -76,7 +76,7 @@ function ytSearch(args, msg, status) {
     }
 }
 
-function getytInfo(url) {
+async function getytInfo(url) {
     let ytInfoPromise = new Promise((resolve, reject) => {
         try {
             let info = await ytdl.getInfo(url);
