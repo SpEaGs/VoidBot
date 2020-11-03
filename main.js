@@ -86,7 +86,7 @@ status.client.cmds = new Discord.Collection();
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str, src='[MAIN]', chan=null) {
     let l = {source: src, channel: chan, message: str, timeStamp: utils.getTime()};
-    let la = [l.timeStamp, l.src, l.message];
+    let la = [l.timeStamp, l.source, l.message];
     if (!l.channel===null) ls.splice(2, 0, l.channel);
     logger.info(la.join(' '));
     if (status.eSender.socket !== false) {
