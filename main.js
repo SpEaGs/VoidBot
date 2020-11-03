@@ -87,7 +87,7 @@ status.client.cmds = new Discord.Collection();
 function log(str, src='[MAIN]', chan=null) {
     let l = {source: src, channel: chan, message: str, timeStamp: utils.getTime()};
     let la = [l.timeStamp, l.source, l.message];
-    if (!l.channel===null) ls.splice(2, 0, l.channel);
+    if (l.channel!=null) ls.splice(2, 0, l.channel);
     logger.info(la.join(' '));
     if (status.eSender.socket !== false) {
         status.eSender.socket.emit('stdout', l);
@@ -100,7 +100,7 @@ function log(str, src='[MAIN]', chan=null) {
 function logErr(str, chan=null) {
     let e = {source: '[ERROR]', channel: chan, message: str, timeStamp: utils.getTime()};
     let ea = [e.timeStamp, e.source, e.message];
-    if (!e.channel===null) ea.splice(2, 0, e.channel);
+    if (e.channel!=null) ea.splice(2, 0, e.channel);
     logger.error(ea.join(' '));
     if (status.eSender.socket !== false) {
         status.eSender.socket.emit('stdout', e);
