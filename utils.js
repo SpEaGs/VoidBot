@@ -58,7 +58,7 @@ module.exports = {
 //gets the current date/time and formats it
 function getTime() {
     let cTime = new Date(Date.now());
-    let timeStr = `[${zeroify(cTime.getMonth()+1)}/${zeroify(cTime.getDate())} ${zeroify(cTime.getHours())}:${zeroify(cTime.getMinutes())}:${zeroify(cTime.getSeconds())}] `;
+    let timeStr = `[${zeroify(cTime.getMonth()+1)}/${zeroify(cTime.getDate())} ${zeroify(cTime.getHours())}:${zeroify(cTime.getMinutes())}:${zeroify(cTime.getSeconds())}]`;
     return timeStr;
 }
 function getTimeRaw() {
@@ -139,7 +139,7 @@ function findChanFromGuild(channel, guild, chanType = 'text') {
 //populates an internal list of admin for a given server
 function populateAdmin(bot) {
     let guild = bot.guild;
-    log(`[${bot.guildName}] Populating list of admin roles...`);
+    log(`Populating list of admin roles...`, `[${bot.guildName}]`);
     let roles = guild.roles.cache.array();
     for (let r of roles) {
         if (r.permissions.has("ADMINISTRATOR")) {
@@ -148,20 +148,20 @@ function populateAdmin(bot) {
             }
         }
     }
-    log(`[${bot.guildName}] Admin role population done!`);
+    log(`Admin role population done!`, `[${bot.guildName}]`);
 }
 
 //populates an internal list of commands
 function populateCmds(status) {
-    log('[MAIN] Populating commands list...');
+    log('Populating commands list...', '[UTILS]');
     let cmdFiles = fs.readdirSync('./commands/');
     status.client.cmds.clear();
     for (let file of cmdFiles) {
         let command = require(`./commands/${file}`);
         status.client.cmds.set(command.name, command);
-        log(`[MAIN] Found command: ${command.name}`);
+        log(`Found command: ${command.name}`, '[UTILS]');
     }
-    log('[MAIN] Command population done!');
+    log('Command population done!', '[UTILS]');
 }
 
 //checks internal list of commands for a given alias
@@ -228,7 +228,7 @@ function systemCMDs(cmd, status=require('main.js')) {
 function dumpJSON(filename, data, spaces=0) {
     fs.writeFile(filename, JSON.stringify(data, null, spaces), (err) => {
         if (err) {
-            logErr(err);
+            logErr(`Error dumping JSON to file:\n${err}`, '[UTILS]');
         }
     });
 }

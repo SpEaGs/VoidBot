@@ -23,7 +23,7 @@ module.exports = {
             if (params.bot.audioQueue.length != 0) play.playNextInQueue(params.bot, params.msg);
         }
         catch (error) {
-            log(error);
+            logErr(`Error skipping song:\n${error}`, '[SKIP]');
         }
     },
 };

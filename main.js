@@ -84,24 +84,30 @@ status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
 
 //wraps logger to a function so that console output can also be sent to the UI
-function log(str) {
-    logger.info(utils.getTime()+str);
+function log(str, src='[MAIN]', chan=null) {
+    let l = {source: src, channel: chan, message: str, timeStamp: utils.getTime()};
+    let la = [l.timeStamp, l.src, l.message];
+    if (!l.channel===null) ls.splice(2, 0, l.channel);
+    logger.info(la.join(' '));
     if (status.eSender.socket !== false) {
-        status.eSender.socket.emit('stdout', utils.getTime()+str);
+        status.eSender.socket.emit('stdout', l);
     };
     if (status.eSender.ipc !== false) {
-        backlog.push(utils.getTime()+str);
-        status.eSender.ipc.send('stdout', utils.getTime()+str);
+        backlog.push(l);
+        status.eSender.ipc.send('stdout', l);
     };
 };
-function logErr(str) {
-    logger.error(utils.getTime()+str);
+function logErr(str, chan=null) {
+    let e = {source: '[ERROR]', channel: chan, message: str, timeStamp: utils.getTime()};
+    let ea = [e.timeStamp, e.source, e.message];
+    if (!e.channel===null) ea.splice(2, 0, e.channel);
+    logger.error(ea.join(' '));
     if (status.eSender.socket !== false) {
-        status.eSender.socket.emit('stdout', utils.getTime()+str);
+        status.eSender.socket.emit('stdout', e);
     };
     if (status.eSender.ipc !== false) {
-        backlog.push(utils.getTime()+str);
-        status.eSender.ipc.send('stdout', utils.getTime()+str);
+        backlog.push(e);
+        status.eSender.ipc.send('stdout', e);
     };
 };
 global.log = log;
@@ -111,10 +117,10 @@ global.logErr = logErr;
 function DBHeartbeat() {
     db.query(`SELECT 1`, (err, result) => {
         if (err) {
-            logErr(`[WEBSERVER] DB Heartbeat error. Attempting another query in 10 seconds.`);
+            logErr(`DB Heartbeat error. Attempting another query in 10 seconds.`, '[WEBSERVER]');
             setTimeout(DBHeartbeat, 10 * 1000);
         }
-        log(`[WEBSERVER] DB Heartbeat successful.`)
+        log('DB Heartbeat successful.', '[WEBSERVER]');
     })
 }
 
@@ -123,9 +129,9 @@ function launchWebServer() {
     //connect to DB & init if needed
     db.connect((err) => {
         if (err) {
-            logErr(`[WEBSERVER] Error connecting to DB: ${err}`)
+            logErr(`Error connecting to DB: ${err}`, '[WEBSERVER]')
         }
-        else log('[WEBSERVER] Successfully connected to DB!');
+        else log('Successfully connected to DB!', '[WEBSERVER]');
     });
     global.dbhb = setInterval(DBHeartbeat, 6 * 60 * 60 * 1000);
     let initUDBSQL = `CREATE TABLE IF NOT EXISTS users (
@@ -137,18 +143,18 @@ function launchWebServer() {
                     g_member VARCHAR(2000)
                     )`;
     db.query(initUDBSQL, (err, result) => {
-        if(err) logErr(`[WEBSERVER] Error initializing UDB: ${err}`);
+        if(err) logErr(`Error initializing UDB: ${err}`, '[WEBSERVER]');
     });
     let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( gID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
                     snowflake VARCHAR(18) NOT NULL
                     )`
     db.query(initGDBSQL, (err, result) => {
-        if(err) logErr(`[WEBSERVER] Error initializing GDB: ${err}`);
+        if(err) logErr(`Error initializing GDB: ${err}`, '[WEBSERVER]');
     });
     for(i of status.client.children.array()) {
         let pushGuildsSQL = `INSERT INTO guilds SET ?`;
         db.query(pushGuildsSQL, {snowflake: i.guildID}, (err, result) => {
-            if(err) logErr(`[WEBSERVER] Error pushing guild ${i.guildID} to guilds table: ${err}`);
+            if(err) logErr(`Error pushing guild ${i.guildID} to guilds table: ${err}`, '[WEBSERVER]');
         })
     }
 
@@ -179,7 +185,7 @@ function launchWebServer() {
     });
 
     server.listen(port, hostname, () => {
-        log(`[WEBSERVER] Active and listening on port ${port}`);
+        log(`Active and listening on port ${port}`, '[WEBSERVER]');
     });
 
     io.on('connection', (socket) => {
@@ -249,17 +255,17 @@ try {
             let newBot = new Bot.Bot(i, status);
             status.client.children.set(id, newBot);
             initBot(newBot);
-            log(`[${newBot.guildName}] Initialization complete!`);
+            log('Initialization complete!', `[${newBot.guildName}]`);
         }
         setTimeout(() => {
             launchWebServer(guilds)
         }, 200);
 
-        log('[MAIN] VoidBot Ready! Hello World!');
+        log('VoidBot Ready! Hello World!');
     });
 }
 catch (error) {
-    logErr(`[MAIN] Error initializing client:\n`+error);
+    logErr(`Error initializing client:\n`+error, '[MAIN]');
     process.exit(1);
 };
 
@@ -268,7 +274,7 @@ to wherever it needs to go (i.e. which child client should handle it/do somethin
 status.client.on('message', msg => {
     let bot = status.client.children.get(msg.guild.id);
     //log incoming message & check for bot message or command
-    log(`[${bot.guildName}] [${msg.channel.name}] [${msg.author.username}]: ${msg}`)
+    log(`[${msg.author.username}]: ${msg}`, `[${bot.guildName}]`, `[${msg.channel.name}]`)
     if (msg.author.id == status.client.user.id) return;
     if (!msg.content.startsWith(utils.config.prefix)) return;
     if (msg.channel.id != bot.defaultTextChannel.id) {
@@ -286,7 +292,6 @@ status.client.on('message', msg => {
     let botadmin = utils.botAdminCheck(msg.author.id);
     let adminCheck = false;
     if (admin || botadmin) adminCheck = true;
-    log(`[MAIN] Admin: ${admin} | Botadmin: ${botadmin}`);
 
     //check system commands & run if found (these are commands related to the bot, not things it does.)
     if (botadmin) {
@@ -309,7 +314,7 @@ status.client.on('message', msg => {
         cmd.execute(params);
     }
     catch (error) {
-        logErr(`[${bot.guildName}] Error executing command:\n`+error);
+        logErr(`Error executing command:\n`+error, `[${bot.guildName}]`);
         msg.reply('There was an error executing that command! Please ask `SpEaGs#2936` to check the logs.');
     };
 });
@@ -350,7 +355,7 @@ status.client.on('guildMemberAdd', member => {
         }
     }
     catch (error) {
-        logErr(`[${bot.guildName}] Error handling guildMemberAdd event:\n`+error);
+        logErr(`Error handling guildMemberAdd event:\n`+error, `[${bot.guildName}]`);
     };
 });
 
@@ -364,7 +369,7 @@ status.client.on('guildMemberRemove', member => {
         }
     }
     catch (error) {
-        logErr(`[${bot.guildName}] Error handling guildMemberRemove event:\n`+error);
+        logErr(`Error handling guildMemberRemove event:\n`+error, `[${bot.guildName}]`);
     };
 });
 
@@ -399,7 +404,7 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
         };
     }
     catch (error) {
-        logErr(`[${bot.guildName}]Error handling voiceStateUpdate event"\n`+error);
+        logErr(`Error handling voiceStateUpdate event"\n`+error, `[${bot.guildName}]`);
     };
 });
 
@@ -526,16 +531,16 @@ ipcMain.once('init-eSender', (event, arg) => { status.eSender.ipc = event.sender
 let loginAtt = 0
 function clientLogin(t) {
     loginAtt++;
-    log(`[MAIN] Logging in... attempt: ${loginAtt}`);
+    log(`Logging in... attempt: ${loginAtt}`);
     try {
         status.client.login(t);
-        log(`[MAIN] Login successful!`);
+        log(`Login successful!`);
     }
     catch (error) {
         if (loginAtt <= 5) {
-            logErr(`Error logging in client. Trying again in 5s...`);
+            logErr(`Error logging in client. Trying again in 5s...`, '[MAIN]');
             setTimeout(function(){clientLogin(t)}, 5000);
         }
-        else logErr(`[MAIN] Error logging in client:\n`+error);
+        else logErr(`Error logging in client:\n`+error, '[MAIN]');
     }
 }

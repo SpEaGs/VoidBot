@@ -50,8 +50,8 @@ function cl() {
 }
 
 //appends a new line of text to a given element
-function appendText(elementID, str) {
-    document.getElementById(elementID).innerHTML += (' > '+str+'<br>');
+function appendChild(elementID, child) {
+    document.getElementById(elementID).appendChild(child);
 }
 
 //creates a new element with given tag, classes, and id
@@ -235,7 +235,11 @@ function executeCmd(str, args = []) {
 //listens for main's stdout messages and appends the contents to the console tab
 ipcRenderer.on('stdout', (event, arg=null) => {
     if(!eleBool) arg = event;
-    appendText('mainContentItemSTDOUT', arg);
+    let e = createElement('a', ['stdoutItem', `stdoutSrc${arg.source}`]);
+    let la = [arg.timeStamp, arg.source, arg.message];
+    if (!arg.channel===null) la.splice(2, 0, arg.channel);
+    e.innerText = '> '+la.join(' ');
+    appendChild('mainContentItemSTDOUT', e);
     document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
 });
 
@@ -370,7 +374,11 @@ ipcRenderer.on('populated', () => {
 
 ipcRenderer.on('init-backlog', (backlog) => {
     for (let i of backlog) {
-        appendText('mainContentItemSTDOUT', i);
+        let e = createElement('a', ['stdoutItem', `stdoutSrc${i.source}`]);
+        let la = [i.timeStamp, i.source, i.message];
+        if (!i.channel===null) la.splice(2, 0, i.channel);
+        e.innerText = '> '+la.join(' ');
+        appendChild('mainContentItemSTDOUT', e);
         document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
     }
 })

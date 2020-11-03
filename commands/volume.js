@@ -25,7 +25,7 @@ module.exports = {
             catch (error) {
                 params.msg.reply(`${params.args[0]} is not valid, scrub! Try again!\n Usage: ${this.usage}`);
                 let log = global.log;
-            log(error);
+            logErr(`Error updating volume:\n${error}`, '[VOLUME]');
             }
         };
     }

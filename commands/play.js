@@ -27,7 +27,7 @@ module.exports = {
             params.bot.voiceChannel = params.bot.guild.channels.cache.get(params.bot.defaultVoiceChannel.id);
         };
         if (!params.bot.voiceChannel) {
-            log(`[${params.bot.guildName}] No voice channel specified and no default.`);
+            log(`No voice channel specified and no default.`, `[${params.bot.guildName}]`);
             try { return params.msg.reply(`I'm not in a voice channel, neither are you, and no default is set...`) }
             catch(any) { return }
         };
@@ -52,13 +52,13 @@ function ytSearch(args, msg, status) {
             msg.reply('Searching Youtube with your query...');
             request(requestUrl, (error, response) => {
                 if (error || !response.statusCode == 200) {
-                    logErr(`[${status.guildName}] Error getting video info`);
+                    logErr(`Error getting video info`, `[${status.guildName}]`);
                     return;
                 }
                 let body = response.body;
                 if (body.items.length == 0) {
                     msg.reply('I got nothing... try being less specific?');
-                    log(`[${status.guildName}] 0 results from search.`);
+                    log(`0 results from search.`, `[${status.guildName}]`);
                     return;
                 }
                 for (let i of body.items) {
@@ -117,7 +117,7 @@ function endDispatcher(status, msg) {
 }
 
 function playNextInQueue(status, msg) {
-    log(`[${status.guildName}] Playing next in queue - length:${status.audioQueue.length}`);
+    log(`Playing next in queue - length:${status.audioQueue.length}`, `[${status.guildName}]`);
     let nextPlay = status.audioQueue[0];
     msg.channel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
     createStream(status, nextPlay, msg);
@@ -127,7 +127,7 @@ function playNextInQueue(status, msg) {
 
 function addToQueue(info, status, msg) {
     msg.channel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
-    log(`[${status.guildName}] Adding ${info.videoDetails.title} to queue.`);
+    log(`Adding ${info.videoDetails.title} to queue.`, `[${status.guildName}]`);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
 }

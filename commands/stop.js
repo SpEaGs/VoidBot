@@ -22,7 +22,7 @@ module.exports = {
             params.bot.nowPlaying = false;
         }
         catch (error) {
-            log(error);
+            logErr(`Error stopping music:\n${error}`, '[STOP]');
         }
     },
 };
