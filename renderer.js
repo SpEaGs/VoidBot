@@ -237,7 +237,7 @@ ipcRenderer.on('stdout', (event, arg=null) => {
     if(!eleBool) arg = event;
     let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(arg.source.split(' ').join('-'))}`]);
     let la = [arg.timeStamp, arg.source, arg.message];
-    if (!arg.channel===null) la.splice(2, 0, arg.channel);
+    if (arg.channel!=null) la.splice(2, 0, arg.channel);
     e.innerText = '> '+la.join(' ');
     appendChild('mainContentItemSTDOUT', e);
     document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
@@ -376,7 +376,7 @@ ipcRenderer.on('init-backlog', (backlog) => {
     for (let i of backlog) {
         let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(i.source.split(' ').join('-'))}`]);
         let la = [i.timeStamp, i.source, i.message];
-        if (!i.channel===null) la.splice(2, 0, i.channel);
+        if (i.channel!=null) la.splice(2, 0, i.channel);
         e.innerText = '> '+la.join(' ');
         appendChild('mainContentItemSTDOUT', e);
         document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
