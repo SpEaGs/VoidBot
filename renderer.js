@@ -235,7 +235,7 @@ function executeCmd(str, args = []) {
 //listens for main's stdout messages and appends the contents to the console tab
 ipcRenderer.on('stdout', (event, arg=null) => {
     if(!eleBool) arg = event;
-    let e = createElement('a', ['stdoutItem', `stdoutSrc${escape(arg.source)}`]);
+    let e = createElement('a', ['stdoutItem', `stdoutSrc${escape(arg.source.split(' ').join('-'))}`]);
     let la = [arg.timeStamp, arg.source, arg.message];
     if (!arg.channel===null) la.splice(2, 0, arg.channel);
     e.innerText = '> '+la.join(' ');
@@ -374,7 +374,7 @@ ipcRenderer.on('populated', () => {
 
 ipcRenderer.on('init-backlog', (backlog) => {
     for (let i of backlog) {
-        let e = createElement('a', ['stdoutItem', `stdoutSrc${escape(i.source)}`]);
+        let e = createElement('a', ['stdoutItem', `stdoutSrc${escape(i.source.split(' ').join('-'))}`]);
         let la = [i.timeStamp, i.source, i.message];
         if (!i.channel===null) la.splice(2, 0, i.channel);
         e.innerText = '> '+la.join(' ');
