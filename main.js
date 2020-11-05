@@ -339,6 +339,7 @@ status.client.on('guildDelete', guild => {
 //discord.js client event for new members joining a server
 status.client.on('guildMemberAdd', member => {
     let bot = status.client.children.get(member.guild.id);
+    log(`New Member Joined: ${member.user.username} Welcome Message set to: ${bot.welcomeMsg}`, `[${bot.guildName}]`);
     try {
         if (bot.welcomeMsg == false) return;
         if (bot.welcomeTextChannel != false) {
