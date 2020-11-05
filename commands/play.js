@@ -81,12 +81,12 @@ let errcount = 0
 async function get_info(url, msg, status) {
     let vidInfo = {};
     if (url.toString().includes('soundcloud.com/')) {
-        vidInfo = await sc.getInfo(url, SC_API_KEY);
+        vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
         vidInfo.trackSource = 'SC';
-        vidInfo.lengthSeconds = Math.trunc(vidInfo.duration / 1000);
+        vidInfo.videoDetails.lengthSeconds = Math.trunc(vidinfo.videoDetails.duration / 1000);
     }
     else if (url.toString().includes('.youtube.com/')) {
-        vidInfo = (await ytdl.getInfo(url)).videoDetails;
+        vidInfo = (await ytdl.getInfo(url));
         vidInfo.trackSource = 'YT';
     }
     vidInfo.url = url;
@@ -108,7 +108,7 @@ async function get_info(url, msg, status) {
 }
 
 function play(info, status, msg) {
-    msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.lengthSeconds / 60)}:${(info.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
+    msg.channel.send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info, msg);
 }
@@ -157,8 +157,8 @@ function playNextInQueue(status, msg) {
 }
 
 function addToQueue(info, status, msg) {
-    msg.channel.send(`Added \`${info.title} [${parseInt(info.lengthSeconds / 60)}:${(info.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
-    log(`Adding ${info.title} to queue.`, `[${status.guildName}]`);
+    msg.channel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
+    log(`Adding ${info.videoDetails.title} to queue.`, `[${status.guildName}]`);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
 }
