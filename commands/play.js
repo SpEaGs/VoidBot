@@ -114,18 +114,18 @@ function play(info, status, msg) {
 }
 
 function createStream(status, info, msg) {
-    let stream;
+    let str;
     switch (info.trackSource) {
         case 'YT': {
-            stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
+            str = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
         }
         case 'SC': {
-            sc.download(info.url, SC_API_KEY).then(str => {str.pipe(fs.createWriteStream('temp.mp3'))});
-            stream = './temp.mp3'
+            sc.download(info.url, SC_API_KEY).then(stream => {stream.pipe(fs.createWriteStream('temp.mp3'))});
+            str = './temp.mp3'
         }
     }
-    if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
-    status.dispatcher = status.voiceConnection.play(stream, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
+    if (process.env.NODE_ENV == 'development') { str.on('error', console.error) }
+    status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
     status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
 };
 
