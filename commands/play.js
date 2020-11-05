@@ -122,7 +122,6 @@ function createStream(status, info, msg) {
             stream = sc.download(info.url, SC_API_KEY);
         }
     }
-    const stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
     status.dispatcher = status.voiceConnection.play(stream, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
     status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
