@@ -120,7 +120,7 @@ async function createStream(status, info, msg) {
             str = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
         }
         case 'SC': {
-            str = sc.download(info.url, SC_API_KEY);
+            sc.download(info.url, SC_API_KEY).then(stream => { str = stream; });
         }
     }
     if (process.env.NODE_ENV == 'development') { str.on('error', console.error) }
