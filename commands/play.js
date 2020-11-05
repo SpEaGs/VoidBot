@@ -1,17 +1,19 @@
-//Play command. Plays given youtube URL (or searches youtube with given terms) in the voice channel of
+//Play command. Plays given youtube or soundcloud URL (or searches youtube with given terms) in the voice channel of
 //the command sender (or default if none)
 
 const ytdl = require('ytdl-core');
+const sc = require('soundcloud-downloader');
 const request = require('superagent');
 
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
 const API_KEY = require('../tokens.json').TOKEN_YT;
+const SC_API_KEY = require('../tokens.json').TOKEN_SC;
 
 module.exports = {
     name: 'play',
-    description: 'Plays a given youtube URL (or from search terms) in the voice channel of whomever sent the command.',
+    description: 'Plays a given youtube or soundcloud URL (or from youtube search terms) in the voice channel of whomever sent the command.',
     alias: false,
     args: true,
     usage: `\`${prefix}play <URL or search terms>\``,
@@ -31,19 +33,19 @@ module.exports = {
             try { return params.msg.reply(`I'm not in a voice channel, neither are you, and no default is set...`) }
             catch(any) { return }
         };
-        ytSearch(params.args, params.msg, params.bot);
+        search(params.args, params.msg, params.bot);
     }
 }
 
-function ytSearch(args, msg, status) {
+function search(args, msg, status) {
     let url = args.toString();
     switch (url.toString().includes('http')) {
         case true: {
-            if (!url.toString().includes('.youtube.com/')) {
-                try { return msg.reply(`That was not a youtube link.`)}
+            if (!url.toString().includes('.youtube.com/') || !url.toString().includes('.soundcloud.com/')) {
+                try { return msg.reply(`That was not a youtube or soundcloud link.`)}
                 catch(any) { return }
             }
-            else get_yt_info(url, msg, status);
+            else get_info(url, msg, status);
             break;
         }
         case false: {
@@ -64,7 +66,7 @@ function ytSearch(args, msg, status) {
                 for (let i of body.items) {
                     if (i.id.kind == 'youtube#video') {
                         url = ('https://www.youtube.com/watch?v='+i.id.videoId);
-                        get_yt_info(url, msg, status);
+                        get_info(url, msg, status);
                         break;
                     }
                 }
@@ -75,8 +77,17 @@ function ytSearch(args, msg, status) {
 }
 
 let errcount = 0
-async function get_yt_info(url, msg, status) {
-    let vidInfo = await ytdl.getInfo(url);
+async function get_info(url, msg, status) {
+    let vidInfo = {};
+    if (url.toString().includes('.soundcloud.com/')) {
+        vidInfo = await sc.getInfo(url, SC_API_KEY);
+        vidInfo.trackSource = 'SC';
+        log(`d-${vidInfo.duration} -- f-${vidInfo.full_duration}`, `[${status.guildName}]`, `[DEBUG]`)
+    }
+    else if (url.toString().includes('.youtube.com/')) {
+        vidInfo = (await ytdl.getInfo(url)).videoDetails;
+        vidInfo.trackSource = 'YT';
+    }
     vidInfo.url = url;
     vidInfo.added_by = msg.author.username;
     if (status.voiceConnection == false) {
@@ -96,12 +107,21 @@ async function get_yt_info(url, msg, status) {
 }
 
 function play(info, status, msg) {
-    msg.channel.send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
+    msg.channel.send(`Playing song: \`${info.title} [${parseInt(info.lengthSeconds / 60)}:${(info.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info, msg);
 }
 
 function createStream(status, info, msg) {
+    let stream;
+    switch (info.trackSource) {
+        case 'YT': {
+            stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
+        }
+        case 'SC': {
+            stream = sc.download(info.url, SC_API_KEY);
+        }
+    }
     const stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
     status.dispatcher = status.voiceConnection.play(stream, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
@@ -119,15 +139,15 @@ function endDispatcher(status, msg) {
 function playNextInQueue(status, msg) {
     log(`Playing next in queue - length:${status.audioQueue.length}`, `[${status.guildName}]`);
     let nextPlay = status.audioQueue[0];
-    msg.channel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
+    msg.channel.send(`Now Playing: \`${nextPlay.title} [${parseInt(nextPlay.lengthSeconds / 60)}:${(nextPlay.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
     createStream(status, nextPlay, msg);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
 }
 
 function addToQueue(info, status, msg) {
-    msg.channel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
-    log(`Adding ${info.videoDetails.title} to queue.`, `[${status.guildName}]`);
+    msg.channel.send(`Added \`${info.title} [${parseInt(info.lengthSeconds / 60)}:${(info.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
+    log(`Adding ${info.title} to queue.`, `[${status.guildName}]`);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
 }

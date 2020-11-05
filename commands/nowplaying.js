@@ -18,6 +18,6 @@ module.exports = {
         if (!params.bot.nowPlaying) {
             return params.msg.reply("I'm not playing anything you scrub!")
         }
-        params.msg.reply(`Now Playing: \`${nP.videoDetails.title} [${parseInt(nP.videoDetails.lengthSeconds / 60)}:${(nP.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}}] (added by: ${nP.added_by})\`\nURL: ${nP.url}`);
+        params.msg.reply(`Now Playing: \`${nP.title} [${parseInt(nP.lengthSeconds / 60)}:${(nP.lengthSeconds % 60).toString().padStart(2, "0")}}] (added by: ${nP.added_by})\`\nURL: ${nP.url}`);
     },
 };

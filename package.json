@@ -1,6 +1,6 @@
 {
   "name": "voidbot",
-  "version": "2.3.3",
+  "version": "2.4.0",
   "description": "A Discord Bot.\r This is like the fourth or so version of the bot... had to re-write it a few times to keep up with changing APIs and now I'm at it again.",
   "main": "main.js",
   "scripts": {
@@ -36,6 +36,7 @@
     "passport": "^0.4.1",
     "pug": "^3.0.0",
     "socket.io": "^2.3.0",
+    "soundcloud-downloader": "^0.1.8",
     "superagent": "^5.3.1",
     "winston": "^3.3.3",
     "ytdl-core": "^4.0.2"
