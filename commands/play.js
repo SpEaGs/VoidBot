@@ -121,9 +121,7 @@ function createStream(status, info, msg) {
         }
         case 'SC': {
             sc.download(info.url, SC_API_KEY).then(str => {str.pipe(fs.createWriteStream('temp.mp3'))});
-            stream = fs.createReadStream('./temp.mp3').then(() => {
-                stream.on('close', () => {fs.unlinkSync('./temp.mp3')});
-            })
+            stream = './temp.mp3'
         }
     }
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
