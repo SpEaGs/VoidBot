@@ -128,7 +128,10 @@ function createStream(status, info, msg) {
                 stream.on('close', () => {
                     str = './temp.mp3';
                     status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
-                    status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
+                    status.dispatcher.on('finish', () => {
+                        endDispatcher(status, msg);
+                        fs.unlinkSync('./temp.mp3');
+                    });
                 })
             });
             break;
