@@ -119,7 +119,7 @@ function createStream(status, info, msg) {
             stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
         }
         case 'SC': {
-            sc.download(info.url, SC_API_KEY).then(str => { stream = str; });
+            sc.download(info.url, SC_API_KEY).then(str => {stream = str.pipe(fs.createWriteStream('temp.mp3'))});
         }
     }
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
