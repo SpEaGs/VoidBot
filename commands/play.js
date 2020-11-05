@@ -113,14 +113,14 @@ function play(info, status, msg) {
     createStream(status, info, msg);
 }
 
-function createStream(status, info, msg) {
+async function createStream(status, info, msg) {
     let str;
     switch (info.trackSource) {
         case 'YT': {
             str = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
         }
         case 'SC': {
-            sc.download(info.url, SC_API_KEY).then(stream => {stream.pipe(fs.createWriteStream('temp.mp3'))});
+            await sc.download(info.url, SC_API_KEY).then(stream => {stream.pipe(fs.createWriteStream('temp.mp3'))});
             str = './temp.mp3'
         }
     }
