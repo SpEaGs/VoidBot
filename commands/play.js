@@ -83,7 +83,7 @@ async function get_info(url, msg, status) {
     if (url.toString().includes('soundcloud.com/')) {
         vidInfo = await sc.getInfo(url, SC_API_KEY);
         vidInfo.trackSource = 'SC';
-        log(`d-${vidInfo.duration} -- f-${vidInfo.full_duration}`, `[${status.guildName}]`, `[DEBUG]`)
+        vidInfo.lengthSeconds = (vidInfo.duration / 1000)
     }
     else if (url.toString().includes('.youtube.com/')) {
         vidInfo = (await ytdl.getInfo(url)).videoDetails;
