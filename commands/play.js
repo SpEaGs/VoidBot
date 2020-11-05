@@ -125,7 +125,7 @@ function createStream(status, info, msg) {
         case 'SC': {
             sc.download(info.url, SC_API_KEY).then(stream => { 
                 stream.pipe(fs.createWriteStream('temp.mp3'));
-                stream.on('close', () => {
+                stream.on('end', () => {
                     str = './temp.mp3';
                     status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
                     status.dispatcher.on('finish', () => {
