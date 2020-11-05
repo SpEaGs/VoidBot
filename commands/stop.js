@@ -18,6 +18,7 @@ module.exports = {
         try {
             params.bot.audioQueue = [];
             stopAudio(params.bot.dispatcher, params.msg);
+            params.bot.dispatcher = false;
             params.bot.nowPlaying = false;
         }
         catch (error) {
@@ -27,6 +28,9 @@ module.exports = {
 };
 
 function stopAudio(dispatcher, msg) {
-    dispatcher = false;
+    try {
+        dispatcher.pause();
+    }
+    catch (error) {}
     msg.reply(`Audio stream ended.`);
 }
