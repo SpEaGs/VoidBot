@@ -6,6 +6,7 @@ const sc = require('soundcloud-downloader');
 const request = require('superagent');
 
 const utils = require('../utils.js');
+const { fs } = require('../main.js');
 const prefix = utils.config.prefix;
 
 const API_KEY = require('../tokens.json').TOKEN_YT;
@@ -119,7 +120,10 @@ function createStream(status, info, msg) {
             stream = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
         }
         case 'SC': {
-            sc.download(info.url, SC_API_KEY).then(str => {stream = str.pipe(fs.createWriteStream('temp.mp3'))});
+            sc.download(info.url, SC_API_KEY).then(str => {str.pipe(fs.createWriteStream('temp.mp3'))});
+            stream = fs.createReadStream('./temp.mp3').then(() => {
+                stream.on('close', () => {fs.unlinkSync('./temp.mp3')});
+            })
         }
     }
     if (process.env.NODE_ENV == 'development') { stream.on('error', console.error) }
