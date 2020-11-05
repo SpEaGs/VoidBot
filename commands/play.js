@@ -41,7 +41,7 @@ function search(args, msg, status) {
     let url = args.toString();
     switch (url.toString().includes('http')) {
         case true: {
-            if (!(url.toString().includes('.youtube.com/')) || url.toString().includes('soundcloud.com/')) {
+            if (!(url.toString().includes('.youtube.com/') || url.toString().includes('soundcloud.com/'))) {
                 try { return msg.reply(`That was not a youtube or soundcloud link.`)}
                 catch(any) { return }
             }
