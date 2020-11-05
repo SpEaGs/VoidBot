@@ -119,6 +119,8 @@ function createStream(status, info, msg) {
         case 'YT': {
             str = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
             status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
+            status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
+            break;
         }
         case 'SC': {
             sc.download(info.url, SC_API_KEY).then(stream => { 
@@ -126,11 +128,12 @@ function createStream(status, info, msg) {
                 stream.on('close', () => {
                     str = './temp.mp3';
                     status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
+                    status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
                 })
             });
+            break;
         }
     }
-    status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
 };
 
 function endDispatcher(status, msg) {
