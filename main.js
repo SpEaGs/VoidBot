@@ -390,7 +390,7 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
         };
         bot.voiceStateCaching.members.push(newState.member.id);
         bot.voiceStateCaching.timeouts[newState.member.id] = setTimeout(() => {
-            bot.voiceStateCaching = bot.voiceStateCaching.filter(val => val != newState.member.id);
+            bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(val => val != newState.member.id);
         }, 3 * 1000);
         if (!oldState.channel) return;
         if (newState.channel != oldState.channel
