@@ -380,15 +380,18 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
     if (oldState.member.id === status.client.user.id) return;
     try {
         if (!newState.channel) {
-            if (!bot.voiceStateCaching[newState.member.id]) return;
-            if (utils.getTimeRaw() - bot.voiceStateCaching[newState.member.id].timeStamp <= 3000) {
+            if (bot.voiceStateCaching.members.includes(newState.member.id)) {
                 bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Look at this twat ${newState.member} joining a voice chat then leaving immediately!`);
             }
-            delete bot.voiceStateCaching[newState.member.id]
+            bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(val => val != newState.member.id);
+            if (bot.voiceStateCaching.timeouts[newState.member.id] != null) {
+                clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
+            }
         };
-        bot.voiceStateCaching[newState.member.id] = {
-            timeStamp: utils.getTimeRaw()
-        };
+        bot.voiceStateCaching.members.push(newState.member.id);
+        bot.voiceStateCaching.timeouts[newState.member.id] = setTimeout(() => {
+            bot.voiceStateCaching = bot.voiceStateCaching.filter(val => val != newState.member.id);
+        }, 3 * 1000);
         if (!oldState.channel) return;
         if (newState.channel != oldState.channel
             && bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
