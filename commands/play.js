@@ -150,7 +150,7 @@ function endDispatcher(status, msg) {
 function playNextInQueue(status, msg) {
     log(`Playing next in queue - length:${status.audioQueue.length}`, `[${status.guildName}]`);
     let nextPlay = status.audioQueue[0];
-    msg.channel.send(`Now Playing: \`${nextPlay.title} [${parseInt(nextPlay.lengthSeconds / 60)}:${(nextPlay.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
+    msg.channel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
     createStream(status, nextPlay, msg);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
