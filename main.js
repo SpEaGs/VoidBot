@@ -387,6 +387,7 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
             if (bot.voiceStateCaching.timeouts[newState.member.id] != null) {
                 clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
             }
+            return;
         };
         bot.voiceStateCaching.members.push(newState.member.id);
         bot.voiceStateCaching.timeouts[newState.member.id] = setTimeout(() => {
