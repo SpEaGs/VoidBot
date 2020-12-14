@@ -387,7 +387,7 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
             if (bot.voiceStateCaching.timeouts[newState.member.id] != null) {
                 clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
             }
-            if (bot.guilds.channels.cache.get(oldState.channel.id).members.array().length == 1
+            if (bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
                 && bot.voiceChannel) {
                     if (bot.dispatcher) {
                         bot.audioQueue = [];
