@@ -387,6 +387,17 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
             if (bot.voiceStateCaching.timeouts[newState.member.id] != null) {
                 clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
             }
+            if (bot.guilds.channels.cache.get(oldState.channel.id).members.array().length == 1
+                && bot.voiceChannel) {
+                    if (bot.dispatcher) {
+                        bot.audioQueue = [];
+                        bot.dispatcher.end();
+                        bot.dispatcher = false;
+                    }
+                    bot.voiceChannel.leave();
+                    bot.voiceChannel = false;
+                    bot.voiceConnection = false;
+                }
             return;
         };
         bot.voiceStateCaching.members.push(newState.member.id);
@@ -394,19 +405,6 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
             bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(val => val != newState.member.id);
         }, 3 * 1000);
         if (!oldState.channel) return;
-        if (newState.channel != oldState.channel
-            && bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
-            && bot.voiceChannel) {
-            if (bot.dispatcher) {
-                bot.audioQueue = [];
-                bot.dispatcher.end();
-                bot.dispatcher = false;
-            }
-            bot.voiceChannel.leave();
-            bot.voiceChannel = false;
-            bot.voiceConnection = false;
-            return;
-        };
     }
     catch (error) {
         logErr(`Error handling voiceStateUpdate event"\n`+error, `[${bot.guildName}]`);
