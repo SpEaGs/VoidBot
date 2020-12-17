@@ -139,7 +139,7 @@ function findChanFromGuild(channel, guild, chanType = 'text') {
 //populates an internal list of admin for a given server
 function populateAdmin(bot) {
     let guild = bot.guild;
-    log(`Populating list of admin roles...`, `[${bot.guildName}]`);
+    log(`Populating list of admin roles...`, ['[INFO]', '[UTILS]', `[${bot.guildName}]`]);
     let roles = guild.roles.cache.array();
     for (let r of roles) {
         if (r.permissions.has("ADMINISTRATOR")) {
@@ -148,20 +148,20 @@ function populateAdmin(bot) {
             }
         }
     }
-    log(`Admin role population done!`, `[${bot.guildName}]`);
+    log(`Admin role population done!`, ['[INFO]', '[UTILS]', `[${bot.guildName}]`]);
 }
 
 //populates an internal list of commands
 function populateCmds(status) {
-    log('Populating commands list...', '[UTILS]');
+    log('Populating commands list...', ['[INFO]', '[UTILS]']);
     let cmdFiles = fs.readdirSync('./commands/');
     status.client.cmds.clear();
     for (let file of cmdFiles) {
         let command = require(`./commands/${file}`);
         status.client.cmds.set(command.name, command);
-        log(`Found command: ${command.name}`, '[UTILS]');
+        log(`Found command: ${command.name}`, ['[INFO]', '[UTILS]']);
     }
-    log('Command population done!', '[UTILS]');
+    log('Command population done!', ['[INFO]', '[UTILS]']);
 }
 
 //checks internal list of commands for a given alias
@@ -228,7 +228,7 @@ function systemCMDs(cmd, status=require('main.js')) {
 function dumpJSON(filename, data, spaces=0) {
     fs.writeFile(filename, JSON.stringify(data, null, spaces), (err) => {
         if (err) {
-            logErr(`Error dumping JSON to file:\n${err}`, '[UTILS]');
+            log(`Error dumping JSON to file:\n${err}`, ['[ERR]', '[UTILS]']);
         }
     });
 }

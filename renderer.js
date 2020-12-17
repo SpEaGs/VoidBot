@@ -235,10 +235,9 @@ function executeCmd(str, args = []) {
 //listens for main's stdout messages and appends the contents to the console tab
 ipcRenderer.on('stdout', (event, arg=null) => {
     if(!eleBool) arg = event;
-    let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(arg.source.split(' ').join('-'))}`]);
-    let la = [arg.timeStamp, arg.source, arg.message];
-    if (arg.channel!=null) la.splice(2, 0, arg.channel);
-    e.innerText = '> '+la.join(' ');
+    let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(arg.tags[1])}`]);
+    e.style.color = arg.color;
+    e.innerText = `${arg.timeStamp} ${arg.tags.join(' ')}: ${arg.msg}`;
     appendChild('mainContentItemSTDOUT', e);
     document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
 });

@@ -38,7 +38,7 @@ class Bot extends EventEmitter {
         };
 
         //login
-        log(`[${this.guildName}] Initializing...`);
+        log(`[${this.guildName}] Initializing...`, ['[INFO]', '[BOT]']);
         //this.client.login(token);
 
         //check for previously saved config & create from defaults if not found
