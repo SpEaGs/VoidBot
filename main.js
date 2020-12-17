@@ -110,7 +110,7 @@ function log(str, tags) {
         }
     }
     if (status.eSender.socket) status.eSender.socket.emit('stdout', lo);
-    if (status.eSender.ipc) status.eSender.ipc.send('stout', lo);
+    if (status.eSender.ipc) status.eSender.ipc.send('stdout', lo);
 }
 global.log = log;
 
