@@ -100,7 +100,7 @@ function log(str, tags) {
         }
         case '[WARN]': {
             lo.color = 'yellow';
-            logger.warning(l);
+            logger.warn(l);
             break;
         }
         case '[ERR]': {
