@@ -263,6 +263,8 @@ try {
         }, 200);
 
         log('VoidBot Ready! Hello World!', ['[INFO]', '[MAIN]']);
+        log('Testing colors.', ['[WARN]', '[MAIN]']);
+        log('Colors now tested.', ['[ERR]', '[MAIN]']);
     });
 }
 catch (error) {
