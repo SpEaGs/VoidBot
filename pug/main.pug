@@ -18,6 +18,7 @@ html
                 h3 But if you ARE an admin, you can click the button below to jump right to the admin panel!
                 #derp
                 script#u(u=user).
+                    let user = JSON.parse(document.getElementById('u').getAttribute('u'));
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
                         console.log('websocket connected!')  
