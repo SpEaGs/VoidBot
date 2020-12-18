@@ -58,9 +58,9 @@ passport.use( new Strategy({
         }
         let findUserSQL = `SELECT * FROM users WHERE snowflake = "${user.id}"`
         let findUserQuery = db.query(findUserSQL, (err, result) => {
-            if (err) logErr(`Error requesting user from DB:\n${err}`, '[WEBSERVER]');
+            if (err) log(`Error requesting user from DB:\n${err}`, ['[ERR]', '[WEBSERVER]']);
             if (!result.length) {
-                log('No user entry found in the DB. Creating a new one...', '[WEBSERVER]');
+                log('No user entry found in the DB. Creating a new one...', ['[INFO]', '[WEBSERVER]']);
                 let newUser = {
                     username: user.name,
                     discriminator: user.discriminator,
@@ -70,14 +70,14 @@ passport.use( new Strategy({
                 }
                 let addUserSQL = `INSERT INTO users SET ?`
                 let addUserQuery = db.query(addUserSQL, newUser, (err, result2) => {
-                    if (err) log(`Error adding new user to DB: ${err}`, '[WEBSERVER]');
-                    log(`New user entry successful!`, '[WEBSERVER]');
+                    if (err) log(`Error adding new user to DB: ${err}`, ['[ERR]', '[WEBSERVER]']);
+                    log(`New user entry successful!`, ['[INFO]', '[WEBSERVER]']);
                 })
             }
         })
         done(null, user);
     })
     .catch(err => {
-        logErr(`Error handling discord API request for guilds: ${err}`, '[WEBSERVER]');
+        log(`Error handling discord API request for guilds: ${err}`, ['[ERR]', '[WEBSERVER]']);
     });
 }))

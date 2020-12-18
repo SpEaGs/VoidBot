@@ -36,7 +36,7 @@ router.get('/admin', (req, res) => {
                 }
             }
             res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
-            log(`User connected to admin panel.`, '[WEBSERVER]', `[${req.user.name}#${req.user.discriminator}]`);
+            log(`User connected to admin panel.`, ['[INFO]', '[WEBSERVER]', `[${req.user.name}#${req.user.discriminator}]`]);
         });
     }
 });
