@@ -9,7 +9,7 @@ delete dir;
 
 const appVersion = require(mainDir+'/package.json').version;
 
-router.use('/node_modules', express.static('./node_modules'));
+router.use('/node_modules', express.static(mainDir+'/node_modules'));
 
 router.get('/', (req, res) => {
     if(!req.user) {
