@@ -109,6 +109,7 @@ function log(str, tags) {
             break;
         }
     }
+    backlog.push(lo);
     if (status.eSender.socket) status.eSender.socket.emit('stdout', lo);
     if (status.eSender.ipc) status.eSender.ipc.send('stdout', lo);
 }

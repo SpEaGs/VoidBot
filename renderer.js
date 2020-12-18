@@ -373,10 +373,9 @@ ipcRenderer.on('populated', () => {
 
 ipcRenderer.on('init-backlog', (backlog) => {
     for (let i of backlog) {
-        let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(i.source.split(' ').join('-'))}`]);
-        let la = [i.timeStamp, i.source, i.message];
-        if (i.channel!=null) la.splice(2, 0, i.channel);
-        e.innerText = '> '+la.join(' ');
+        let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(i.tags[1])}`]);
+        e.style.color = i.color;
+        e.innerText = `${i.timeStamp} ${i.tags.join(' ')}: ${i.msg}`;
         appendChild('mainContentItemSTDOUT', e);
         document.getElementById('mainContentConsole').scrollTop = document.getElementById('mainContentConsole').scrollHeight;
     }
