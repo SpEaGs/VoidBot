@@ -18,14 +18,7 @@ html
                 h3 But if you ARE an admin, you can click the button below to jump right to the admin panel!
                 #derp
                 script#u(u=user).
-                    let user
-                    function userPopped() {
-                        socket.emit('getBotInfo', user.guilds.member);
-                    }
-                    setTimeout(() => {
-                        user = JSON.parse(document.getElementById('u').getAttribute('u'));
-                        setTimeout(() => {userPopped();}, 100);
-                    }, 100);
+                    let user = JSON.parse(document.getElementById('u').getAttribute('u'));
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
                         console.log('websocket connected!')  
@@ -44,6 +37,7 @@ html
                         document.getElementById('derp').innerText += `[${bot.guildID}]`;
                         console.log(bot.guildID);
                     }
+                    socket.emit('getBotInfo', user.guilds.member);
                     socket.on('sendBotInfo', (bots) => {
                         for (let b in bots) {
                             addGuild(b);

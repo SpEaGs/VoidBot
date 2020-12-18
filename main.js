@@ -197,25 +197,28 @@ function launchWebServer() {
         socket.on('command', cmd);
         socket.on('updateBot', updateBot);
 
+        function dumbifyBot(bot) {
+            let dumbBot = {
+                guildID: bot.guildID,
+                guildName: bot.guildName,
+                voiceChannelArray: bot.voiceChannelArray,
+                defaultVoiceChannel: bot.defaultVoiceChannel,
+                textChannelArray: bot.textChannelArray,
+                defaultTextChannel: bot.defaultTextChannel,
+                ruleTextChannel: bot.ruleTextChannel,
+                welcomeTextChannel: bot.welcomeTextChannel,
+                roleArray: bot.roleArray,
+                announcementsRole: bot.announcementsRole,
+                newMemberRole: bot.newMemberRole,
+                defaultVolume: bot.defaultVolume,
+                welcomeMsg: bot.welcomeMsg
+            }
+            return dumbBot;
+        }
+
         socket.once('initConnect', () => {
             for( let i of status.client.children.array()) {
-                let bot = {
-                    guildID: i.guildID,
-                    guildName: i.guildName,
-                    voiceChannelArray: i.voiceChannelArray,
-                    defaultVoiceChannel: i.defaultVoiceChannel,
-                    textChannelArray: i.textChannelArray,
-                    defaultTextChannel: i.defaultTextChannel,
-                    ruleTextChannel: i.ruleTextChannel,
-                    welcomeTextChannel: i.welcomeTextChannel,
-                    roleArray: i.roleArray,
-                    announcementsRole: i.announcementsRole,
-                    newMemberRole: i.newMemberRole,
-                    defaultVolume: i.defaultVolume,
-                    welcomeMsg: i.welcomeMsg
-                    
-                }
-                socket.emit('add-client', bot);
+                socket.emit('add-client', dumbifyBot(i));
             }
         });
 
@@ -223,7 +226,7 @@ function launchWebServer() {
             let bots = [];
             for (let i of status.client.children.array()) {
                 if (guilds.includes(i.guildID)) {
-                    bots.push(i);
+                    bots.push(dumbifyBot(i));
                 }
             }
             socket.emit('sendBotInfo', (bots));
