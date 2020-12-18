@@ -5,12 +5,42 @@ html
         title VoidBot
         include ./header.pug
     body
+        #errPopup.popup.hidden
+            .popupItem Error connecting to VoidBot. Attempting to reconnect...
+        #popupNewGuild.popup.hidden
+            .popupItem There has been an update to either the webpage or the bot. Please refresh your page.
         h2.pageTitle Home
         .mainContentContainer
             .mainArticle
                 h2 Welcome to VoidBot's Web UI!
                 h3 There's not much to see here right now since there are no features for non-admin users here yet...
                 h3 But if you ARE an admin, you can click the button below to jump right to the admin panel!
+                #derp
+                script.
+                    const socket = io(`http://${window.location.hostname}:7777`);
+                    socket.once('connect', () => {
+                        console.log('websocket connected!')  
+                    });
+                    socket.on('connect_error', (err) => {
+                        console.log('Connection Error: (Will attempt to reconnect)');
+                        console.warn(err);
+                        document.getElementById('errPopup').classList.remove('hidden');
+                    });
+                    socket.on('reconnect', (n) => {
+                        console.log(`Reconnected after ${n} attempts.`);
+                        document.getElementById('errPopup').classList.add('hidden');
+                    });
+
+                    function addGuild(bot) {
+                        document.getElementById('derp').innerText += `[${bot.guildID}]`;
+                        console.log(bot.guildID);
+                    }
+                    socket.emit('getBotInfo', user.guilds.member);
+                    socket.on('sendBotInfo', (bots) => {
+                        for (let b in bots) {
+                            addGuild(b);
+                        }
+                    })
             a.navlinkButton(href='/dash/admin')
                 .navlinkText Admin Panel
 

@@ -131,7 +131,7 @@ function launchWebServer() {
     //connect to DB & init if needed
     db.connect((err) => {
         if (err) {
-            log(`Error connecting to DB: ${err}`, ['[ERR]', '[WEBSERVER]'])
+            log(`Error connecting to DB: ${err}`, ['[ERR]', '[WEBSERVER]']);
         }
         else log('Successfully connected to DB!', ['[INFO]', '[WEBSERVER]']);
     });
@@ -218,6 +218,17 @@ function launchWebServer() {
                 socket.emit('add-client', bot);
             }
         });
+
+        socket.on('getBotInfo', (guilds) => {
+            let bots = [];
+            for (let i of status.client.children.array()) {
+                if (guilds.includes(i.guildID)) {
+                    bots.push(i);
+                }
+            }
+            socket.emit('sendBotInfo', (bots));
+        })
+
         setTimeout(() => {
             socket.emit('populated');
             socket.emit('init-backlog', backlog);
