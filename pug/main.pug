@@ -5,6 +5,7 @@ html
         title VoidBot
         include ./header.pug
     body
+        script(src='node_modules/socket.io-client/dist/socket.io.dev.js')
         #errPopup.popup.hidden
             .popupItem Error connecting to VoidBot. Attempting to reconnect...
         #popupNewGuild.popup.hidden
