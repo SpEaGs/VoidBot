@@ -24,7 +24,7 @@ html
                     }
                     setTimeout(() => {
                         user = JSON.parse(document.getElementById('u').getAttribute('u'));
-                        userPopped();
+                        setTimeout(() => {userPopped();}, 100);
                     }, 100);
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
