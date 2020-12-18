@@ -19,7 +19,7 @@ html
                 #derp
                 script#u(u=user).
                     let user
-                    funciton userPopped() {
+                    function userPopped() {
                         socket.emit('getBotInfo', user.guilds.member);
                     }
                     setTimeout(() => {
