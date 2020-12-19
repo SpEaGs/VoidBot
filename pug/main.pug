@@ -39,7 +39,8 @@ html
                     }
                     socket.emit('getBotInfo', user.guilds.member);
                     socket.on('sendBotInfo', (bots) => {
-                        for (let b in bots) {
+                        console.log(bots);
+                        for (let b of bots) {
                             addGuild(b);
                         }
                     })
