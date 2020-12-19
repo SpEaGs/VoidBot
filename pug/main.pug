@@ -20,7 +20,7 @@ html
                 script#u(u=user).
                     let thisScript = document.getElementById('u')
                     let user = thisScript.getAttribute('u');
-                    thisScript.removeAttribute('u');
+                    setTimeout( () => {thisScript.removeAttribute('u');}, 2000);
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
                         console.log('websocket connected!')  
