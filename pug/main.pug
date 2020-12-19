@@ -18,7 +18,9 @@ html
                 h3 But if you ARE an admin, you can click the button below to jump right to the admin panel!
                 #derp
                 script#u(u=user).
-                    let user = JSON.parse(document.getElementById('u').getAttribute('u'));
+                    let thisScript = document.getElementById('u')
+                    let user = thisScript.getAttribute('u'));
+                    thisScript.removeAttribute('u');
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
                         console.log('websocket connected!')  
@@ -34,16 +36,18 @@ html
                     });
 
                     function addGuild(bot) {
-                        document.getElementById('derp').innerText += `[${bot.guildID}]`;
-                        console.log(bot.guildID);
+                        let ctrl = document.createElement('div');
+                        ctrl.id = `gCtrl${bot.guildID}`;
+                        ctrl.classList.add('guildController');
+                        document.getElementById('guildControlsContainer').appendChild(ctrl);
                     }
                     socket.emit('getBotInfo', user.guilds.member);
                     socket.on('sendBotInfo', (bots) => {
-                        console.log(bots);
                         for (let b of bots) {
                             addGuild(b);
                         }
                     })
+                .articleItem#guildControlsContainer
             a.navlinkButton(href='/dash/admin')
                 .navlinkText Admin Panel
 
