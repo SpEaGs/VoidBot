@@ -19,7 +19,7 @@ html
                 #derp
                 script#u(u=user).
                     let thisScript = document.getElementById('u')
-                    let user = JSON.stringify(thisScript.getAttribute('u'));
+                    let user = JSON.parse(thisScript.getAttribute('u'));
                     console.log(user);
                     setTimeout( () => {thisScript.removeAttribute('u');}, 2000);
                     const socket = io(`http://${window.location.hostname}:7777`);
