@@ -10,6 +10,7 @@ style.
         --accent-color-hover: rgb(70, 93, 225);
         --track-color: rgb(173, 173, 173);
         --track-color-hover: rgb(211, 211, 211);
+        --popup-shade-color: rgba(0, 0, 0, 0.7);
     }
 
     ::-webkit-scrollbar {
@@ -45,6 +46,31 @@ style.
         height: 100%;
         width: 100%;
         overflow: auto;
+    }
+
+    .hidden {
+        display: none;
+    }
+
+    .popup {
+        transition: ease 0.3s all;
+        position: absolute;
+        z-index: 10;
+        width: 100%;
+        height: 100%;
+        background-color: var(--popup-shade-color);
+    }
+    .popupItem {
+        position: relative;
+        display: flex;
+        width: 500px;
+        height: auto;
+        padding: 20px;
+        left: calc(50% - 260px);
+        top: calc(50% - 100px);
+        background-color: var(--toolbar-color);
+        text-align: center;
+        font-size: 2em;
     }
 
     .webTitle {
@@ -126,4 +152,31 @@ style.
         left: 0px;
         width: calc(100% - 14px);
         height: calc(100% - 64px);
+    }
+
+    .articleItem {
+        display: flex;
+        position: fixed;
+        width: 100%;
+        height: 100%;
+        max-height: 650px;
+        left: 0px;
+        overflow-y: auto;
+        align-items: center;
+        bottom: 30px;
+        justify-content: center;
+        flex-flow: row;
+    }
+
+    .guildController {
+        width: 30%;
+        height: 90%;
+        position: relative;
+        left: 10px;
+        background-color: var(--toolbar-color);
+        top: 10px;
+        margin: auto;
+    }
+    .guildController:hover {
+        background-color: var(--toolbar-hover-color);
     }
