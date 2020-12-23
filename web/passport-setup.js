@@ -52,12 +52,12 @@ passport.use( new Strategy({
         }
         db.query(`SELECT * FROM guilds`, (err, result) => {
             for (let i of response) {
-                if (result.includes(i.id)) {
+                //if (result.includes(i.id)) {
                     user.guilds.member.push(i.id);
                     if ((i.permissions & 0x8) == 0x8) {
                         user.guilds.admin.push(i.id);
                     }
-                }
+                //}
             }
         });
         db.query(`SELECT * FROM users WHERE snowflake = "${user.id}"`, (err, result) => {
