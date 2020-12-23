@@ -20,7 +20,6 @@ html
                 script#u(u=user).
                     let thisScript = document.getElementById('u')
                     let user = JSON.parse(thisScript.getAttribute('u'));
-                    console.log(user);
                     setTimeout( () => {thisScript.removeAttribute('u');}, 2000);
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
@@ -47,7 +46,6 @@ html
                         for (let b of bots) {
                             addGuild(b);
                         }
-                        console.log(bots);
                     })
                 .articleItem#guildControlsContainer
             a.navlinkButton(href='/dash/admin')
