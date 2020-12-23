@@ -59,9 +59,9 @@ passport.use( new Strategy({
                     }
                 }
             }
+            log(user);
         });
-        let findUserSQL = `SELECT * FROM users WHERE snowflake = "${user.id}"`
-        let findUserQuery = db.query(findUserSQL, (err, result) => {
+        db.query(`SELECT * FROM users WHERE snowflake = "${user.id}"`, (err, result) => {
             if (err) log(`Error requesting user from DB:\n${err}`, ['[ERR]', '[WEBSERVER]']);
             if (!result.length) {
                 log('No user entry found in the DB. Creating a new one...', ['[INFO]', '[WEBSERVER]']);
