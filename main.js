@@ -147,9 +147,7 @@ function launchWebServer() {
     db.query(initUDBSQL, (err, result) => {
         if(err) log(`Error initializing UDB: ${err}`, ['[ERR]', '[WEBSERVER]']);
     });
-    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( gID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    snowflake VARCHAR(18) NOT NULL
-                    )`
+    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( snowflake VARCHAR(18) NOT NULL PRIMARY KEY )`
     db.query(initGDBSQL, (err, result) => {
         if(err) log(`Error initializing GDB: ${err}`, ['[ERR]', '[WEBSERVER]']);
     });
