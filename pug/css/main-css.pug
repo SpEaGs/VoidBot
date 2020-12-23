@@ -162,25 +162,26 @@ style.
 
     .articleItem {
         display: flex;
-        position: fixed;
+        position: relative;
         width: 100%;
-        height: calc(100% - 250px);
-        top: 250px;
-        left: 0px;
+        top: 25px;
         align-items: center;
-        bottom: 30px;
         justify-content: center;
         flex-flow: row;
+        flex-wrap: wrap;
+        margin: 10px;
     }
 
     .guildController {
-        width: 30%;
+        width: 100%;
         height: 100%;
         min-height: 400px;
         max-height: 650px;
+        min-width: 400px;
+        max-width: 550px;
         position: relative;
         background-color: var(--toolbar-color);
-        margin: 20px;
+        margin: 15px;
         transition: ease 0.3s all;
     }
     .guildController:hover {
