@@ -154,7 +154,7 @@ function launchWebServer() {
         if(err) log(`Error initializing GDB: ${err}`, ['[ERR]', '[WEBSERVER]']);
     });
     for(i of status.client.children.array()) {
-        let pushGuildsSQL = `INSERT INTO guilds SET ?`;
+        let pushGuildsSQL = `INSERT IGNORE INTO guilds SET ?`;
         db.query(pushGuildsSQL, {snowflake: i.guildID}, (err, result) => {
             if(err) log(`Error pushing guild ${i.guildID} to guilds table: ${err}`, ['[ERR]','[WEBSERVER]']);
         })
