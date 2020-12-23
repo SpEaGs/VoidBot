@@ -51,8 +51,8 @@ passport.use( new Strategy({
             member: []
         }
         db.query(`SELECT * FROM guilds`, (err, result) => {
-            for (let i in response) {
-                if (Object.values(result).includes(i.id)) {
+            for (let i of response) {
+                if (result.includes(i.id)) {
                     user.guilds.member.push(i.id);
                     if ((i.permissions & 0x8) == 0x8) {
                         user.guilds.admin.push(i.id);
