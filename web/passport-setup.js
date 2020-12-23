@@ -50,12 +50,14 @@ passport.use( new Strategy({
             admin: [],
             member: []
         }
-        for (let i of response) {
-            user.guilds.member.push(i.id);
-            if ((i.permissions & 0x8) == 0x8) {
-                user.guilds.admin.push(i.id);
+        db.query(`SELECT * FROM guilds`, (err, result) => {
+            for (let i of response) {
+                if (Object.values(result).includes(i)) user.guilds.member.push(i.id);
+                if ((i.permissions & 0x8) == 0x8) {
+                    user.guilds.admin.push(i.id);
+                }
             }
-        }
+        });
         let findUserSQL = `SELECT * FROM users WHERE snowflake = "${user.id}"`
         let findUserQuery = db.query(findUserSQL, (err, result) => {
             if (err) log(`Error requesting user from DB:\n${err}`, ['[ERR]', '[WEBSERVER]']);
