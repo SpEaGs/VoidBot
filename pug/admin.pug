@@ -8,7 +8,7 @@ include ./css/admin-css.pug
 #titleBar
     strong#titleText VoidBot v 
         script#version(ver=appVersion).
-            document.write(document.getElementById('version').getAttribute('ver'));
+            document.getElementById(titleText).innerText += document.getElementById('version').getAttribute('ver');
     a.navlinkButton#navlinkDash(href='/dash')
         .navlinkText Dashboard
     a.navlinkButton#navlinkLogout(href='/auth/logout')
