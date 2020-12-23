@@ -51,6 +51,7 @@ passport.use( new Strategy({
             member: []
         }
         db.query(`SELECT * FROM guilds`, (err, result) => {
+            console.log(result);
             for (let i of response) {
                 if (Object.values(result).includes(i.id)) {
                     user.guilds.member.push(i.id);
@@ -59,7 +60,7 @@ passport.use( new Strategy({
                     }
                 }
             }
-            log(user);
+            console.log(user);
         });
         db.query(`SELECT * FROM users WHERE snowflake = "${user.id}"`, (err, result) => {
             if (err) log(`Error requesting user from DB:\n${err}`, ['[ERR]', '[WEBSERVER]']);
