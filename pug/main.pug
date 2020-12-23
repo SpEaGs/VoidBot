@@ -43,7 +43,6 @@ html
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
                     }
                     socket.emit('getBotInfo', user.guilds.member);
-                    console.log(user);
                     socket.on('sendBotInfo', (bots) => {
                         for (let b of bots) {
                             addGuild(b);
