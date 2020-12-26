@@ -38,10 +38,11 @@ html
                         let ctrl = document.createElement('div');
                             ctrl.id = `gCtrl${bot.guildID}`;
                             ctrl.classList.add('guildController');
-                        let txt = document.createElement('input');
-                            txt.id = `gcURLInput${bot.guildID}`;
-                            txt.type = 'url';
-                            txt.classList.add('gcURLInput');
+                        let url = document.createElement('input');
+                            url.id = `gcURLInput${bot.guildID}`;
+                            url.type = 'url';
+                            url.classList.add('gcURLInput');
+                            ctrl.appendChild(url);
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
                     };
                     socket.on('sendBotInfo', (bots) => {
