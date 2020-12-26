@@ -94,6 +94,11 @@ style.
         margin: 0px;
         padding: 7px;
     }
+    @media all and (max-width: 1334px) {
+        .pageTitle{
+            left: 211px;
+        }
+    }
 
     .titlebar {
         position: fixed;
@@ -164,7 +169,6 @@ style.
         display: flex;
         position: relative;
         width: 100%;
-        top: 10px;
         align-items: center;
         justify-content: center;
         flex-flow: row;
@@ -177,6 +181,7 @@ style.
         height: 40px;
         margin-left: 0.5em;
         margin-right: 0.5em;
+        padding-bottom: 20px;
         color: white;
         text-decoration: none;
         background: var(--accent-color);
@@ -194,12 +199,9 @@ style.
         display: flex;
         flex-flow: column;
         align-items: center;
-        background-color: var(--toolbar-color);
+        background-color: var(--toolbar-hover-color);
         margin: 15px;
         transition: ease 0.3s all;
-    }
-    .guildController:hover {
-        background-color: var(--toolbar-hover-color);
     }
     .gcURLInput {
         width: 350px;
