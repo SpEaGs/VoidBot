@@ -191,10 +191,19 @@ style.
         width: 550px;
         height: 650px;
         position: relative;
+        display: flex;
+        flex-flow: column;
+        align-items: center;
         background-color: var(--toolbar-color);
         margin: 15px;
         transition: ease 0.3s all;
     }
     .guildController:hover {
         background-color: var(--toolbar-hover-color);
+    }
+    .gcURLInput {
+        width: 350px;
+        position: relative;
+        margin-top: 50px;
+        left: -0.5em;
     }

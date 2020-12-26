@@ -38,6 +38,11 @@ html
                         let ctrl = document.createElement('div');
                             ctrl.id = `gCtrl${bot.guildID}`;
                             ctrl.classList.add('guildController');
+                        let ttx = document.createElement('div');
+                            ttx.id = `gcTitleText${bot.guildID}`;
+                            ttx.classList.add('gcTitleText');
+                            ttx.innerText = bot.guildName;
+                            ctrl.appendChild(ttx);
                         let url = document.createElement('input');
                             url.id = `gcURLInput${bot.guildID}`;
                             url.type = 'url';
