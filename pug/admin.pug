@@ -1,31 +1,36 @@
-#errPopup.popup.hidden
-    .popupItem Error connecting to VoidBot. Attempting to reconnect...
-#popupNewGuild.popup.hidden
-    .popupItem There has been an update to either the webpage or the bot. Please refresh your page.
-link(rel='icon', type='image/x-icon', href='http://76.179.50.164:7777/favicon.ico')
-script(src='node_modules/socket.io-client/dist/socket.io.dev.js')
-script(type='text/javascript', src='renderer.js')
-include ./css/admin-css.pug
-#titleBar
-    strong#titleText VoidBot v 
-        script#version(ver=appVersion).
-            document.getElementById("titleText").innerText += document.getElementById('version').getAttribute('ver');
-    a.navlinkButton#navlinkDash(href='/dash')
-        .navlinkText Dashboard
-    a.navlinkButton#navlinkLogout(href='/auth/logout')
-        .navlinkText Logout
-.contentBody#windowContent
-    include navbar.pug
-script#g(g=guilds).
-    let interv = setInterval( () => {
-        if (populated == true) {
-            clearInterval(interv);
-            delete interv
-            let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
-            for (i of gs) {
-                removeClient(i);
-            }
-            let e = document.getElementById('g')
-            e.parentNode.removeChild(e);
-        }
-    }, 200);
+doctype html
+html
+    head
+        title VoidBot Admin Panel
+        link(rel='icon', type='image/x-icon', href='http://76.179.50.164:7777/favicon.ico')
+        script(src='node_modules/socket.io-client/dist/socket.io.dev.js')
+        script(type='text/javascript', src='renderer.js')
+        include ./css/admin-css.pug
+    body
+        #errPopup.popup.hidden
+            .popupItem Error connecting to VoidBot. Attempting to reconnect...
+        #popupNewGuild.popup.hidden
+            .popupItem There has been an update to either the webpage or the bot. Please refresh your page.
+        #titleBar
+            strong#titleText VoidBot v 
+                script#version(ver=appVersion).
+                    document.getElementById("titleText").innerText += document.getElementById('version').getAttribute('ver');
+            a.navlinkButton#navlinkDash(href='/dash')
+                .navlinkText Dashboard
+            a.navlinkButton#navlinkLogout(href='/auth/logout')
+                .navlinkText Logout
+        .contentBody#windowContent
+            include navbar.pug
+        script#g(g=guilds).
+            let interv = setInterval( () => {
+                if (populated == true) {
+                    clearInterval(interv);
+                    delete interv
+                    let gs = JSON.parse(document.getElementById('g').getAttribute('g').split("&quot;").join('"'));
+                    for (i of gs) {
+                        removeClient(i);
+                    }
+                    let e = document.getElementById('g')
+                    e.parentNode.removeChild(e);
+                }
+            }, 200);
