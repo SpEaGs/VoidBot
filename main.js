@@ -162,7 +162,7 @@ function launchWebServer() {
     exApp.set('views', './pug');
 
     exApp.use('/assets', express.static('./assets'));
-    exApp.use('/favicon.ico', express.static(mainDir+'/favicon.ico'));
+    exApp.use('/favicon.ico', express.static('./favicon.ico'));
 
 
     exApp.use(cParse());
