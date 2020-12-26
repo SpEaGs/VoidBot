@@ -86,17 +86,22 @@ style.
         text-align: center;
     }
     .pageTitle{ 
-        top: -4px;
-        left: calc(15% + 11px);
+        top: -8px;
+        left: calc(15% + 12px);
         position: relative;
-        width: 5%;
-        text-align: center;
+        display: flex;
+        flex-flow: column;
+        text-align: left;
+        justify-content: center;
+        padding-left: 10px;
+        height: 50px;
+        width: calc(85% - 30px);
         margin: 0px;
-        padding: 7px;
+        background-color: var(--toolbar-color);
     }
-    @media all and (max-width: 1334px) {
+    @media all and (max-width: 1203px) {
         .pageTitle{
-            left: 211px;
+            left: 205px;
         }
     }
 
