@@ -22,7 +22,7 @@ html
                     setTimeout( () => {thisScript.removeAttribute('u');}, 2000);
                     const socket = io(`http://${window.location.hostname}:7777`);
                     socket.once('connect', () => {
-                        console.log('websocket connected!')  
+                        socket.emit('getBotInfo', user.guilds.member);
                     });
                     socket.on('connect_error', (err) => {
                         console.log('Connection Error: (Will attempt to reconnect)');
@@ -36,11 +36,14 @@ html
 
                     function addGuild(bot) {
                         let ctrl = document.createElement('div');
-                        ctrl.id = `gCtrl${bot.guildID}`;
-                        ctrl.classList.add('guildController');
+                            ctrl.id = `gCtrl${bot.guildID}`;
+                            ctrl.classList.add('guildController');
+                        let txt = document.createElement('input');
+                            txt.id = `gcURLInput${bot.guildID}`;
+                            txt.type = 'url';
+                            txt.classList.add('gcURLInput');
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
                     };
-                    socket.emit('getBotInfo', user.guilds.member);
                     socket.on('sendBotInfo', (bots) => {
                         for (let b of bots) {
                             addGuild(b);
