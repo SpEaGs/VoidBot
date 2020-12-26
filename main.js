@@ -329,7 +329,7 @@ status.client.on('message', msg => {
     }
     catch (error) {
         log(`Error executing command:\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
-        msg.reply('There was an error executing that command! Please ask `SpEaGs#2936` to check the logs.');
+        msg.reply('There was an error executing that command! Please ask an admin or `SpEaGs#2936` to check the logs.');
     };
 });
 
