@@ -40,13 +40,13 @@ html
                         ctrl.id = `gCtrl${bot.guildID}`;
                         ctrl.classList.add('guildController');
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
-                    }
+                    };
                     socket.emit('getBotInfo', user.guilds.member);
                     socket.on('sendBotInfo', (bots) => {
                         for (let b of bots) {
                             addGuild(b);
-                        }
-                    })
+                        };
+                    });
             a.articleButton(href='/dash/admin')
                 .navlinkText Admin Panel
             .articleItem#guildControlsContainer

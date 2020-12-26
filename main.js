@@ -287,11 +287,11 @@ catch (error) {
 to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
 status.client.on('message', msg => {
     let bot = status.client.children.get(msg.guild.id);
-    //log incoming message & check for bot message or command
-    log(`[${msg.author.username}]: ${msg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`, `[${msg.channel.name}]`])
+    //check incoming message for command and log if true
     if (msg.author.id == status.client.user.id) return;
     if (!msg.content.startsWith(utils.config.prefix)) return;
-    if (msg.channel.id != bot.defaultTextChannel.id) {
+    log(`[Command]: ${msg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
+    if (bot.defaultTextChannel && msg.channel.id != bot.defaultTextChannel.id) {
         msg.delete({reason:"Wrong channel for bot commands."});
         bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author));
         return;
