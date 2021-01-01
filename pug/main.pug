@@ -53,14 +53,23 @@ html
                         let aqu = document.createElement('div');
                             aqu.id = `gcAudioQ${bot.guildID}`;
                             aqu.classList.add('gcAudioQ');
+                            aqu.innerText = 'Queue:';
                             let ol = document.createElement('ol');
                                 ol.style = "max-height: 176px; overflow:auto; padding-left: 20px;";
-                                for (let i of bot.audioQueue) {
+                                if (bot.audioQueue.length = 0) {
                                     let qi = document.createElement('li');
-                                        qi.id = `gcAudioQI${bot.audioQueue.indexOf(i)}`;
                                         qi.classList.add('gcAudioQI');
-                                        qi.innerText = `${i.videoDetails.title}\n(added by: ${i.added_by})`;
+                                        qi.innerText = 'Queue Empty';
                                         ol.appendChild(qi);
+                                }
+                                else {
+                                    for (let i of bot.audioQueue) {
+                                        let qi = document.createElement('li');
+                                            qi.id = `gcAudioQI${bot.audioQueue.indexOf(i)}`;
+                                            qi.classList.add('gcAudioQI');
+                                            qi.innerText = `${i.videoDetails.title}\n(added by: ${i.added_by})`;
+                                            ol.appendChild(qi);
+                                    }
                                 }
                                 aqu.appendChild(ol);
                             ctrl.appendChild(aqu);
