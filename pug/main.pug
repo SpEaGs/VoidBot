@@ -63,7 +63,7 @@ html
                     };
                     socket.once('sendBotInfo', (bots) => {
                         for (let b of bots) {
-                            addGuild(b);
+                            setTimeout(addGuild(b), 200);
                         };
                         socket.on('sendBotInfo', (info) => {
                             for (let i of info) {
