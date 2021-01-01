@@ -142,6 +142,7 @@ function createStream(status, info, msg) {
 function endDispatcher(status, msg) {
     if (status.audioQueue && status.audioQueue.length === 0) {
         status.dispatcher = false;
+        status.nowPlaying = false;
         return;
     }
     else { playNextInQueue(status, msg); }
