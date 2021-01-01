@@ -74,13 +74,12 @@ html
                             url.type = 'url';
                             url.classList.add('gcURLInput');
                             url.placeholder = 'Youtube or SoundCloud link here';
-                            url.value = '';
                             ctrl.appendChild(url);
                         let add = document.createElement('div');
                             add.id = `gcSongAdd${bot.guildID}`;
                             add.classList.add('gcSongAdd');
                             add.innerText = '+';
-                            add.onclick = addSong(bot, user);
+                            add.onclick = () => {addSong(bot, user);};
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
                     };
 
