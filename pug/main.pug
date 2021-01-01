@@ -56,10 +56,7 @@ html
                             let ol = document.createElement('ol');
                                 ol.style = "max-height: 176px; overflow:auto; padding-left: 20px;";
                                 if (bot.audioQueue.length == 0) {
-                                    let qi = document.createElement('li');
-                                        qi.classList.add('gcAudioQI');
-                                        qi.innerText = 'Queue Empty';
-                                        ol.appendChild(qi);
+                                    aqu.innerText = 'Queue is Empty.';
                                 }
                                 else {
                                     for (let i of bot.audioQueue) {
