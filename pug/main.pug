@@ -16,7 +16,7 @@ html
                 h2 Welcome to VoidBot's Web UI!
                 h3 There's not much to see here right now since there are no working features for non-admin users yet...
                 h3 But if you ARE an admin, you can click the button below to jump right to the admin panel!
-                script#u(u=user).
+                script.
                     let thisScript = document.getElementById('u')
                     let user = JSON.parse(thisScript.getAttribute('u'));
                     setTimeout( () => {thisScript.removeAttribute('u');}, 2000);
@@ -43,6 +43,12 @@ html
                             ttx.classList.add('gcTitleText');
                             ttx.innerText = bot.guildName;
                             ctrl.appendChild(ttx);
+                        let nwp = document.createElement('div');
+                            nwp.id = `gcNowPlay${bot.guildID}`;
+                            nwp.classList.add('gcNowPlay');
+                            if (bot.nowPlaying = false) {nwp.innerText = 'Now Playing:\nNothing.'}
+                            else {nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`};
+                            ctrl.appendChild(nwp);
                         let url = document.createElement('input');
                             url.id = `gcURLInput${bot.guildID}`;
                             url.type = 'url';
