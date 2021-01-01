@@ -230,10 +230,10 @@ function launchWebServer() {
                 }
                 dumbBot.nowPlaying = np;
             }
-            console.log(bot.audioQueue);
             if (bot.audioQueue.length > 0) {
                 let aq = [];
                 for (let i of bot.audioQueue) {
+                    console.log(i);
                     let aqd = {
                         videoDetails: {
                             title: i.videoDetails.title,
