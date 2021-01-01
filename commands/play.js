@@ -109,7 +109,7 @@ async function get_info(url, msg, status) {
 }
 
 function play(info, status) {
-    status.defaultTextChannel.send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
+    status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info);
 }
@@ -152,14 +152,14 @@ function endDispatcher(status) {
 function playNextInQueue(status) {
     log(`Playing next in queue - length:${status.audioQueue.length}`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
     let nextPlay = status.audioQueue[0];
-    status.defaultTextChannel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
+    status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
     createStream(status, nextPlay);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
 }
 
 function addToQueue(info, status) {
-    status.defaultTextChannel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
+    status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
     log(`Adding ${info.videoDetails.title} to queue.`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
