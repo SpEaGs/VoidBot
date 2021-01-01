@@ -202,7 +202,15 @@ function launchWebServer() {
                 guildID: bot.guildID,
                 guildName: bot.guildName,
                 dispatcher: bot.dispatcher,
-                nowPlaying: bot.nowPlaying,
+                nowPlaying: {
+                    videoDetails: {
+                        title: bot.nowPlaying.videoDetails.title,
+                        lengthSeconds: bot.nowPlaying.videoDetails.lengthSeconds
+                    },
+                    trackSource: bot.nowPlaying.trackSource,
+                    url: bot.nowPlaying.url,
+                    added_by: bot.nowPlaying.added_by
+                },
                 audioQueue: bot.audioQueue,
                 voiceChannel: bot.voiceChannel,
                 voiceChannelArray: bot.voiceChannelArray,
