@@ -230,7 +230,7 @@ function launchWebServer() {
                 }
                 dumbBot.nowPlaying = np;
             }
-            if (bot.audioQueue && bot.audioQueue.length >= 1) {
+            if (bot.audioQueue !== []) {
                 let aq = [];
                 for (let i of bot.audioQueue) {
                     let aqd = {
