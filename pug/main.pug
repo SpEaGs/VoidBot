@@ -52,7 +52,7 @@ html
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
                     };
                     function updateInfo(bot) {
-
+                        console.log('updateInfo');
                     };
                     socket.once('sendBotInfo', (bots) => {
                         for (let b of bots) {
