@@ -242,9 +242,9 @@ function launchWebServer() {
                         url: i.url,
                         added_by: i.added_by
                     }
-                    console.log(aqd);
                     aq.push(aqd);
                 }
+                dumbBot.audioQueue = aq;
             }
             return dumbBot;
         }
