@@ -51,10 +51,25 @@ html
                             ctrl.appendChild(url);
                         document.getElementById('guildControlsContainer').appendChild(ctrl);
                     };
-                    socket.on('sendBotInfo', (bots) => {
+                    function updateInfo(bot) {
+
+                    };
+                    socket.once('sendBotInfo', (bots) => {
                         for (let b of bots) {
                             addGuild(b);
                         };
+                        socket.on('sendBotInfo', (info) => {
+                            for (let i of info) {
+                                updateInfo(i);
+                            }
+                        });
+                    });
+                    socket.on('new-guild', () => {
+                        document.getElementById(popupNewGuild).classList.toggle('hidden');
+                    });
+                    socket.on('rem-client', (guildID) => {
+                        let e = document.getElementById(`gCtrl${guildID}`);
+                        e.parentNode.removeChild(e);
                     });
             a.articleButton(href='/dash/admin')
                 .navlinkText Admin Panel
