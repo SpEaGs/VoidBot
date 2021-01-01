@@ -4,6 +4,8 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+const MAIN = require('../main.js');
+
 module.exports = {
     name: 'stop',
     description: 'Stops the bot\'s currently playing audio stream.',
@@ -20,6 +22,7 @@ module.exports = {
             stopAudio(params.bot.dispatcher, params.msg);
             params.bot.dispatcher = false;
             params.bot.nowPlaying = false;
+            MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
         }
         catch (error) {
             logErr(`Error stopping music:\n${error}`, '[STOP]');
