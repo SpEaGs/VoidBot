@@ -35,7 +35,6 @@ html
                     });
 
                     function addGuild(bot) {
-                        console.log(bot.audioQueue);
                         let ctrl = document.createElement('div');
                             ctrl.id = `gCtrl${bot.guildID}`;
                             ctrl.classList.add('guildController');
@@ -56,7 +55,7 @@ html
                             aqu.innerText = 'Queue:';
                             let ol = document.createElement('ol');
                                 ol.style = "max-height: 176px; overflow:auto; padding-left: 20px;";
-                                if (bot.audioQueue.length = 0) {
+                                if (bot.audioQueue.length == 0) {
                                     let qi = document.createElement('li');
                                         qi.classList.add('gcAudioQI');
                                         qi.innerText = 'Queue Empty';
