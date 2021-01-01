@@ -46,7 +46,7 @@ html
                         let nwp = document.createElement('div');
                             nwp.id = `gcNowPlay${bot.guildID}`;
                             nwp.classList.add('gcNowPlay');
-                            if (bot.nowPlaying = false) {nwp.innerText = 'Now Playing:\nNothing.'}
+                            if (!bot.nowPlaying) {nwp.innerText = 'Now Playing:\nNothing.'}
                             else {nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`};
                             ctrl.appendChild(nwp);
                         let url = document.createElement('input');
