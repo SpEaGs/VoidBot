@@ -433,7 +433,7 @@ status.client.on('guildMemberRemove', member => {
 status.client.on('voiceStateUpdate', (oldState, newState) => {
     let bot = status.client.children.get(newState.member.guild.id);
     if (oldState.member.id === status.client.user.id) return;
-    if (oldState.channel.id === newState.channel.id) return;
+    if (oldState.channel && newState.channel && oldState.channel.id === newState.channel.id) return;
     try {
         if (!newState.channel) {
             if (bot.voiceStateCaching.members.includes(newState.member.id)) {
