@@ -285,8 +285,7 @@ catch (error) {
     process.exit(1);
 };
 
-/*discord.js client message event handler (only need to listen to this once so the master sends the info 
-to wherever it needs to go (i.e. which child client should handle it/do something with it)*/
+//discord.js client event for the bot receiving a message
 status.client.on('message', msg => {
     let bot = status.client.children.get(msg.guild.id);
     //check incoming message for command and log if true
@@ -338,13 +337,19 @@ status.client.on('message', msg => {
 //discord.js client event for the bot entering a new server
 status.client.on('guildCreate', guild => {
     let newBot = new Bot.Bot(guild, status);
+    log('New server added.', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
     status.client.children.set(guild.id, newBot);
-    setTimeout(() => {initBot(newBot);}, 400);
+    setTimeout(() => {
+        initBot(newBot);
+        log('Initialization complete!', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
+    }, 400);
     status.eSender.socket.emit('new-guild');
 });
 
 //discord.js client event for the bot leaving or being kicked from a server
 status.client.on('guildDelete', guild => {
+    let bot = status.client.children.get(guild.id);
+    log('Server removed. Deleting config and data.', ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
     status.client.children.delete(guild.id);
     delete utils.config.sharding[guild.id];
     utils.dumpJSON('config.json', utils.config, 2);
@@ -355,7 +360,7 @@ status.client.on('guildDelete', guild => {
 //discord.js client event for new members joining a server
 status.client.on('guildMemberAdd', member => {
     let bot = status.client.children.get(member.guild.id);
-    log(`New Member Joined: ${member.user.username} Welcome Message set to: ${bot.welcomeMsg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
+    log(`New member joined. Welcome message set to: ${bot.welcomeMsg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
     try {
         if (bot.welcomeMsg === false) return;
         if (bot.welcomeTextChannel != false) {
@@ -379,6 +384,7 @@ status.client.on('guildMemberAdd', member => {
 //discord.js client event for when a member leaves a server
 status.client.on('guildMemberRemove', member => {
     let bot = status.client.children.get(member.guild.id);
+    log('A member left the server.', ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
     try {
         if (bot.welcomeMsg == false) return;
         if (bot.welcomeTextChannel != false) {
