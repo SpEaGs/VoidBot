@@ -202,7 +202,6 @@ function launchWebServer() {
             let dumbBot = {
                 guildID: bot.guildID,
                 guildName: bot.guildName,
-                //dispatcher: bot.dispatcher,
                 nowPlaying: false,
                 audioQueue: bot.audioQueue,
                 voiceChannel: bot.voiceChannel,
