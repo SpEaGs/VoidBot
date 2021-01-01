@@ -209,12 +209,28 @@ style.
         transition: ease 0.3s all;
     }
     .gcURLInput {
-        width: 350px;
+        width: calc(75% - 2em);
         height: 1.5em;
         position: relative;
-        margin-top: 50px;
-        left: calc(-0.5em - 3px);
+        margin-top: 10px;
+        left: -11px;
         color: white;
         background-color: var(--navbar-hover-color);
         border: none;
+    }
+    .gcNowPlay {
+        width: 75%;
+    }
+    .gcAudioQ {
+        width: calc(75% - 20px);
+        max-height: 200px;
+        margin-top: 1.5em;
+        background-color: var(--navbar-hover-color);
+        padding: 10px;
+    }
+    .gcAudioQI {
+        margin-bottom: 10px;
+        margin-right: 8px;
+        padding: 5px;
+        background-color: var(--toolbar-hover-color);
     }
