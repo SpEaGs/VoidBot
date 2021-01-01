@@ -21,7 +21,7 @@ module.exports = {
         }
         for (const item of params.bot.audioQueue) {
             i += 1;
-            output.push(`${i}) - \`${item.videoDetails.title} [${parseInt(item..videoDetails.lengthSeconds / 60)}:${(item.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${item.added_by})\``);
+            output.push(`${i}) - \`${item.videoDetails.title} [${parseInt(item.videoDetails.lengthSeconds / 60)}:${(item.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${item.added_by})\``);
         };
         params.msg.reply(`Playlist: ${output.join('\n')}`);
     }
