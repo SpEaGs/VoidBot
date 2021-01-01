@@ -87,7 +87,7 @@ html
                     function addSong(bot, user) {
                         let el = document.getElementById(`gcURLInput${bot.guildID}`);
                         let url = el.value;
-                        if (url == '') return;
+                        if (!url) return;
                         toSend = {
                             control: 'addSong',
                             data: {
