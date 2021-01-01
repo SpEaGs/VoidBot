@@ -233,7 +233,6 @@ function launchWebServer() {
             if (bot.audioQueue.length > 0) {
                 let aq = [];
                 for (let i of bot.audioQueue) {
-                    console.log(i);
                     let aqd = {
                         videoDetails: {
                             title: i.videoDetails.title,
@@ -243,7 +242,7 @@ function launchWebServer() {
                         url: i.url,
                         added_by: i.added_by
                     }
-                    aq[bot.audioQueue.indexOf(i)] = aqd;
+                    aq.push(aqd);
                 }
             }
             return dumbBot;
