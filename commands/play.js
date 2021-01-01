@@ -81,13 +81,24 @@ let errcount = 0
 async function get_info(url, msg, status) {
     let vidInfo = {};
     if (url.toString().includes('soundcloud.com/')) {
-        vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
-        vidInfo.trackSource = 'SC';
-        vidInfo.videoDetails.lengthSeconds = Math.trunc(vidinfo.videoDetails.duration / 1000);
+        let scDetails = await sc.getInfo(url, SC_API_KEY);
+        vidInfo = {
+            videoDetails: {
+                title: scDetails.title,
+                lengthSeconds: Math.trunc(scDetails.duration/1000)
+            },
+            trackSource: 'SC'
+        }
     }
     else if (url.toString().includes('.youtube.com/')) {
-        vidInfo = (await ytdl.getInfo(url));
-        vidInfo.trackSource = 'YT';
+        ytDetails = (await ytdl.getInfo(url)).videoDetails;
+        vidInfo = {
+            videoDetails:{
+                title: ytDetails.title,
+                lengthSeconds: ytDetails.lengthSeconds
+            },
+            trackSource: 'YT'
+        }
     }
     vidInfo.url = url;
     vidInfo.added_by = msg.author.username;
