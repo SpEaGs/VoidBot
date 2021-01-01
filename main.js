@@ -77,6 +77,7 @@ module.exports = {
 
 //set up basic structure for calling/storing discord.js clients (master + children)
 const status = require('./main.js');
+const { brotliCompressSync } = require('zlib');
 
 function getStatus() {
     return status;
@@ -203,7 +204,7 @@ function launchWebServer() {
                 guildID: bot.guildID,
                 guildName: bot.guildName,
                 nowPlaying: false,
-                audioQueue: bot.audioQueue,
+                audioQueue: [],
                 voiceChannel: bot.voiceChannel,
                 voiceChannelArray: bot.voiceChannelArray,
                 defaultVoiceChannel: bot.defaultVoiceChannel,
@@ -228,6 +229,21 @@ function launchWebServer() {
                     added_by: bot.nowPlaying.added_by
                 }
                 dumbBot.nowPlaying = np;
+            }
+            if (bot.audioQueue && bot.audioQueue.length >= 1) {
+                let aq = [];
+                for (let i of bot.audioQueue) {
+                    let aqd = {
+                        videoDetails: {
+                            title: i.videoDetails.title,
+                            lengthSeconds: i.videoDetails.lengthSeconds
+                        },
+                        trackSource: i.trackSource,
+                        url: i.url,
+                        added_by: i.added_by
+                    }
+                    aq[bot.audioQueue.indexOf(i)] = aqd;
+                }
             }
             return dumbBot;
         }
