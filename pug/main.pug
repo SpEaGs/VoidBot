@@ -53,13 +53,16 @@ html
                         let aqu = document.createElement('div');
                             aqu.id = `gcAudioQ${bot.guildID}`;
                             aqu.classList.add('gcAudioQ');
-                            for (let i of bot.audioQueue) {
-                                let qi = document.createElement('li');
-                                    qi.id = `gcAudioQI${bot.audioQueue.indexOf(i)}`;
-                                    qi.classList.add('gcAudioQI');
-                                    qi.innerText = `${i.videoDetails.title}\n(added by: ${i.added_by})`;
-                                    aqu.appendChild(qi);
-                            }
+                            let ol = document.createElement('ol');
+                                ol.style = "max-height: 176px; overflow:auto; padding-left: 20px;";
+                                for (let i of bot.audioQueue) {
+                                    let qi = document.createElement('li');
+                                        qi.id = `gcAudioQI${bot.audioQueue.indexOf(i)}`;
+                                        qi.classList.add('gcAudioQI');
+                                        qi.innerText = `${i.videoDetails.title}\n(added by: ${i.added_by})`;
+                                        ol.appendChild(qi);
+                                }
+                                aqu.appendChild(ol);
                             ctrl.appendChild(aqu);
                         let url = document.createElement('input');
                             url.id = `gcURLInput${bot.guildID}`;
