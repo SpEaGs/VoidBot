@@ -198,19 +198,12 @@ function launchWebServer() {
         socket.on('updateBot', updateBot);
 
         function dumbifyBot(bot) {
+            let np = {}
             let dumbBot = {
                 guildID: bot.guildID,
                 guildName: bot.guildName,
                 dispatcher: bot.dispatcher,
-                nowPlaying: {
-                    videoDetails: {
-                        title: bot.nowPlaying.videoDetails.title,
-                        lengthSeconds: bot.nowPlaying.videoDetails.lengthSeconds
-                    },
-                    trackSource: bot.nowPlaying.trackSource,
-                    url: bot.nowPlaying.url,
-                    added_by: bot.nowPlaying.added_by
-                },
+                nowPlaying: false,
                 audioQueue: bot.audioQueue,
                 voiceChannel: bot.voiceChannel,
                 voiceChannelArray: bot.voiceChannelArray,
@@ -224,6 +217,18 @@ function launchWebServer() {
                 newMemberRole: bot.newMemberRole,
                 defaultVolume: bot.defaultVolume,
                 welcomeMsg: bot.welcomeMsg
+            }
+            if (bot.nowPlaying) {
+                let np = {
+                    videoDetails: {
+                        title: bot.nowPlaying.videoDetails.title,
+                        lengthSeconds: bot.nowPlaying.videoDetails.lengthSeconds
+                    },
+                    trackSource: bot.nowPlaying.trackSource,
+                    url: bot.nowPlaying.url,
+                    added_by: bot.nowPlaying.added_by
+                }
+                dumbBot.nowPlaying = np;
             }
             return dumbBot;
         }
