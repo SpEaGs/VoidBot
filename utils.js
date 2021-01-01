@@ -52,7 +52,8 @@ module.exports = {
     populateAdmin: populateAdmin,
     aliasCheck: aliasCheck,
     dumpJSON: dumpJSON,
-    cleanChannelName: cleanChannelName
+    cleanChannelName: cleanChannelName,
+    dumbifyBot: dumbifyBot
 }
 
 //gets the current date/time and formats it
@@ -231,4 +232,56 @@ function dumpJSON(filename, data, spaces=0) {
             log(`Error dumping JSON to file:\n${err}`, ['[ERR]', '[UTILS]']);
         }
     });
+}
+
+//returns a simplified version of the given bot object (for sending to web clients)
+function dumbifyBot(bot) {
+    let np = {}
+    let dumbBot = {
+        guildID: bot.guildID,
+        guildName: bot.guildName,
+        nowPlaying: false,
+        audioQueue: [],
+        voiceChannel: bot.voiceChannel,
+        voiceChannelArray: bot.voiceChannelArray,
+        defaultVoiceChannel: bot.defaultVoiceChannel,
+        textChannelArray: bot.textChannelArray,
+        defaultTextChannel: bot.defaultTextChannel,
+        ruleTextChannel: bot.ruleTextChannel,
+        welcomeTextChannel: bot.welcomeTextChannel,
+        roleArray: bot.roleArray,
+        announcementsRole: bot.announcementsRole,
+        newMemberRole: bot.newMemberRole,
+        defaultVolume: bot.defaultVolume,
+        welcomeMsg: bot.welcomeMsg
+    }
+    if (bot.nowPlaying) {
+        let np = {
+            videoDetails: {
+                title: bot.nowPlaying.videoDetails.title,
+                lengthSeconds: bot.nowPlaying.videoDetails.lengthSeconds
+            },
+            trackSource: bot.nowPlaying.trackSource,
+            url: bot.nowPlaying.url,
+            added_by: bot.nowPlaying.added_by
+        }
+        dumbBot.nowPlaying = np;
+    }
+    if (bot.audioQueue.length > 0) {
+        let aq = [];
+        for (let i of bot.audioQueue) {
+            let aqd = {
+                videoDetails: {
+                    title: i.videoDetails.title,
+                    lengthSeconds: i.videoDetails.lengthSeconds
+                },
+                trackSource: i.trackSource,
+                url: i.url,
+                added_by: i.added_by
+            }
+            aq.push(aqd);
+        }
+        dumbBot.audioQueue = aq;
+    }
+    return dumbBot;
 }

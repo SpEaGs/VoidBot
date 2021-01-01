@@ -198,60 +198,9 @@ function launchWebServer() {
         socket.on('command', cmd);
         socket.on('updateBot', updateBot);
 
-        function dumbifyBot(bot) {
-            let np = {}
-            let dumbBot = {
-                guildID: bot.guildID,
-                guildName: bot.guildName,
-                nowPlaying: false,
-                audioQueue: [],
-                voiceChannel: bot.voiceChannel,
-                voiceChannelArray: bot.voiceChannelArray,
-                defaultVoiceChannel: bot.defaultVoiceChannel,
-                textChannelArray: bot.textChannelArray,
-                defaultTextChannel: bot.defaultTextChannel,
-                ruleTextChannel: bot.ruleTextChannel,
-                welcomeTextChannel: bot.welcomeTextChannel,
-                roleArray: bot.roleArray,
-                announcementsRole: bot.announcementsRole,
-                newMemberRole: bot.newMemberRole,
-                defaultVolume: bot.defaultVolume,
-                welcomeMsg: bot.welcomeMsg
-            }
-            if (bot.nowPlaying) {
-                let np = {
-                    videoDetails: {
-                        title: bot.nowPlaying.videoDetails.title,
-                        lengthSeconds: bot.nowPlaying.videoDetails.lengthSeconds
-                    },
-                    trackSource: bot.nowPlaying.trackSource,
-                    url: bot.nowPlaying.url,
-                    added_by: bot.nowPlaying.added_by
-                }
-                dumbBot.nowPlaying = np;
-            }
-            if (bot.audioQueue.length > 0) {
-                let aq = [];
-                for (let i of bot.audioQueue) {
-                    let aqd = {
-                        videoDetails: {
-                            title: i.videoDetails.title,
-                            lengthSeconds: i.videoDetails.lengthSeconds
-                        },
-                        trackSource: i.trackSource,
-                        url: i.url,
-                        added_by: i.added_by
-                    }
-                    aq.push(aqd);
-                }
-                dumbBot.audioQueue = aq;
-            }
-            return dumbBot;
-        }
-
         socket.once('initConnect', () => {
             for( let i of status.client.children.array()) {
-                socket.emit('add-client', dumbifyBot(i));
+                socket.emit('add-client', utils.dumbifyBot(i));
             }
         });
 
@@ -276,7 +225,7 @@ function launchWebServer() {
             let bots = [];
             for (let i of status.client.children.array()) {
                 if (guilds.includes(i.guildID)) {
-                    bots.push(dumbifyBot(i));
+                    bots.push(utils.dumbifyBot(i));
                 }
             }
             socket.emit('sendBotInfo', (bots));
