@@ -255,6 +255,23 @@ function launchWebServer() {
             }
         });
 
+        socket.on('gControls', (params) => {
+            switch (params.control) {
+                case "addSong": {
+                    let paramsOut = {
+                        msg: {
+                            author: {
+                                username: params.data.username
+                            }
+                        },
+                        botOut: status.client.children.get(params.bot.guildID),
+                        url: params.data.url
+                    }
+                    status.client.cmds.get('play').get_info(paramsOut.url, paramsOut.msg, paramsOut.botOut);
+                }
+            }
+        });
+
         socket.on('getBotInfo', (guilds) => {
             let bots = [];
             for (let i of status.client.children.array()) {
@@ -567,7 +584,14 @@ function updateBot(e, bot) {
     if(!bot) bot=e;
     for (let i of status.client.children.array()) {
         if (i.guildID == bot.guildID) {
-            i = bot;
+            i.defaultTextChannel = bot.defaultTextChannel;
+            i.defaultVoiceChannel = bot.defaultVoiceChannel;
+            i.defaultVolume = bot.defaultVolume;
+            i.ruleTextChannel = bot.ruleTextChannel;
+            i.welcomeTextChannel = bot.welcomeTextChannel;
+            i.welcomeMsg = bot.welcomeMsg;
+            i.announcementsRole = bot.announcementsRole;
+            i.newMemberRole = bot.newMemberRole;
             utils.saveConfig(i);
         }
     }

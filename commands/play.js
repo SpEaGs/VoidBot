@@ -22,6 +22,7 @@ module.exports = {
     botadmin: false,
     server: true,
     playNextInQueue: playNextInQueue,
+    get_info: get_info,
     execute(params) {
         let log = global.log;
         if (params.msg.channel.type == 'voice') return;
@@ -94,32 +95,32 @@ async function get_info(url, msg, status) {
     if (status.voiceConnection == false) {
         status.voiceChannel.join().then(connection => {
             status.voiceConnection = connection;
-            play(vidInfo, status, msg);
+            play(vidInfo, status);
         });
         return;
     }
     if (status.dispatcher != false) {
-        addToQueue(vidInfo, status, msg);
+        addToQueue(vidInfo, status);
         return;
     }
     else {
-        play(vidInfo, status, msg);
+        play(vidInfo, status);
     }
 }
 
-function play(info, status, msg) {
-    msg.channel.send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
+function play(info, status) {
+    status.defaultTextChannel.send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
-    createStream(status, info, msg);
+    createStream(status, info);
 }
 
-function createStream(status, info, msg) {
+function createStream(status, info) {
     let str;
     switch (info.trackSource) {
         case 'YT': {
             str = ytdl.downloadFromInfo(info, { filter: 'audioonly' });
             status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
-            status.dispatcher.on('finish', () => { endDispatcher(status, msg); });
+            status.dispatcher.on('finish', () => { endDispatcher(status); });
             break;
         }
         case 'SC': {
@@ -129,7 +130,7 @@ function createStream(status, info, msg) {
                     str = `./temp${status.guildID}.mp3`;
                     status.dispatcher = status.voiceConnection.play(str, { volume: (parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100), passes: 2, bitrate: 'auto' });
                     status.dispatcher.on('finish', () => {
-                        endDispatcher(status, msg);
+                        endDispatcher(status);
                         fs.unlinkSync(`./temp${status.guildID}.mp3`);
                     });
                 })
@@ -139,26 +140,26 @@ function createStream(status, info, msg) {
     }
 };
 
-function endDispatcher(status, msg) {
+function endDispatcher(status) {
     if (status.audioQueue && status.audioQueue.length === 0) {
         status.dispatcher = false;
         status.nowPlaying = false;
         return;
     }
-    else { playNextInQueue(status, msg); }
+    else { playNextInQueue(status); }
 }
 
-function playNextInQueue(status, msg) {
+function playNextInQueue(status) {
     log(`Playing next in queue - length:${status.audioQueue.length}`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
     let nextPlay = status.audioQueue[0];
-    msg.channel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
-    createStream(status, nextPlay, msg);
+    status.defaultTextChannel.send(`Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(nextPlay.videoDetails.lengthSeconds / 60)}:${(nextPlay.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${nextPlay.added_by})\``);
+    createStream(status, nextPlay);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
 }
 
-function addToQueue(info, status, msg) {
-    msg.channel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
+function addToQueue(info, status) {
+    status.defaultTextChannel.send(`Added \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\` to the queue.`);
     log(`Adding ${info.videoDetails.title} to queue.`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
