@@ -204,7 +204,7 @@ function launchWebServer() {
                 dispatcher: bot.dispatcher,
                 nowPlaying: bot.nowPlaying,
                 audioQueue: bot.audioQueue,
-                voiceConnection: voiceConnection,
+                voiceConnection: bot.voiceConnection,
                 voiceChannel: bot.voiceChannel,
                 voiceChannelArray: bot.voiceChannelArray,
                 defaultVoiceChannel: bot.defaultVoiceChannel,
