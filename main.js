@@ -320,9 +320,11 @@ status.client.on('message', msg => {
             case true: {
                 msg.delete({reason:"Wrong channel for bot commands."});
                 bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author, cmdRec));
+                break;
             }
             case false: {
                 bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author, cmdRec));
+                break;
             }
         }
         return;
