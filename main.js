@@ -290,12 +290,7 @@ status.client.on('message', msg => {
     //check incoming message for command and log if true
     if (msg.author.id == status.client.user.id) return;
     if (!msg.content.startsWith(utils.config.prefix)) return;
-    log(`[Command]: ${msg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
-    if (bot.defaultTextChannel && msg.channel.id != bot.defaultTextChannel.id) {
-        msg.delete({reason:"Wrong channel for bot commands."});
-        bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author));
-        return;
-    }
+    log(`${msg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`, '[CMD]']);
 
     //parse for command arguments
     const args = msg.content.slice(utils.config.prefix.length).split(/ +/);
@@ -315,7 +310,23 @@ status.client.on('message', msg => {
 
     //check for command alias, arguments, and admin
     let aliCheck = utils.aliasCheck(cmdName, status);
-    if (!status.client.cmds.has(cmdName) && !aliCheck) return msg.reply('Command not recognized.');
+    let cmdRec = true;
+    if (!status.client.cmds.has(cmdName) && !aliCheck) {
+        log(`Not Recognized.`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`, '[CMD]']);
+        cmdRec = false;
+    }
+    if (bot.defaultTextChannel && msg.channel.id != bot.defaultTextChannel.id) {
+        switch (cmdRec) {
+            case true: {
+                msg.delete({reason:"Wrong channel for bot commands."});
+                bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author, cmdRec));
+            }
+            case false: {
+                bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author, cmdRec));
+            }
+        }
+        return;
+    }
     let cmd = aliCheck;
     if (!aliCheck) cmd = status.client.cmds.get(cmdName);
     if (cmd.server && msg.channel.type !== 'text') return msg.reply('That command only works on a server!');

@@ -88,8 +88,9 @@ function sendoff(mem) {
 }
 
 //handles the 'wrong channel' message if a member posts a command in the wrong channel
-function wrongChannel(mem) {
-    let toReturn = (`${mem} Please post your bot commands here!`);
+function wrongChannel(mem, cmdRec) {
+    let toReturn = `${mem} Please post your bot commands here!`;
+    if (!cmdRec) toReturn = `${mem} If that message was intended as a command, it wasn't recognized. Please post your bot commands here!`;
     return toReturn;
 }
 
