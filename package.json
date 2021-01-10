@@ -1,6 +1,6 @@
 {
   "name": "voidbot",
-  "version": "2.6.0",
+  "version": "2.6.1",
   "description": "A Discord Bot.\r This is like the fourth or so version of the bot... had to re-write it a few times to keep up with changing APIs and now I'm at it again.",
   "main": "main.js",
   "scripts": {
