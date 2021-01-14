@@ -222,6 +222,10 @@ function launchWebServer() {
                     let botOut = status.client.children.get(params.bot.guildID);
                     status.client.cmds.get('skip').execute({bot: botOut});
                 }
+                case "vol": {
+                    let botOut = status.client.children.get(params.bot.guildID);
+                    status.cluient.cmds.get('volume').execute({bot: botOut, args: [params.value]})
+                }
             }
         });
 
@@ -572,6 +576,7 @@ ipcMain.on('updateBot', updateBot);
 
 function updateVol(bot){
     status.eSender.ipc.send('updateVol', bot);
+    status.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
 }
 
 ipcMain.once('init-eSender', (event, arg) => { status.eSender.ipc = event.sender; });

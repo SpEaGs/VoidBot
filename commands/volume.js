@@ -23,7 +23,7 @@ module.exports = {
         else {
             try { returnVolume(params.args[0], params, false) }
             catch (error) {
-                params.msg.reply(`${params.args[0]} is not valid, scrub! Try again!\n Usage: ${this.usage}`);
+                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${params.args[0]} is not valid, scrub! Try again!\n Usage: ${this.usage}`);
                 let log = global.log;
             logErr(`Error updating volume:\n${error}`, '[VOLUME]');
             }
@@ -56,7 +56,7 @@ function returnVolume(volume='', params, regBool) {
     if (regBool) { returnMsg = `Set the current volume to :100:` }
     else { returnMsg = `Set the current volume to ${params.bot.defaultVolume}%.` };
     if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(params.bot.defaultVolume / 100));
-    params.msg.channel.send(returnMsg);
+    params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(returnMsg);
     updateVol(params.bot);
     utils.saveConfig(params.bot);
 }
