@@ -59,7 +59,7 @@ html
                                 voli.max = '100';
                                 voli.value = bot.defaultVolume;
                                 voli.oninput = () => {
-                                    document.getElementById(`gcVolText${bot.guildID}`).innnerText = document.getElementById(`gcVolInput${bot.guildID}`).value;
+                                    document.getElementById(`gcVolText${bot.guildID}`).innerText = document.getElementById(`gcVolInput${bot.guildID}`).value;
                                     if(!volTimeout) {
                                         volTimeout = setTimeout(() => {volInput(bot)}, 1000);
                                     }
