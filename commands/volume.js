@@ -58,6 +58,6 @@ function returnVolume(volume='', params, regBool) {
     if (params.bot.dispatcher != false) params.bot.dispatcher.setVolume(parseFloat(params.bot.defaultVolume / 100));
     params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(returnMsg);
     updateVol(params.bot);
-    console.log(params);
     utils.saveConfig(params.bot);
+    console.log(params);
 }
