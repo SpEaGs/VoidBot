@@ -344,14 +344,14 @@ status.client.on('message', msg => {
     if (cmd.admin && !adminCheck) return msg.reply('You do not have sufficient permissions to use that command you fool!');
             
     //run command
-    try {
+    //try {
         let params = { msg, args, bot };
         cmd.execute(params);
-    }
-    catch (error) {
-        log(`Error executing command:\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
-        msg.reply('There was an error executing that command! Please ask an admin or `SpEaGs#2936` to check the logs.');
-    };
+    //}
+    //catch (error) {
+    //    log(`Error executing command:\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
+    //    msg.reply('There was an error executing that command! Please ask an admin or `SpEaGs#2936` to check the logs.');
+    //};
 });
 
 //discord.js client event for the bot entering a new server
