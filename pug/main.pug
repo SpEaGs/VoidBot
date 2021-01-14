@@ -58,7 +58,7 @@ html
                                 voli.min = '0';
                                 voli.max = '100';
                                 voli.value = bot.defaultVolume;
-                                voli.oninput = () => {
+                                voli.onchange = () => {
                                     document.getElementById(`gcVolText${bot.guildID}`).innerText = document.getElementById(`gcVolInput${bot.guildID}`).value;
                                     if(!volTimeout) {
                                         volTimeout = setTimeout(() => {volInput(bot)}, 1000);
@@ -163,6 +163,7 @@ html
                         let voltxt = document.getElementById(`gcVolText${bot.guildID}`);
                         let skp = document.getElementById(`gcSkip${bot.guildID}`);
                         let ol = document.getElementById(`gcAudioQOL${bot.guildID}`);
+                        console.log(bot.defaultVolume);
                         if (!bot.nowPlaying) {
                             nwp.innerText = 'Now Playing:\nNothing.';
                             vol.classList.add('hidden');
