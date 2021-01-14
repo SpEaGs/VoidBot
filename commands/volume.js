@@ -21,12 +21,7 @@ module.exports = {
             return;
         }
         else {
-            try { returnVolume(params.args[0], params, false) }
-            catch (error) {
-                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${params.args[0]} is not valid, scrub! Try again!\n Usage: ${this.usage}`);
-                let log = global.log;
-            log(`Error updating volume:\n${error}`, ['[ERR]', '[VOLUME]']);
-            }
+            returnVolume(params.args[0], params, false)
         };
     }
 };
