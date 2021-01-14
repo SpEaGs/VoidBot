@@ -46,15 +46,17 @@ html
                         let nwp = document.createElement('div');
                             nwp.id = `gcNowPlay${bot.guildID}`;
                             nwp.classList.add('gcNowPlay');
-                            if (!bot.nowPlaying) {nwp.innerText = 'Now Playing:\nNothing.'}
-                            else {nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`};
-                            ctrl.appendChild(nwp);
                         let skp = document.createElement('div');
                             skp.id = `gcSkip${bot.guildID}`;
                             skp.classList.add('gcSkip');
-                            skp.classList.add('hidden');
                             skp.innerText = 'Skip';
                             skp.onclick = () => {skipSong(bot)};
+                            if (!bot.nowPlaying) {
+                                nwp.innerText = 'Now Playing:\nNothing.';
+                                skp.classList.add('hidden');
+                            }
+                            else {nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`};
+                            ctrl.appendChild(nwp);
                             ctrl.appendChild(skp);
                         let aqu = document.createElement('div');
                             aqu.id = `gcAudioQ${bot.guildID}`;
