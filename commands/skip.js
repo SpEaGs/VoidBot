@@ -5,6 +5,8 @@ const utils = require('../utils.js');
 const play = require('./play.js');
 const prefix = utils.config.prefix;
 
+const MAIN = require('../main.js');
+
 module.exports = {
     name: 'skip',
     description: 'Skips the bot\'s currently playing audio stream.',
@@ -21,6 +23,7 @@ module.exports = {
             params.bot.dispatcher = false;
             params.bot.nowPlaying = false;
             if (params.bot.audioQueue.length != 0) play.playNextInQueue(params.bot);
+            MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
         }
         catch (error) {
             logErr(`Error skipping song:\n${error}`, '[SKIP]');
