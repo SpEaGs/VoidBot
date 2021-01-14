@@ -32,6 +32,7 @@ module.exports = {
 };
 
 function returnVolume(volume='', params, regBool) {
+    console.log(params);
     let returnMsg = '';
     switch (volume[0]) {
         case '+': {
