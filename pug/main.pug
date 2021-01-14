@@ -119,10 +119,13 @@ html
                         let skp = document.getElementById(`gcSkip${bot.guildID}`);
                         let ol = document.getElementById(`gcAudioQOL${bot.guildID}`);
                         if (!bot.nowPlaying) {
-                            nwp.innerText = 'Now Playing:\nNothing.'
+                            nwp.innerText = 'Now Playing:\nNothing.';
                             skp.classList.add('hidden');
                         }
-                        else {nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`};
+                        else {
+                            nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`;
+                            skp.classList.remove('hidden');
+                        };
                         if (bot.audioQueue.length == 0) {
                             ol.innerHTML = '';
                             let olParent = ol.parentNode;
