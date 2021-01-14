@@ -107,12 +107,12 @@ async function get_info(url, msg, status) {
     else {
         play(vidInfo, status);
     }
-    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)])
 }
 
 function play(info, status) {
     status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
+    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)])
     createStream(status, info);
 }
 
@@ -146,6 +146,7 @@ function endDispatcher(status) {
     if (status.audioQueue && status.audioQueue.length === 0) {
         status.dispatcher = false;
         status.nowPlaying = false;
+        MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
         return;
     }
     else { playNextInQueue(status); }
