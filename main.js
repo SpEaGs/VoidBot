@@ -217,14 +217,17 @@ function launchWebServer() {
                         url: params.data.url
                     }
                     status.client.cmds.get('play').get_info(paramsOut.url, paramsOut.msg, paramsOut.botOut);
+                    break;
                 }
                 case "skip": {
                     let botOut = status.client.children.get(params.bot.guildID);
                     status.client.cmds.get('skip').execute({bot: botOut});
+                    break;
                 }
                 case "vol": {
                     let botOut = status.client.children.get(params.bot.guildID);
                     status.client.cmds.get('volume').execute({bot: botOut, args: [params.value]})
+                    break;
                 }
             }
         });
