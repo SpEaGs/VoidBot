@@ -17,10 +17,10 @@ module.exports = {
     execute(params) {
         let log = global.log
         try {
-            stopAudio(params.bot.dispatcher, params.msg);
+            stopAudio(params.bot.dispatcher, params.bot);
             params.bot.dispatcher = false;
             params.bot.nowPlaying = false;
-            if (params.bot.audioQueue.length != 0) play.playNextInQueue(params.bot, params.msg);
+            if (params.bot.audioQueue.length != 0) play.playNextInQueue(params.bot);
         }
         catch (error) {
             logErr(`Error skipping song:\n${error}`, '[SKIP]');
@@ -28,7 +28,7 @@ module.exports = {
     },
 };
 
-function stopAudio(dispatcher, msg) {
+function stopAudio(dispatcher, bot) {
     dispatcher.pause();
-    msg.reply(`Skipping...`);
+    bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Skipping...`);
 }
