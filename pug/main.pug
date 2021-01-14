@@ -34,6 +34,8 @@ html
                         document.getElementById('errPopup').classList.add('hidden');
                     });
 
+                    let volTimeout = false;
+
                     function addGuild(bot) {
                         let ctrl = document.createElement('div');
                             ctrl.id = `gCtrl${bot.guildID}`;
@@ -56,7 +58,15 @@ html
                                 voli.min = '0';
                                 voli.max = '100';
                                 voli.value = bot.defaultVolume;
-                                voli.oninput = () => {volInput(bot)};
+                                voli.oninput = () => {
+                                    if(!volTimeout) {
+                                        volTimeout = setTimeout(() => {volInput(bot)}, 1000);
+                                    }
+                                    else {
+                                        volTimeout.clearTimeout()
+                                        volTimeout = setTimeout(() -> {volInput(bot, volTimeout)}, 1000);
+                                    }
+                                };
                             let voltxt = document.createElement('div');
                                 voltxt.id = `gcVolText${bot.guildID}`;
                                 voltxt.classList.add('gcVolText');
@@ -135,13 +145,14 @@ html
                         }
                         socket.emit('gControls', toSend);
                     }
-                    function volInput(bot) {
+                    function volInput(bot, timeout) {
                         let toSend = {
                             control: 'vol',
                             bot: bot,
                             value: document.getElementById(`gcVolInput${bot.guildID}`).value
                         }
                         socket.emit('gControls', toSend);
+                        timeout = false;
                     }
 
                     function updateInfo(bot) {
