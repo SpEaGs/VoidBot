@@ -59,6 +59,7 @@ html
                                 voli.max = '100';
                                 voli.value = bot.defaultVolume;
                                 voli.oninput = () => {
+                                    voltxt.innerText = voli.value;
                                     if(!volTimeout) {
                                         volTimeout = setTimeout(() => {volInput(bot)}, 1000);
                                     }
