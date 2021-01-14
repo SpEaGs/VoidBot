@@ -26,7 +26,7 @@ module.exports = {
             MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
         }
         catch (error) {
-            logErr(`Error skipping song:\n${error}`, '[SKIP]');
+            log(`Error skipping song:\n${error}`, ['[ERR]', '[SKIP]']);
         }
     },
 };
