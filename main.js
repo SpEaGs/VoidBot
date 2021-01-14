@@ -224,7 +224,7 @@ function launchWebServer() {
                 }
                 case "vol": {
                     let botOut = status.client.children.get(params.bot.guildID);
-                    status.cluient.cmds.get('volume').execute({bot: botOut, args: [params.value]})
+                    status.client.cmds.get('volume').execute({bot: botOut, args: [params.value]})
                 }
             }
         });
