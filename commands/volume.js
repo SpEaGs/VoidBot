@@ -21,7 +21,8 @@ module.exports = {
             return;
         }
         else {
-            returnVolume(params.args[0], params, false)
+            returnVolume(params.args[0], params, false);
+            return;
         };
     }
 };
