@@ -63,8 +63,8 @@ html
                                         volTimeout = setTimeout(() => {volInput(bot)}, 1000);
                                     }
                                     else {
-                                        volTimeout.clearTimeout()
-                                        volTimeout = setTimeout(() -> {volInput(bot, volTimeout)}, 1000);
+                                        clearTimeout(volTimeout)
+                                        volTimeout = setTimeout(() => {volInput(bot, volTimeout)}, 1000);
                                     }
                                 };
                             let voltxt = document.createElement('div');
