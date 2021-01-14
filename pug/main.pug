@@ -166,6 +166,8 @@ html
                         if (!bot.nowPlaying) {
                             nwp.innerText = 'Now Playing:\nNothing.';
                             vol.classList.add('hidden');
+                            voli.value = bot.defaultVolume;
+                            voltxt.innerText = bot.defaultVolume;
                             skp.classList.add('hidden');
                         }
                         else {
