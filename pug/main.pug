@@ -51,7 +51,7 @@ html
                             ctrl.appendChild(nwp);
                         let skp = document.createElement('div');
                             skp.id = `gcSkip${bot.guildID}`;
-                            skp.classList.add('gcSkip');
+                            skp.classList.add('gcSkip', 'hidden');
                             skp.innerText = 'Skip';
                             skp.onclick = () => {skipSong(bot)};
                             ctrl.appendChild(skp);
