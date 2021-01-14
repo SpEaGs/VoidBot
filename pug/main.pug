@@ -49,6 +49,12 @@ html
                             if (!bot.nowPlaying) {nwp.innerText = 'Now Playing:\nNothing.'}
                             else {nwp.innerText = `Now Playing:\n${bot.nowPlaying.videoDetails.title} [${parseInt(bot.nowPlaying.videoDetails.lengthSeconds / 60)}:${(bot.nowPlaying.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}]\n(added by: ${bot.nowPlaying.added_by})`};
                             ctrl.appendChild(nwp);
+                        let skp = document.createElement('div');
+                            skp.id = `gcSkip${bot.guildID}`;
+                            skp.classList.add('gcSkip');
+                            skp.innerText = 'Skip';
+                            skp.onclick = () => {skipSong(bot)};
+                            ctrl.appendChild(skp);
                         let aqu = document.createElement('div');
                             aqu.id = `gcAudioQ${bot.guildID}`;
                             aqu.classList.add('gcAudioQ');
@@ -89,7 +95,7 @@ html
                         let el = document.getElementById(`gcURLInput${bot.guildID}`);
                         let url = el.value;
                         if (!url) return;
-                        toSend = {
+                        let toSend = {
                             control: 'addSong',
                             data: {
                                 username: user.name,
@@ -99,6 +105,13 @@ html
                         }
                         socket.emit('gControls', toSend);
                         el.value = '';
+                    }
+                    function skipSong(bot) {
+                        let toSend = {
+                            control: 'skip',
+                            bot: bot
+                        }
+                        socket.emit('gControls', toSend);
                     }
 
                     function updateInfo(bot) {
