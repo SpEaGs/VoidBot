@@ -229,6 +229,20 @@ function launchWebServer() {
                     status.client.cmds.get('volume').execute({bot: botOut, args: [params.value]})
                     break;
                 }
+                case "stop": {
+                    let botOut = status.client.children.get(params.bot.guildID);
+                    status.client.cmds.get('stop').execute({bot: botOut});
+                    break;
+                }
+                case "pause": {
+                    let botOut = status.client.children.get(params.bot.guildID);
+                    status.client.cmds.get('pause').execute({bot: botOut});
+                    break;
+                }
+                case "resume": {
+                    let botOut = status.client.children.get(params.bot.guildID);
+                    status.client.cmds.get('resume').execute({bot: botOut});
+                }
             }
         });
 
