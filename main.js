@@ -218,7 +218,7 @@ function launchWebServer() {
                         bot: status.client.children.get(params.bot.guildID),
                         args: params.data.input.split(' ')
                     }
-                    paramsOut.msg.member.voice.channel = (paramsOut.botOut.guild.members.cache.get(snowflake).voice.channel);
+                    paramsOut.msg.member.voice.channel = (paramsOut.bot.guild.members.cache.get(snowflake).voice.channel);
                     status.client.cmds.get('play').execute(paramsOut);
                     break;
                 }
