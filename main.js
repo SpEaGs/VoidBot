@@ -235,11 +235,13 @@ function launchWebServer() {
                     break;
                 }
                 case "pause": {
+                    log(params.bot.paused, ['[WARN]', '[MAIN]']);
                     let botOut = status.client.children.get(params.bot.guildID);
                     status.client.cmds.get('pause').execute({bot: botOut});
                     break;
                 }
                 case "resume": {
+                    log(params.bot.paused, ['[WARN]', '[MAIN]']);
                     let botOut = status.client.children.get(params.bot.guildID);
                     status.client.cmds.get('resume').execute({bot: botOut});
                 }
