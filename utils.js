@@ -254,7 +254,8 @@ function dumbifyBot(bot) {
         announcementsRole: bot.announcementsRole,
         newMemberRole: bot.newMemberRole,
         defaultVolume: bot.defaultVolume,
-        welcomeMsg: bot.welcomeMsg
+        welcomeMsg: bot.welcomeMsg,
+        paused: false
     }
     if (bot.nowPlaying) {
         let np = {
