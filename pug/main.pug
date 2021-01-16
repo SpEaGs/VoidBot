@@ -215,11 +215,11 @@ html
                             voli.value = bot.defaultVolume;
                             voltxt.innerText = bot.defaultVolume;
                             pcc.classList.remove('hidden');
+                            if (bot.paused) {
+                                pspl.innerText = 'Resume';
+                            }
+                            else {pspl.innerText = 'Pause'};
                         };
-                        if (bot.paused) {
-                            pspl.innerText = 'Resume';
-                        }
-                        else {pspl.innerText = 'Pause'};
                         if (bot.audioQueue.length == 0) {
                             ol.innerHTML = '';
                             let olParent = ol.parentNode;
