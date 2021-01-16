@@ -86,7 +86,7 @@ html
                             let pspl = document.createElement('div');
                                 pspl.id = `gcPsPl${bot.guildID}`;
                                 pspl.classList.add('gcPCB');
-                                if (bot.dispatcher && bot.dispatcher.paused) {
+                                if (bot.paused) {
                                     pspl.innerText = 'Resume';
                                 }
                                 else {pspl.innerText = 'Pause'};
@@ -170,7 +170,7 @@ html
                             control: '',
                             bot: bot
                         }
-                        if (bot.dispatcher && bot.dispatcher.paused) {
+                        if (bot.paused) {
                             toSend.control = 'resume'
                         }
                         else {toSend.control = 'pause'}
@@ -201,7 +201,7 @@ html
                         let pcc = document.getElementById(`pCC${bot.guildID}`);
                         let pspl = document.getElementById(`gcPsPl${bot.guildID}`);
                         let ol = document.getElementById(`gcAudioQOL${bot.guildID}`);
-                        console.log(bot.dispatcher);
+                        console.log(bot.paused);
                         if (!bot.nowPlaying) {
                             nwp.innerText = 'Now Playing:\nNothing.';
                             vol.classList.add('hidden');
@@ -216,7 +216,7 @@ html
                             voltxt.innerText = bot.defaultVolume;
                             pcc.classList.remove('hidden');
                         };
-                        if (bot.dispatcher && bot.dispatcher.paused) {
+                        if (bot.paused) {
                             pspl.innerText = 'Resume';
                         }
                         else {pspl.innerText = 'Pause'};
