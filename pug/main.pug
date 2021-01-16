@@ -134,12 +134,12 @@ html
                                 }
                                 aqu.appendChild(ol);
                             ctrl.appendChild(aqu);
-                        let url = document.createElement('input');
-                            url.id = `gcURLInput${bot.guildID}`;
-                            url.type = 'url';
-                            url.classList.add('gcURLInput');
-                            url.placeholder = 'Youtube or SoundCloud link here';
-                            ctrl.appendChild(url);
+                        let sin = document.createElement('input');
+                            sin.id = `gcSongInput${bot.guildID}`;
+                            sin.type = 'text';
+                            sin.classList.add('gcSongInput');
+                            sin.placeholder = 'Youtube or SoundCloud link here';
+                            ctrl.appendChild(sin);
                         let add = document.createElement('div');
                             add.id = `gcSongAdd${bot.guildID}`;
                             add.classList.add('gcSongAdd');
@@ -150,14 +150,15 @@ html
                     };
 
                     function addSong(bot, user) {
-                        let el = document.getElementById(`gcURLInput${bot.guildID}`);
-                        let url = el.value;
-                        if (!url) return;
+                        let el = document.getElementById(`gcSongInput${bot.guildID}`);
+                        let input = el.value;
+                        if (!input) return;
                         let toSend = {
                             control: 'addSong',
                             data: {
                                 username: user.name,
-                                url: url
+                                snowflake: user.id,
+                                input: input
                             },
                             bot: bot
                         }

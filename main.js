@@ -207,16 +207,19 @@ function launchWebServer() {
         socket.on('gControls', (params) => {
             switch (params.control) {
                 case "addSong": {
+                    let snowflake = params.data.snowflake;
                     let paramsOut = {
                         msg: {
                             author: {
                                 username: params.data.username
-                            }
+                            },
+                            member: {voice: {channel: {}}}
                         },
-                        botOut: status.client.children.get(params.bot.guildID),
-                        url: params.data.url
+                        bot: status.client.children.get(params.bot.guildID),
+                        args: params.data.input.split(' ')
                     }
-                    status.client.cmds.get('play').get_info(paramsOut.url, paramsOut.msg, paramsOut.botOut);
+                    paramsOut.msg.member.voice.channel = (paramsOut.botOut.guild.members.cache.get(snowflake).voice.channel);
+                    status.client.cmds.get('play').execute(paramsOut);
                     break;
                 }
                 case "remSong": {

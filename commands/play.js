@@ -24,17 +24,15 @@ module.exports = {
     botadmin: false,
     server: true,
     playNextInQueue: playNextInQueue,
-    get_info: get_info,
     execute(params) {
         let log = global.log;
-        if (params.msg.channel.type == 'voice') return;
         params.bot.voiceChannel = params.msg.member.voice.channel;
         if (!params.bot.voiceChannel) {
             params.bot.voiceChannel = params.bot.guild.channels.cache.get(params.bot.defaultVoiceChannel.id);
         };
         if (!params.bot.voiceChannel) {
             log(`No voice channel specified and no default.`, ['[WARN]', '[PLAY]', `[${params.bot.guildName}]`]);
-            try { return params.msg.reply(`I'm not in a voice channel, neither are you, and no default is set...`) }
+            try { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`I'm not in a voice channel, neither are you, and no default is set...`) }
             catch(any) { return }
         };
         search(params.args, params.msg, params.bot);
@@ -46,7 +44,7 @@ function search(args, msg, status) {
     switch (url.toString().includes('http')) {
         case true: {
             if (!(url.toString().includes('.youtube.com/') || url.toString().includes('soundcloud.com/'))) {
-                try { return msg.reply(`That was not a youtube or soundcloud link.`)}
+                try { return status.guild.channels.cache.get(status.defaultTextChannel.id).send(`That was not a youtube or soundcloud link.`)}
                 catch(any) { return }
             }
             else get_info(url, msg, status);
@@ -55,7 +53,7 @@ function search(args, msg, status) {
         case false: {
             let searchKwds = (args.join(' '));
             let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(searchKwds)}&key=${API_KEY}`;
-            msg.reply('Searching Youtube with your query...');
+            status.guild.channels.cache.get(status.defaultTextChannel.id).send('Searching Youtube with your query...');
             request(requestUrl, (error, response) => {
                 if (error || !response.statusCode == 200) {
                     logErr(`Error getting video info`, `[${status.guildName}]`);
@@ -63,7 +61,7 @@ function search(args, msg, status) {
                 }
                 let body = response.body;
                 if (body.items.length == 0) {
-                    msg.reply('I got nothing... try being less specific?');
+                    status.guild.channels.cache.get(status.defaultTextChannel.id).send('I got nothing... try being less specific?');
                     log(`0 results from search.`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
                     return;
                 }
