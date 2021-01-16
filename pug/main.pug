@@ -167,13 +167,9 @@ html
                     }
                     function pausePlay(bot) {
                         let toSend = {
-                            control: '',
+                            control: 'pausePlay',
                             bot: bot
                         }
-                        if (bot.paused) {
-                            toSend.control = 'resume'
-                        }
-                        else {toSend.control = 'pause'}
                         socket.emit('gControls', toSend);
                     }
                     function stop(bot) {

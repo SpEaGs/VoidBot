@@ -234,16 +234,19 @@ function launchWebServer() {
                     status.client.cmds.get('stop').execute({bot: botOut});
                     break;
                 }
-                case "pause": {
-                    log(params.bot.paused, ['[WARN]', '[MAIN]']);
+                case "pausePlay": {
                     let botOut = status.client.children.get(params.bot.guildID);
-                    status.client.cmds.get('pause').execute({bot: botOut});
+                    switch (botOut.dispatcher.paused) {
+                        case true: {
+                            status.client.cmds.get('resume').execute({bot: botOut});
+                            break;
+                        }
+                        case false: {
+                            status.client.cmds.get('pause').execute({bot: botOut});
+                            break;
+                        }
+                    }
                     break;
-                }
-                case "resume": {
-                    log(params.bot.paused, ['[WARN]', '[MAIN]']);
-                    let botOut = status.client.children.get(params.bot.guildID);
-                    status.client.cmds.get('resume').execute({bot: botOut});
                 }
             }
         });
