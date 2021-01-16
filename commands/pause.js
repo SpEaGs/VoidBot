@@ -20,7 +20,7 @@ module.exports = {
             case false: {
                 params.bot.dispatcher.pause()
                 params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream paused. Use \`${prefix}resume\` to resume.`);
-                setTimeout(MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]), 1000);
+                setTimeout(() => {MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)])}, 1000);
                 break;
             }
             case true: {
