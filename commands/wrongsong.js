@@ -4,6 +4,8 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+const MAIN = require('../main.js');
+
 module.exports = {
     name: 'wrongsong',
     description: 'Removes a song from the queue.',
@@ -23,6 +25,7 @@ module.exports = {
             let i = item-1
             let title = params.bot.audioQueue[i].title;
             params.bot.audioQueue.splice(i, 1);
+            MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
             return params.msg.reply(`Removed \`${title}\` from the queue.`)
         }
     }

@@ -219,6 +219,11 @@ function launchWebServer() {
                     status.client.cmds.get('play').get_info(paramsOut.url, paramsOut.msg, paramsOut.botOut);
                     break;
                 }
+                case "remSong": {
+                    let botOut = status.client.children.get(params.bot.guildID);
+                    status.client.cmds.get('wrongsong').execute({bot: botOut, args: [params.value+1]});
+                    break;
+                }
                 case "skip": {
                     let botOut = status.client.children.get(params.bot.guildID);
                     status.client.cmds.get('skip').execute({bot: botOut});

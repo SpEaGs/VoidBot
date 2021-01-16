@@ -120,9 +120,15 @@ html
                                 else {
                                     for (let i of bot.audioQueue) {
                                         let qi = document.createElement('li');
-                                            qi.id = `gcAudioQI${bot.audioQueue.indexOf(i)}`;
+                                            qi.id = `gcAudioQI${bot.guildID}-${bot.audioQueue.indexOf(i)}`;
                                             qi.classList.add('gcAudioQI');
                                             qi.innerText = `${i.videoDetails.title}\n(added by: ${i.added_by})`;
+                                            let rem = document.createElement('div');
+                                                rem.id = `gcAudioQIRem${bot.guildID}-${bot.audioQueue.indexOf(i)}`;
+                                                rem.classList.add('gcAudioQIRem');
+                                                rem.innerText = '-';
+                                                rem.onclick = () => {remSong(bot, bot.audioQueue.indexOf(i))};
+                                                qi.appendChild(rem);
                                             ol.appendChild(qi);
                                     }
                                 }
@@ -157,6 +163,14 @@ html
                         }
                         socket.emit('gControls', toSend);
                         el.value = '';
+                    }
+                    function remSong(bot, index) {
+                        let toSend = {
+                            control: 'remSong',
+                            value: index,
+                            bot: bot
+                        }
+                        socket.emit('gControls', toSend);
                     }
                     function skipSong(bot) {
                         let toSend = {
