@@ -53,7 +53,7 @@ function search(args, msg, status) {
         case false: {
             let searchKwds = (args.join(' '));
             let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(searchKwds)}&key=${API_KEY}`;
-            status.guild.channels.cache.get(status.defaultTextChannel.id).send('Searching Youtube with your query...');
+            status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Searching Youtube for \`${searchKwds}\`...`);
             request(requestUrl, (error, response) => {
                 if (error || !response.statusCode == 200) {
                     logErr(`Error getting video info`, `[${status.guildName}]`);
