@@ -23,7 +23,7 @@ module.exports = {
         else if (isNaN(item)) return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`That's not a number you fool.`);
         else {
             let i = item-1
-            let title = params.bot.audioQueue[i].title;
+            let title = params.bot.audioQueue[i].videoDetails.title;
             params.bot.audioQueue.splice(i, 1);
             MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
             return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Removed \`${title}\` from the queue.`)
