@@ -266,7 +266,9 @@ function dumbifyBot(bot) {
             url: bot.nowPlaying.url,
             added_by: bot.nowPlaying.added_by
         }
+        let dp = {paused: bot.dispatcher.paused};
         dumbBot.nowPlaying = np;
+        dumbBot.dispatcher = dp;
     }
     if (bot.audioQueue.length > 0) {
         let aq = [];
