@@ -4,6 +4,8 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+const MAIN = require('../main.js');
+
 module.exports = {
     name: 'pause',
     description: 'Pauses the bot\'s currently playing audio stream.',
@@ -17,11 +19,12 @@ module.exports = {
         switch (params.bot.dispatcher.paused) {
             case false: {
                 params.bot.dispatcher.pause()
-                params.msg.reply(`Audio stream paused. Use \`${prefix}resume\` to resume.`);
+                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream paused. Use \`${prefix}resume\` to resume.`);
+                MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
                 break;
             }
             case true: {
-                params.msg.reply(`Audio stream is already paused. Use \`${prefix}resume\` to resume.`);
+                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream is already paused. Use \`${prefix}resume\` to resume.`);
                 break;
             }
         }

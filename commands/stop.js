@@ -19,21 +19,21 @@ module.exports = {
         let log = global.log
         try {
             params.bot.audioQueue = [];
-            stopAudio(params.bot.dispatcher, params.msg);
+            stopAudio(params.bot);
             params.bot.dispatcher = false;
             params.bot.nowPlaying = false;
             MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
         }
         catch (error) {
-            logErr(`Error stopping music:\n${error}`, '[STOP]');
+            log(`Error stopping music:\n${error}`, ['[ERR]', '[STOP]']);
         }
     },
 };
 
-function stopAudio(dispatcher, msg) {
+function stopAudio(bot) {
     try {
-        dispatcher.pause();
+        bot.dispatcher.pause();
     }
     catch (error) {}
-    msg.reply(`Audio stream ended.`);
+    bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Audio stream ended.`);
 }
