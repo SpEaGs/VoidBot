@@ -20,7 +20,7 @@ module.exports = {
             case true: {
                 params.bot.dispatcher.resume()
                 params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream resumed.`);
-                setTimeout(() => {MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)])}, 1000);
+                MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
                 break;
             }
             case false: {
