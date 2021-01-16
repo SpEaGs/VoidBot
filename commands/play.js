@@ -112,11 +112,11 @@ async function get_info(url, msg, status) {
 function play(info, status) {
     status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
-    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)])
     createStream(status, info);
 }
 
 function createStream(status, info) {
+    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
     let str;
     switch (info.trackSource) {
         case 'YT': {
@@ -166,4 +166,5 @@ function addToQueue(info, status) {
     log(`Adding ${info.videoDetails.title} to queue.`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
     if (!status.audioQueue) status.audioQueue = [];
     status.audioQueue.push(info);
+    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
 }
