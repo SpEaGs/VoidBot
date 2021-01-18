@@ -248,7 +248,7 @@ function filterSTDOUT(tags=[]) {
 let activeFilters = [];
 
 document.addEventListener('keypress', (e) => {
-    if (e.keyCode = 13 && document.hasFocus(document.getElementById('consoleFilterBox'))) {
+    if (e.keyCode == 13 && document.hasFocus(document.getElementById('consoleFilterBox'))) {
         document.getElementById('consoleFilterAdd').click();
     }
 })
