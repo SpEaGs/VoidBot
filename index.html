@@ -22,10 +22,6 @@
       <div class="navbarContainer">
         <div class="navbarButton navbarButtonSelected" id="navbarButtonConsole" onclick="selectTab('Console')"> 
           <div class="navbarButtonText">Console</div>
-          <div class="filterContainer" id="consoleFilterContainer">
-            <input class="filterTextBox" id="consoleFilterBox" type="text" placeholder="Filter:"></input>
-            <div class="filterAdd" id="consoleFilterAdd" onclick="addFilter()">+</div>
-            <div class="filterFlex" id="filterFlexContainer"></div>
           </div>
         </div>
         <div class="navbarButton" id="navbarButtonSharding" onclick="selectTab('Sharding')"> 
@@ -41,6 +37,10 @@
         </div>
       </div>
       <div class="mainContentContainer" id="mainContentConsole">
+        <div class="filterContainer" id="consoleFilterContainer">
+          <input class="filterTextBox" id="consoleFilterBox" type="text" placeholder="Filter:"></input>
+          <div class="filterAdd" id="consoleFilterAdd" onclick="addFilter()">+</div>
+          <div class="filterFlex" id="filterFlexContainer"></div>
         <div class="mainContentItem" id="mainContentItemSTDOUT"></div>
       </div>
       <div class="navbarMenuContainer hidden" id="navbarMenuSharding"></div>

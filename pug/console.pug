@@ -4,4 +4,8 @@
     .navbarMenuButton#navbarMenuButtonRefAdmin(onclick=`executeCmd('refreshadmin', '')`)
         .navbarMenuButtonText Refresh Admin
 .mainContentContainer#mainContentConsole
+    .filterContainer#consoleFilterContainer
+        input.filterTextBox#consoleFilterBox(type='text', placeholder='Filter:')
+        .filterAdd#consoleFilterAdd(onclick='addFilter()') +
+        .filterFlex#filterFlexContainer
     .mainContentItem#mainContentItemSTDOUT
