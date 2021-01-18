@@ -375,6 +375,7 @@ input:checked + .toggleSlider:before {
     width: 100%;
     max-width: 1200px;
     height: 32px;
+    -webkit-app-region: none;
 }
 .filterTextBox {
     position: relative;
