@@ -384,7 +384,7 @@ input:checked + .toggleSlider:before {
     height: 20px;
     background-color: var(--accent-color);
     left: calc(25% + 169px);
-    top: -16px;
+    top: -13px;
     text-align: center;
     transition: ease 0.3s all;
 }
