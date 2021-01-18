@@ -461,8 +461,11 @@ input:checked + .toggleSlider:before {
     cursor: default;
 }
 
-@Media all and (max-width: 1414px) {
+@Media all and (max-width: 1453px) {
     .filterContainer {
-        left: 363px;
+        left: 364px;
+    }
+    .mainContentContainer {
+        left: 354px;
     }
 }
