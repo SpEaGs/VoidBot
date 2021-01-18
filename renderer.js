@@ -254,6 +254,7 @@ function addFilter() {
     e.onclick = () => {removeFilter(val)};
     e.innerText = val;
     appendChild('filterFlexContainer', e);
+    document.getElementById('consoleFilterBox').value = '';
     filterSTDOUT(activeFilters);
 }
 
