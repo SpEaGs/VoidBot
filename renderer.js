@@ -234,7 +234,7 @@ function executeCmd(str, args = []) {
 
 function filterSTDOUT(tags=[]) {
     let stdoutElems = document.getElementsByClassName('stdoutItem');
-    if (tags==[]) {
+    if (tags.length == 0) {
         console.log('if');
         for (let e of stdoutElems) {
             e.classList.remove('hidden');
