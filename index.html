@@ -36,7 +36,12 @@
         </div>
       </div>
       <div class="mainContentContainer" id="mainContentConsole">
-        <div class="mainContentItem" id="mainContentItemSTDOUT"></div>
+        <div class="filterContainer" id="consoleFilterContainer">
+          <input class="filterTextBox" id="consoleFilterBox" type="text" placeholder="Filter:"></input>
+          <div class="filterAdd" id="consoleFilterAdd" onclick="addFilter()">+</div>
+          <div class="filterFlex" id="filterFlexContainer"></div>
+          <div class="mainContentItem" id="mainContentItemSTDOUT"></div>
+        </div>
       </div>
       <div class="navbarMenuContainer hidden" id="navbarMenuSharding"></div>
       <div class="mainContentContainer hidden" id="mainContentSharding"></div>
