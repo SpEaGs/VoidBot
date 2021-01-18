@@ -234,14 +234,15 @@ function executeCmd(str, args = []) {
 
 function filterSTDOUT(tags=[]) {
     let stdoutElems = document.getElementsByClassName('stdoutItem');
-    if (tags===[]) {
+    if (tags==[]) {
+        console.log('if');
         for (let e of stdoutElems) {
             e.classList.remove('hidden');
         }
     }
     else {
+        console.log('else');
         for (let e of document.getElementsByClassName('stdoutItem')) {
-            console.log(e.innerText)
             for (let t of tags) {
                 switch (e.innerText.includes(t)) {
                     case true: {
@@ -267,6 +268,7 @@ function addFilter() {
     e.onclick = () => {removeFilter(val)};
     e.innerText = val;
     appendChild('filterFlexContainer', e);
+    console.log(activeFilters);
     filterSTDOUT(activeFilters);
 }
 
@@ -274,6 +276,7 @@ function removeFilter(toRem) {
     activeFilters.splice(activeFilters.indexOf(toRem), 1);
     let e = document.getElementById(`filterItem_${escape(toRem)}`);
     e.parentNode.removeChild(e);
+    console.log(activeFilters);
     filterSTDOUT(activeFilters);
 }
 
