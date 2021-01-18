@@ -233,24 +233,47 @@ function executeCmd(str, args = []) {
 }
 
 function filterSTDOUT(tags=[]) {
-    for (let e of document.getElementsByClassName('stdoutItem')) {
-        for (let t of tags) {
-            switch (e.innerText.includes(t)) {
-                case true: {
-                    e.classList.remove('hidden');
-                    break;
-                }
-                case false: {
-                    e.classList.add('hidden');
-                    break;
+    let stdoutElems = document.getElementsByClassName('stdoutItem');
+    if (tags===[]) {
+        for (let e of stdoutElems) {
+            e.classList.remove('hidden');
+        }
+    }
+    else {
+        for (let e of document.getElementsByClassName('stdoutItem')) {
+            for (let t of tags) {
+                switch (e.innerText.includes(t)) {
+                    case true: {
+                        e.classList.remove('hidden');
+                        break;
+                    }
+                    case false: {
+                        e.classList.add('hidden');
+                        break;
+                    }
                 }
             }
         }
     }
 }
 
+let activeFilters = [];
+
 function addFilter() {
-    
+    let val = document.getElementById('consoleFilterBox').value;
+    activeFilters.push(val);
+    let e = createElement('div', ['filterItem'], `filterItem_${escape(val)}`);
+    e.onclick = () => {removeFilter(val)};
+    e.innerText = val;
+    appendChild('filterFlexContainer', e);
+    filterSTDOUT(activeFilters);
+}
+
+function removeFilter(toRem) {
+    activeFilters.splice(activeFilters.indexOf(toRem), 1);
+    let e = document.getElementById(`filterItem_${escape(toRem)}`);
+    e.parentNode.removeChild(e);
+    filterSTDOUT(activeFilters);
 }
 
 //listens for main's stdout messages and appends the contents to the console tab

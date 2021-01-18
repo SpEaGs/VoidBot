@@ -443,6 +443,27 @@ style.
     .filterAdd:hover {
         background-color: var(--accent-color-hover);
     }
+    .filterFlex {
+        position: fixed;
+        display: flex;
+        flex-flow: row;
+        height: 32px;
+        width: 400px;
+        top: 0px;
+        left: calc(25% + 175px);
+        -webkit-app-region: none;
+    }
+    .filterItem {
+        position: relative;
+        width: calc(auto + 10px);
+        height: 20px;
+        color: white;
+        background-color: var(--accent-color);
+        cursor: pointer;
+    }
+    .filterItem:hover {
+        background-color: var(--accent-color-hover);
+    }
 
     #mainContentItemSTDOUT {
         font-family: "Cousine";
