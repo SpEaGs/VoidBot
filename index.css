@@ -401,16 +401,21 @@ input:checked + .toggleSlider:before {
     height: 32px;
     width: 400px;
     top: 0px;
-    left: calc(25% + 194px);
+    left: calc(25% + 189px);
+    align-items: center;
     -webkit-app-region: none;
 }
 .filterItem {
     position: relative;
-    width: calc(auto + 10px);
+    width: auto;
+    padding-left: 10px;
+    padding-right: 10px;
     height: 20px;
     color: white;
     background-color: var(--accent-color);
     cursor: pointer;
+    border-radius: 10px;
+    margin-left: 5px;
 }
 .filterItem:hover {
     background-color: var(--accent-color-hover);
