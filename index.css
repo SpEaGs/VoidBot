@@ -372,11 +372,12 @@ input:checked + .toggleSlider:before {
     position: fixed;
     top: 0px;
     left: 25%;
+    width: 100%;
     max-width: 1200px;
     height: 32px;
 }
 .filterTextBox {
-    position: fixed;
+    position: relative;
     left: 10px;
     top: 5px;
     height: 20px;
@@ -404,7 +405,7 @@ input:checked + .toggleSlider:before {
     display: flex;
     flex-flow: row;
     height: 32px;
-    width: 100%;
+    width: calc(100% - 189px);
     top: -42px;
     left: 189px;
     align-items: center;
