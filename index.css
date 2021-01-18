@@ -369,7 +369,7 @@ input:checked + .toggleSlider:before {
     top: 0.5em;
 }
 .filterTextBox {
-    position: relative;
+    position: fixed;
     left: calc(25% + 10px);
     top: 5px;
     height: 20px;
