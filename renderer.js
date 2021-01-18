@@ -241,6 +241,7 @@ function filterSTDOUT(tags=[]) {
     }
     else {
         for (let e of document.getElementsByClassName('stdoutItem')) {
+            console.log(e.innerText)
             for (let t of tags) {
                 switch (e.innerText.includes(t)) {
                     case true: {

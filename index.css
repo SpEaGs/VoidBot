@@ -401,7 +401,7 @@ input:checked + .toggleSlider:before {
     height: 32px;
     width: 400px;
     top: 0px;
-    left: calc(25% + 175px);
+    left: calc(25% + 194px);
     -webkit-app-region: none;
 }
 .filterItem {
