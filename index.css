@@ -460,3 +460,9 @@ input:checked + .toggleSlider:before {
     background: var(--main-bg-color);
     cursor: default;
 }
+
+@Media all and (max-width: 1414) {
+    .filterContainer {
+        left: 363;
+    }
+}
