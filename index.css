@@ -368,6 +368,29 @@ input:checked + .toggleSlider:before {
     margin-left: 1em;
     top: 0.5em;
 }
+.filterTextBox {
+    position: relative;
+    left: calc(25% + 10px);
+    top: 5px;
+    height: 20px;
+    width: 150px;
+    color: white;
+    background-color: var(--toolbar-hover-color);
+    border: none;
+}
+.filterAdd {
+    position: relative;
+    width: 20px;
+    height: 20px;
+    background-color: var(--accent-color);
+    left: calc(25% + 169px);
+    top: -16px;
+    text-align: center;
+    transition: ease 0.3s all;
+}
+.filterAdd:hover {
+    background-color: var(--accent-color-hover);
+}
 #titleButtonClose {
     background: url('assets/titleButton/titleButtonClose.png');
 }

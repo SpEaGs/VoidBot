@@ -232,10 +232,31 @@ function executeCmd(str, args = []) {
     }
 }
 
+function filterSTDOUT(tags=[]) {
+    for (let e of document.getElementsByClassName('stdoutItem')) {
+        for (let t of tags) {
+            switch (e.innerText.includes(t)) {
+                case true: {
+                    e.classList.remove('hidden');
+                    break;
+                }
+                case false: {
+                    e.classList.add('hidden');
+                    break;
+                }
+            }
+        }
+    }
+}
+
+function addFilter() {
+    
+}
+
 //listens for main's stdout messages and appends the contents to the console tab
 ipcRenderer.on('stdout', (event, arg=null) => {
     if(!eleBool) arg = event;
-    let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(arg.tags[1])}`]);
+    let e = createElement('p', ['stdoutItem']);
     e.style.color = arg.color;
     e.innerText = `${arg.timeStamp} ${arg.tags.join(' ')}: ${arg.msg}`;
     appendChild('mainContentItemSTDOUT', e);
@@ -373,7 +394,7 @@ ipcRenderer.on('populated', () => {
 
 ipcRenderer.on('init-backlog', (backlog) => {
     for (let i of backlog) {
-        let e = createElement('p', ['stdoutItem', `stdoutSrc${escape(i.tags[1])}`]);
+        let e = createElement('p', ['stdoutItem']);
         e.style.color = i.color;
         e.innerText = `${i.timeStamp} ${i.tags.join(' ')}: ${i.msg}`;
         appendChild('mainContentItemSTDOUT', e);

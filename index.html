@@ -8,10 +8,12 @@
     <script type="text/javascript" src="renderer.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css">
     <div id="titleBar"><strong id="titleText">VoidBot v
-        <script>
-          const appVersion = require('./package.json').version;
-          document.write(appVersion);
-        </script></strong>
+      <script>
+        const appVersion = require('./package.json').version;
+        document.write(appVersion);
+      </script></strong>
+      <input class="filterTextBox" id="consoleFilterBox" type="text" placeholder="Filter:"></input>
+      <div class="filterAdd" id="consoleFilterAdd" onclick="addFilter()">+</div>
       <div class="titleButtonContainer">
         <div class="titleButton" id="titleButtonClose" onclick="cl()"></div>
         <div class="titleButton" id="titleButtonMaximize" onclick="max()"></div>
