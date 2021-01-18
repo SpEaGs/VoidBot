@@ -2,6 +2,10 @@
 .navbarContainer
     .navbarButton.navbarButtonSelected#navbarButtonConsole(onclick=`selectTab('Console')`) 
         .navbarButtonText Console
+        .filterContainer#consoleFilterContainer
+            input.filterTextBox#consoleFilterBox(type='text', placeholder='Filter:')
+            .filterAdd#consoleFilterAdd(onclick='addFilter()') +
+            .filterFlex#filterFlexContainer
     .navbarButton#navbarButtonSharding(onclick=`selectTab('Sharding')`) 
         .navbarButtonText Sharding
 include console.pug

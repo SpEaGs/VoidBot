@@ -19,9 +19,6 @@ html
                 .navlinkText Dashboard
             a.navlinkButton#navlinkLogout(href='/auth/logout')
                 .navlinkText Logout
-            input.filterTextBox#consoleFilterBox(type='text', placeholder='Filter:')
-            .filterAdd#consoleFilterAdd(onclick='addFilter()') +
-            .filterFlex#filterFlexContainer
         .contentBody#windowContent
             include navbar.pug
         script#g(g=guilds).
