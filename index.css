@@ -377,6 +377,7 @@ input:checked + .toggleSlider:before {
     color: white;
     background-color: var(--toolbar-hover-color);
     border: none;
+    -webkit-app-region: none;
 }
 .filterAdd {
     position: relative;
@@ -387,6 +388,8 @@ input:checked + .toggleSlider:before {
     top: -13px;
     text-align: center;
     transition: ease 0.3s all;
+    -webkit-app-region: none;
+    cursor: pointer;
 }
 .filterAdd:hover {
     background-color: var(--accent-color-hover);
