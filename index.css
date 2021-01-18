@@ -465,7 +465,4 @@ input:checked + .toggleSlider:before {
     .filterContainer {
         left: 364px;
     }
-    .mainContentContainer {
-        left: 354px;
-    }
 }
