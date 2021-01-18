@@ -8,10 +8,10 @@
     <script type="text/javascript" src="renderer.js"></script>
     <link rel="stylesheet" type="text/css" href="index.css">
     <div id="titleBar"><strong id="titleText">VoidBot v
-      <script>
-        const appVersion = require('./package.json').version;
-        document.write(appVersion);
-      </script></strong>
+        <script>
+          const appVersion = require('./package.json').version;
+          document.write(appVersion);
+        </script></strong>
       <div class="titleButtonContainer">
         <div class="titleButton" id="titleButtonClose" onclick="cl()"></div>
         <div class="titleButton" id="titleButtonMaximize" onclick="max()"></div>
@@ -22,7 +22,6 @@
       <div class="navbarContainer">
         <div class="navbarButton navbarButtonSelected" id="navbarButtonConsole" onclick="selectTab('Console')"> 
           <div class="navbarButtonText">Console</div>
-          </div>
         </div>
         <div class="navbarButton" id="navbarButtonSharding" onclick="selectTab('Sharding')"> 
           <div class="navbarButtonText">Sharding</div>
