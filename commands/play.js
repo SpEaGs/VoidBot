@@ -111,10 +111,10 @@ function play(info, status) {
     status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Playing song: \`${info.videoDetails.title} [${parseInt(info.videoDetails.lengthSeconds / 60)}:${(info.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${info.added_by})\``);
     status.nowPlaying = info;
     createStream(status, info);
+    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
 }
 
 function createStream(status, info) {
-    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
     let str;
     switch (info.trackSource) {
         case 'YT': {
@@ -157,6 +157,7 @@ function playNextInQueue(status) {
     createStream(status, nextPlay);
     status.nowPlaying = nextPlay;
     status.audioQueue.shift();
+    MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
 }
 
 function addToQueue(info, status) {
