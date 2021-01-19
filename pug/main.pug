@@ -112,8 +112,8 @@ html
                             aqu.classList.add('gcAudioQ');
                             aqu.innerText = 'Queue:';
                             let ol = document.createElement('ol');
-                                ol.id = `gcAudioQOL${bot.guildID}`
-                                ol.style = "max-height: 176px; overflow:auto; padding-left: 22px;";
+                                ol.id = `gcAudioQOL${bot.guildID}`;
+                                ol.style = "max-height: 166px; overflow:auto; padding-left: 22px; margin: 0px; margin-top: 1em;";
                                 if (bot.audioQueue.length == 0) {
                                     aqu.innerText = 'Queue is Empty.';
                                 }
@@ -242,6 +242,7 @@ html
                             olParent.appendChild(ol);
                         }
                         else {
+                        ol.parentNode.innerText = 'Queue:';
                             ol.innerHTML = '';
                             for (let i of bot.audioQueue) {
                                 let qi = document.createElement('li');
