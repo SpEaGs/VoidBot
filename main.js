@@ -209,7 +209,7 @@ function launchWebServer() {
                 case "join": {
                     let paramsOut = {
                         args: params.value.name.split(' '),
-                        bot: status.client.childre.get(params.bot.guildID)
+                        bot: status.client.children.get(params.bot.guildID)
                     }
                     status.client.cmds.get('join').execute(paramsOut);
                     break;
