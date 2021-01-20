@@ -35,7 +35,7 @@
     "opusscript": "0.0.7",
     "passport": "^0.4.1",
     "pug": "^3.0.0",
-    "socket.io": "^2.3.0",
+    "socket.io": "^2.4.0",
     "soundcloud-downloader": "^0.1.8",
     "superagent": "^5.3.1",
     "winston": "^3.3.3",
