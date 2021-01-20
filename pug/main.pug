@@ -53,7 +53,7 @@ html
                                 vddb.id = `gcVCDropdownButton${bot.guildID}`;
                                 vddb.classList.add('gcVCDropdownButton');
                                 vddb.innerText = 'None';
-                                vddb.onclick = () => {document.getElementById(`gcVCDropdownContent${bot.guildID}`).classList.remove('hidden')};
+                                vddb.onclick = () => {document.getElementById(`gcVCDropdownContent${bot.guildID}`).classList.toggle('hidden')};
                                 vcdd.appendChild(vddb);
                             let vddc = document.createElement('div');
                                 vddc.id = `gcVCDropdownContent${bot.guildID}`;
