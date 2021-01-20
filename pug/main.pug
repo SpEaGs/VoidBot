@@ -45,6 +45,34 @@ html
                             ttx.classList.add('gcTitleText');
                             ttx.innerText = bot.guildName;
                             ctrl.appendChild(ttx);
+                        let vcdd = document.createElement('div');
+                            vcdd.id = `gcVCDropdown${bot.guildID}`;
+                            vcdd.classList.add('gcVCDropdown');
+                            vcdd.innerText = 'Active Voice Channel:';
+                            let vddb = document.createElement('div');
+                                vddb.id = `gcVCDropdownButton${bot.guildID}`;
+                                vddb.classList.add('gcVCDropdownButton');
+                                vddb.innerText = 'None';
+                                vddb.onclick = () => {document.getElementById(`gcVCDropdownContent${bot.guildID}`).classList.remove('hidden')};
+                                vcdd.appendChild(vddb);
+                            let vddc = document.createElement('div');
+                                vddc.id = `gcVCDropdownContent${bot.guildID}`;
+                                vddc.classList.add('gcVCDropdownContent');
+                                vddc.classList.add('hidden');
+                                for (let i of bot.voiceChannelArray) {
+                                    if (bot.voiceChannel && i.id == bot.voiceChannel.id) {
+                                        vddb.innerText = i.name;
+                                    }
+                                    else {
+                                        let vddci = document.createElement('div');
+                                            vddci.id = `gcVCDropdownItem${bot.guildID}_${i.id}`;
+                                            vddci.classList.add('gcVCDropdownItem');
+                                            vddci.innerText = i.name;
+                                            vddci.onclick = () => {ddSelect(bot, 'VC', i)};
+                                            vddc.appendChild(vddci);
+                                    }
+                                }
+                                vcdd.appendChild(vddc);
                         let nwp = document.createElement('div');
                             nwp.id = `gcNowPlay${bot.guildID}`;
                             nwp.classList.add('gcNowPlay');
@@ -154,6 +182,22 @@ html
                         });
                     };
 
+                    function ddSelect(bot, type, chan){
+                        switch (type) {
+                            case 'VC': {
+                                let toSend = {
+                                    control: 'join',
+                                    value: chan.name,
+                                    bot: bot
+                                }
+                                socket.emit('gControls', toSend);
+                                break;
+                            }
+                            case 'TC': {
+                                break;
+                            }
+                        }
+                    }
                     function addSong(bot, user) {
                         let el = document.getElementById(`gcSongInput${bot.guildID}`);
                         let input = el.value;
@@ -210,6 +254,8 @@ html
                     }
 
                     function updateInfo(bot) {
+                        let vddb = document.getElementById(`gcVCDropdownButton${bot.guildID}`);
+                        let vddc = document.getElementById(`gcVCDropdownContent${bot.guildID}`);
                         let nwp = document.getElementById(`gcNowPlay${bot.guildID}`);
                         let vol = document.getElementById(`gcVol${bot.guildID}`);
                         let voli = document.getElementById(`gcVolInput${bot.guildID}`);
@@ -218,6 +264,21 @@ html
                         let pspl = document.getElementById(`gcPsPl${bot.guildID}`);
                         let ol = document.getElementById(`gcAudioQOL${bot.guildID}`);
                         let aqu = ol.parentNode;
+                        vddb.innerText = 'None';
+                        vddc.innerHTML = '';
+                        for (let i of bot.voiceChannelArray) {
+                            if (bot.voiceChannel && i.id == bot.voiceChannel.id) {
+                                vddb.innerText = i.name;
+                            }
+                            else {
+                                let vddci = document.createElement('div');
+                                    vddci.id = `gcVCDropdownItem${bot.guildID}_${i.id}`;
+                                    vddci.classList.add('gcVCDropdownItem');
+                                    vddci.innerText = i.name;
+                                    vddci.onclick = () => {ddSelect(bot, 'VC', i)};
+                                    vddc.appendChild(vddci);
+                            }
+                        }
                         if (!bot.nowPlaying) {
                             nwp.innerText = 'Now Playing:\nNothing.';
                             vol.classList.add('hidden');

@@ -206,6 +206,14 @@ function launchWebServer() {
 
         socket.on('gControls', (params) => {
             switch (params.control) {
+                case "join": {
+                    let paramsOut = {
+                        args: params.value.name.split(' '),
+                        bot: status.client.childre.get(params.bot.guildID)
+                    }
+                    status.client.cmds.get('join').execute(paramsOut);
+                    break;
+                }
                 case "addSong": {
                     let snowflake = params.data.snowflake;
                     let paramsOut = {
