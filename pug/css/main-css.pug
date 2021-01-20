@@ -213,7 +213,7 @@ style.
         margin-bottom: 1.5em;
     }
     .gcVCDropdownButton {
-        background-color: var(--navbar-hover-color);
+        background-color: var(--accent-color);
         position: relative;
         padding: 5px;
         left: calc(25%/2);
@@ -221,14 +221,26 @@ style.
         width: 75%;
         cursor: pointer;
     }
+    .gcVCDropdownButton:hover {
+        background-color: var(--accent-color-hover);
+    }
     .gcVCDropdownContent {
-        background-color: var(--navbar-hover-color);
+        background-color: var(--toolbar-color);
         position: relative;
         top: 5px;
         width: calc(75% - 30px);
         left: calc(25%/2);
         padding: 5px;
+    }
+    .gcVCDropdownItem {
+        background: var(--accent-color);
+        padding: 5px;
+        margin: 2px;
+        transition: ease 0.3s all;
         cursor: pointer;
+    }
+    .gcVCDropdownItem:hover {
+        background-color: var(--accent-color-hover);
     }
     .gcSongInput {
         width: calc(75% - 2em);
