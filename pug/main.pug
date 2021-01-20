@@ -188,7 +188,7 @@ html
                             case 'VC': {
                                 let toSend = {
                                     control: 'join',
-                                    value: chan.name,
+                                    value: chan,
                                     bot: bot
                                 }
                                 socket.emit('gControls', toSend);
