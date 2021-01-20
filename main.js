@@ -191,8 +191,8 @@ function launchWebServer() {
         log(`Active and listening on port ${port}`, ['[INFO]', '[WEBSERVER]']);
     });
 
-    io.on('connection', (socket) => {
-        status.eSender.socket = socket;
+    status.eSender.socket = io;
+    status.eSender.socket.on('connection', (socket) => {
         socket.emit('ready', 'ready');
 
         socket.on('command', cmd);
