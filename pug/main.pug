@@ -340,6 +340,14 @@ html
                         let e = document.getElementById(`gCtrl${guildID}`);
                         e.parentNode.removeChild(e);
                     });
+                    window.onclick = (e) => {
+                        if (!e.target.matches('.gcVCDropdownButton')) {
+                            let dropdowns = document.getElementsByClassName('gcVCDropdownContent');
+                            for (let i = 0; i < dropdowns.length; i++) {
+                                dropdowns[i].classList.add('hidden');
+                            }
+                        }
+                    }
             a.articleButton(href='/dash/admin')
                 .navlinkText Admin Panel
             h2 Guild Controls:
