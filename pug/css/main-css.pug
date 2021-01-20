@@ -216,10 +216,9 @@ style.
         background-color: var(--accent-color);
         position: relative;
         padding: 5px;
-        left: calc(25%/2);
         top: 5px;
-        width: 75%;
         cursor: pointer;
+        transition: ease 0.3s all;
     }
     .gcVCDropdownButton:hover {
         background-color: var(--accent-color-hover);
@@ -228,9 +227,13 @@ style.
         background-color: var(--toolbar-color);
         position: relative;
         top: 5px;
-        width: calc(75% - 30px);
-        left: calc(25%/2);
         padding: 5px;
+        max-height: 125px;
+        overflow-y: auto;
+    }
+    .gcVCDropdownContent::-webkit-scrollbar {
+        height: 3px;
+        width: 3px;
     }
     .gcVCDropdownItem {
         background: var(--accent-color);
