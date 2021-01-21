@@ -49,6 +49,13 @@ html
                             vcdd.id = `gcVCDropdown${bot.guildID}`;
                             vcdd.classList.add('gcVCDropdown');
                             vcdd.innerText = 'Active Voice Channel:';
+                            let lvbtn = document.createElement('div');
+                                lvbtn.id = `gcVCLeave${bot.guildID}`;
+                                lvbtn.classList.add('gcVCLeave');
+                                lvbtn.innerText = 'Leave';
+                                lvbtn.onclick = () => {vcLeave(bot)};
+                                if (!bot.voiceChannel) lvbtn.classList.add('hidden');
+                                vcdd.appendChild(lvbtn);
                             let vddb = document.createElement('div');
                                 vddb.id = `gcVCDropdownButton${bot.guildID}`;
                                 vddb.classList.add('gcVCDropdownButton');
@@ -255,6 +262,7 @@ html
                     }
 
                     function updateInfo(bot) {
+                        let lvbtn = document.getElementById(`gcVCLeave${bot.guildID}`);
                         let vddb = document.getElementById(`gcVCDropdownButton${bot.guildID}`);
                         let vddc = document.getElementById(`gcVCDropdownContent${bot.guildID}`);
                         let nwp = document.getElementById(`gcNowPlay${bot.guildID}`);
@@ -267,6 +275,8 @@ html
                         let aqu = ol.parentNode;
                         vddb.innerText = 'None';
                         vddc.innerHTML = '';
+                        if (!bot.voiceChannel) {lvbtn.classList.add('hidden')}
+                        else {lvbtn.classList.remove('hidden')};
                         for (let i of bot.voiceChannelArray) {
                             if (bot.voiceChannel && i.id == bot.voiceChannel.id) {
                                 vddb.innerText = i.name;

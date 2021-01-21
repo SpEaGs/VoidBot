@@ -214,6 +214,13 @@ function launchWebServer() {
                     status.client.cmds.get('join').execute(paramsOut);
                     break;
                 }
+                case "leave": {
+                    let paramsOut = {
+                        bot: status.client.children.get(params.bot.guildID)
+                    }
+                    status.client.cmds.get('leave').execute(paramsOut);
+                    break;
+                }
                 case "addSong": {
                     let snowflake = params.data.snowflake;
                     let paramsOut = {

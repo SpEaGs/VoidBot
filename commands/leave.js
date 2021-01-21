@@ -14,7 +14,7 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
-        if (!params.bot.voiceChannel) return params.msg.reply(`I'm not in a voice channel...`);
+        if (!params.bot.voiceChannel) return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`I'm not in a voice channel...`);
         params.bot.audioQueue = [];
         if (params.bot.dispatcher !== false) {
             params.bot.dispatcher.end();
@@ -23,5 +23,6 @@ module.exports = {
         params.bot.voiceChannel.leave();
         params.bot.voiceChannel = false;
         params.bot.voiceConnection = false;
+        MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
     }
 }
