@@ -25,6 +25,6 @@ module.exports = {
         params.bot.voiceChannel.leave();
         params.bot.voiceChannel = false;
         params.bot.voiceConnection = false;
-        MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
+        MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
     }
 }
