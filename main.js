@@ -37,7 +37,7 @@ const dashRouter = require('./web/routers/dash.js');
 
 let server = http.createServer(exApp);
 
-const io = require('socket.io').listen(server);
+const io = require('socket.io')(server, {});
 
 const utils = require('./utils.js');
 const Bot = require('./bot.js');
