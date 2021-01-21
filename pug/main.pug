@@ -206,6 +206,13 @@ html
                             }
                         }
                     }
+                    function vcLeave(bot) {
+                        let toSend = {
+                            control: 'leave',
+                            bot: bot
+                        }
+                        socket.emit('gControls', toSend);
+                    }
                     function addSong(bot, user) {
                         let el = document.getElementById(`gcSongInput${bot.guildID}`);
                         let input = el.value;
