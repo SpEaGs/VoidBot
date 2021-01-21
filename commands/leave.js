@@ -1,8 +1,10 @@
 
 //Leave command. Makes the bot stop playing audio, clear any queued songs, and leave whatever voice channel it's connected to.
 
-const utils = require('../utils.js')
+const utils = require('../utils.js');
 const prefix = utils.config.prefix;
+
+const MAIN = require('../main.js');
 
 module.exports = {
     name: 'leave',
