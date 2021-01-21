@@ -49,13 +49,6 @@ html
                             vcdd.id = `gcVCDropdown${bot.guildID}`;
                             vcdd.classList.add('gcVCDropdown');
                             vcdd.innerText = 'Active Voice Channel:';
-                            let lvbtn = document.createElement('div');
-                                lvbtn.id = `gcVCLeave${bot.guildID}`;
-                                lvbtn.classList.add('gcVCLeave');
-                                lvbtn.innerText = 'Leave';
-                                lvbtn.onclick = () => {vcLeave(bot)};
-                                if (!bot.voiceChannel) lvbtn.classList.add('hidden');
-                                vcdd.appendChild(lvbtn);
                             let vddb = document.createElement('div');
                                 vddb.id = `gcVCDropdownButton${bot.guildID}`;
                                 vddb.classList.add('gcVCDropdownButton');
@@ -80,6 +73,13 @@ html
                                     }
                                 }
                                 vcdd.appendChild(vddc);
+                            let lvbtn = document.createElement('div');
+                                lvbtn.id = `gcVCLeave${bot.guildID}`;
+                                lvbtn.classList.add('gcVCLeave');
+                                lvbtn.innerText = 'Leave';
+                                lvbtn.onclick = () => {vcLeave(bot)};
+                                if (!bot.voiceChannel) lvbtn.classList.add('hidden');
+                                vcdd.appendChild(lvbtn);
                             ctrl.appendChild(vcdd);
                         let nwp = document.createElement('div');
                             nwp.id = `gcNowPlay${bot.guildID}`;
