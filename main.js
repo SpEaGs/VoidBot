@@ -380,7 +380,6 @@ status.client.on('message', msg => {
                 break;
             }
         }
-        return;
     }
     if (!cmdRec) return;
     let cmd = aliCheck;
