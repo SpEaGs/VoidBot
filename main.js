@@ -382,6 +382,7 @@ status.client.on('message', msg => {
         }
         return;
     }
+    if (!cmdRec) return;
     let cmd = aliCheck;
     if (!aliCheck) cmd = status.client.cmds.get(cmdName);
     if (cmd.server && msg.channel.type !== 'text') return msg.reply('That command only works on a server!');
