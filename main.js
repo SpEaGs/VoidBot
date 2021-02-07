@@ -77,7 +77,6 @@ module.exports = {
 
 //set up basic structure for calling/storing discord.js clients (master + children)
 const status = require('./main.js');
-const { brotliCompressSync } = require('zlib');
 
 function getStatus() {
     return status;
@@ -86,6 +85,7 @@ function getStatus() {
 //status.client = new Discord.Client();
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
+status.client.lastSeen = {};
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str, tags) {
     let lo = { timeStamp: utils.getTime(),
@@ -498,6 +498,19 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
     catch (error) {
         log(`Error handling voiceStateUpdate event"\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
     };
+});
+
+//discord.js client event for when a user's presence updates.
+status.client.on('presenceUpdate', (oldPresence, newPresence) => {
+    if (oldPresence.status == newPresence.status) return;
+    if (newPresence.status == 'online') {
+        delete status.client.lastSeen[newPresence.user.id];
+        return;
+    }
+    else {
+        status.client.lastSeen[newPresence.user.id] = utils.getTimeRaw();
+        return;
+    }
 });
 
 //set up electron window, login client, and launch web UI

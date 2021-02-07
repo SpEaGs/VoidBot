@@ -53,7 +53,8 @@ module.exports = {
     aliasCheck: aliasCheck,
     dumpJSON: dumpJSON,
     cleanChannelName: cleanChannelName,
-    dumbifyBot: dumbifyBot
+    dumbifyBot: dumbifyBot,
+    msToDHMS: msToDHMS
 }
 
 //gets the current date/time and formats it
@@ -287,4 +288,21 @@ function dumbifyBot(bot) {
         dumbBot.audioQueue = aq;
     }
     return dumbBot;
+}
+
+function msToTime(ms) {
+    let time = {
+        secs: Math.floor((ms / 1000) % 60),
+        mins: Math.floor((ms / (1000 * 60)) % 60),
+        hours: Math.floor((ms / (1000 * 60 * 60)) % 24),
+        days: Math.floor((ms / (1000 * 60 * 60 * 24)) % 365),
+        years: Math.floor((ms / (1000 * 60 * 60 * 24 * 365)))
+    }
+    let timeOut = []
+    if (time.secs > 0) timeOut.unshift(`${time.secs} seconds`);
+    if (time.mins > 0) timeOut.unshift(`${time.mins} minutes`);
+    if (time.hours > 0) timeOut.unshift(`${time.hours} hours`);
+    if (time.days > 0) timeOut.unshift(`${time.days} days`);
+    if (time.years > 0) timeOut.unshift(`${time.years} years`);
+    return timeOut.join(', ');
 }
