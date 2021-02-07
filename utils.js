@@ -54,7 +54,7 @@ module.exports = {
     dumpJSON: dumpJSON,
     cleanChannelName: cleanChannelName,
     dumbifyBot: dumbifyBot,
-    msToDHMS: msToDHMS
+    msToTime: msToTime
 }
 
 //gets the current date/time and formats it
