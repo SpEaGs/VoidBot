@@ -1,6 +1,5 @@
 
-//Ping command. Returns 'Pong!'
-
+//Slap command. Slaps a user (metaphorically)
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
