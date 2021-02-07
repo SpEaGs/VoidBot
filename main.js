@@ -293,6 +293,7 @@ function launchWebServer() {
 
 function initBot(bot) {
     utils.populateAdmin(bot);
+    utils.populateUsers(status.client.lastSeen, bot);
     for (let chan of bot.guild.channels.cache.array()) {
         let cleanChanName = utils.cleanChannelName(chan.name);
         switch (chan.type) {

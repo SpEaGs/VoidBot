@@ -54,7 +54,8 @@ module.exports = {
     dumpJSON: dumpJSON,
     cleanChannelName: cleanChannelName,
     dumbifyBot: dumbifyBot,
-    msToTime: msToTime
+    msToTime: msToTime,
+    populateUsers: populateUsers
 }
 
 //gets the current date/time and formats it
@@ -305,4 +306,12 @@ function msToTime(ms) {
     if (time.days > 0) timeOut.unshift(`${time.days} days`);
     if (time.years > 0) timeOut.unshift(`${time.years} years`);
     return timeOut.join(', ');
+}
+
+function populateUsers(seen, bot) {
+    for (let u of bot.guild.members.cache.array()) {
+        if (!seen[u.id] && u.presence.status != 'online') {
+            seen[u.id] = getTimeRaw();
+        }
+    }
 }
