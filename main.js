@@ -308,7 +308,7 @@ function initBot(bot) {
         let cleanRoleName = utils.cleanChannelName(role.name);
         bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
     }
-    mainWindow.webContents.send('add-client', utils.dumbifyBot(bot));
+    status.eSender.ipc.send('add-client', bot);
 }
 
 //discord.js client ready event handler (master client)
