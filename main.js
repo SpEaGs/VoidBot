@@ -317,13 +317,43 @@ try {
         utils.populateCmds(status);
         
         status.client.ws.on('INTERACTION_CREATE', async interaction => {
-            log(JSON.stringify(interaction, null, 2), ['[WARN]','[MAIN]', '[INT-CMD]']);
-            status.client.api.interactions(interaction.id, interaction.token).callback.post({data: {
-                type: 4,
-                data: {
-                    content: 'Command received!'
+            //log(JSON.stringify(interaction, null, 2), ['[WARN]','[MAIN]', '[INT-CMD]']);
+            //fetch admin lists & compare user id
+            let admin = utils.adminCheck(bot, interaction.member.user);
+            let botadmin = utils.botAdminCheck(interaction.member.user.id);
+            let adminCheck = false;
+            if (admin || botadmin) adminCheck = true;
+
+            //get and run command
+            let cmd = status.client.cmds.get(interaction.data.name);
+            if (cmd.admin && !adminCheck) {
+                status.client.api.interactions(interaction.id, interaction.token).callback.post({data: {
+                    type: 4,
+                    data: {
+                        content: 'You lack sufficient permissions for that command.'
+                    }
+                }})
+            }
+            else {
+                let bot = status.client.children.get(interaction.guild_id);
+                let member = bot.guild.members.cache.get(interaction.member.user.id);
+                let msg = {
+                    author: member,
+                    member: member
                 }
-            }})
+                let args = []
+                for (let i of interaction.data.options) {
+                    args.push(i.value);
+                }
+                let params = {msg, args, bot}
+                cmd.execute(params);
+                status.client.api.interactions(interaction.id, interaction.token).callback.post({data: {
+                    type: 4,
+                    data: {
+                        content: 'Command received!'
+                    }
+                }})
+            }
         })
 
         //populate info for child clients
