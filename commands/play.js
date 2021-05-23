@@ -14,9 +14,12 @@ const SC_API_KEY = require('../tokens.json').TOKEN_SC;
 
 const MAIN = require('../main.js');
 
+let name = 'play'
+let description = 'Plays a given youtube or soundcloud URL (or from youtube search terms) in the voice channel of whomever sent the command.'
+
 module.exports = {
-    name: 'play',
-    description: 'Plays a given youtube or soundcloud URL (or from youtube search terms) in the voice channel of whomever sent the command.',
+    name: name,
+    description: description,
     alias: false,
     args: true,
     usage: `\`${prefix}play <URL or search terms>\``,
@@ -38,8 +41,8 @@ module.exports = {
         search(params.args, params.msg, params.bot);
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'search',

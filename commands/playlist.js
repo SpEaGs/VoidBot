@@ -4,9 +4,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'playlist'
+let description = 'Lists all entries in audio playlist.'
+
 module.exports = {
-    name: 'playlist',
-    description: 'Lists all entries in audio playlist.',
+    name: name,
+    description: description,
     alias: ['pl'],
     args: false,
     usage: `\`${prefix}playlist\``,
@@ -26,7 +29,7 @@ module.exports = {
         params.msg.reply(`Playlist: ${output.join('\n')}`);
     },
     regJSON: {
-        name: this.name,
-        description: this.description
+        name: name,
+        description: description
     }
 };

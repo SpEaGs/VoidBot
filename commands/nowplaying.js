@@ -4,9 +4,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'nowplaying'
+let description = 'Lists info about the currently playing audio.'
+
 module.exports = {
-    name: 'nowplaying',
-    description: 'Lists info about the currently playing audio.',
+    name: name,
+    description: description,
     alias: ['np'],
     args: false,
     usage: `\`${prefix}nowplaying\``,
@@ -21,7 +24,7 @@ module.exports = {
         params.msg.reply(`Now Playing: \`${nP.videoDetails.title} [${parseInt(nP.videoDetails.lengthSeconds / 60)}:${(nP.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}}] (added by: ${nP.added_by})\`\nURL: ${nP.url}`);
     },
     regJSON: {
-        name: this.name,
-        description: this.description
+        name: name,
+        description: description
     }
 };

@@ -4,9 +4,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'welcome'
+let description = 'Sends a welcome message for the given user.'
+
 module.exports = {
-    name: 'welcome',
-    description: 'Sends a welcome message for the given user.',
+    name: name,
+    description: description,
     alias: [],
     args: true,
     usage: `\`${prefix}welcome <user>\``,
@@ -27,8 +30,8 @@ module.exports = {
 
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'user',

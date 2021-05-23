@@ -5,9 +5,12 @@ const utils = require('../utils.js');
 const { description } = require('./play.js');
 const prefix = utils.config.prefix;
 
+let name = 'role'
+let description = 'Adds/Removes a(the) given role(s) from a given user. Admin only.'
+
 module.exports = {
-    name: 'role',
-    description: 'Adds/Removes a(the) given role(s) from a given user. Admin only.',
+    name: name,
+    description: description,
     alias: false,
     args: true,
     usage: `\`${prefix}role <add/remove> <user> <role>\``,
@@ -72,8 +75,8 @@ module.exports = {
         };
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'action',

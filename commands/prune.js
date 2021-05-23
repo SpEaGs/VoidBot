@@ -4,9 +4,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'prune'
+let description = 'Prunes given number of messages from the given channel. Admin only.'
+
 module.exports = {
-    name: 'prune',
-    description: 'Prunes given number of messages from the given channel. Admin only.',
+    name: name,
+    description: description,
     alias: false,
     args: true,
     usage: `\`${prefix}prune {amount} {channel}\``,
@@ -43,8 +46,8 @@ module.exports = {
         };
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'amount',

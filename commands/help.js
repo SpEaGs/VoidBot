@@ -4,9 +4,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'help'
+let description = 'Displays a list of commands, or a given command\'s description, usage, and aliases (if any)'
+
 module.exports = {
-    name: 'help',
-    description: 'Displays a list of commands, or a given command\'s description, usage, and aliases (if any)',
+    name: name,
+    description: description,
     alias: ['?'],
     args: false,
     usage: `\`${prefix}help <command>\``,

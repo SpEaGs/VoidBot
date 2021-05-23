@@ -7,9 +7,12 @@ const prefix = utils.config.prefix;
 
 const MAIN = require('../main.js');
 
+let name = 'skip'
+let description = 'Skips the bot\'s currently playing audio stream.'
+
 module.exports = {
-    name: 'skip',
-    description: 'Skips the bot\'s currently playing audio stream.',
+    name: name,
+    description: description,
     alias: false,
     args: false,
     usage: `\`${prefix}skip\``,
@@ -30,8 +33,8 @@ module.exports = {
         }
     },
     regJSON: {
-        name: this.name,
-        description: this.description
+        name: name,
+        description: description
     }
 };
 

@@ -5,9 +5,12 @@ const utils = require('../utils.js');
 const { regJSON } = require('./announcements.js');
 const prefix = utils.config.prefix;
 
+let name = 'broadcast'
+let description = 'Sends a given message to all servers the bot is in.'
+
 module.exports = {
-    name: 'broadcast',
-    description: 'Sends a given message to all servers the bot is in.',
+    name: name,
+    description: description,
     alias: [],
     args: true,
     usage: `\`${prefix}broadcast <message>\``,
@@ -22,8 +25,8 @@ module.exports = {
         }
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'message',

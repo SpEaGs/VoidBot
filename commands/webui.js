@@ -5,9 +5,12 @@ const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 const pubIP = utils.config.pubIP;
 
+let name = 'webui'
+let description = 'Sends a link to the WebUI page.'
+
 module.exports = {
-    name: 'webui',
-    description: 'Sends a link to the WebUI page.',
+    name: name,
+    description: description,
     alias: [],
     args: false,
     usage: `\`${prefix}webui\``,
@@ -18,7 +21,7 @@ module.exports = {
         params.msg.reply(`The web UI can be found here: http://${pubIP}:7777/dash`);
     },
     regJSON: {
-        name: this.name,
-        description: this.description
+        name: name,
+        description: description
     }
 }

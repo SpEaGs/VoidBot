@@ -4,9 +4,12 @@ const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 const status = require('../main.js');
 
+let name = 'seen'
+let description = 'Gets how long ago a user was last online/active.'
+
 module.exports = {
-    name: 'seen',
-    description: 'Gets how long ago a user was last online/active.',
+    name: name,
+    description: description,
     alias: false,
     args: true,
     usage: `\`${prefix}seen <user to find>\``,
@@ -38,8 +41,8 @@ module.exports = {
         }
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'user',

@@ -6,9 +6,12 @@ const prefix = utils.config.prefix;
 
 const MAIN = require('../main.js');
 
+let name = 'join'
+let description = 'Makes the bot join the given voice channel, or, if none given, the voice channel the user is in.'
+
 module.exports = {
-    name: 'join',
-    description: 'Makes the bot join the given voice channel, or, if none given, the voice channel the user is in.',
+    name: name,
+    description: description,
     alias: ['j', 'sum', 'summon'],
     args: false,
     useage: `\`${prefix}join <voice channel>\``,
@@ -36,8 +39,8 @@ module.exports = {
         catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`That channel doesn't exist or isn't a voice channel!`); }
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'channel',

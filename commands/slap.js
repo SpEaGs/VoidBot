@@ -3,9 +3,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'slap'
+let description = 'Slap someone!'
+
 module.exports = {
-    name: 'slap',
-    description: 'Slap someone!',
+    name: name,
+    description: description,
     alias: false,
     args: true,
     usage: `\`${prefix}slap <user to slap>\``,
@@ -17,8 +20,8 @@ module.exports = {
         params.msg.reply(`I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`);
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'user',

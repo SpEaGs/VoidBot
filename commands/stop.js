@@ -6,9 +6,12 @@ const prefix = utils.config.prefix;
 
 const MAIN = require('../main.js');
 
+let name = 'stop'
+let description = 'Stops the bot\'s currently playing audio stream.'
+
 module.exports = {
-    name: 'stop',
-    description: 'Stops the bot\'s currently playing audio stream.',
+    name: name,
+    description: description,
     alias: false,
     args: false,
     usage: `\`${prefix}stop\``,
@@ -29,8 +32,8 @@ module.exports = {
         }
     },
     regJSON: {
-        name: this.name,
-        description: this.description
+        name: name,
+        description: description
     }
 };
 

@@ -6,9 +6,12 @@ const prefix = utils.config.prefix;
 
 const MAIN = require('../main.js');
 
+let name = 'leave'
+let description = `Makes the bot stop playing audio, clear any queued songs, and leave whatever voice channel it's connected to.`
+
 module.exports = {
-    name: 'leave',
-    description: `Makes the bot stop playing audio, clear any queued songs, and leave whatever voice channel it's connected to.`,
+    name: name,
+    description: description,
     alias: ['l'],
     args: false,
     useage: `\`${prefix}leave\``,
@@ -33,7 +36,7 @@ module.exports = {
         MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
     },
     regJSON: {
-        name: this.name,
-        description: this.description
+        name: name,
+        description: description
     }
 }

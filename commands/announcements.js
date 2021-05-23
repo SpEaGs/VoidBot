@@ -3,9 +3,12 @@
 const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 
+let name = 'announcements'
+let description = 'Use this to opt in or out of announcements on this server if it is enabled'
+
 module.exports = {
-    name: 'announcements',
-    description: 'Use this to opt in or out of announcements on this server if it is enabled',
+    name: name,
+    description: description,
     alias: ['anno'],
     args: false,
     usage: `\`${prefix}announcements <in/out>\``,
@@ -32,8 +35,8 @@ module.exports = {
         }
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'action',

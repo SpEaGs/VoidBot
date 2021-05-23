@@ -5,9 +5,12 @@ const utils = require('../utils.js');
 const prefix = utils.config.prefix;
 const updateVol = require('../main.js').updateVol;
 
+let name = 'volume'
+let description = 'Alters the bot\'s volume to the given value.'
+
 module.exports = {
-    name: 'volume',
-    description: 'Alters the bot\'s volume to the given value.',
+    name: name,
+    description: description,
     alias: ['vol'],
     args: true,
     usage: `\`${prefix}volume <0-100>\``,
@@ -30,8 +33,8 @@ module.exports = {
         };
     },
     regJSON: {
-        name: this.name,
-        description: this.description,
+        name: name,
+        description: description,
         options: [
             {
                 name: 'value',
