@@ -25,6 +25,14 @@ module.exports = {
             try { return params.msg.reply(`You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`) }
             catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`) }
         }
+        else if (item < params.bot.audioQueue.length) {
+            try { return params.msg.reply(`The playlist isn't even ${item} songs long...`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} The playlist isn't even ${item} songs long...`) }
+        }
+        else if (item < 0) {
+            try { return params.msg.reply(`That was a negative number...`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That was a negative number...`) }
+        }
         else if (isNaN(item)) {
             try { return params.msg.reply(`That's not a number you fool.`) }
             catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That's not a number you fool.`) }
