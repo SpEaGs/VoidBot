@@ -18,7 +18,7 @@ module.exports = {
     server: false,
     execute(params) {
         try { params.msg.reply('Pong!'); }
-        catch { params.bot.defaultTextChannel.send('Pong!'); }
+        catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send('Pong!'); }
     },
     regJSON: {
         name: name,
