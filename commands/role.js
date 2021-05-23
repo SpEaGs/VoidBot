@@ -94,8 +94,8 @@ module.exports = {
                 required: true
             },
             {
-                name: 'role(s)',
-                description: 'role(s) to add or remove.',
+                name: 'roles',
+                description: 'roles to add or remove.',
                 type: 3,
                 required: true
             }
