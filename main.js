@@ -482,7 +482,12 @@ status.client.on('voiceStateUpdate', (oldState, newState) => {
                         bot.dispatcher.end();
                         bot.dispatcher = false;
                     }
-                    bot.voiceChannel.leave();
+                    try {
+                        bot.voiceChannel.leave();
+                    }
+                    catch {
+                        bot.guild.channels.cache.get(bot.voiceChannel.id).leave();
+                    }
                     bot.voiceChannel = false;
                     bot.voiceConnection = false;
                     status.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(bot)]);
