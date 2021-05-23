@@ -23,19 +23,27 @@ module.exports = {
         let seen = utils.msToTime(timeDiff);
         switch (target.presence.status) {
             case 'online': {
-                params.msg.reply(`That user is online right now you lazy fool!`);
+                params.msg.reply(`That user is online right now you lazy fool!`).catch(() => {
+                    params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That user is online right now you lazy fool!`)
+                });
                 break;
             }
             case 'offline': {
-                params.msg.reply(`That user is offline and was last seen ${seen} ago.`);
+                params.msg.reply(`That user is offline and was last seen ${seen} ago.`).catch(() => {
+                    params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That user is offline and was last seen ${seen} ago.`)
+                });
                 break;
             }
             case 'idle': {
-                params.msg.reply(`That user is AFK/Idle and was last active ${seen} ago.`);
+                params.msg.reply(`That user is AFK/Idle and was last active ${seen} ago.`).catch(() => {
+                    params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That user is AFK/Idle and was last active ${seen} ago.`)
+                });
                 break;
             }
             case 'dnd': {
-                params.msg.reply(`That user is set to Do not Disturb and was last available ${seen} ago.`);
+                params.msg.reply(`That user is set to Do not Disturb and was last available ${seen} ago.`).catch(() => {
+                    params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That user is set to Do not Disturb and was last available ${seen} ago.`)
+                });
                 break;
             }
         }

@@ -19,17 +19,22 @@ module.exports = {
         let log = global.log;
         let mem = params.msg.member;
         if (!params.args.length) {
-            return params.msg.reply(`You need to opt in or out.\nUsage: ${this.usage}`)
+            try { return params.msg.reply(`You need to opt in or out.\nUsage: ${this.usage}`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You need to opt in or out.\nUsage: ${this.usage}`) }
         }
         else if (params.args.length >= 1) {
             switch (params.args[0].toLowerCase()) {
                 case 'in': {
                     mem.roles.add(utils.config.sharding[params.bot.guildID].announcementsRole.id);
-                    return params.msg.reply(`You've successfully opted IN to ${params.bot.guildName} announcements!`);
+                    return params.msg.reply(`You've successfully opted IN to ${params.bot.guildName} announcements!`).catch(() => {
+                        return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`)
+                 });
                 }
                 case 'out': {
                     mem.roles.remove(utils.config.sharding[params.bot.guildID].announcementsRole.id);
-                    return params.msg.reply(`You've successfully opted OUT of ${params.bot.guildName} announcements!`);
+                    return params.msg.reply(`You've successfully opted OUT of ${params.bot.guildName} announcements!`).catch(() => {
+                        return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`)
+                    });
                 }
             }
         }

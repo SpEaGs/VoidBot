@@ -18,7 +18,9 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
-        params.msg.reply(`The web UI can be found here: http://${pubIP}:7777/dash`);
+        params.msg.reply(`The web UI can be found here: http://${pubIP}:7777/dash`).catch(() => {
+            params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} The web UI can be found here: http://${pubIP}:7777/dash`)
+    });
     },
     regJSON: {
         name: name,
