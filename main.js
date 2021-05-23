@@ -308,7 +308,7 @@ function initBot(bot) {
         let cleanRoleName = utils.cleanChannelName(role.name);
         bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
     }
-    status.eSender.ipc.send('add-client', bot);
+    status.eSender.ipc.send('add-client', utils.dumbifyBot(bot));
 }
 
 //discord.js client ready event handler (master client)
@@ -629,13 +629,13 @@ function updateBot(e, bot) {
         status.eSender.socket.emit('updateBotUI', bot);
     };
     if (status.eSender.ipc !== false) {
-        status.eSender.ipc.send('updateBotUI', bot);
+        status.eSender.ipc.send('updateBotUI', utils.dumbifyBot(bot));
     };
 }
 ipcMain.on('updateBot', updateBot);
 
 function updateVol(bot){
-    status.eSender.ipc.send('updateVol', bot);
+    status.eSender.ipc.send('updateVol', utils.dumbifyBot(bot));
     status.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(bot)]);
 }
 
