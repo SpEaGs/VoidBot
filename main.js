@@ -317,6 +317,7 @@ try {
         utils.populateCmds(status);
         
         status.client.ws.on('INTERACTION_CREATE', async interaction => {
+            let bot = status.client.children.get(interaction.guild_id);
             //fetch admin lists & compare user id
             let admin = utils.adminCheck(bot, interaction.member.user);
             let botadmin = utils.botAdminCheck(interaction.member.user.id);
@@ -334,7 +335,6 @@ try {
                 }})
             }
             else {
-                let bot = status.client.children.get(interaction.guild_id);
                 let member = bot.guild.members.cache.get(interaction.member.user.id);
                 let msg = {
                     author: member,
