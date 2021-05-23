@@ -62,7 +62,8 @@ class Bot extends EventEmitter {
         for (let cmd of this.status.client.cmds.array()) {
             if (cmd.regJSON != false) {
                 log(JSON.stringify(cmd.regJSON, null, 2), ['[WARN]', '[BOT]']);
-                this.status.client.api.applications(this.status.client.user.id).guilds(this.guildID).commands.post({data: cmd.regJSON});
+                this.status.client.api.applications(this.status.client.user.id).guilds(this.guildID).commands.post({data: cmd.regJSON})
+                    .catch(log(`Error registering command: ${cmd.name}`));
             }
         }
     }
