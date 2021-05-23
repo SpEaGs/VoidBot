@@ -335,8 +335,8 @@ try {
                 }})
             }
             else {
+                log(JSON.stringify(interaction), null, ['[WARN]'])
                 let member = bot.guild.members.cache.get(interaction.member.user.id);
-                log(JSON.stringify(member, null, 2), ['[WARN]'])
                 let msg = {
                     author: member,
                     member: member
