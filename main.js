@@ -340,6 +340,7 @@ try {
                     author: member,
                     member: member
                 }
+                msg.member.voice = member.voice;
                 let args = []
                 if (interaction.data.options) {
                     for (let i of interaction.data.options) {
