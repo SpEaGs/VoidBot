@@ -26,15 +26,13 @@ module.exports = {
             switch (params.args[0].toLowerCase()) {
                 case 'in': {
                     mem.roles.add(utils.config.sharding[params.bot.guildID].announcementsRole.id);
-                    return params.msg.reply(`You've successfully opted IN to ${params.bot.guildName} announcements!`).catch(() => {
-                        return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`)
-                 });
+                    try { return params.msg.reply(`You've successfully opted IN to ${params.bot.guildName} announcements!`) }
+                    catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`) }
                 }
                 case 'out': {
                     mem.roles.remove(utils.config.sharding[params.bot.guildID].announcementsRole.id);
-                    return params.msg.reply(`You've successfully opted OUT of ${params.bot.guildName} announcements!`).catch(() => {
-                        return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`)
-                    });
+                    try { return params.msg.reply(`You've successfully opted OUT of ${params.bot.guildName} announcements!`) }
+                    catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`) }
                 }
             }
         }

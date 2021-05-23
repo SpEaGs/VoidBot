@@ -17,22 +17,20 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
+        let mem = params.msg.member;
         if (params.args.length <2) {
-            return params.msg.reply('Please specify the channel to prune.').catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Please specify the channel to prune.`)
-            });
+            try { return params.msg.reply('Please specify the channel to prune.') }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Please specify the channel to prune.`) }
         }
         const amount = parseInt(params.args[0]);
         const chan = utils.findChanFromGuild(params.args[1], params.bot.guild);
         if (isNaN(amount)) {
-            return params.msg.reply('That\'s not a real number scrub!').catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That's not a real number scrub!`)
-            });
+            try { return params.msg.reply('That\'s not a real number scrub!') }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That's not a real number scrub!`) }
         };
         if (!chan) {
-            return params.msg.reply('That channel doesn\'t exist you egg!').catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That channel doesn't exist you egg!`)
-            });
+            try { return params.msg.reply('That channel doesn\'t exist you egg!') }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That channel doesn't exist you egg!`) }
         };
         var caseCheck = 0;
         if (amount >= 2 && amount <= 100) caseCheck = 2;
@@ -41,29 +39,24 @@ module.exports = {
 
         switch (caseCheck) {
             case 0: {
-                return params.msg.reply('H... Hokay... deleting 0 messages then...').catch(() => {
-                    return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} H... Hokay... deleting 0 messages then...`)
-                });
+                try { return params.msg.reply('H... Hokay... deleting 0 messages then...') }
+                catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} H... Hokay... deleting 0 messages then...`) }
             }
             case 1: {
-                return params.msg.reply('Pruning currently only works for 2 or more messages.').catch(() => {
-                    return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Pruning currently only works for 2 or more messages.`)
-                });
+                try { return params.msg.reply('Pruning currently only works for 2 or more messages.') }
+                catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Pruning currently only works for 2 or more messages.`) }
             }
             case 2:
                 chan.bulkDelete((amount+1), true).catch(err => {
                     console.error(err);
-                    return params.msg.reply('Pruning error. Likely that all applicable messages are too (2 weeks) old.').catch(() => {
-                        return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Pruning error. Likely that all applicable messages are too (2 weeks) old.`)
-                    });
+                    try { return params.msg.reply('Pruning error. Likely that all applicable messages are too (2 weeks) old.') }
+                    catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Pruning error. Likely that all applicable messages are too (2 weeks) old.`) }
                 });
-                return params.msg.reply(`Pruned ${amount} messages from ${chan.name}`).catch(() => {
-                    return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Pruned ${amount} messages from ${chan.name}`)
-                });
+                try { return params.msg.reply(`Pruned ${amount} messages from ${chan.name}`) }
+                catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Pruned ${amount} messages from ${chan.name}`) }
             case 3: {
-                return params.msg.reply('For reasons unfathomable, I can\'t prune more than 100 messages.').catch(() => {
-                    return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} For reasons unfathomable, I can\'t prune more than 100 messages.`)
-                });
+                try { return params.msg.reply('For reasons unfathomable, I can\'t prune more than 100 messages.') }
+                catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} For reasons unfathomable, I can\'t prune more than 100 messages.`) }
             }
         };
     },
@@ -74,7 +67,7 @@ module.exports = {
             {
                 name: 'amount',
                 description: 'Number of messages to prune.',
-                type: 3,
+                type: 4,
                 required: true
             },
             {

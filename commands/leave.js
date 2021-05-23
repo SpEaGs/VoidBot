@@ -19,7 +19,11 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
-        if (!params.bot.voiceChannel) return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`I'm not in a voice channel...`);
+        let mem = params.msg.member;
+        if (!params.bot.voiceChannel) {
+            try { return params.msg.reply(`I'm not in a voice channel...`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} I'm not in a voice channel...`) }
+        }
         params.bot.audioQueue = [];
         if (params.bot.dispatcher !== false) {
             params.bot.dispatcher.end();

@@ -16,10 +16,10 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
+        let mem = params.msg.member;
         let slappee = utils.findMemberFromGuild(params.args.join(' '), params.bot.guild)
-        params.msg.reply(`I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`).catch(() => {
-            params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`)
-        });
+        try { params.msg.reply(`I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`) }
+        catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`) }
     },
     regJSON: {
         name: name,

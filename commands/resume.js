@@ -19,15 +19,18 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
+        let mem = params.msg.member;
         switch (params.bot.dispatcher.paused) {
             case true: {
                 params.bot.dispatcher.resume()
-                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream resumed.`);
+                try { params.msg.reply(`Audio stream resumed.`) }
+                catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Audio stream resumed.`) }
                 MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
                 break;
             }
             case false: {
-                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream is already playing.`);
+                try { params.msg.reply(`Audio stream is already playing.`) }
+                catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Audio stream is already playing.`) }
                 break;
             }
         }

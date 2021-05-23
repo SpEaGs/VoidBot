@@ -19,17 +19,23 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
+        let mem = params.msg.member;
         let item = parseInt(params.args)
         if (!params.args.length) {
-            return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`);
+            try { return params.msg.reply(`You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`) }
         }
-        else if (isNaN(item)) return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`That's not a number you fool.`);
+        else if (isNaN(item)) {
+            try { return params.msg.reply(`That's not a number you fool.`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That's not a number you fool.`) }
+        }
         else {
             let i = item-1
             let title = params.bot.audioQueue[i].videoDetails.title;
             params.bot.audioQueue.splice(i, 1);
             MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
-            return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Removed \`${title}\` from the queue.`)
+            try { return params.msg.reply(`Removed \`${title}\` from the queue.`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Removed \`${title}\` from the queue.`) }
         }
     },
     regJSON: {
@@ -39,7 +45,7 @@ module.exports = {
             {
                 name: 'number',
                 description: 'Queue number of the song to remove. (find it with /playlist)',
-                type: 3,
+                type: 4,
                 required: true
             }
         ]

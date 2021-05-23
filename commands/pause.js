@@ -19,15 +19,18 @@ module.exports = {
     botadmin: false,
     server: true,
     execute(params) {
+        let mem = params.msg.member;
         switch (params.bot.dispatcher.paused) {
             case false: {
                 params.bot.dispatcher.pause()
-                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream paused. Use \`${prefix}resume\` to resume.`);
+                try { params.msg.reply(`Audio stream paused. Use \`${prefix}resume\` to resume.`) }
+                catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Audio stream paused. Use \`${prefix}resume\` to resume.`) }
                 MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
                 break;
             }
             case true: {
-                params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Audio stream is already paused. Use \`${prefix}resume\` to resume.`);
+                try { params.msg.reply(`Audio stream is already paused. Use \`${prefix}resume\` to resume.`) }
+                catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Audio stream is already paused. Use \`${prefix}resume\` to resume.`) }
                 break;
             }
         }

@@ -18,14 +18,14 @@ module.exports = {
     server: false,
     execute(params) {
         let log = global.log;
+        let mem = params.msg.member
         if (!params.args.length) {
             let commandArray = []
             for (let c of params.bot.status.client.cmds.array()) {
                 commandArray.splice(commandArray.length, 0, `${prefix}${c.name}`);
             }
-            return params.msg.reply(`Commands: \`${commandArray.join('`, `')}\``).catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Commands: \`${commandArray.join('`, `')}\``)
-            });
+            try { return params.msg.reply(`Commands: \`${commandArray.join('`, `')}\``) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Commands: \`${commandArray.join('`, `')}\``) }
         }
         if (params.args[0].toLowerCase() == 'all') {
             let toReturnArray = []
@@ -37,28 +37,24 @@ module.exports = {
                     toReturnArray.push(`\`${prefix}${c.name}\`:\n    Usage: ${s.usage}\n    ${c.description}`);
                 }
             }
-            return params.msg.reply(`\n${toReturnArray.join(`\n\n`)}`).catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} \n${toReturnArray.join(`\n\n`)}`)
-            });
+            try { return params.msg.reply(`\n${toReturnArray.join(`\n\n`)}`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} \n${toReturnArray.join(`\n\n`)}`) }
         }
 
         let aliCheck = utils.aliasCheck(params.args[0], params.bot.status);
         if (!params.bot.status.client.cmds.has(params.args[0]) && !aliCheck) {
-            return params.msg.reply('The command or alias you asked for help with doesn\'t exist.').catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} The command or alias you asked for help with doesn\'t exist.`)
-            });
+            try { return params.msg.reply('The command or alias you asked for help with doesn\'t exist.') }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} The command or alias you asked for help with doesn\'t exist.`) }
         }
         let cmd = aliCheck;
         if (!aliCheck) { cmd = params.bot.status.client.cmds.get(params.args[0]) }
         if (cmd.alias !== false) {
-            return params.msg.reply(`\n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}\nAliases: \`${prefix}${cmd.alias.join('`, `')}\``).catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} \n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}\nAliases: \`${prefix}${cmd.alias.join('`, `')}\``)
-            });
+            try { return params.msg.reply(`\n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}\nAliases: \`${prefix}${cmd.alias.join('`, `')}\``) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} \n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}\nAliases: \`${prefix}${cmd.alias.join('`, `')}\``) }
         }
         else {
-            return params.msg.reply(`\n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`).catch(() => {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} \n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`)
-            });
+            try { return params.msg.reply(`\n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} \n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`) }
         }
     },
     regJSON: false

@@ -22,7 +22,7 @@ module.exports = {
         let log = global.log
         try {
             params.bot.audioQueue = [];
-            stopAudio(params.bot);
+            stopAudio(params);
             params.bot.dispatcher = false;
             params.bot.nowPlaying = false;
             MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
@@ -37,10 +37,12 @@ module.exports = {
     }
 };
 
-function stopAudio(bot) {
+function stopAudio(params) {
+    let mem = params.msg.member;
     try {
-        bot.dispatcher.pause();
+        params.bot.dispatcher.pause();
     }
     catch (error) {}
-    bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Audio stream ended.`);
+    try { params.msg.reply(`Audio stream ended.`) }
+    catch { params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} Audio stream ended.`); }
 }

@@ -20,23 +20,30 @@ module.exports = {
     server: true,
     execute(params) {
         let log = global.log;
+        let mem = params.msg.member;
         if (params.args.length < 1) {
             let voiceChannel = params.msg.member.voice.channel;
             if (voiceChannel === params.bot.voiceChannel) {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`I'm already in that voice channel...`);
+                try { return params.msg.reply(`I'm already in that voice channel...`) }
+                catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} I'm already in that voice channel...`) }
             }
             if (!voiceChannel && (!params.bot.dispatcher.playing || !params.bot.dispatcher)) {
-                return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`You're not in a voice channel and none were given...`);
+                try { return params.msg.reply(`You're not in a voice channel and none were given...`) }
+                catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You're not in a voice channel and none were given...`) }
             }
             joinVoice(voiceChannel, params.bot);
             return;
         }
         let chan = utils.findChanFromGuild(params.args.join(' '), params.bot.guild, 'voice');
         if (chan === params.bot.voiceChannel) {
-            return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`I'm already in that voice channel...`);
+            try { params.msg.reply(`I'm already in that voice channel...`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} I'm already in that voice channel...`) }
         }
         try { joinVoice(chan, params.bot); return; }
-        catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`That channel doesn't exist or isn't a voice channel!`); }
+        catch { 
+            try { params.msg.reply(`That channel doesn't exist or isn't a voice channel!`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} That channel doesn't exist or isn't a voice channel!`) }
+        }
     },
     regJSON: {
         name: name,

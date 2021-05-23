@@ -29,14 +29,15 @@ module.exports = {
     playNextInQueue: playNextInQueue,
     execute(params) {
         let log = global.log;
+        let mem = params.msg.member
         params.bot.voiceChannel = params.msg.member.voice.channel;
         if (!params.bot.voiceChannel) {
             params.bot.voiceChannel = params.bot.guild.channels.cache.get(params.bot.defaultVoiceChannel.id);
         };
         if (!params.bot.voiceChannel) {
             log(`No voice channel specified and no default.`, ['[WARN]', '[PLAY]', `[${params.bot.guildName}]`]);
-            try { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`I'm not in a voice channel, neither are you, and no default is set...`) }
-            catch(any) { return }
+            try { return params.msg.reply(`I'm not in a voice channel, neither are you, and no default is set...`) }
+            catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} I'm not in a voice channel, neither are you, and no default is set...`) }
         };
         search(params.args, params.msg, params.bot);
     },
@@ -56,11 +57,12 @@ module.exports = {
 
 function search(args, msg, status) {
     let url = args.toString();
+    let mem = msg.member
     switch (url.toString().includes('http')) {
         case true: {
             if (!(url.toString().includes('.youtube.com/') || url.toString().includes('soundcloud.com/'))) {
-                try { return status.guild.channels.cache.get(status.defaultTextChannel.id).send(`That was not a youtube or soundcloud link.`)}
-                catch(any) { return }
+                try { return msg.reply(`That was not a youtube or soundcloud link.`) }
+                catch { return status.guild.channels.cache.get(status.defaultTextChannel.id).send(`${mem} That was not a youtube or soundcloud link.`) }
             }
             else get_info(url, msg, status);
             break;
@@ -68,7 +70,8 @@ function search(args, msg, status) {
         case false: {
             let searchKwds = (args.join(' '));
             let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(searchKwds)}&key=${API_KEY}`;
-            status.guild.channels.cache.get(status.defaultTextChannel.id).send(`Searching Youtube for \`${searchKwds}\`...`);
+            try { msg.reply(`Searching Youtube for \`${searchKwds}\`...`) }
+            catch { status.guild.channels.cache.get(status.defaultTextChannel.id).send(`${mem} Searching Youtube for \`${searchKwds}\`...`) }
             request(requestUrl, (error, response) => {
                 if (error || !response.statusCode == 200) {
                     logErr(`Error getting video info`, `[${status.guildName}]`);
@@ -76,7 +79,8 @@ function search(args, msg, status) {
                 }
                 let body = response.body;
                 if (body.items.length == 0) {
-                    status.guild.channels.cache.get(status.defaultTextChannel.id).send('I got nothing... try being less specific?');
+                    try { msg.reply(`I got nothing... try being less specific?` ) }
+                    catch { status.guild.channels.cache.get(status.defaultTextChannel.id).send(`${mem}I got nothing... try being less specific?`) }
                     log(`0 results from search.`, ['[INFO]', '[PLAY]', `[${status.guildName}]`]);
                     return;
                 }
