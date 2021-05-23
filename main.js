@@ -341,8 +341,10 @@ try {
                     member: member
                 }
                 let args = []
-                for (let i of interaction.data.options) {
-                    args.push(i.value);
+                if (interaction.data.options) {
+                    for (let i of interaction.data.options) {
+                        args.push(i.value);
+                    }
                 }
                 let params = {msg, args, bot}
                 cmd.execute(params);
