@@ -538,7 +538,8 @@ function createWindow() {
     }
     mainWindow = new BrowserWindow({
         webPreferences: {
-            nodeIntegration: true
+            nodeIntegration: true,
+            contextIsolation: false
         },
         x: x,
         y: y,
