@@ -2,7 +2,6 @@
 //Role command. adds/removes given role from given user
 
 const utils = require('../utils.js');
-const { description } = require('./play.js');
 const prefix = utils.config.prefix;
 
 let name = 'role'
