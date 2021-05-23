@@ -317,7 +317,6 @@ try {
         utils.populateCmds(status);
         
         status.client.ws.on('INTERACTION_CREATE', async interaction => {
-            //log(JSON.stringify(interaction, null, 2), ['[WARN]','[MAIN]', '[INT-CMD]']);
             //fetch admin lists & compare user id
             let admin = utils.adminCheck(bot, interaction.member.user);
             let botadmin = utils.botAdminCheck(interaction.member.user.id);
