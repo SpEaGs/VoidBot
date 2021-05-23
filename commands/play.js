@@ -15,7 +15,7 @@ const SC_API_KEY = require('../tokens.json').TOKEN_SC;
 const MAIN = require('../main.js');
 
 let name = 'play'
-let description = 'Plays a given youtube or soundcloud URL (or from youtube search terms) in the voice channel of whomever sent the command.'
+let description = 'Plays a given YT or SC URL (or from YT search terms).'
 
 module.exports = {
     name: name,

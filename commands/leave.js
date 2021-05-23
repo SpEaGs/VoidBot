@@ -7,7 +7,7 @@ const prefix = utils.config.prefix;
 const MAIN = require('../main.js');
 
 let name = 'leave'
-let description = `Makes the bot stop playing audio, clear any queued songs, and leave whatever voice channel it's connected to.`
+let description = `Makes the bot leave whatever voice channel it's in.`
 
 module.exports = {
     name: name,
