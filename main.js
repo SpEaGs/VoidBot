@@ -82,7 +82,6 @@ function getStatus() {
     return status;
 }
 
-//status.client = new Discord.Client();
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
 status.client.lastSeen = {};
@@ -309,7 +308,7 @@ function initBot(bot) {
         let cleanRoleName = utils.cleanChannelName(role.name);
         bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
     }
-    status.eSender.ipc.send('add-client', bot);
+    mainWindow.webContents.send('add-client', bot);
 }
 
 //discord.js client ready event handler (master client)
