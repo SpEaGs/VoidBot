@@ -52,7 +52,7 @@ module.exports = {
             {
                 name: 'amount',
                 description: 'Number of messages to prune.',
-                type: 4,
+                type: 3,
                 required: true
             },
             {

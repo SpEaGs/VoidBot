@@ -39,7 +39,7 @@ module.exports = {
             {
                 name: 'value',
                 description: 'Value to set volume to.',
-                type: 4,
+                type: 3,
                 required: true
             }
         ]

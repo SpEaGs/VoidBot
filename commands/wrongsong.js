@@ -39,7 +39,7 @@ module.exports = {
             {
                 name: 'number',
                 description: 'Queue number of the song to remove. (find it with /playlist)',
-                type: 4,
+                type: 3,
                 required: true
             }
         ]
