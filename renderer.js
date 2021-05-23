@@ -3,11 +3,12 @@ let remote;
 let ipcRenderer;
 let populated = false;
 
-try {
+//try {
     remote = require('electron').remote;
     ipcRenderer = require('electron').ipcRenderer;
     eleBool = true;
-}
+//}
+/*
 catch {
     ipcRenderer = io(`http://${window.location.hostname}:7777`);
     ipcRenderer.once('connect', () => {
@@ -23,6 +24,7 @@ catch {
         document.getElementById('errPopup').classList.add('hidden');
     });
 }
+*/
 
 //--------------------------------------------------------------------------------------------------------------
 //This file handles the rendering of the HTML.
