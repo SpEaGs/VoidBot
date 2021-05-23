@@ -640,7 +640,6 @@ function updateBot(e, bot) {
 ipcMain.on('updateBot', updateBot);
 
 function updateVol(bot){
-    log(JSON.stringify(utils.dumbifyBot(bot)), ['[WARN]']);
     status.eSender.ipc.send('updateVol', utils.dumbifyBot(bot));
     status.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(bot)]);
 }
