@@ -28,6 +28,10 @@ module.exports = {
             log(`Error stopping music:\n${error}`, ['[ERR]', '[STOP]']);
         }
     },
+    regJSON: {
+        name: this.name,
+        description: this.description
+    }
 };
 
 function stopAudio(bot) {

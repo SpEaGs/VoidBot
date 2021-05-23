@@ -29,6 +29,10 @@ module.exports = {
             log(`Error skipping song:\n${error}`, ['[ERR]', '[SKIP]']);
         }
     },
+    regJSON: {
+        name: this.name,
+        description: this.description
+    }
 };
 
 function stopAudio(dispatcher, bot) {

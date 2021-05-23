@@ -28,5 +28,17 @@ module.exports = {
             MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
             return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`Removed \`${title}\` from the queue.`)
         }
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'number',
+                description: 'Queue number of the song to remove. (find it with /playlist)',
+                type: 4,
+                required: true
+            }
+        ]
     }
 };

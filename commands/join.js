@@ -34,6 +34,18 @@ module.exports = {
         }
         try { joinVoice(chan, params.bot); return; }
         catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`That channel doesn't exist or isn't a voice channel!`); }
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'channel',
+                description: 'Voice channel to join.',
+                type: 3,
+                required: false
+            }
+        ]
     }
 };
 

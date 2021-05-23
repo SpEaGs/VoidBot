@@ -16,5 +16,9 @@ module.exports = {
     server: true,
     execute(params) {
         params.msg.reply(`The web UI can be found here: http://${pubIP}:7777/dash`);
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description
     }
 }

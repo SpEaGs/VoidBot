@@ -31,5 +31,9 @@ module.exports = {
         params.bot.voiceChannel = false;
         params.bot.voiceConnection = false;
         MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description
     }
 }

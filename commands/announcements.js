@@ -30,5 +30,21 @@ module.exports = {
                 }
             }
         }
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'action',
+                description: 'opt in or out',
+                type: 3,
+                required: true,
+                choices: [
+                    { name: 'in', value: 'in' },
+                    { name: 'out', value: 'out' }
+                ]
+            }
+        ]
     }
 }

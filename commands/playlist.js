@@ -24,5 +24,9 @@ module.exports = {
             output.push(`${i}) - \`${item.videoDetails.title} [${parseInt(item.videoDetails.lengthSeconds / 60)}:${(item.videoDetails.lengthSeconds % 60).toString().padStart(2, "0")}] (added by: ${item.added_by})\``);
         };
         params.msg.reply(`Playlist: ${output.join('\n')}`);
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description
     }
 };

@@ -37,4 +37,16 @@ module.exports = {
             }
         }
     },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'user',
+                description: 'User to find.',
+                type: 3,
+                required: true
+            }
+        ]
+    }
 };

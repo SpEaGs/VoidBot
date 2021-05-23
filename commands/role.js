@@ -2,6 +2,7 @@
 //Role command. adds/removes given role from given user
 
 const utils = require('../utils.js');
+const { description } = require('./play.js');
 const prefix = utils.config.prefix;
 
 module.exports = {
@@ -70,6 +71,34 @@ module.exports = {
             };
         };
     },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'action',
+                description: 'Add or remove.',
+                type: 3,
+                required: true,
+                choices: [
+                    { name: 'add', value: 'add' },
+                    { name: 'remove', value: 'remove' }
+                ]
+            },
+            {
+                name: 'user',
+                description: 'User to add or remove roles from.',
+                type: 3,
+                required: true
+            },
+            {
+                name: 'role(s)',
+                description: 'role(s) to add or remove.',
+                type: 3,
+                required: true
+            }
+        ]
+    }
 };
 
 function add(mem, roleRes) {

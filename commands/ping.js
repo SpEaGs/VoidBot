@@ -16,4 +16,8 @@ module.exports = {
     execute(params) {
         params.msg.reply('Pong!');
     },
+    regJSON: {
+        name: this.name,
+        description: this.description
+    }
 };

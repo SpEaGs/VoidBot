@@ -25,5 +25,17 @@ module.exports = {
             welcomeChannel.send(utils.welcome(utils.findMemberFromGuild(arg, params.bot.guild), anno));
         }
 
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'user',
+                description: 'User to welcome.',
+                type: 3,
+                required: true
+            }
+        ]
     }
 }

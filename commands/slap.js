@@ -8,7 +8,7 @@ module.exports = {
     description: 'Slap someone!',
     alias: false,
     args: true,
-    usage: `\`${prefix}slap <thing to slap>\``,
+    usage: `\`${prefix}slap <user to slap>\``,
     admin: false,
     botadmin: false,
     server: true,
@@ -16,4 +16,16 @@ module.exports = {
         let slappee = utils.findMemberFromGuild(params.args.join(' '), params.bot.guild)
         params.msg.reply(`I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`);
     },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'user',
+                description: 'user to slap',
+                type: 3,
+                required: true
+            }
+        ]
+    }
 };

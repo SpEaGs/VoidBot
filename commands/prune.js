@@ -42,4 +42,22 @@ module.exports = {
             case 3: return params.msg.reply('For reasons unfathomable, I can\'t prune more than 100 messages.');
         };
     },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'amount',
+                description: 'Number of messages to prune.',
+                type: 4,
+                required: true
+            },
+            {
+                name: 'channel',
+                description: 'Channel to prune from.',
+                type: 3,
+                required: true
+            }
+        ]
+    }
 };

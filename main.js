@@ -316,6 +316,8 @@ try {
     status.client.once('ready', () => {
         utils.populateCmds(status);
         
+        
+
         //populate info for child clients
         let guilds = status.client.guilds.cache.array();
         for (let i of guilds) {

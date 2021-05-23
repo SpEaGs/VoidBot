@@ -45,5 +45,6 @@ module.exports = {
         else {
             return params.msg.reply(`\n\`${prefix}${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`);
         }
-    }
+    },
+    regJSON: false
 }

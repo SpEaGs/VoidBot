@@ -28,6 +28,18 @@ module.exports = {
             log(`Error updating volume:\n${error}`, ['[ERR]', '[VOLUME]']);
             }
         };
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'value',
+                description: 'Value to set volume to.',
+                type: 4,
+                required: true
+            }
+        ]
     }
 };
 

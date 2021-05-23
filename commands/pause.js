@@ -29,4 +29,8 @@ module.exports = {
             }
         }
     },
+    regJSON: {
+        name: this.name,
+        description: this.description
+    }
 };

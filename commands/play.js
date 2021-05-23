@@ -36,6 +36,18 @@ module.exports = {
             catch(any) { return }
         };
         search(params.args, params.msg, params.bot);
+    },
+    regJSON: {
+        name: this.name,
+        description: this.description,
+        options: [
+            {
+                name: 'search',
+                description: 'URL or search terms.',
+                type: 3,
+                required: true
+            }
+        ]
     }
 }
 
