@@ -5,7 +5,7 @@
   "main": "main.js",
   "scripts": {
     "start": "cross-env NODE_ENV=production electron .",
-    "dev": "cross-env NODE_ENV=development electron . --enable-logging --trace-warnings",
+    "dev": "cross-env NODE_ENV=development electron --enable-logging --trace-warnings .",
     "dist-win": "electron-builder build",
     "dist-ras": "electron-builder build --linux"
   },
