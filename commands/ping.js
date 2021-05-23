@@ -17,7 +17,8 @@ module.exports = {
     botadmin: false,
     server: false,
     execute(params) {
-        params.msg.reply('Pong!');
+        try { params.msg.reply('Pong!'); }
+        catch { params.bot.defaultTextChannel.send('Pong!'); }
     },
     regJSON: {
         name: name,
