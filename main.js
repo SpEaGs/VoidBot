@@ -317,7 +317,7 @@ try {
         utils.populateCmds(status);
         
         status.client.ws.on('INTERACTION_CREATE', async interaction => {
-            log(JSON.stringify(interaction), ['[WARN]','[MAIN]', '[INT-CMD]']);
+            log(JSON.stringify(interaction, null, 2), ['[WARN]','[MAIN]', '[INT-CMD]']);
             status.client.api.interactions(interaction.id, interaction.token).callback.post({data: {
                 type: 4,
                 data: {
