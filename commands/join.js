@@ -38,9 +38,16 @@ module.exports = {
 };
 
 function joinVoice(voiceChannel, status) {
-    voiceChannel.join().then(connection => {
-        status.voiceConnection = connection
-    });
+    try {
+        voiceChannel.join().then(connection => {
+            status.voiceConnection = connection;
+        });
+    }
+    catch {
+        status.guild.channels.get(voiceChannel.id).join().then(connection => {
+            status.voiceConnection = connection;
+        });
+    }
     status.voiceChannel = voiceChannel;
     MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(status)]);
 };

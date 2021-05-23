@@ -22,7 +22,12 @@ module.exports = {
             params.bot.dispatcher.end();
             params.bot.dispatcher = false;
         }
-        params.bot.voiceChannel.leave();
+        try {
+            params.bot.voiceChannel.leave();
+        }
+        catch {
+            params.bot.guild.channels.cache.get(params.bot.voiceChannel.id).leave();
+        }
         params.bot.voiceChannel = false;
         params.bot.voiceConnection = false;
         MAIN.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(params.bot)]);

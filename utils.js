@@ -245,7 +245,7 @@ function dumbifyBot(bot) {
         guildName: bot.guildName,
         nowPlaying: false,
         audioQueue: [],
-        voiceChannel: bot.voiceChannel,
+        voiceChannel: false,
         voiceChannelArray: bot.voiceChannelArray,
         defaultVoiceChannel: bot.defaultVoiceChannel,
         textChannelArray: bot.textChannelArray,
@@ -258,6 +258,13 @@ function dumbifyBot(bot) {
         defaultVolume: bot.defaultVolume,
         welcomeMsg: bot.welcomeMsg,
         paused: false
+    }
+    if (bot.voiceChannel) {
+        let vc = {
+            id: bot.voiceChannel.id,
+            name: bot.voiceChannel.name
+        }
+        dumbBot.voiceChannel = vc;
     }
     if (bot.nowPlaying) {
         let np = {

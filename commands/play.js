@@ -93,10 +93,18 @@ async function get_info(url, msg, status) {
     vidInfo.url = url;
     vidInfo.added_by = msg.author.username;
     if (status.voiceConnection == false) {
-        status.voiceChannel.join().then(connection => {
-            status.voiceConnection = connection;
-            play(vidInfo, status);
-        });
+        try {
+            status.voiceChannel.join().then(connection => {
+                status.voiceConnection = connection;
+                play(vidInfo, status);
+            });
+        }
+        catch {
+            status.guild.channels.cache.get(status.voiceChannel.id).join().then(connection => {
+                status.voiceConnection = connection;
+                play(vidInfo, status);
+            })
+        }
         return;
     }
     if (status.dispatcher != false) {
