@@ -336,11 +336,11 @@ try {
             }
             else {
                 let member = bot.guild.members.cache.get(interaction.member.user.id);
+                log(JSON.stringify(member, null, 2), ['[WARN]'])
                 let msg = {
                     author: member,
                     member: member
                 }
-                msg.member.voice = member.voice;
                 let args = []
                 if (interaction.data.options) {
                     for (let i of interaction.data.options) {
