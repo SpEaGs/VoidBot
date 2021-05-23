@@ -25,7 +25,7 @@ module.exports = {
             try { return params.msg.reply(`You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`) }
             catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`) }
         }
-        else if (item < params.bot.audioQueue.length) {
+        else if (item > params.bot.audioQueue.length) {
             try { return params.msg.reply(`The playlist isn't even ${item} songs long...`) }
             catch { return params.bot.guild.channels.cache.get(params.bot.defaultTextChannel.id).send(`${mem} The playlist isn't even ${item} songs long...`) }
         }
