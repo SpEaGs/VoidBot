@@ -335,7 +335,6 @@ try {
                 }})
             }
             else {
-                log(JSON.stringify(bot.guild.members.cache.array(), null, 2), ['[WARN]']);
                 let member = bot.guild.members.cache.get(interaction.member.user.id);
                 let msg = {
                     author: member,
@@ -361,10 +360,10 @@ try {
         //populate info for child clients
         let guilds = status.client.guilds.cache.array();
         for (let i of guilds) {
+            i.members.fetch();
             let id = i.id;
             let newBot = new Bot.Bot(i, status);
             status.client.children.set(id, newBot);
-            i.members.fetch();
             initBot(newBot);
             log('Initialization complete!', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
         }
@@ -446,6 +445,7 @@ status.client.on('message', msg => {
 status.client.on('guildCreate', guild => {
     let newBot = new Bot.Bot(guild, status);
     log('New server added.', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
+    guild.members.fetch();
     status.client.children.set(guild.id, newBot);
     setTimeout(() => {
         initBot(newBot);
