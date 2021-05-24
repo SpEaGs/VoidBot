@@ -67,7 +67,7 @@ module.exports = {
         socket: false,
         ipc: false
     },
-    client: new Discord.Client(),
+    client: new Discord.Cliend({forceFetchUsers: true}),
     fs: fs,
     systemUIPopulated: false,
     settingsUIPopulated: false,
