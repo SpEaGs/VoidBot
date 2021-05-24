@@ -364,6 +364,7 @@ try {
             let id = i.id;
             let newBot = new Bot.Bot(i, status);
             status.client.children.set(id, newBot);
+            i.members.fetch();
             initBot(newBot);
             log('Initialization complete!', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
         }
