@@ -214,8 +214,6 @@ function launchWebServer() {
             if (params.data.value) {
                 paramsOut.args = params.data.value.toString().split(' ');
             };
-            log(params.control, ['[WARN]'])
-            log(JSON.stringify(paramsOut.args), ['[WARN]'])
             if (params.control === 'pausePlay') {
                 switch (botOut.dispatcher.paused) {
                     case true: {
@@ -229,7 +227,6 @@ function launchWebServer() {
                 }
             }
             else {
-                log('else', ['[WARN]'])
                 status.client.cmds.get(params.control).execute(paramsOut);
             }
         });
