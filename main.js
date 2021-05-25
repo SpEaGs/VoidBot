@@ -214,10 +214,7 @@ function launchWebServer() {
             if (params.data.value) {
                 paramsOut.args = toString(params.data.value).split(' ');
             };
-            if (params.control != 'pausePlay') {
-                status.client.cmds.get(params.control).execute(paramsOut);
-            }
-            else {
+            if (params.control === 'pausePlay') {
                 switch (botOut.dispatcher.paused) {
                     case true: {
                         status.client.cmds.get('resume').execute(paramsOut);
@@ -228,6 +225,9 @@ function launchWebServer() {
                         break;
                     }
                 }
+            }
+            else {
+                status.client.cmds.get(params.control).execute(paramsOut);
             }
         });
 
