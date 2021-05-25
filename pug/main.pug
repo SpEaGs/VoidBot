@@ -312,7 +312,7 @@ html
                                     vddci.id = `gcVCDropdownItem${bot.guildID}_${i.id}`;
                                     vddci.classList.add('gcVCDropdownItem');
                                     vddci.innerText = i.name;
-                                    vddci.onclick = () => {ddSelect(bot, 'VC', i)};
+                                    vddci.onclick = () => {ddSelect(bot, 'VC', i.name)};
                                     vddc.appendChild(vddci);
                             }
                         }
