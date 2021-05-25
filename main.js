@@ -204,72 +204,31 @@ function launchWebServer() {
         });
 
         socket.on('gControls', (params) => {
-            switch (params.control) {
-                case "join": {
-                    let paramsOut = {
-                        args: params.value.name.split(' '),
-                        bot: status.client.children.get(params.bot.guildID)
+            let botOut = status.client.children.get(params.bot.guildID);
+            let memOut = botOut.guild.members.cache.get(params.data.snowflake);
+            let paramsOut = {
+                msg: { member: memOut },
+                args: false,
+                bot: botOut
+            }
+            if (params.data.value) {
+                paramsOut.args = toString(params.data.value).split(' ');
+            };
+            if (!params.control == 'pausePlay') {
+                status.client.cmds.get(params.control).execute(paramsOut);
+            }
+            else {
+                switch (botOut.dispatcher.paused) {
+                    case true: {
+                        status.client.cmds.get('resume').execute(paramsOut);
+                        break;
                     }
-                    status.client.cmds.get('join').execute(paramsOut);
-                    break;
-                }
-                case "leave": {
-                    let paramsOut = {
-                        bot: status.client.children.get(params.bot.guildID)
+                    case false: {
+                        status.client.cmds.get('pause').execute(paramsOut);
+                        break;
                     }
-                    status.client.cmds.get('leave').execute(paramsOut);
-                    break;
                 }
-                case "addSong": {
-                    let snowflake = params.data.snowflake;
-                    let paramsOut = {
-                        msg: {
-                            author: {
-                                username: params.data.username
-                            },
-                            member: {voice: {channel: {}}}
-                        },
-                        bot: status.client.children.get(params.bot.guildID),
-                        args: params.data.input.split(' ')
-                    }
-                    paramsOut.msg.member.voice.channel = (paramsOut.bot.guild.members.cache.get(snowflake).voice.channel);
-                    status.client.cmds.get('play').execute(paramsOut);
-                    break;
-                }
-                case "remSong": {
-                    let botOut = status.client.children.get(params.bot.guildID);
-                    status.client.cmds.get('wrongsong').execute({bot: botOut, args: [params.value+1]});
-                    break;
-                }
-                case "skip": {
-                    let botOut = status.client.children.get(params.bot.guildID);
-                    status.client.cmds.get('skip').execute({bot: botOut});
-                    break;
-                }
-                case "vol": {
-                    let botOut = status.client.children.get(params.bot.guildID);
-                    status.client.cmds.get('volume').execute({bot: botOut, args: [params.value]})
-                    break;
-                }
-                case "stop": {
-                    let botOut = status.client.children.get(params.bot.guildID);
-                    status.client.cmds.get('stop').execute({bot: botOut});
-                    break;
-                }
-                case "pausePlay": {
-                    let botOut = status.client.children.get(params.bot.guildID);
-                    switch (botOut.dispatcher.paused) {
-                        case true: {
-                            status.client.cmds.get('resume').execute({bot: botOut});
-                            break;
-                        }
-                        case false: {
-                            status.client.cmds.get('pause').execute({bot: botOut});
-                            break;
-                        }
-                    }
-                    break;
-                }
+                break;
             }
         });
 

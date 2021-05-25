@@ -110,7 +110,7 @@ async function get_info(url, msg, status) {
         vidInfo.trackSource = 'YT';
     }
     vidInfo.url = url;
-    vidInfo.added_by = msg.author.username;
+    vidInfo.added_by = msg.member.displayName;
     if (status.voiceConnection == false) {
         try {
             status.voiceChannel.join().then(connection => {

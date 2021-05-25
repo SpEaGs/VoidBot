@@ -193,7 +193,10 @@ html
                             case 'VC': {
                                 let toSend = {
                                     control: 'join',
-                                    value: chan,
+                                    data: {
+                                        value: chan.name,
+                                        snowflake: user.id
+                                    },
                                     bot: bot
                                 }
                                 socket.emit('gControls', toSend);
@@ -207,20 +210,22 @@ html
                     function vcLeave(bot) {
                         let toSend = {
                             control: 'leave',
+                            data: {
+                                snowflake: user.id
+                            },
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
                     }
                     function addSong(bot, user) {
                         let el = document.getElementById(`gcSongInput${bot.guildID}`);
-                        let input = el.value;
-                        if (!input) return;
+                        let value = el.value;
+                        if (!value) return;
                         let toSend = {
-                            control: 'addSong',
+                            control: 'play',
                             data: {
-                                username: user.name,
-                                snowflake: user.id,
-                                input: input
+                                value: value,
+                                snowflake: user.id
                             },
                             bot: bot
                         }
@@ -229,8 +234,11 @@ html
                     }
                     function remSong(bot, index) {
                         let toSend = {
-                            control: 'remSong',
-                            value: index,
+                            control: 'wrongsong',
+                            data: {
+                                value: index+1,
+                                snowflake: user.id
+                            },
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
@@ -238,6 +246,9 @@ html
                     function skipSong(bot) {
                         let toSend = {
                             control: 'skip',
+                            data: {
+                                snowflake: user.id
+                            }
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
@@ -245,6 +256,9 @@ html
                     function pausePlay(bot) {
                         let toSend = {
                             control: 'pausePlay',
+                            data: {
+                                snowflake: user.id
+                            }
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
@@ -252,15 +266,21 @@ html
                     function stop(bot) {
                         let toSend = {
                             control: 'stop',
+                            data: {
+                                snowflake: user.id
+                            }
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
                     }
                     function volInput(bot, timeout) {
                         let toSend = {
-                            control: 'vol',
-                            bot: bot,
-                            value: document.getElementById(`gcVolInput${bot.guildID}`).value
+                            control: 'volume',
+                            data: {
+                                value: document.getElementById(`gcVolInput${bot.guildID}`).value,
+                                snowflake: user.id
+                            }
+                            bot: bot
                         }
                         socket.emit('gControls', toSend);
                         timeout = false;
