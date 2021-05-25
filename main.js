@@ -204,7 +204,6 @@ function launchWebServer() {
         });
 
         socket.on('gControls', (params) => {
-            log(`gControls ${JSON.stringify(params)}`, ['[WARN]', '[WEBUI]']);
             let botOut = status.client.children.get(params.bot.guildID);
             let memOut = botOut.guild.members.cache.get(params.data.snowflake);
             let paramsOut = {
@@ -215,7 +214,7 @@ function launchWebServer() {
             if (params.data.value) {
                 paramsOut.args = toString(params.data.value).split(' ');
             };
-            if (!params.control == 'pausePlay') {
+            if (params.control != 'pausePlay') {
                 status.client.cmds.get(params.control).execute(paramsOut);
             }
             else {
