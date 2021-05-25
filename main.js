@@ -228,7 +228,6 @@ function launchWebServer() {
                         break;
                     }
                 }
-                break;
             }
         });
 
