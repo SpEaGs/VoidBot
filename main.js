@@ -211,7 +211,7 @@ function launchWebServer() {
                 args: false,
                 bot: botOut
             }
-            log(params.data.value, ['[WARN]'])
+            log(toString(params.data.value), ['[WARN]'])
             if (params.data.value) {
                 paramsOut.args = toString(params.data.value).split(' ');
             };
