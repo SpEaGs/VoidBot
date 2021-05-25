@@ -229,6 +229,7 @@ function launchWebServer() {
                 }
             }
             else {
+                log('else', ['[WARN]'])
                 status.client.cmds.get(params.control).execute(paramsOut);
             }
         });
