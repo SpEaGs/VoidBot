@@ -213,7 +213,7 @@ function launchWebServer() {
             }
             log(toString(params.data.value), ['[WARN]'])
             if (params.data.value) {
-                paramsOut.args = toString(params.data.value).split(' ');
+                paramsOut.args = Object.toString(params.data.value).split(' ');
             };
             log(params.control, ['[WARN]'])
             log(JSON.stringify(paramsOut.args), ['[WARN]'])
