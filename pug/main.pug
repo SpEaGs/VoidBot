@@ -248,7 +248,7 @@ html
                             control: 'skip',
                             data: {
                                 snowflake: user.id
-                            }
+                            },
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
@@ -258,7 +258,7 @@ html
                             control: 'pausePlay',
                             data: {
                                 snowflake: user.id
-                            }
+                            },
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
@@ -268,7 +268,7 @@ html
                             control: 'stop',
                             data: {
                                 snowflake: user.id
-                            }
+                            },
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
@@ -279,7 +279,7 @@ html
                             data: {
                                 value: document.getElementById(`gcVolInput${bot.guildID}`).value,
                                 snowflake: user.id
-                            }
+                            },
                             bot: bot
                         }
                         socket.emit('gControls', toSend);
