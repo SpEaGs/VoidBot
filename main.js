@@ -214,6 +214,7 @@ function launchWebServer() {
             if (params.data.value) {
                 paramsOut.args = toString(params.data.value).split(' ');
             };
+            log(JSON.stringify(paramsOut.args), ['[WARN]'])
             if (params.control === 'pausePlay') {
                 switch (botOut.dispatcher.paused) {
                     case true: {
