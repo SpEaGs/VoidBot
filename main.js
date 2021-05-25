@@ -204,6 +204,7 @@ function launchWebServer() {
         });
 
         socket.on('gControls', (params) => {
+            log(`gControls ${JSON.stringify(params)}`, ['[WARN]', '[WEBUI]']);
             let botOut = status.client.children.get(params.bot.guildID);
             let memOut = botOut.guild.members.cache.get(params.data.snowflake);
             let paramsOut = {
