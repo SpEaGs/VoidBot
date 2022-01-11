@@ -108,3 +108,5 @@ BotAddInfo.txt
 tokens.json
 config.json
 *.code-workspace
+
+/old*
