@@ -7,8 +7,7 @@ let dir = __dirname.split('/');
 let mainDir = dir.slice(0, (dir.length - 2)).join('/');
 delete dir;
 
-console.log(mainDir);
-//const appVersion = require(mainDir+'/package.json').version;
+const appVersion = require(mainDir+'/package.json').version;
 
 router.use('/node_modules', express.static(mainDir+'/node_modules'));
 
@@ -36,7 +35,7 @@ router.get('/admin', (req, res) => {
                     guilds.push(i.snowflake);
                 }
             }
-            res.render('admin', {user: req.user, appVersion: 2, guilds: JSON.stringify(guilds)});
+            res.render('admin', {user: req.user, appVersion: appVersion, guilds: JSON.stringify(guilds)});
             log(`User connected to admin panel.`, ['[INFO]', '[WEBSERVER]', `[${req.user.name}#${req.user.discriminator}]`]);
         });
     }
