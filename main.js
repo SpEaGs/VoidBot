@@ -57,7 +57,6 @@ module.exports = {
   fs: fs,
   systemUIPopulated: false,
   settingsUIPopulated: false,
-  updateVol: updateVol,
   getStatus: getStatus,
 };
 
