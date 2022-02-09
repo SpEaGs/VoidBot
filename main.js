@@ -24,8 +24,6 @@ require("./web/auth");
 
 const userRouter = require("./web/routers/user");
 
-const api = express();
-
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
 
