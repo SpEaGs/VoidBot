@@ -4,7 +4,7 @@ const JwtStrategy = require("passport-jwt").Strategy,
 const User = require("../models/user");
 
 const opts = {};
-opts.jwtFromReq = ExtractJwt.fromAuthHeaderAsBearerToken();
+opts.jwtFromRequest = ExtractJwt.fromAuthHeaderAsBearerToken();
 opts.secretOrKey = process.env.JWT_SECRET;
 console.log(opts.secretOrKey);
 
