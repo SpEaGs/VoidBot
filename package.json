@@ -24,26 +24,30 @@
   "homepage": "https://github.com/SpEaGs/VoidBot#readme",
   "dependencies": {
     "@oauth-everything/passport-discord": "^1.0.2",
+    "body-parser": "^1.19.1",
     "cookie-parser": "^1.4.5",
     "cookie-session": "^1.4.0",
+    "cors": "^2.8.5",
     "cross-env": "^7.0.3",
     "discord.js": "^12.5.3",
+    "dotenv": "^16.0.0",
     "express": "^4.17.1",
     "is-electron": "^2.2.0",
+    "mongoose": "^6.2.1",
     "mysql": "^2.18.1",
-    "node-fetch": "^2.6.1",
+    "node-fetch": "^2.6.7",
     "opusscript": "0.0.7",
     "passport": "^0.4.1",
     "pug": "^3.0.2",
     "socket.io": "^3.1.2",
     "soundcloud-downloader": "^0.2.4",
     "superagent": "^5.3.1",
-    "winston": "^3.3.3",
-    "ytdl-core": "^4.8.0"
+    "winston": "^3.5.1",
+    "ytdl-core": "^4.10.1"
   },
   "devDependencies": {
     "electron": "^12.2.3",
-    "electron-builder": "^22.10.5"
+    "electron-builder": "^22.14.13"
   },
   "build": {
     "appId": "Void.Bot",
