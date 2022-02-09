@@ -17,6 +17,7 @@ const passport = require("passport");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
+require("dotenv").config();
 require("./web/utils/connectdb");
 require("./web/strategies/jwt");
 require("./web/strategies/local");
