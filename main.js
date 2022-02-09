@@ -451,7 +451,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         }
         try {
           bot.voiceChannel.leave();
-        } catch {
+        } catch (error) {
           bot.guild.channels.cache.get(bot.voiceChannel.id).leave();
         }
         bot.voiceChannel = false;
