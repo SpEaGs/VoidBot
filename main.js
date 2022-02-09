@@ -97,7 +97,7 @@ function launchWebServer() {
   api.use(bParse.json());
   api.use(cParse(process.env.COOKIE_SECRET));
 
-  const whitelist = proces.env.WHITELISTED_DOMAINS
+  const whitelist = process.env.WHITELISTED_DOMAINS
     ? process.env.WHITELISTED_DOMAINS.split(",")
     : [];
   const corsOptions = {
