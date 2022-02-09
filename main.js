@@ -17,13 +17,6 @@ const passport = require("passport");
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
-require("./web/utils/connectdb");
-require("./web/strategies/jwt");
-require("./web/strategies/local");
-require("./web/auth");
-
-const utils = require("./utils.js");
-const Bot = require("./bot.js");
 
 //log formatting and pipes to log files
 var backlog = [];
@@ -47,26 +40,6 @@ logger.add(
   })
 );
 
-//init some vars & export
-module.exports = {
-  client: new Discord.Client({ forceFetchUsers: true }),
-  fs: fs,
-  systemUIPopulated: false,
-  settingsUIPopulated: false,
-  getStatus: getStatus,
-};
-
-//set up basic structure for calling/storing discord.js clients (master + children)
-const status = require("./main.js");
-const bodyParser = require("body-parser");
-
-function getStatus() {
-  return status;
-}
-
-status.client.children = new Discord.Collection();
-status.client.cmds = new Discord.Collection();
-status.client.lastSeen = {};
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str, tags) {
   let lo = { timeStamp: utils.getTime(), tags: tags, msg: str, color: "" };
@@ -91,6 +64,33 @@ function log(str, tags) {
   backlog.push(lo);
 }
 global.log = log;
+
+require("./web/utils/connectdb");
+require("./web/strategies/jwt");
+require("./web/strategies/local");
+require("./web/auth");
+
+const utils = require("./utils.js");
+const Bot = require("./bot.js");
+
+//init some vars & export
+module.exports = {
+  client: new Discord.Client({ forceFetchUsers: true }),
+  fs: fs,
+  systemUIPopulated: false,
+  settingsUIPopulated: false,
+  getStatus: getStatus,
+};
+
+const status = require("./main.js");
+
+function getStatus() {
+  return status;
+}
+
+status.client.children = new Discord.Collection();
+status.client.cmds = new Discord.Collection();
+status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
@@ -121,7 +121,7 @@ function launchWebServer() {
 
   const server = api.listen(process.env.PORT || 8081, () => {
     const port = server.address().port;
-    console.log("API started at oprt:", port);
+    log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
 }
 
