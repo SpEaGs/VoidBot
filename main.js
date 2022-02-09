@@ -53,10 +53,6 @@ logger.add(
 
 //init some vars & export
 module.exports = {
-  eSender: {
-    socket: false,
-    ipc: false,
-  },
   client: new Discord.Client({ forceFetchUsers: true }),
   fs: fs,
   systemUIPopulated: false,
@@ -98,8 +94,6 @@ function log(str, tags) {
     }
   }
   backlog.push(lo);
-  if (status.eSender.socket) status.eSender.socket.emit("stdout", lo);
-  if (status.eSender.ipc) status.eSender.ipc.send("stdout", lo);
 }
 global.log = log;
 
@@ -166,7 +160,6 @@ function initBot(bot) {
     let cleanRoleName = utils.cleanChannelName(role.name);
     bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
   }
-  status.eSender.ipc.send("add-client", utils.dumbifyBot(bot));
 }
 
 //discord.js client ready event handler (master client)
@@ -337,7 +330,6 @@ status.client.on("guildCreate", (guild) => {
       `[${newBot.guildName}]`,
     ]);
   }, 400);
-  status.eSender.socket.emit("new-guild");
 });
 
 //discord.js client event for the bot leaving or being kicked from a server
@@ -351,8 +343,6 @@ status.client.on("guildDelete", (guild) => {
   status.client.children.delete(guild.id);
   delete utils.config.sharding[guild.id];
   utils.dumpJSON("config.json", utils.config, 2);
-  status.eSender.ipc.send("rem-client", guild.id);
-  status.eSender.socket.emit("rem-client", guild.id);
 });
 
 //discord.js client event for new members joining a server
@@ -456,7 +446,6 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         }
         bot.voiceChannel = false;
         bot.voiceConnection = false;
-        status.eSender.socket.emit("sendBotInfo", [utils.dumbifyBot(bot)]);
       }
       return;
     }
@@ -511,7 +500,6 @@ function cmd(e, arg) {
   }
   return;
 }
-ipcMain.on("command", cmd);
 
 function updateBot(e, bot) {
   if (!bot) bot = e;
@@ -528,23 +516,7 @@ function updateBot(e, bot) {
       utils.saveConfig(i);
     }
   }
-  if (status.eSender.socket !== false) {
-    status.eSender.socket.emit("updateBotUI", bot);
-  }
-  if (status.eSender.ipc !== false) {
-    status.eSender.ipc.send("updateBotUI", utils.dumbifyBot(bot));
-  }
 }
-ipcMain.on("updateBot", updateBot);
-
-function updateVol(bot) {
-  status.eSender.ipc.send("updateVol", utils.dumbifyBot(bot));
-  status.eSender.socket.emit("sendBotInfo", [utils.dumbifyBot(bot)]);
-}
-
-ipcMain.once("init-eSender", (event, arg) => {
-  status.eSender.ipc = event.sender;
-});
 
 //discord.js client login (called when the electron window is open and ready)
 let loginAtt = 0;
