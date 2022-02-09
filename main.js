@@ -1,4 +1,4 @@
-const { token } = require("./tokens.json");
+const token = require("./tokens.json").TOKEN;
 
 const Discord = require("discord.js");
 const winston = require("winston");
