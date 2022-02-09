@@ -4,10 +4,7 @@
   "description": "A Discord Bot.\r This is like the fourth or so version of the bot... had to re-write it a few times to keep up with changing APIs and now I'm at it again.",
   "main": "main.js",
   "scripts": {
-    "start": "cross-env NODE_ENV=production electron .",
-    "dev": "cross-env NODE_ENV=development electron --trace-warnings .",
-    "dist-win": "electron-builder build",
-    "dist-ras": "electron-builder build --linux"
+    "start": "node main.js"
   },
   "repository": {
     "type": "git",
