@@ -22,12 +22,8 @@ require("./web/strategies/jwt");
 require("./web/strategies/local");
 require("./web/auth");
 
-const userRouter = require("./web/routers/user");
-
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
-
-let mainWindow;
 
 //log formatting and pipes to log files
 var backlog = [];
@@ -117,7 +113,7 @@ function launchWebServer() {
 
   api.use(cors(corsOptions));
   api.use(passport.initialize());
-  api.use("/users", userRouter);
+  api.use("/users", require("./web/routers/user"));
 
   api.get("/", (req, res) => {
     res.send({ status: success });
@@ -127,8 +123,6 @@ function launchWebServer() {
     const port = server.address().port;
     console.log("API started at oprt:", port);
   });
-
-  clientLogin(token);
 }
 
 function initBot(bot) {
@@ -537,3 +531,5 @@ function clientLogin(t) {
     } else log(`Error logging in client:\n` + error, ["[ERR]", "[MAIN]"]);
   }
 }
+
+clientLogin(token);
