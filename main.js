@@ -116,7 +116,7 @@ function launchWebServer() {
   api.use("/users", require("./web/routers/user"));
 
   api.get("/", (req, res) => {
-    res.send({ status: success });
+    res.send({ status: "success" });
   });
 
   const server = api.listen(process.env.PORT || 8081, () => {
