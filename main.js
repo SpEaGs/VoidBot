@@ -80,9 +80,11 @@ module.exports = {
   systemUIPopulated: false,
   settingsUIPopulated: false,
   getStatus: getStatus,
+  webAppDomain: utils.config.webAppDomain,
 };
 
 const status = require("./main.js");
+const { config } = require("dotenv");
 
 function getStatus() {
   return status;
@@ -116,7 +118,7 @@ function launchWebServer() {
   api.use("/users", require("./web/routers/user"));
 
   api.get("/", (req, res) => {
-    res.send({ status: "success" });
+    res.redirect(status.webAppDomain);
   });
 
   const server = api.listen(process.env.PORT || 8081, () => {
