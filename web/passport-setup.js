@@ -48,6 +48,7 @@ passport.use(
               user.guilds.admin.push(i.id);
             }
           }
+          log(JSON.stringify(user.guilds), ["[WARN]", "[WEBSERVER]"]);
           User.findOne({ snowflake: user.id }, (err, dbUser) => {
             if (err)
               log(`Error requesting user from DB:\n${err}`, [
