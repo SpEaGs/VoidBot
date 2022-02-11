@@ -10,20 +10,13 @@ const Session = new Schema({
   },
 });
 
-const Guild = new Schema({
-  guild: {
-    type: String,
-    default: "",
-  },
-});
-
 const Guilds = new Schema({
   admin: {
-    type: [Guild],
+    type: [],
     default: false,
   },
   member: {
-    type: [Guild],
+    type: [],
   },
 });
 
