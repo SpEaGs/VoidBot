@@ -66,9 +66,8 @@ function log(str, tags) {
 global.log = log;
 
 require("./web/utils/connectdb");
-require("./web/strategies/jwt");
-require("./web/strategies/local");
 require("./web/auth");
+require("./web/passport-setup");
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");

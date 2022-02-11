@@ -1,5 +1,5 @@
 const db = require("mongoose");
-const Schema = db.Schema;
+const { Schema } = db;
 
 const passportLocalDB = require("passport-local-mongoose");
 
@@ -10,22 +10,38 @@ const Session = new Schema({
   },
 });
 
+const Guild = new Schema({
+  guild: {
+    type: String,
+    default: "",
+  },
+});
+
+const Guilds = new Schema({
+  admin: {
+    type: [Guild],
+    default: false,
+  },
+  member: {
+    type: [Guild],
+  },
+});
+
 const User = new Schema({
-  firstName: {
+  snowflake: {
     type: String,
     default: "",
   },
-  lastName: {
+  username: {
     type: String,
     default: "",
   },
-  authStrategy: {
+  discriminator: {
     type: String,
-    default: "local",
+    default: "",
   },
-  points: {
-    type: Number,
-    default: 50,
+  guilds: {
+    type: Guilds,
   },
   refreshToken: {
     type: [Session],
@@ -33,7 +49,7 @@ const User = new Schema({
 });
 
 User.set("toJSON", {
-  transform: function (doc, ret, options) {
+  transform: (doc, ret, options) => {
     delete ret.refreshToken;
     return ret;
   },
