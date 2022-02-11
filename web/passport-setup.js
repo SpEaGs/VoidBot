@@ -7,10 +7,10 @@ const { Strategy, Scope } = require("@oauth-everything/passport-discord");
 const User = require("./models/user");
 
 passport.serializeUser((user, done) => {
-  done(null, user.id);
+  done(null, user.token);
 });
 passport.deserializeUser((id, done) => {
-  User.findOne({ snowflake: id }, (err, user) => {
+  User.findOne({ token: id }, (err, user) => {
     if (err) return done(err, false);
     if (user) return done(null, user);
     else return done(null, false);
@@ -64,10 +64,21 @@ passport.use(
                 username: user.name,
                 discriminator: user.discriminator,
                 guilds: user.guilds,
+                token: accessToken,
               });
               newUser.save((err) => {
                 if (err)
                   log(`Error adding new user to DB:\n${err}`, [
+                    "[ERR]",
+                    "[WEBSERVER]",
+                  ]);
+              });
+            } else {
+              log("User found in DB.", ["[INFO]", "[WEBSERVER]"]);
+              dbUser.token = accessToken;
+              dbUser.save((err) => {
+                if (err)
+                  log(`Error updating user with new token:\n${err}`, [
                     "[ERR]",
                     "[WEBSERVER]",
                   ]);
