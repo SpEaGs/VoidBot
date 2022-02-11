@@ -115,6 +115,7 @@ function launchWebServer() {
   api.use(cors(corsOptions));
   api.use(passport.initialize());
   api.use("/users", require("./web/routers/user"));
+  api.use("/auth", require("./web/routers/auth"));
 
   api.get("/", (req, res) => {
     res.redirect(status.webAppDomain);
