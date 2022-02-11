@@ -118,7 +118,9 @@ function launchWebServer() {
   api.use("/auth", require("./web/routers/auth"));
 
   api.get("/", (req, res) => {
-    res.redirect(status.webAppDomain);
+    let user = req.user || false;
+    if (!user) res.redirect(status.webAppDomain);
+    else res.redirect(status.webAppDomain + "authSuccess");
   });
 
   const server = api.listen(process.env.PORT || 8081, () => {
