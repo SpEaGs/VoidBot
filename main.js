@@ -124,6 +124,33 @@ function launchWebServer() {
     else res.redirect(status.webAppDomain + "authSuccess");
   });
 
+  function initSocket(s) {
+    s.on("guilds", (uToken) => {
+      User.findOne({ token: uToken }, (err, u) => {
+        if (err) return socket.disconnect();
+        if (!u) return socket.disconnect();
+        else {
+          let guildsOut = [];
+          for (b in status.client.children.array()) {
+            if (user.guilds.member.includes(b.guildID)) {
+              guildsOut.push(utils.dumbifyBot(b));
+            }
+          }
+          s.emit("guilds_res", guildsOut);
+        }
+      });
+    });
+    s.on("user", (uToken) => {
+      User.findOne({ token: uToken }, (err, u) => {
+        if (err) return socket.disconnect();
+        if (!u) return socket.disconnect();
+        else {
+          s.emit("user-res", u);
+        }
+      });
+    });
+  }
+
   io.on("connection", (socket) => {
     log("New socket connection. Starting handshake...", [
       "[INFO]",
@@ -139,7 +166,8 @@ function launchWebServer() {
           };
         else {
           status.sockets.push({ socket: socket, token: token });
-          socket.emit("handshake_end", true);
+          initSocket(socket);
+          socket.emit("handshake_end", u);
         }
       });
     });

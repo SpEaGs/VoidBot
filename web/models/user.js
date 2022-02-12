@@ -3,13 +3,19 @@ const { Schema } = db;
 
 const passportLocalDB = require("passport-local-mongoose");
 
+const GID = new Schema({
+  gid: {
+    type: String,
+  },
+});
+
 const Guilds = new Schema({
   admin: {
-    type: [],
+    type: [GID],
     default: false,
   },
   member: {
-    type: [],
+    type: [GID],
   },
 });
 
