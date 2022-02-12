@@ -10,6 +10,8 @@ const url = require("url");
 const express = require("express");
 const cors = require("cors");
 const api = express();
+const server = require("http").createServer(api);
+const io = new (require("socket.io").Server)(server);
 const cParse = require("cookie-parser");
 const passport = require("passport");
 
@@ -79,10 +81,10 @@ module.exports = {
   settingsUIPopulated: false,
   getStatus: getStatus,
   webAppDomain: utils.config.webAppDomain,
+  sockets: [],
 };
 
 const status = require("./main.js");
-const { config } = require("dotenv");
 
 function getStatus() {
   return status;
@@ -94,6 +96,7 @@ status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
+  const User = require("./web/models/user");
   api.use(express.json());
   api.use(cParse(process.env.COOKIE_SECRET));
 
@@ -121,7 +124,29 @@ function launchWebServer() {
     else res.redirect(status.webAppDomain + "authSuccess");
   });
 
-  const server = api.listen(process.env.PORT || 8081, () => {
+  io.on("connection", (socket) => {
+    log("New socket connection. Starting handshake...", [
+      "[INFO]",
+      "[WEBSOCKET]",
+    ]);
+    socket.once("handshake_res", (token) => {
+      User.findOne({ token: token }, (err, u) => {
+        if (err) return socket.disconnect();
+        if (!u)
+          return () => {
+            socket.emit("handshake_end", false);
+            socket.disconnect();
+          };
+        else {
+          status.sockets.push({ socket: socket, token: token });
+          socket.emit("handshake_end", true);
+        }
+      });
+    });
+    socket.emit("handshake");
+  });
+
+  server.listen(process.env.PORT || 8081, () => {
     const port = server.address().port;
     log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
