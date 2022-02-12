@@ -10,7 +10,6 @@ const url = require("url");
 const express = require("express");
 const cors = require("cors");
 const api = express();
-const bParse = require("body-parser");
 const cParse = require("cookie-parser");
 const passport = require("passport");
 
@@ -95,7 +94,7 @@ status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
-  api.use(bParse.json());
+  api.use(express.json());
   api.use(cParse(process.env.COOKIE_SECRET));
 
   const whitelist = process.env.WHITELISTED_DOMAINS
@@ -114,7 +113,6 @@ function launchWebServer() {
 
   api.use(cors(corsOptions));
   api.use(passport.initialize());
-  api.use("/users", require("./web/routers/user"));
   api.use("/auth", require("./web/routers/auth"));
 
   api.get("/", (req, res) => {
