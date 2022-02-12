@@ -3,13 +3,6 @@ const { Schema } = db;
 
 const passportLocalDB = require("passport-local-mongoose");
 
-const Session = new Schema({
-  refreshToken: {
-    type: String,
-    default: "",
-  },
-});
-
 const Guilds = new Schema({
   admin: {
     type: [],
@@ -36,8 +29,8 @@ const User = new Schema({
   guilds: {
     type: Guilds,
   },
-  refreshToken: {
-    type: [Session],
+  token: {
+    type: String,
   },
 });
 
