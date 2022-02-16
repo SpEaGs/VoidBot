@@ -102,9 +102,6 @@ status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
-  api.use(bParse.json());
-  api.use(cParse(process.env.COOKIE_SECRET));
-
   const whitelist = process.env.WHITELISTED_DOMAINS
     ? process.env.WHITELISTED_DOMAINS.split(",")
     : [];
@@ -120,6 +117,7 @@ function launchWebServer() {
   };
 
   api.use(cors(corsOptions));
+  api.use(cParse());
   api.use(passport.initialize());
   api.use(passport.session());
 
