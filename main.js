@@ -11,7 +11,12 @@ const express = require("express");
 const cors = require("cors");
 const api = express();
 const server = require("http").createServer(api);
-const io = new (require("socket.io").Server)(server);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://76.179.53.45:3000",
+    methods: ["GET", "POST"],
+  },
+});
 const bParse = require("body-parser");
 const cParse = require("cookie-parser");
 const passport = require("passport");
