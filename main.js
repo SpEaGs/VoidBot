@@ -128,6 +128,15 @@ function launchWebServer() {
     next();
   });
   api.use("/auth", require("./web/routers/auth"));
+  api.get("/", (req, res) => {
+    if (!req.user) {
+      res.redirect(utils.config.webAppDomain);
+    } else {
+      res.redirect(
+        `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
+      );
+    }
+  });
 
   function initSocket(s) {
     s.on("guilds", (uToken) => {

@@ -15,7 +15,7 @@ router.get(
   "/discord/callback",
   passport.authenticate("discord", {
     failureRedirect: "/login",
-    successRedirect: webAppDomain,
+    successRedirect: "/",
   })
 );
 
