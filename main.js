@@ -23,6 +23,7 @@ const bParse = require("body-parser");
 const cParse = require("cookie-parser");
 const cSess = require("cookie-session");
 const passport = require("passport");
+const User = require("./web/models/user");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
