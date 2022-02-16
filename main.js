@@ -129,7 +129,7 @@ function launchWebServer() {
   });
   api.use("/auth", require("./web/routers/auth"));
   api.get("/", (req, res) => {
-    console.log(req.user);
+    console.log(JSON.stringify(req));
     if (!req.user) {
       res.redirect(utils.config.webAppDomain);
     } else {
