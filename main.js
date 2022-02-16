@@ -8,7 +8,6 @@ const path = require("path");
 const url = require("url");
 
 const express = require("express");
-const cors = require("cors");
 const api = express();
 const server = require("http").createServer(api);
 const io = new (require("socket.io").Server)(server);
@@ -99,22 +98,6 @@ function launchWebServer() {
   const User = require("./web/models/user");
   api.use(express.json());
   api.use(cParse(process.env.COOKIE_SECRET));
-
-  const whitelist = process.env.WHITELISTED_DOMAINS
-    ? process.env.WHITELISTED_DOMAINS.split(",")
-    : [];
-  const corsOptions = {
-    origin: (origin, callback) => {
-      if (!origin || whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  };
-
-  api.use(cors(corsOptions));
   api.use(passport.initialize());
   api.use("/auth", require("./web/routers/auth"));
 
