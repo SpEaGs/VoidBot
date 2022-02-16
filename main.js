@@ -10,6 +10,8 @@ const url = require("url");
 const express = require("express");
 const cors = require("cors");
 const api = express();
+const server = require("http").createServer(api);
+const io = new (require("socket.io").Server)(server);
 const bParse = require("body-parser");
 const cParse = require("cookie-parser");
 const passport = require("passport");
@@ -120,17 +122,92 @@ function launchWebServer() {
     res.header("Access-Control-Allow-Headers", "X-Requested-Width");
     next();
   });
-
-  api.use("/users", require("./web/routers/user"));
   api.use("/auth", require("./web/routers/auth"));
 
-  api.get("/", (req, res) => {
-    let user = req.user || false;
-    if (!user) res.redirect(status.webAppDomain);
-    else res.redirect(status.webAppDomain + "authSuccess");
+  function initSocket(s) {
+    s.on("guilds", (uToken) => {
+      User.findOne({ token: uToken }, (err, u) => {
+        if (err) return socket.disconnect();
+        if (!u) return socket.disconnect();
+        else {
+          let guildsOut = [];
+          for (b in status.client.children.array()) {
+            if (user.guilds.member.includes(b.guildID)) {
+              guildsOut.push(utils.dumbifyBot(b));
+            }
+          }
+          s.emit("guilds_res", guildsOut);
+        }
+      });
+    });
+    s.on("user", (uToken) => {
+      User.findOne({ token: uToken }, (err, u) => {
+        if (err) return socket.disconnect();
+        if (!u) return socket.disconnect();
+        else {
+          s.emit("user-res", u);
+        }
+      });
+    });
+  }
+
+  io.on("connection", (socket) => {
+    log("New socket connection. Starting handshake...", [
+      "[INFO]",
+      "[WEBSOCKET]",
+    ]);
+    socket.once("handshake_res", (authed, token, dToken = false) => {
+      if (authed && dToken) {
+        User.findOne({ token: dToken }, (err, u) => {
+          if (err) return socket.disconnect();
+          if (!u) {
+            socket.emit("handshake_end", false);
+            socket.disconnect();
+          } else {
+            let oldSocketIndex = status.sockets.findIndex(
+              (socket) => socket.token === token
+            );
+            if (oldSocketIndex != -1) {
+              status.sockets[oldSocketIndex] = {
+                socket: socket,
+                token: token,
+                dToken: dToken,
+              };
+            } else
+              status.sockets.push({
+                socket: socket,
+                token: token,
+                dToken: dToken,
+              });
+            initSocket(socket);
+            socket.emit("handshake_end", true, u);
+          }
+        });
+      } else {
+        let oldSocketIndex = status.sockets.findIndex(
+          (socket) => (socket.token = token)
+        );
+        if (oldSocketIndex != -1) {
+          status.sockets[oldSocketIndex] = {
+            socket: socket,
+            token: token,
+            dToken: false,
+          };
+        } else
+          status.sockets.push({
+            socket: socket,
+            token: token,
+            dToken: false,
+          });
+        socket.emit("handshake_end", false);
+        socket.disconnect();
+      }
+    });
+
+    socket.emit("handshake");
   });
 
-  const server = api.listen(process.env.PORT || 8081, () => {
+  server.listen(process.env.PORT || 8081, () => {
     const port = server.address().port;
     log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
