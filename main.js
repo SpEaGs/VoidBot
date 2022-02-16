@@ -162,7 +162,10 @@ function launchWebServer() {
       "[WEBSOCKET]",
     ]);
     socket.once("handshake_res", (authed, token, dToken = false) => {
-      log(`${authed}\n${token}\n${dToken}`, ["[WARN]", "[WEBSERVER]"]);
+      log(`authed: ${authed}\ntoken: ${token}\ndToken: ${dToken}`, [
+        "[WARN]",
+        "[WEBSERVER]",
+      ]);
       if (authed && dToken) {
         User.findOne({ token: dToken }, (err, u) => {
           if (err) return socket.disconnect();
@@ -193,7 +196,7 @@ function launchWebServer() {
         let oldSocketIndex = status.sockets.findIndex(
           (socket) => (socket.token = token)
         );
-        log(oldSocketIndex, ["[WARN]", "[WEBSERVER]"]);
+        log(`oldSocketIndex: ${oldSocketIndex}`, ["[WARN]", "[WEBSERVER]"]);
         if (oldSocketIndex != -1) {
           status.sockets[oldSocketIndex] = {
             socket: socket,
@@ -206,7 +209,6 @@ function launchWebServer() {
             token: token,
             dToken: false,
           });
-        log(JSON.stringify(status.sockets), ["[WARN]", "[WEBSERVER]"]);
         socket.emit("handshake_end", false);
         socket.disconnect();
       }
