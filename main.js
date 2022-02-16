@@ -8,9 +8,9 @@ const path = require("path");
 const url = require("url");
 
 const express = require("express");
+const cors = require("cors");
 const api = express();
-const server = require("http").createServer(api);
-const io = new (require("socket.io").Server)(server);
+const bParse = require("body-parser");
 const cParse = require("cookie-parser");
 const passport = require("passport");
 
@@ -80,10 +80,10 @@ module.exports = {
   settingsUIPopulated: false,
   getStatus: getStatus,
   webAppDomain: utils.config.webAppDomain,
-  sockets: [],
 };
 
 const status = require("./main.js");
+const { config } = require("dotenv");
 
 function getStatus() {
   return status;
@@ -95,102 +95,42 @@ status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
-  const User = require("./web/models/user");
-  api.use(express.json());
+  api.use(bParse.json());
   api.use(cParse(process.env.COOKIE_SECRET));
+
+  const whitelist = process.env.WHITELISTED_DOMAINS
+    ? process.env.WHITELISTED_DOMAINS.split(",")
+    : [];
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  };
+
+  api.use(cors(corsOptions));
   api.use(passport.initialize());
+
+  api.all("/", (req, res, next) => {
+    res.header("Access-Control-AllowOrigin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-Width");
+    next();
+  });
+
+  api.use("/users", require("./web/routers/user"));
   api.use("/auth", require("./web/routers/auth"));
 
   api.get("/", (req, res) => {
     let user = req.user || false;
     if (!user) res.redirect(status.webAppDomain);
-    else res.redirect(status.webAppDomain);
+    else res.redirect(status.webAppDomain + "authSuccess");
   });
 
-  function initSocket(s) {
-    s.on("guilds", (uToken) => {
-      User.findOne({ token: uToken }, (err, u) => {
-        if (err) return socket.disconnect();
-        if (!u) return socket.disconnect();
-        else {
-          let guildsOut = [];
-          for (b in status.client.children.array()) {
-            if (user.guilds.member.includes(b.guildID)) {
-              guildsOut.push(utils.dumbifyBot(b));
-            }
-          }
-          s.emit("guilds_res", guildsOut);
-        }
-      });
-    });
-    s.on("user", (uToken) => {
-      User.findOne({ token: uToken }, (err, u) => {
-        if (err) return socket.disconnect();
-        if (!u) return socket.disconnect();
-        else {
-          s.emit("user-res", u);
-        }
-      });
-    });
-  }
-
-  io.on("connection", (socket) => {
-    log("New socket connection. Starting handshake...", [
-      "[INFO]",
-      "[WEBSOCKET]",
-    ]);
-    socket.once("handshake_res", (authed, token, dToken = false) => {
-      if (authed && dToken) {
-        User.findOne({ token: dToken }, (err, u) => {
-          if (err) return socket.disconnect();
-          if (!u) {
-            socket.emit("handshake_end", false);
-            socket.disconnect();
-          } else {
-            let oldSocketIndex = status.sockets.findIndex(
-              (socket) => socket.token === token
-            );
-            if (oldSocketIndex != -1) {
-              status.sockets[oldSocketIndex] = {
-                socket: socket,
-                token: token,
-                dToken: dToken,
-              };
-            } else
-              status.sockets.push({
-                socket: socket,
-                token: token,
-                dToken: dToken,
-              });
-            initSocket(socket);
-            socket.emit("handshake_end", true, u);
-          }
-        });
-      } else {
-        let oldSocketIndex = status.sockets.findIndex(
-          (socket) => (socket.token = token)
-        );
-        if (oldSocketIndex != -1) {
-          status.sockets[oldSocketIndex] = {
-            socket: socket,
-            token: token,
-            dToken: false,
-          };
-        } else
-          status.sockets.push({
-            socket: socket,
-            token: token,
-            dToken: false,
-          });
-        socket.emit("handshake_end", false);
-        socket.disconnect();
-      }
-    });
-
-    socket.emit("handshake");
-  });
-
-  server.listen(process.env.PORT || 8081, () => {
+  const server = api.listen(process.env.PORT || 8081, () => {
     const port = server.address().port;
     log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
