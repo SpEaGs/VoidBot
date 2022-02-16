@@ -131,11 +131,12 @@ function launchWebServer() {
   api.get("/", (req, res) => {
     console.log(req.user);
     if (!req.user) {
-      res.redirect(utils.config.webAppDomain + "test");
+      res.send(req.user);
+      //res.redirect(utils.config.webAppDomain + "test");
     } else {
-      res.redirect(
-        `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
-      );
+      //res.redirect(
+      //  `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
+      //);
     }
   });
 
