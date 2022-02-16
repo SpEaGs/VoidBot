@@ -176,15 +176,7 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    log("New socket connection. Starting handshake...", [
-      "[INFO]",
-      "[WEBSOCKET]",
-    ]);
     socket.once("handshake_res", (authed, token, dToken = false) => {
-      log(`authed: ${authed}\ntoken: ${token}\ndToken: ${dToken}`, [
-        "[WARN]",
-        "[WEBSERVER]",
-      ]);
       if (authed && dToken) {
         User.findOne({ token: dToken }, (err, u) => {
           if (err) return socket.disconnect();
