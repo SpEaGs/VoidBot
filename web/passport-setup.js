@@ -7,10 +7,11 @@ const { Strategy, Scope } = require("@oauth-everything/passport-discord");
 const User = require("./models/user");
 
 passport.serializeUser((user, done) => {
+  console.log(JSON.stringify(user));
   done(null, user.token);
 });
 passport.deserializeUser((id, done) => {
-  console.log("deserialize");
+  console.log(id);
   User.findOne({ token: id }, (err, user) => {
     if (err) return done(err, false);
     if (user) return done(null, user);
