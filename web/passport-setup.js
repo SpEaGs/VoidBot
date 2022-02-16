@@ -9,8 +9,8 @@ const User = require("./models/user");
 passport.serializeUser((user, done) => {
   done(null, user.token);
 });
-passport.deserializeUser((id, done) => {
-  User.findOne({ token: id }, (err, user) => {
+passport.deserializeUser((token, done) => {
+  User.findOne({ token: token }, (err, user) => {
     if (err) return done(err, false);
     if (user) return done(null, user);
     else return done(null, false);
@@ -27,9 +27,10 @@ passport.use(
     },
     (accessToken, refreshToken, profile, done) => {
       let user = {
-        id: profile.id,
-        name: profile.username,
+        snowflake: profile.id,
+        username: profile.username,
         discriminator: profile.displayName.split("#").pop(),
+        token: accessToken,
       };
       fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
@@ -48,7 +49,7 @@ passport.use(
               user.guilds.admin.push(i.id);
             }
           }
-          User.findOne({ snowflake: user.id }, (err, dbUser) => {
+          User.findOne({ snowflake: user.snowflake }, (err, dbUser) => {
             if (err)
               log(`Error requesting user from DB:\n${err}`, [
                 "[ERR]",
@@ -59,15 +60,15 @@ passport.use(
                 "[INFO]",
                 "[WEBSERVER]",
               ]);
-              let newUser = new User({
-                snowflake: user.id,
-                username: user.name,
+              let newDBUser = new User({
+                snowflake: user.snowflake,
+                username: user.username,
                 discriminator: user.discriminator,
                 guilds: user.guilds,
                 token: accessToken,
               });
-              log(JSON.stringify(newUser), ["[WARN]", "[WEBSERVER]"]);
-              newUser.save((err) => {
+              log(JSON.stringify(newDBUser), ["[WARN]", "[WEBSERVER]"]);
+              newDBUser.save((err) => {
                 if (err)
                   log(`Error adding new user to DB:\n${err}`, [
                     "[ERR]",
