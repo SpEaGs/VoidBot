@@ -1,4 +1,6 @@
-const token = require("./tokens.json").TOKEN;
+const keys = require("./tokens.json");
+const token = keys.TOKEN;
+const cookieKey = keys.COOKIE_KEY;
 
 const Discord = require("discord.js");
 const winston = require("winston");
@@ -19,6 +21,7 @@ const io = require("socket.io")(server, {
 });
 const bParse = require("body-parser");
 const cParse = require("cookie-parser");
+const cSess = require("cookie-session");
 const passport = require("passport");
 
 if (process.env.NODE_ENV !== "production") {
@@ -118,6 +121,13 @@ function launchWebServer() {
 
   api.use(cors(corsOptions));
   api.use(cParse());
+  api.use(
+    cSess({
+      name: "session",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      keys: [cookieKey],
+    })
+  );
   api.use(passport.initialize());
   api.use(passport.session());
 
