@@ -10,6 +10,7 @@ passport.serializeUser((user, done) => {
   done(null, user.token);
 });
 passport.deserializeUser((id, done) => {
+  console.log("deserialize");
   User.findOne({ token: id }, (err, user) => {
     if (err) return done(err, false);
     if (user) return done(null, user);
