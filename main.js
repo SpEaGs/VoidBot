@@ -121,7 +121,7 @@ function launchWebServer() {
   api.get("/", (req, res) => {
     let user = req.user || false;
     if (!user) res.redirect(status.webAppDomain);
-    else res.redirect(status.webAppDomain + "authSuccess");
+    else res.redirect(status.webAppDomain);
   });
 
   function initSocket(s) {
@@ -156,21 +156,54 @@ function launchWebServer() {
       "[INFO]",
       "[WEBSOCKET]",
     ]);
-    socket.once("handshake_res", (token) => {
-      User.findOne({ token: token }, (err, u) => {
-        if (err) return socket.disconnect();
-        if (!u)
-          return () => {
+    socket.once("handshake_res", (authed, token, dToken = false) => {
+      if (authed && dToken) {
+        User.findOne({ token: dToken }, (err, u) => {
+          if (err) return socket.disconnect();
+          if (!u) {
             socket.emit("handshake_end", false);
             socket.disconnect();
+          } else {
+            let oldSocketIndex = status.sockets.findIndex(
+              (socket) => socket.token === token
+            );
+            if (oldSocketIndex != -1) {
+              status.sockets[oldSocketIndex] = {
+                socket: socket,
+                token: token,
+                dToken: dToken,
+              };
+            } else
+              status.sockets.push({
+                socket: socket,
+                token: token,
+                dToken: dToken,
+              });
+            initSocket(socket);
+            socket.emit("handshake_end", true, u);
+          }
+        });
+      } else {
+        let oldSocketIndex = status.sockets.findIndex(
+          (socket) => (socket.token = token)
+        );
+        if (oldSocketIndex != -1) {
+          status.sockets[oldSocketIndex] = {
+            socket: socket,
+            token: token,
+            dToken: false,
           };
-        else {
-          status.sockets.push({ socket: socket, token: token });
-          initSocket(socket);
-          socket.emit("handshake_end", u);
-        }
-      });
+        } else
+          status.sockets.push({
+            socket: socket,
+            token: token,
+            dToken: false,
+          });
+        socket.emit("handshake_end", false);
+        socket.disconnect();
+      }
     });
+
     socket.emit("handshake");
   });
 

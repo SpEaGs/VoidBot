@@ -40,13 +40,6 @@ const User = new Schema({
   },
 });
 
-User.set("toJSON", {
-  transform: (doc, ret, options) => {
-    delete ret.refreshToken;
-    return ret;
-  },
-});
-
 User.plugin(passportLocalDB);
 
 module.exports = db.model("User", User);
