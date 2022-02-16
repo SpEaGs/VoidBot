@@ -121,6 +121,7 @@ function launchWebServer() {
 
   api.use(cors(corsOptions));
   api.use(passport.initialize());
+  api.use(passport.session());
 
   api.all("/", (req, res, next) => {
     res.header("Access-Control-AllowOrigin", "*");
