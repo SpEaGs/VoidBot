@@ -67,7 +67,6 @@ passport.use(
                 guilds: user.guilds,
                 token: accessToken,
               });
-              log(JSON.stringify(newDBUser), ["[WARN]", "[WEBSERVER]"]);
               newDBUser.save((err) => {
                 if (err)
                   log(`Error adding new user to DB:\n${err}`, [
