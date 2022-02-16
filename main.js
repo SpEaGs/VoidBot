@@ -87,6 +87,7 @@ module.exports = {
   settingsUIPopulated: false,
   getStatus: getStatus,
   webAppDomain: utils.config.webAppDomain,
+  sockets: [],
 };
 
 const status = require("./main.js");
