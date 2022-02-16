@@ -9,8 +9,8 @@ const User = require("./models/user");
 passport.serializeUser((user, done) => {
   done(null, user.token);
 });
-passport.deserializeUser((token, done) => {
-  User.findOne({ token: token }, (err, user) => {
+passport.deserializeUser((id, done) => {
+  User.findOne({ token: id }, (err, user) => {
     if (err) return done(err, false);
     if (user) return done(null, user);
     else return done(null, false);
