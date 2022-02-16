@@ -129,14 +129,15 @@ function launchWebServer() {
   });
   api.use("/auth", require("./web/routers/auth"));
   api.get("/", (req, res) => {
-    console.log(JSON.stringify(req));
+    res.send(req);
+    /*
     if (!req.user) {
       res.redirect(utils.config.webAppDomain);
     } else {
       res.redirect(
         `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
       );
-    }
+    }*/
   });
 
   function initSocket(s) {
