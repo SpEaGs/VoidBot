@@ -1,4 +1,6 @@
-const token = require("./tokens.json").TOKEN;
+const keys = require("./tokens.json");
+const token = keys.TOKEN;
+const cookieKey = keys.COOKIE_KEY;
 
 const Discord = require("discord.js");
 const winston = require("winston");
@@ -11,9 +13,17 @@ const express = require("express");
 const cors = require("cors");
 const api = express();
 const server = require("http").createServer(api);
-const io = new (require("socket.io").Server)(server);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://76.179.53.45:3000",
+    methods: ["GET", "POST"],
+  },
+});
+const bParse = require("body-parser");
 const cParse = require("cookie-parser");
+const cSess = require("cookie-session");
 const passport = require("passport");
+const User = require("./web/models/user");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -67,7 +77,6 @@ function log(str, tags) {
 global.log = log;
 
 require("./web/utils/connectdb");
-require("./web/auth");
 require("./web/passport-setup");
 
 const utils = require("./utils.js");
@@ -85,6 +94,7 @@ module.exports = {
 };
 
 const status = require("./main.js");
+const { config } = require("dotenv");
 
 function getStatus() {
   return status;
@@ -96,10 +106,6 @@ status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
-  const User = require("./web/models/user");
-  api.use(express.json());
-  api.use(cParse(process.env.COOKIE_SECRET));
-
   const whitelist = process.env.WHITELISTED_DOMAINS
     ? process.env.WHITELISTED_DOMAINS.split(",")
     : [];
@@ -115,13 +121,31 @@ function launchWebServer() {
   };
 
   api.use(cors(corsOptions));
+  api.use(cParse());
+  api.use(
+    cSess({
+      name: "session",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      keys: [cookieKey],
+    })
+  );
   api.use(passport.initialize());
-  api.use("/auth", require("./web/routers/auth"));
+  api.use(passport.session());
 
+  api.all("/", (req, res, next) => {
+    res.header("Access-Control-AllowOrigin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-Width");
+    next();
+  });
+  api.use("/auth", require("./web/routers/auth"));
   api.get("/", (req, res) => {
-    let user = req.user || false;
-    if (!user) res.redirect(status.webAppDomain);
-    else res.redirect(status.webAppDomain);
+    if (!req.user) {
+      res.redirect(utils.config.webAppDomain + "test");
+    } else {
+      res.redirect(
+        `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
+      );
+    }
   });
 
   function initSocket(s) {
@@ -131,6 +155,7 @@ function launchWebServer() {
         if (!u) return socket.disconnect();
         else {
           let guildsOut = [];
+<<<<<<< HEAD
           for (b in status.client.children.array()) {
             if (user.guilds.member.includes(b.guildID)) {
               if (user.guilds.admin.includes(b.guildID)) {
@@ -138,6 +163,11 @@ function launchWebServer() {
               } else {
                 guildsOut.push(utils.dumbifyBot(b));
               }
+=======
+          for (b of status.client.children.array()) {
+            if (u.guilds.member.includes(b.guildID)) {
+              guildsOut.push(utils.dumbifyBot(b));
+>>>>>>> aff573a52949b6ff8996ae42dc4a62faba2a335c
             }
           }
           s.emit("guilds_res", guildsOut);
@@ -156,10 +186,6 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    log("New socket connection. Starting handshake...", [
-      "[INFO]",
-      "[WEBSOCKET]",
-    ]);
     socket.once("handshake_res", (authed, token, dToken = false) => {
       if (authed && dToken) {
         User.findOne({ token: dToken }, (err, u) => {
@@ -191,6 +217,7 @@ function launchWebServer() {
         let oldSocketIndex = status.sockets.findIndex(
           (socket) => (socket.token = token)
         );
+        log(`oldSocketIndex: ${oldSocketIndex}`, ["[WARN]", "[WEBSERVER]"]);
         if (oldSocketIndex != -1) {
           status.sockets[oldSocketIndex] = {
             socket: socket,
