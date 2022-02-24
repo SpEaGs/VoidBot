@@ -155,7 +155,6 @@ function launchWebServer() {
         if (!u) return socket.disconnect();
         else {
           let guildsOut = [];
-<<<<<<< HEAD
           for (b in status.client.children.array()) {
             if (user.guilds.member.includes(b.guildID)) {
               if (user.guilds.admin.includes(b.guildID)) {
@@ -163,11 +162,6 @@ function launchWebServer() {
               } else {
                 guildsOut.push(utils.dumbifyBot(b));
               }
-=======
-          for (b of status.client.children.array()) {
-            if (u.guilds.member.includes(b.guildID)) {
-              guildsOut.push(utils.dumbifyBot(b));
->>>>>>> aff573a52949b6ff8996ae42dc4a62faba2a335c
             }
           }
           s.emit("guilds_res", guildsOut);
