@@ -262,27 +262,32 @@ function dumpJSON(filename, data, spaces = 0) {
 }
 
 //returns a simplified version of the given bot object (for sending to web clients)
-function dumbifyBot(bot) {
+function dumbifyBot(bot, admin = false) {
   let np = {};
   let dumbBot = {
+    admin: admin,
     guildID: bot.guildID,
     guildName: bot.guildName,
     nowPlaying: false,
     audioQueue: [],
     voiceChannel: false,
     voiceChannelArray: bot.voiceChannelArray,
-    defaultVoiceChannel: bot.defaultVoiceChannel,
-    textChannelArray: bot.textChannelArray,
-    defaultTextChannel: bot.defaultTextChannel,
-    ruleTextChannel: bot.ruleTextChannel,
-    welcomeTextChannel: bot.welcomeTextChannel,
-    roleArray: bot.roleArray,
-    announcementsRole: bot.announcementsRole,
-    newMemberRole: bot.newMemberRole,
-    defaultVolume: bot.defaultVolume,
-    welcomeMsg: bot.welcomeMsg,
     paused: false,
   };
+  if (admin) {
+    Object.assign(dumbBot, {
+      defaultVoiceChannel: bot.defaultVoiceChannel,
+      textChannelArray: bot.textChannelArray,
+      defaultTextChannel: bot.defaultTextChannel,
+      ruleTextChannel: bot.ruleTextChannel,
+      welcomeTextChannel: bot.welcomeTextChannel,
+      roleArray: bot.roleArray,
+      announcementsRole: bot.announcementsRole,
+      newMemberRole: bot.newMemberRole,
+      defaultVolume: bot.defaultVolume,
+      welcomeMsg: bot.welcomeMsg,
+    });
+  }
   if (bot.voiceChannel) {
     let vc = {
       id: bot.voiceChannel.id,

@@ -133,7 +133,11 @@ function launchWebServer() {
           let guildsOut = [];
           for (b in status.client.children.array()) {
             if (user.guilds.member.includes(b.guildID)) {
-              guildsOut.push(utils.dumbifyBot(b));
+              if (user.guilds.admin.includes(b.guildID)) {
+                guildsOut.push(utils.dumbifyBot(b, true));
+              } else {
+                guildsOut.push(utils.dumbifyBot(b));
+              }
             }
           }
           s.emit("guilds_res", guildsOut);
