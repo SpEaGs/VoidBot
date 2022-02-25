@@ -151,6 +151,7 @@ function launchWebServer() {
   function initSocket(s) {
     s.on("guilds", (uToken) => {
       User.findOne({ token: uToken }, (err, u) => {
+        log(JSON.stringify(u.guilds), ["[WARN]", "[WEBSERVER]"]);
         if (err) return socket.disconnect();
         if (!u) return socket.disconnect();
         else {
