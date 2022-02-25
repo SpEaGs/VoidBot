@@ -164,6 +164,7 @@ function launchWebServer() {
               }
             }
           }
+          log(JSON.stringify(guildsOut), ["[WARN]", "[WEBSERVER]"]);
           s.emit("guilds_res", guildsOut);
         }
       });
@@ -211,7 +212,6 @@ function launchWebServer() {
         let oldSocketIndex = status.sockets.findIndex(
           (socket) => (socket.token = token)
         );
-        log(`oldSocketIndex: ${oldSocketIndex}`, ["[WARN]", "[WEBSERVER]"]);
         if (oldSocketIndex != -1) {
           status.sockets[oldSocketIndex] = {
             socket: socket,
