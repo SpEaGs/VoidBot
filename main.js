@@ -156,7 +156,7 @@ function launchWebServer() {
         if (!u) return socket.disconnect();
         else {
           let guildsOut = [];
-          for (b in status.client.children.array()) {
+          for (b of status.client.children.array()) {
             if (u.guilds.member.includes(b.guildID)) {
               if (u.guilds.admin.includes(b.guildID)) {
                 guildsOut.push(utils.dumbifyBot(b, true));
