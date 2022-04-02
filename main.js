@@ -177,6 +177,28 @@ function launchWebServer() {
         }
       });
     });
+    s.on("g_data", (payload) => {
+      let bot = status.client.children.find(
+        (bot) => bot.guildID === payload.id
+      );
+      for (let i of Object.keys(payload.data)) {
+        bot[i] = payload.data[i];
+      }
+      let mem = bot.guild.members.cache.get(payload.snowflake);
+      let paramsOut = { msg: { author: mem, member: mem }, args: [], bot: bot };
+      switch (payload.action) {
+        case false || null || undefined:
+          break;
+        case "vc":
+          paramsOut.args.push(payload.vc.name.split(" "));
+          status.client.cmds.get("join").execute(paramsOut);
+          break;
+        case "vol":
+          paramsOut.args.push(payload.data);
+          status.client.cmds.get("volume").execute(paramsOut);
+          break;
+      }
+    });
   }
 
   io.on("connection", (socket) => {
