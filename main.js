@@ -190,9 +190,14 @@ function launchWebServer() {
         case false || null || undefined:
           break;
         case "vc":
-          paramsOut.args.push(payload.vc.name.split(" "));
-          status.client.cmds.get("join").execute(paramsOut);
-          break;
+          if (payload.data) {
+            paramsOut.args.push(payload.vc.name.split(" "));
+            status.client.cmds.get("join").execute(paramsOut);
+            break;
+          } else {
+            status.client.cmds.get("leave").execute(paramsOut);
+            break;
+          }
         case "vol":
           paramsOut.args.push(payload.data);
           status.client.cmds.get("volume").execute(paramsOut);
