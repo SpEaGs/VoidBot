@@ -195,7 +195,7 @@ function launchWebServer() {
           break;
         case "vc":
           if (payload.aData) {
-            paramsOut.args.push(payload.data.name.split(" "));
+            paramsOut.args.push(payload.aData.name.split(" "));
             status.client.cmds.get("join").execute(paramsOut);
             break;
           } else {
