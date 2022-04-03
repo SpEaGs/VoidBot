@@ -178,6 +178,7 @@ function launchWebServer() {
       });
     });
     s.on("g_data", (payload) => {
+      log(JSON.stringify(payload), ["[WARN]", "[WEBSERVER]"]);
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
