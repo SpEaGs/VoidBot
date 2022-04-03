@@ -192,7 +192,7 @@ function launchWebServer() {
           break;
         case "vc":
           if (payload.data) {
-            paramsOut.args.push(payload.vc.name.split(" "));
+            paramsOut.args.push(payload.data.name.split(" "));
             status.client.cmds.get("join").execute(paramsOut);
             break;
           } else {
