@@ -182,8 +182,11 @@ function launchWebServer() {
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
-      for (let i of Object.keys(payload.data)) {
-        bot[i] = payload.data[i];
+      if (payload.data) {
+        for (let i of Object.keys(payload.data)) {
+          bot[i] = payload.data[i];
+        }
+        return;
       }
       let mem = bot.guild.members.cache.get(payload.snowflake);
       let paramsOut = { msg: { author: mem, member: mem }, args: [], bot: bot };
@@ -191,7 +194,7 @@ function launchWebServer() {
         case false || null || undefined:
           break;
         case "vc":
-          if (payload.data) {
+          if (payload.aData) {
             paramsOut.args.push(payload.data.name.split(" "));
             status.client.cmds.get("join").execute(paramsOut);
             break;
@@ -200,7 +203,7 @@ function launchWebServer() {
             break;
           }
         case "vol":
-          paramsOut.args.push(payload.data);
+          paramsOut.args.push(payload.aData.split(" "));
           status.client.cmds.get("volume").execute(paramsOut);
           break;
       }
