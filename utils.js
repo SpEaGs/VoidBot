@@ -355,7 +355,8 @@ function populateUsers(seen, bot) {
 }
 
 function informClients(bot, data) {
+  let payload = { guildID: bot.guildID, data: data };
   for (let s of bot.socketSubs) {
-    s.emit("guild_partial", data);
+    s.emit("guild_partial", payload);
   }
 }
