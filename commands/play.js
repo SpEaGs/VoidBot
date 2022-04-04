@@ -144,11 +144,13 @@ async function get_info(url, msg, status) {
     vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
     vidInfo.trackSource = "SC";
     vidInfo.videoDetails.lengthSeconds = Math.trunc(
-      vidinfo.videoDetails.duration / 1000
+      vidInfo.videoDetails.duration / 1000
     );
+    vidInfo.imgURL = vidInfo.videoDetails.artwork_url;
   } else if (url.toString().includes(".youtube.com/")) {
     vidInfo = await ytdl.getInfo(url);
     vidInfo.trackSource = "YT";
+    vidInfo.imgURL = vidInfo.thumbnail_url;
   }
   vidInfo.url = url;
   vidInfo.added_by = msg.member.displayName;
