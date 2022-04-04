@@ -1,4 +1,5 @@
 const fs = require("fs");
+var status = require("main.js");
 
 //init config (create with defaults if not exists)
 let config = {};
@@ -50,6 +51,7 @@ module.exports = {
   dumbifyBot: dumbifyBot,
   msToTime: msToTime,
   populateUsers: populateUsers,
+  informClients: informClients,
 };
 
 //gets the current date/time and formats it
@@ -226,7 +228,7 @@ function saveConfig(bot) {
 }
 
 //handles all system commands (commands related to the bot, not things it does)
-function systemCMDs(cmd, status = require("main.js")) {
+function systemCMDs(cmd, status = status) {
   let sysCmd;
   switch (cmd) {
     case "refreshcmds": {
@@ -349,5 +351,11 @@ function populateUsers(seen, bot) {
     if (!seen[u.id] && u.presence.status != "online") {
       seen[u.id] = getTimeRaw();
     }
+  }
+}
+
+function informClients(bot, data) {
+  for (let s of bot.socketSubs) {
+    s.emit("guild_partial", data);
   }
 }

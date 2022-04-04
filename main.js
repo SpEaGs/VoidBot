@@ -149,6 +149,12 @@ function launchWebServer() {
   });
 
   function initSocket(s) {
+    s.on("disconnect", () => {
+      for (b of status.client.children.array()) {
+        let index = b.socketSubs.indexOf(s);
+        if (index > -1) b.socketSubs.splice(index, 1);
+      }
+    });
     s.on("guilds", (uToken) => {
       User.findOne({ token: uToken }, (err, u) => {
         if (err) return socket.disconnect();
@@ -162,6 +168,7 @@ function launchWebServer() {
               } else {
                 guildsOut.push(utils.dumbifyBot(b));
               }
+              b.socketSubs.push(s);
             }
           }
           s.emit("guilds_res", guildsOut);

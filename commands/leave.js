@@ -40,6 +40,7 @@ module.exports = {
     }
     params.bot.voiceChannel = false;
     params.bot.voiceConnection = false;
+    utils.informClients(params.bot, { voiceChannel: params.bot.voiceChannel });
   },
   regJSON: {
     name: name,

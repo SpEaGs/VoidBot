@@ -108,4 +108,5 @@ function joinVoice(voiceChannel, status) {
       });
   }
   status.voiceChannel = voiceChannel;
+  utils.informClients(status, { voiceChannel: status.voiceChannel });
 }
