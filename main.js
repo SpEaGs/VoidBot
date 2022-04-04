@@ -178,7 +178,6 @@ function launchWebServer() {
       });
     });
     s.on("g_data", (payload) => {
-      log(JSON.stringify(payload), ["[WARN]", "[WEBSERVER]"]);
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
@@ -196,7 +195,6 @@ function launchWebServer() {
         case "vc":
           if (payload.aData) {
             paramsOut.args = payload.aData.name.split(" ");
-            log(bot.voiceChannel.name, ["[WARN]", "[WEBSERVER]"]);
             status.client.cmds.get("join").execute(paramsOut);
             break;
           } else {
