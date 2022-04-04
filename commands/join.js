@@ -21,6 +21,7 @@ module.exports = {
   execute(params) {
     let log = global.log;
     let mem = params.msg.member;
+    log(JSON.stringify(params.args), ["[WARN]", "[JOIN]"]);
     if (params.args.length < 1) {
       let voiceChannel = params.msg.member.voice.channel;
       if (voiceChannel === params.bot.voiceChannel) {
