@@ -196,6 +196,7 @@ function launchWebServer() {
         case "vc":
           if (payload.aData) {
             paramsOut.args.push(payload.aData.name.split(" "));
+            log(bot.voiceChannel.name, ["[WARN]", "[WEBSERVER]"]);
             status.client.cmds.get("join").execute(paramsOut);
             break;
           } else {
