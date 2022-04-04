@@ -199,18 +199,9 @@ function launchWebServer() {
       switch (payload.action) {
         case false || null || undefined:
           break;
-        case "vc":
-          if (payload.aData) {
-            paramsOut.args = payload.aData.name.split(" ");
-            status.client.cmds.get("join").execute(paramsOut);
-            break;
-          } else {
-            status.client.cmds.get("leave").execute(paramsOut);
-            break;
-          }
-        case "vol":
-          paramsOut.args = payload.aData.split(" ");
-          status.client.cmds.get("volume").execute(paramsOut);
+        default:
+          if (payload.aData) paramsOut.args = payload.aData.split(" ");
+          status.client.cmds.get(payload.action).execute(paramsOut);
           break;
       }
     });
