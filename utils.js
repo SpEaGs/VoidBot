@@ -1,5 +1,5 @@
 const fs = require("fs");
-var status = require("main.js");
+var status = require("./main.js");
 
 //init config (create with defaults if not exists)
 let config = {};
