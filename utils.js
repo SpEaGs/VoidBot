@@ -305,6 +305,7 @@ function dumbifyBot(bot, admin = false) {
       },
       trackSource: bot.nowPlaying.trackSource,
       url: bot.nowPlaying.url,
+      imgUrl: bot.nowPlaying.imgUrl,
       added_by: bot.nowPlaying.added_by,
     };
     dumbBot.nowPlaying = np;
@@ -320,6 +321,7 @@ function dumbifyBot(bot, admin = false) {
         },
         trackSource: i.trackSource,
         url: i.url,
+        imgUrl: i.imgUrl,
         added_by: i.added_by,
       };
       aq.push(aqd);
