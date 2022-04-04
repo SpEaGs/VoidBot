@@ -192,6 +192,9 @@ function launchWebServer() {
         for (let i of Object.keys(payload.data)) {
           bot[i] = payload.data[i];
         }
+        for (let s of bot.socketSubs) {
+          s.emit("guild_partial", { guildID: bot.guildID, data: payload.data });
+        }
         return;
       }
       let mem = bot.guild.members.cache.get(payload.snowflake);
