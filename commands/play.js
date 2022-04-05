@@ -150,7 +150,7 @@ async function get_info(url, msg, status) {
   } else if (url.toString().includes(".youtube.com/")) {
     vidInfo = await ytdl.getInfo(url);
     vidInfo.trackSource = "YT";
-    vidInfo.imgURL = vidInfo.videoDetails.thumbnail.thumbnails.pop();
+    vidInfo.imgURL = vidInfo.videoDetails.thumbnail.thumbnails.pop().url;
   }
   vidInfo.url = url;
   vidInfo.added_by = msg.member.displayName;
