@@ -229,6 +229,10 @@ function createStream(status, info) {
       break;
     }
   }
+  utils.informClients(status, {
+    audioQueue: status.audioQueue,
+    nowPlaying: status.nowPlaying,
+  });
 }
 
 function endDispatcher(status) {
@@ -257,9 +261,9 @@ function playNextInQueue(status) {
         .toString()
         .padStart(2, "0")}] (added by: ${nextPlay.added_by})\``
     );
-  createStream(status, nextPlay);
   status.nowPlaying = nextPlay;
   status.audioQueue.shift();
+  createStream(status, nextPlay);
 }
 
 function addToQueue(info, status) {
