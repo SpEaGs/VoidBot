@@ -283,4 +283,5 @@ function addToQueue(info, status) {
   ]);
   if (!status.audioQueue) status.audioQueue = [];
   status.audioQueue.push(info);
+  utils.informClients(status, { audioQueue: status.audioQueue });
 }
