@@ -311,7 +311,7 @@ function dumbifyBot(bot, admin = false) {
     dumbBot.nowPlaying = np;
     dumbBot.paused = bot.dispatcher.paused;
   }
-  log(bot.nowPlaying.imgURL, ["[WARN]", "[BOT]"]);
+  log(JSON.stringify(bot.nowPlaying), ["[WARN]", "[BOT]"]);
   if (bot.audioQueue.length > 0) {
     let aq = [];
     for (let i of bot.audioQueue) {
