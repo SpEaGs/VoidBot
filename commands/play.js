@@ -150,7 +150,7 @@ async function get_info(url, msg, status) {
   } else if (url.toString().includes(".youtube.com/")) {
     vidInfo = await ytdl.getInfo(url);
     vidInfo.trackSource = "YT";
-    vidInfo.imgURL = vidInfo.thumbnail_url;
+    vidInfo.imgURL = vidInfo.videoDetails.thumbnails.pop().url;
   }
   vidInfo.url = url;
   vidInfo.added_by = msg.member.displayName;
@@ -229,6 +229,10 @@ function createStream(status, info) {
       break;
     }
   }
+  utils.informClients(status, {
+    audioQueue: status.audioQueue,
+    nowPlaying: status.nowPlaying,
+  });
 }
 
 function endDispatcher(status) {
@@ -265,9 +269,9 @@ function playNextInQueue(status) {
         .toString()
         .padStart(2, "0")}] (added by: ${nextPlay.added_by})\``
     );
-  createStream(status, nextPlay);
   status.nowPlaying = nextPlay;
   status.audioQueue.shift();
+  createStream(status, nextPlay);
 }
 
 function addToQueue(info, status) {
@@ -287,4 +291,5 @@ function addToQueue(info, status) {
   ]);
   if (!status.audioQueue) status.audioQueue = [];
   status.audioQueue.push(info);
+  utils.informClients(status, { audioQueue: status.audioQueue });
 }
