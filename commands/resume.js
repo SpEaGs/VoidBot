@@ -29,6 +29,9 @@ module.exports = {
             .get(params.bot.defaultTextChannel.id)
             .send(`${mem} Audio stream resumed.`);
         }
+        utils.informClients(params.bot, {
+          paused: params.bot.dispatcher.paused,
+        });
         break;
       }
       case false: {

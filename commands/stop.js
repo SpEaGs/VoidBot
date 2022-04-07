@@ -27,6 +27,11 @@ module.exports = {
     } catch (error) {
       log(`Error stopping music:\n${error}`, ["[ERR]", "[STOP]"]);
     }
+    utils.informClients(params.bot, {
+      audioQueue: params.bot.audioQueue,
+      paused: false,
+      nowPlaying: false,
+    });
   },
   regJSON: {
     name: name,

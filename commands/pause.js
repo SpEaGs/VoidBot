@@ -33,6 +33,9 @@ module.exports = {
               `${mem} Audio stream paused. Use \`${prefix}resume\` to resume.`
             );
         }
+        utils.informClients(params.bot, {
+          paused: params.bot.dispatcher.paused,
+        });
         break;
       }
       case true: {

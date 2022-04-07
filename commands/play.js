@@ -235,6 +235,11 @@ function endDispatcher(status) {
   if (status.audioQueue && status.audioQueue.length === 0) {
     status.dispatcher = false;
     status.nowPlaying = false;
+    utils.informClients(status, {
+      audioQueue: status.audioQueue,
+      nowPlaying: false,
+      paused: false,
+    });
     return;
   } else {
     playNextInQueue(status);
@@ -248,6 +253,9 @@ function playNextInQueue(status) {
     `[${status.guildName}]`,
   ]);
   let nextPlay = status.audioQueue[0];
+  if (!nextPlay) {
+    return endDispatcher(status);
+  }
   status.guild.channels.cache
     .get(status.defaultTextChannel.id)
     .send(

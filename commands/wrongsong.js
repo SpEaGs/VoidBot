@@ -62,6 +62,7 @@ module.exports = {
       let i = item - 1;
       let title = params.bot.audioQueue[i].videoDetails.title;
       params.bot.audioQueue.splice(i, 1);
+      utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
       try {
         return params.msg.reply(`Removed \`${title}\` from the queue.`);
       } catch {
