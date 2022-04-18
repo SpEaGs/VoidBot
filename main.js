@@ -165,6 +165,7 @@ function launchWebServer() {
             if (u.guilds.member.includes(b.guildID)) {
               if (u.guilds.admin.includes(b.guildID)) {
                 guildsOut.push(utils.dumbifyBot(b, true));
+                b.adminSocketSubs.push(s);
               } else {
                 guildsOut.push(utils.dumbifyBot(b));
               }

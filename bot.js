@@ -36,6 +36,7 @@ class Bot extends EventEmitter {
       timeouts: {},
     };
     this.socketSubs = [];
+    this.adminSocketSubs = [];
 
     //login
     log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guildName}]`]);
