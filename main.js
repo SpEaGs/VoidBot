@@ -188,12 +188,17 @@ function launchWebServer() {
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
+      let sockets = bot.adminSocketSubs;
       if (payload.data) {
         for (let i of Object.keys(payload.data)) {
           bot[i] = payload.data[i];
         }
-        for (let s of bot.socketSubs) {
-          s.emit("guild_partial", { guildID: bot.guildID, data: payload.data });
+        if (!!payload.admin) sockets = bot.socketSubs;
+        for (let s of sockets) {
+          s.emit("guild_partial", {
+            guildID: bot.guildID,
+            data: payload.data,
+          });
         }
         return;
       }
