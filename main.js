@@ -194,7 +194,7 @@ function launchWebServer() {
         for (let i of Object.keys(payload.data)) {
           bot[i] = payload.data[i];
         }
-        if (!!payload.admin) sockets = bot.socketSubs;
+        if (!payload.admin) sockets = bot.socketSubs;
         for (let s of sockets) {
           s.emit("guild_partial", {
             guildID: bot.guildID,
