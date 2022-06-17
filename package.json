@@ -42,7 +42,7 @@
     "ytdl-core": "^4.8.0"
   },
   "devDependencies": {
-    "electron": "^12.2.3",
+    "electron": "^15.5.5",
     "electron-builder": "^22.10.5"
   },
   "build": {
