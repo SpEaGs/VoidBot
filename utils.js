@@ -54,6 +54,7 @@ module.exports = {
   msToTime: msToTime,
   populateUsers: populateUsers,
   informClients: informClients,
+  informAdminClients: informAdminClients,
 };
 
 //gets the current date/time and formats it
@@ -363,6 +364,13 @@ function populateUsers(seen, bot) {
 function informClients(bot, data) {
   let payload = { guildID: bot.guildID, data: data };
   for (let s of bot.socketSubs) {
+    s.emit("guild_partial", payload);
+  }
+}
+
+function informAdminClients(bot, data) {
+  let payload = { guildID: bot.guildID, data: data };
+  for (let s of bot.adminSocketSubs) {
     s.emit("guild_partial", payload);
   }
 }

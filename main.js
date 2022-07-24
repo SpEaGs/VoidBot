@@ -95,6 +95,7 @@ module.exports = {
 
 const status = require("./main.js");
 const { config } = require("dotenv");
+const { informAdminClients } = require("./utils.js");
 
 function getStatus() {
   return status;
@@ -186,7 +187,6 @@ function launchWebServer() {
       });
     });
     s.on("g_data", (payload) => {
-      log(payload.admin, ["[WARN]", "[WEBSERVER]"]);
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
@@ -195,13 +195,15 @@ function launchWebServer() {
         for (let i of Object.keys(payload.data)) {
           bot[i] = payload.data[i];
         }
-        if (!payload.admin) sockets = bot.socketSubs;
-        log(sockets === bot.adminSocketSubs, ["[WARN]", "[WEBSERVER]"]);
-        for (let s of sockets) {
-          s.emit("guild_partial", {
-            guildID: bot.guildID,
-            data: payload.data,
-          });
+        switch (payload.admin) {
+          case true: {
+            utils.informAdminClients(bot, payload.data);
+            break;
+          }
+          case false: {
+            utils.informClients(bot, payload.data);
+            break;
+          }
         }
         return;
       }
