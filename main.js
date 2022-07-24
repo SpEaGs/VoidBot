@@ -196,7 +196,7 @@ function launchWebServer() {
           bot[i] = payload.data[i];
         }
         if (!payload.admin) sockets = bot.socketSubs;
-        log(sockets === bot.socketSubs, ["[WARN]", "[WEBSERVER]"]);
+        log(sockets === bot.adminSocketSubs, ["[WARN]", "[WEBSERVER]"]);
         for (let s of sockets) {
           s.emit("guild_partial", {
             guildID: bot.guildID,
