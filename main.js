@@ -186,7 +186,7 @@ function launchWebServer() {
       });
     });
     s.on("g_data", (payload) => {
-      log(JSON.stringify(payload), ["[WARN]", "[WEBSERVER]"]);
+      log(payload.admin, ["[WARN]", "[WEBSERVER]"]);
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
@@ -196,6 +196,8 @@ function launchWebServer() {
           bot[i] = payload.data[i];
         }
         if (!payload.admin) sockets = bot.socketSubs;
+        log(JSON.stringify(sockets), ["[WARN]", "[WEBSERVER]"]);
+        log(JSON.stringify(bot.adminSocketSubs), ["[WARN]", "[WEBSERVER]"]);
         for (let s of sockets) {
           s.emit("guild_partial", {
             guildID: bot.guildID,
