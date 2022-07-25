@@ -303,8 +303,14 @@ function initBot(bot) {
     }
   }
   for (let role of bot.guild.roles.cache.array()) {
-    let cleanRoleName = utils.cleanChannelName(role.name);
-    bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+    if (role.id !== bot.guild.roles.everyone.id) {
+      let cleanRoleName = utils.cleanChannelName(role.name);
+      bot.roleArray.push({
+        id: role.id,
+        name: role.name,
+        cName: cleanRoleName,
+      });
+    }
   }
 }
 
