@@ -13,6 +13,7 @@ const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 
 const MAIN = require("../main.js");
+const { listenerCount } = require("superagent");
 
 let name = "play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
@@ -80,7 +81,7 @@ function getParameterByName(name, url) {
 }
 
 function worker(taskList = [], interval = 500) {
-  function task = taskList.shift();
+  let task = taskList.shift();
   task();
   if (!!taskList.length) {
     setTimeout(() => {
