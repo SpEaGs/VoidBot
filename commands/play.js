@@ -106,7 +106,7 @@ function search(args, msg, status) {
             .get(status.defaultTextChannel.id)
             .send(`${mem} That link was broken or incomplete.`);
         }
-        let requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${API_KEY}&playlistId=${plID}`;
+        let requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet$maxResults=20&key=${API_KEY}&playlistId=${plID}`;
         try {
           msg.reply(`Hold onto your butts! I've got a playlist inbound...`);
         } catch {
