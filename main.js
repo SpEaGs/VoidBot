@@ -94,8 +94,6 @@ module.exports = {
 };
 
 const status = require("./main.js");
-const { config } = require("dotenv");
-const { informAdminClients } = require("./utils.js");
 
 function getStatus() {
   return status;
