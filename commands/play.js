@@ -159,7 +159,7 @@ function search(args, msg, status) {
       }
       request(requestUrl, (error, response) => {
         if (error || !response.statusCode == 200) {
-          logErr(`Error getting video info`, `[${status.guildName}]`);
+          log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
           return;
         }
         let body = response.body;
