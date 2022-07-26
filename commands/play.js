@@ -136,12 +136,13 @@ function search(args, msg, status) {
             return i.snippet.resourceId.videoId;
           });
         });
-        vidIDs.forEach((id) => {
+        utils.dumpJSON("vidIDs", vidIDs, 2);
+        /*vidIDs.forEach((id) => {
           tasks.push(() => {
             get_info("https://www.youtube.com/watch?v=" + id, msg, status);
           });
         });
-        worker(tasks);
+        worker(tasks);*/
       } else get_info(url, msg, status);
       break;
     }
