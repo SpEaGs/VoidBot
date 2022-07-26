@@ -125,24 +125,24 @@ function search(args, msg, status) {
               `${mem} Hold onto your butts! I've got a playlist inbound...`
             );
         }
-        let vidIDs;
         let tasks = [];
         request(requestURL, (error, response) => {
           if (error || !response.statusCode == 200) {
             log("Error getting playlist info", ["[WARN], [PLAY]"]);
             return;
           }
-          utils.dumpJSON("vidIDs", response.body.items, 2);
-          vidIDs = response.body.items.map((i) => {
-            return i.snippet.resourceId.videoId;
+          response.body.items.forEach((i) => {
+            tasks.push(() => {
+              get_info(
+                "https://www.youtube.com/watch?v=" +
+                  i.snippet.resourceId.videoId,
+                msg,
+                status
+              );
+            });
           });
         });
-        /*vidIDs.forEach((id) => {
-          tasks.push(() => {
-            get_info("https://www.youtube.com/watch?v=" + id, msg, status);
-          });
-        });
-        worker(tasks);*/
+        worker(tasks);
       } else get_info(url, msg, status);
       break;
     }
