@@ -219,6 +219,7 @@ async function get_info(url, msg, status) {
     try {
       status.voiceChannel.join().then((connection) => {
         status.voiceConnection = connection;
+        utils.informClients(status, { voiceChannel: status.voiceChannel });
         play(vidInfo, status);
       });
     } catch {
