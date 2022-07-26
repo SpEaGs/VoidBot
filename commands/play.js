@@ -81,13 +81,15 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-function worker(taskList = [], interval = 1000) {
+function worker(status, taskList = [], interval = 1000) {
+  if (interval > 1000) interval = 1000;
+  if (!status.dispatcher) interval = 3000;
   log("remaining: " + taskList.length, ["[INFO]", "[PLAY-Worker]"]);
   taskList[0]();
   taskList.shift();
   if (!!taskList.length) {
     setTimeout(() => {
-      worker(taskList, interval);
+      worker(status, taskList, interval);
     }, interval);
   }
 }
@@ -145,7 +147,7 @@ function search(args, msg, status) {
               );
             });
           });
-          worker(tasks);
+          worker(status, tasks);
         });
       } else get_info(url, msg, status);
       break;
