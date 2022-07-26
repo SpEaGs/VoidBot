@@ -111,7 +111,7 @@ function search(args, msg, status) {
           msg.reply(`Hold onto your butts! I've got a playlist inbound...`);
         } catch {
           status.guild.channels.cache
-            .get(status.defaultTextChannel)
+            .get(status.defaultTextChannel.id)
             .send(
               `${mem} Hold onto your butts! I've got a playlist inbound...`
             );
