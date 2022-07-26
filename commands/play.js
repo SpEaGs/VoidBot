@@ -14,6 +14,7 @@ const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 
 const MAIN = require("../main.js");
 const { listenerCount } = require("superagent");
+const { json } = require("body-parser");
 
 let name = "play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
@@ -145,6 +146,7 @@ function search(args, msg, status) {
             });
           });
         });
+        utils.dumpJSON("tasks", tasks, 2);
         worker(tasks);
       } else get_info(url, msg, status);
       break;
