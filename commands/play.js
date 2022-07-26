@@ -116,7 +116,7 @@ function search(args, msg, status) {
               `${mem} Hold onto your butts! I've got a playlist inbound...`
             );
         }
-        request(requestUrl, (error, response) => {
+        request(requestURL, (error, response) => {
           if (error || !response.statusCode == 200) {
             log("Error getting playlist info", ["[WARN], [PLAY]"]);
             return;
