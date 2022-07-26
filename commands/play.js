@@ -80,7 +80,7 @@ function getParameterByName(name, url) {
 }
 
 function worker(taskList = [], interval = 500) {
-  taskList.shift()();
+  taskList.shift().execute();
   if (!!taskList.length) {
     setTimeout(() => {
       worker(taskList, interval);
