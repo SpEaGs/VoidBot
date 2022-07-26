@@ -70,7 +70,17 @@ module.exports = {
   },
 };
 
+function getParameterByName(name, url) {
+  name = name.replace(/[\[\]]/g, "\\$&");
+  var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+    results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return "";
+  return decodeURIComponent(results[2].replace(/\+/g, " "));
+}
+
 function search(args, msg, status) {
+  let tasks = [];
   let url = args.toString();
   let mem = msg.member;
   switch (url.toString().includes("http")) {
@@ -88,6 +98,33 @@ function search(args, msg, status) {
             .get(status.defaultTextChannel.id)
             .send(`${mem} That was not a youtube or soundcloud link.`);
         }
+      }
+      if (url.toString().includes("list=")) {
+        let plID = getParameterByName("list", url);
+        if (!plID || plID === "") {
+          return status.guild.channels.cache
+            .get(status.defaultTextChannel.id)
+            .send(`${mem} That link was broken or incomplete.`);
+        }
+        let requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&key=${API_KEY}&id=${plID}`;
+        try {
+          msg.reply(`Hold onto your butts! I've got a playlist inbound...`);
+        } catch {
+          status.guild.channels.cache
+            .get(status.defaultTextChannel)
+            .send(
+              `${mem} Hold onto your butts! I've got a playlist inbound...`
+            );
+        }
+        request(requestUrl, (error, response) => {
+          if (error || !response.statusCode == 200) {
+            log("Error getting playlist info", ["[WARN], [PLAY]"]);
+            return;
+          }
+          let body = response.body;
+          utils.dumpJSON("pl_test", response.body, 2);
+          log("Dumped response to file.", ["[WARN]", "[PLAY]"]);
+        });
       } else get_info(url, msg, status);
       break;
     }
