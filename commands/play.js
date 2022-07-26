@@ -132,11 +132,11 @@ function search(args, msg, status) {
             log("Error getting playlist info", ["[WARN], [PLAY]"]);
             return;
           }
+          utils.dumpJSON("vidIDs", response.body.items, 2);
           vidIDs = response.body.items.map((i) => {
             return i.snippet.resourceId.videoId;
           });
         });
-        utils.dumpJSON("vidIDs", body.items, 2);
         /*vidIDs.forEach((id) => {
           tasks.push(() => {
             get_info("https://www.youtube.com/watch?v=" + id, msg, status);
