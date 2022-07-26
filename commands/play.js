@@ -82,7 +82,7 @@ function getParameterByName(name, url) {
 }
 
 function worker(taskList = [], interval = 500) {
-  utils.dumpJSON("tasklist", taskList, 2);
+  log("remaining: " + taskList.length, ["[WARN]", "[PLAY]"]);
   taskList[0]();
   taskList.shift();
   if (!!taskList.length) {
@@ -144,9 +144,9 @@ function search(args, msg, status) {
                 status
               );
             });
+            log("queued: " + tasks.length, ["[WARN]", "[PLAY]"]);
           });
         });
-        utils.dumpJSON("tasks", tasks, 2);
         worker(tasks);
       } else get_info(url, msg, status);
       break;
