@@ -79,6 +79,15 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
+function worker(taskList = [], interval = 500) {
+  taskList.shift()();
+  if (!!taskList.length) {
+    setTimeout(() => {
+      worker(taskList, interval);
+    }, interval);
+  }
+}
+
 function search(args, msg, status) {
   let tasks = [];
   let url = args.toString();
@@ -116,15 +125,23 @@ function search(args, msg, status) {
               `${mem} Hold onto your butts! I've got a playlist inbound...`
             );
         }
+        let vidIDs;
+        let tasks = [];
         request(requestURL, (error, response) => {
           if (error || !response.statusCode == 200) {
             log("Error getting playlist info", ["[WARN], [PLAY]"]);
             return;
           }
-          let body = response.body;
-          utils.dumpJSON("pl_test", response.body, 2);
-          log("Dumped response to file.", ["[WARN]", "[PLAY]"]);
+          vidIDs = response.body.items.map((i) => {
+            return i.snippet.resourceId.videoId;
+          });
         });
+        vidIDs.forEach((id) => {
+          tasks.push(() => {
+            get_info("https://www.youtube.com/watch?v=" + id, msg, status);
+          });
+        });
+        worker(tasks);
       } else get_info(url, msg, status);
       break;
     }
