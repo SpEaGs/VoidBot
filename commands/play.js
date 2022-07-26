@@ -81,8 +81,8 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-function worker(taskList = [], interval = 500) {
-  log("remaining: " + taskList.length, ["[WARN]", "[PLAY]"]);
+function worker(taskList = [], interval = 1000) {
+  log("remaining: " + taskList.length, ["[INFO]", "[PLAY-Worker]"]);
   taskList[0]();
   taskList.shift();
   if (!!taskList.length) {
@@ -144,7 +144,6 @@ function search(args, msg, status) {
                 status
               );
             });
-            log("queued: " + tasks.length, ["[WARN]", "[PLAY]"]);
           });
           worker(tasks);
         });
