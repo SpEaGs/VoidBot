@@ -146,8 +146,8 @@ function search(args, msg, status) {
             });
             log("queued: " + tasks.length, ["[WARN]", "[PLAY]"]);
           });
+          worker(tasks);
         });
-        worker(tasks);
       } else get_info(url, msg, status);
       break;
     }
