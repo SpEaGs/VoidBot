@@ -136,7 +136,7 @@ function search(args, msg, status) {
             return i.snippet.resourceId.videoId;
           });
         });
-        utils.dumpJSON("vidIDs", vidIDs, 2);
+        utils.dumpJSON("vidIDs", body.items, 2);
         /*vidIDs.forEach((id) => {
           tasks.push(() => {
             get_info("https://www.youtube.com/watch?v=" + id, msg, status);
