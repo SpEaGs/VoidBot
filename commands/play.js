@@ -81,6 +81,7 @@ function getParameterByName(name, url) {
 }
 
 function worker(taskList = [], interval = 500) {
+  utils.dumpJSON("tasklist", taskList, 2);
   taskList[0]();
   taskList.shift();
   if (!!taskList.length) {
