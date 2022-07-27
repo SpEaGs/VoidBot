@@ -596,6 +596,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         }
         bot.voiceChannel = false;
         bot.voiceConnection = false;
+        utils.informClients(bot, { voiceChannel: bot.voiceChannel });
       }
       return;
     }
