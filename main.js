@@ -225,10 +225,10 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    socket.once("consoleHS", (snowflake) => {
+    socket.once("get_backlog", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
         status.consoleSockets.push(socket);
-        socket.emit("consoleHS_res", backlog);
+        socket.emit("backlog", backlog);
       }
     });
     socket.once("handshake_res", (authed, token, dToken = false) => {
