@@ -29,9 +29,6 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
-require("./web/utils/connectdb");
-require("./web/passport-setup");
-
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
 
@@ -104,6 +101,9 @@ function log(str, tags) {
   backlog.push(lo);
 }
 global.log = log;
+
+require("./web/utils/connectdb");
+require("./web/passport-setup");
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
