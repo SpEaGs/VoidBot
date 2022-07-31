@@ -29,6 +29,30 @@ if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
 
+require("./web/utils/connectdb");
+require("./web/passport-setup");
+
+const utils = require("./utils.js");
+const Bot = require("./bot.js");
+
+//init some vars & export
+module.exports = {
+  client: new Discord.Client({ forceFetchUsers: true }),
+  fs: fs,
+  systemUIPopulated: false,
+  settingsUIPopulated: false,
+  getStatus: getStatus,
+  webAppDomain: utils.config.webAppDomain,
+  sockets: [],
+  consoleSockets: [],
+};
+
+const status = require("./main.js");
+
+function getStatus() {
+  return status;
+}
+
 //log formatting and pipes to log files
 var backlog = [];
 var logger = winston.createLogger({
@@ -53,51 +77,33 @@ logger.add(
 
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str, tags) {
-  let lo = { timeStamp: utils.getTime(), tags: tags, msg: str, color: "" };
+  let lo = { timeStamp: utils.getTime(), tags: tags, msg: str };
   let l = `${lo.timeStamp} ${lo.tags.join(" ")}: ${lo.msg}`;
   switch (tags[0]) {
     case "[INFO]": {
-      lo.color = "white";
       logger.info(l);
       break;
     }
     case "[WARN]": {
-      lo.color = "yellow";
       logger.warn(l);
       break;
     }
     case "[ERR]": {
-      lo.color = "red";
       logger.error(l);
       break;
     }
   }
+  consoleSockets.forEach((s) => {
+    s.emit("stdout_check");
+    s.once("stdout_auth", (snowflake) => {
+      if (utils.config.botAdmin.includes(snowflake)) {
+        s.emit("stdout", lo);
+      }
+    });
+  });
   backlog.push(lo);
 }
 global.log = log;
-
-require("./web/utils/connectdb");
-require("./web/passport-setup");
-
-const utils = require("./utils.js");
-const Bot = require("./bot.js");
-
-//init some vars & export
-module.exports = {
-  client: new Discord.Client({ forceFetchUsers: true }),
-  fs: fs,
-  systemUIPopulated: false,
-  settingsUIPopulated: false,
-  getStatus: getStatus,
-  webAppDomain: utils.config.webAppDomain,
-  sockets: [],
-};
-
-const status = require("./main.js");
-
-function getStatus() {
-  return status;
-}
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
@@ -219,6 +225,12 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
+    socket.once("consoleHS", (snowflake) => {
+      if (utils.config.botAdmin.includes(snowflake)) {
+        status.consoleSockets.push(socket);
+        socket.emit("consoleHS_res", backlog);
+      }
+    });
     socket.once("handshake_res", (authed, token, dToken = false) => {
       if (authed && dToken) {
         User.findOne({ token: dToken }, (err, u) => {
