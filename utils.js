@@ -6,7 +6,7 @@ let config = {};
 if (!fs.existsSync("./config.json")) {
   config = {
     pubIP: false,
-    prefix: "~",
+    prefix: "/",
     welcomeMsgPre: "A new pawn for my schemes!?!?",
     sendoffMsgPre: "Aww... there goes another pawn...",
     botAdmin: ["125759724707774464", "125758417934483456"],
