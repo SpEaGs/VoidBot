@@ -93,7 +93,7 @@ function log(str, tags) {
       break;
     }
   }
-  consoleSockets.forEach((s) => {
+  status.consoleSockets.forEach((s) => {
     s.emit("stdout_check");
     s.once("stdout_auth", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
