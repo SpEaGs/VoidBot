@@ -364,6 +364,10 @@ try {
         }
         let params = { msg, args, bot };
         cmd.execute(params);
+        log(`${cmd.name} Command received from ${bot.guildName}`, [
+          "[INFO]",
+          `[${bot.guildName}]`,
+        ]);
         status.client.api
           .interactions(interaction.id, interaction.token)
           .callback.post({
