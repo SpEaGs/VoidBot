@@ -366,7 +366,8 @@ try {
     });
 
     //populate info for child clients
-    for (let i of status.client.guilds.cache.array()) {
+    let guilds = status.client.guilds.cache.array();
+    for (let i of guilds) {
       i.members.fetch();
       let newBot = new Bot.Bot(i, status);
       status.client.children.set(i.id, newBot);
