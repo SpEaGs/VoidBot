@@ -1,6 +1,7 @@
 const passport = require("passport");
 const keys = require("../tokens.json");
 const fetch = require("node-fetch");
+const utils = require("../utils.js");
 
 const { Strategy, Scope } = require("@oauth-everything/passport-discord");
 
@@ -31,6 +32,7 @@ passport.use(
         username: profile.username,
         discriminator: profile.displayName.split("#").pop(),
         token: accessToken,
+        botAdmin: false,
       };
       fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
@@ -66,7 +68,10 @@ passport.use(
                 discriminator: user.discriminator,
                 guilds: user.guilds,
                 token: accessToken,
+                botAdmin: false,
               });
+              if (utils.config.botAdmin.includes(user.snowflake))
+                newDBUser.botAdmin = true;
               newDBUser.save((err) => {
                 if (err)
                   log(`Error adding new user to DB:\n${err}`, [

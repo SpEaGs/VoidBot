@@ -22,6 +22,10 @@ const User = new Schema({
   token: {
     type: String,
   },
+  botAdmin: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 User.plugin(passportLocalDB);
