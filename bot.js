@@ -70,14 +70,6 @@ class Bot extends EventEmitter {
 
     //save config (should be done after every edit to the config object)
     utils.dumpJSON("./config.json", utils.config, 2);
-    for (let cmd of this.status.client.cmds.array()) {
-      if (cmd.regJSON != false) {
-        this.status.client.api
-          .applications(this.status.client.user.id)
-          .guilds(this.guildID)
-          .commands.post({ data: cmd.regJSON });
-      }
-    }
   }
 }
 

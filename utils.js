@@ -193,6 +193,14 @@ function populateCmds(status) {
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
     status.client.cmds.set(command.name, command);
+    for (let bot of status.client.children.array()) {
+      if (!!command.regJSON) {
+        status.client.api
+          .applications(status.client.user.id)
+          .guilds(bot.guildID)
+          .commands.post({ data: command.regJSON });
+      }
+    }
     log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);
   }
   log("Command population done!", ["[INFO]", "[UTILS]"]);
