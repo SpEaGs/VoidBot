@@ -366,12 +366,10 @@ try {
     });
 
     //populate info for child clients
-    let guilds = status.client.guilds.cache.array();
-    for (let i of guilds) {
+    for (let i of status.client.guilds.cache.array()) {
       i.members.fetch();
-      let id = i.id;
       let newBot = new Bot.Bot(i, status);
-      status.client.children.set(id, newBot);
+      status.client.children.set(i.id, newBot);
       initBot(newBot);
       log("Initialization complete!", [
         "[INFO]",
