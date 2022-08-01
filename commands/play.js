@@ -14,7 +14,7 @@ const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 
 const MAIN = require("../main.js");
 
-let name = "play";
+let name = "Play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
 
 module.exports = {

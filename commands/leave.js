@@ -5,7 +5,7 @@ const prefix = utils.config.prefix;
 
 const MAIN = require("../main.js");
 
-let name = "leave";
+let name = "Leave";
 let description = `Makes the bot leave whatever voice channel it's in.`;
 
 module.exports = {

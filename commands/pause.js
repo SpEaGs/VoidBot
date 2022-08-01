@@ -5,7 +5,7 @@ const prefix = utils.config.prefix;
 
 const MAIN = require("../main.js");
 
-let name = "pause";
+let name = "Pause";
 let description = "Pauses the bot's currently playing audio stream.";
 
 module.exports = {

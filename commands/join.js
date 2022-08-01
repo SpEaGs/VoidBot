@@ -5,7 +5,7 @@ const prefix = utils.config.prefix;
 
 const MAIN = require("../main.js");
 
-let name = "join";
+let name = "Join";
 let description =
   "Makes the bot join the given voice channel, or, if none given, the voice channel the user is in.";
 

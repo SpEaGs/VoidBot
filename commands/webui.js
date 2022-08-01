@@ -4,7 +4,7 @@ const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 const pubIP = utils.config.pubIP;
 
-let name = "webui";
+let name = "Webui";
 let description = "Sends a link to the WebUI page.";
 
 module.exports = {

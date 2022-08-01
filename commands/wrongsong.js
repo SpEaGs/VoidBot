@@ -5,7 +5,7 @@ const prefix = utils.config.prefix;
 
 const MAIN = require("../main.js");
 
-let name = "wrongsong";
+let name = "Wrongsong";
 let description = "Removes a song from the queue.";
 
 module.exports = {

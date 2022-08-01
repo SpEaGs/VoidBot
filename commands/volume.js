@@ -3,7 +3,7 @@
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 
-let name = "volume";
+let name = "Volume";
 let description = "Alters the bot's volume to the given value.";
 
 module.exports = {

@@ -6,7 +6,7 @@ const prefix = utils.config.prefix;
 
 const MAIN = require("../main.js");
 
-let name = "skip";
+let name = "Skip";
 let description = "Skips the bot's currently playing audio stream.";
 
 module.exports = {
