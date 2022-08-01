@@ -157,7 +157,9 @@ function launchWebServer() {
     s.on("disconnect", () => {
       for (b of status.client.children.array()) {
         let index = b.socketSubs.indexOf(s);
+        let adminIndex = b.adminSocketSubs.indexOf(s);
         if (index > -1) b.socketSubs.splice(index, 1);
+        if (index > -1) b.adminSocketSubs.splice(index, 1);
       }
     });
     s.on("guilds", (uToken) => {
