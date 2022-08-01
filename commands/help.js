@@ -3,6 +3,7 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const status = require("../main.js");
 
 let name = "Help";
 let description =
@@ -105,5 +106,19 @@ module.exports = {
       }
     }
   },
-  regJSON: false,
+  regJSON: {
+    name: name,
+    description: description,
+    options: [
+      {
+        name: "command",
+        description: "The command to get help with",
+        type: 3,
+        required: false,
+        choices: status.client.cmds.array().map((cmd) => {
+          return { name: cmd.name, value: cmd.name };
+        }),
+      },
+    ],
+  },
 };
