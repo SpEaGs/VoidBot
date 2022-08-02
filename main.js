@@ -238,6 +238,11 @@ function launchWebServer() {
         socket.emit("backlog", backlog);
       }
     });
+    socket.on("sysCMD", (payload) => {
+      if (utils.config.botAdmin.includes(payload.snowflake)) {
+        cmd(payload.cmd);
+      }
+    });
     socket.once("handshake_res", (authed, token, dToken = false) => {
       if (authed && dToken) {
         User.findOne({ token: dToken }, (err, u) => {
@@ -575,9 +580,8 @@ status.client.on("presenceUpdate", (oldPresence, newPresence) => {
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)
-function cmd(e, arg) {
-  if (!arg) arg = e;
-  switch (arg[0]) {
+function cmd(e = "") {
+  switch (e) {
     case "refreshcmds": {
       utils.populateCmds(status);
       break;
