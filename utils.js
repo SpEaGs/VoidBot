@@ -192,7 +192,7 @@ function populateCmds(status) {
   status.client.cmds.clear();
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
-    status.client.cmds.set(command.name, command);
+    status.client.cmds.set(command.name.toLowerCase(), command);
     for (let bot of status.client.children.array()) {
       if (!!command.regJSON) {
         status.client.api

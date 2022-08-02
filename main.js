@@ -340,7 +340,7 @@ try {
       if (admin || botadmin) adminCheck = true;
 
       //get and run command
-      let cmd = status.client.cmds.get(interaction.data.name);
+      let cmd = status.client.cmds.get(interaction.data.name.toLowerCase());
       if (cmd.admin && !adminCheck) {
         status.client.api
           .interactions(interaction.id, interaction.token)
