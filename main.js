@@ -31,12 +31,15 @@ if (process.env.NODE_ENV !== "production") {
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
-
+const intents = new Discord.IntentsBitField([
+  Discord.IntentsBitField.Flags.Guilds,
+  Discord.IntentsBitField.Flags.GuildMembers,
+]);
 //init some vars & export
 module.exports = {
   client: new Discord.Client({
     forceFetchUsers: true,
-    intents: [Discord.GatewayIntentBits.Guilds],
+    intents: intents,
   }),
   fs: fs,
   systemUIPopulated: false,
@@ -399,7 +402,6 @@ try {
     //populate info for child clients
     let guilds = status.client.guilds.cache;
     for (let i of guilds) {
-      i.members.fetch();
       let newBot = new Bot.Bot(i, status);
       status.client.children.set(i.id, newBot);
       initBot(newBot);
