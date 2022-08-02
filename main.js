@@ -34,7 +34,10 @@ const Bot = require("./bot.js");
 
 //init some vars & export
 module.exports = {
-  client: new Discord.Client({ forceFetchUsers: true }),
+  client: new Discord.Client({
+    forceFetchUsers: true,
+    intents: [GatewayIntentBits.Guilds],
+  }),
   fs: fs,
   systemUIPopulated: false,
   settingsUIPopulated: false,
@@ -45,6 +48,7 @@ module.exports = {
 };
 
 const status = require("./main.js");
+const { GatewayIntentBits } = require("discord.js");
 
 function getStatus() {
   return status;
