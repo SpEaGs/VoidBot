@@ -220,7 +220,12 @@ function launchWebServer() {
           break;
         default:
           if (payload.aData) paramsOut.args = payload.aData.split(" ");
-          status.client.cmds.get(payload.action).execute(paramsOut);
+          let cmd = status.client.cmds.get(payload.action);
+          log(`${cmd.name} Command received from ${bot.guildName}`, [
+            "[INFO]",
+            `[${bot.guildName}]`,
+          ]);
+          cmd.execute(paramsOut);
           break;
       }
     });
@@ -574,18 +579,18 @@ function cmd(e, arg) {
   if (!arg) arg = e;
   switch (arg[0]) {
     case "refreshcmds": {
-      utils.systemCMDs(arg[0], status);
+      utils.populateCmds(status);
       break;
     }
     case "refreshadmin": {
       for (let bot of status.client.children.array()) {
-        utils.systemCMDs(arg[0], bot);
+        utils.populateAdmin(bot);
       }
       break;
     }
     case "kill": {
-      utils.systemCMDs(arg[0], status);
-      break;
+      status.client.destroy();
+      process.exit(0);
     }
     default:
       return;

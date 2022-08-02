@@ -44,7 +44,6 @@ module.exports = {
   findMemberFromGuild: findMemberFromGuild,
   findRoleFromGuild: findRoleFromGuild,
   findChanFromGuild: findChanFromGuild,
-  systemCMDs: systemCMDs,
   populateCmds: populateCmds,
   populateAdmin: populateAdmin,
   aliasCheck: aliasCheck,
@@ -236,33 +235,6 @@ function saveConfig(bot) {
   config.sharding[bot.guildID].welcomeMsg = bot.welcomeMsg;
   config.sharding[bot.guildID].ruleTextChannel = bot.ruleTextChannel;
   dumpJSON("./config.json", config, 2);
-}
-
-//handles all system commands (commands related to the bot, not things it does)
-function systemCMDs(cmd, status = status) {
-  let sysCmd;
-  switch (cmd) {
-    case "refreshcmds": {
-      sysCmd = true;
-      populateCmds(status);
-      break;
-    }
-    case "refreshadmin": {
-      sysCmd = true;
-      populateAdmin(status, status.guild);
-      break;
-    }
-    case "kill": {
-      sysCmd = true;
-      status.client.destroy();
-      process.exit(0);
-    }
-    default: {
-      sysCmd = false;
-      break;
-    }
-  }
-  return sysCmd;
 }
 
 //dumps a given object's JSON to a json file
