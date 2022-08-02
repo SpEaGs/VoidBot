@@ -597,7 +597,8 @@ function cmd(e = "") {
       process.exit(0);
     }
     default:
-      return;
+      status.client.cmds.get("broadcast").execute({ args: e });
+      break;
   }
   return;
 }
