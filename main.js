@@ -413,7 +413,7 @@ try {
       }
     });
     setTimeout(() => {
-      launchWebServer(guilds);
+      launchWebServer();
     }, 200);
 
     log("VoidBot Ready! Hello World!", ["[INFO]", "[MAIN]"]);
