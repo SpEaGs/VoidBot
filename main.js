@@ -353,11 +353,7 @@ try {
         let newBot = new Bot.Bot(g, status);
         status.client.children.set(g.id, newBot);
         initBot(newBot);
-        log("Initialization complete!", [
-          "[INFO]",
-          "[MAIN]",
-          `[${newBot.guildName}]`,
-        ]);
+        log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
       }
     })();
     utils.populateCmds(status);
