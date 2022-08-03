@@ -343,6 +343,7 @@ function initBot(bot) {
 }
 
 //discord.js client ready event handler (master client)
+(async () => {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
@@ -419,7 +420,7 @@ try {
 } catch (error) {
   log(`Error initializing client:\n` + error, ["[ERR]", "[MAIN]"]);
   process.exit(1);
-}
+}})()
 
 //discord.js client event for the bot entering a new server
 status.client.on("guildCreate", (guild) => {
