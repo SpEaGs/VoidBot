@@ -206,7 +206,7 @@ function populateCmds(status) {
     }
     log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);
   }
-  const rest = new REST({ version: "10" }.setToken(TOKEN));
+  const rest = new REST({ version: "10" }).setToken(TOKEN);
   (async () => {
     try {
       log("Sending slash command data...", ["[INFO]", "[UTILS]"]);
