@@ -14,12 +14,12 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
     .setDescription(description)
-    .addStringOption((option) => {
+    .addStringOption((option) =>
       option
         .setName("command")
         .setDescription("The command to get help with")
-        .setRequired(false);
-    }),
+        .setRequired(false)
+    ),
   name: name,
   description: description,
   alias: ["?"],
