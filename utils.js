@@ -354,8 +354,10 @@ function msToTime(ms) {
   return timeOut.join(", ");
 }
 
-function populateUsers(seen, bot) {
-  for (let u of bot.guild.members.cache) {
+async function populateUsers(status, bot) {
+  let seen = status.client.lastSeen;
+  let guild = status.client.guilds.fetch(bot.guildID);
+  for (let u of guild.members.cache) {
     if (!seen[u.id] && u.presence.status != "online") {
       seen[u.id] = getTimeRaw();
     }
