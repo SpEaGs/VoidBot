@@ -346,7 +346,7 @@ function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
-    async () => {
+    (async () => {
       for (let i of status.client.guilds.cache) {
         let g = await status.client.guilds.fetch(i.id);
         let newBot = new Bot.Bot(g, status);
@@ -358,7 +358,7 @@ try {
           `[${newBot.guildName}]`,
         ]);
       }
-    };
+    })();
     utils.populateCmds(status);
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
