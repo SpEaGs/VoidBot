@@ -6,11 +6,11 @@ const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Announcements";
 let description =
-  "Use this to opt in or out of announcements on this server if it is enabled";
+  "Opt in or out of announcements on this server if it is enabled";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option
