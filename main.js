@@ -346,6 +346,7 @@ function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
+    console.log(status.client.guilds.cache);
     for (let i of status.client.guilds.cache) {
       i.roles.fetch();
       i.members.fetch();
