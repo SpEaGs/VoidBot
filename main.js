@@ -346,12 +346,10 @@ function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
-    console.log(status.client.guilds.cache);
     for (let i of status.client.guilds.cache) {
-      i.roles.fetch();
-      i.members.fetch();
-      let newBot = new Bot.Bot(i, status);
-      status.client.children.set(i.id, newBot);
+      let g = await status.client.guilds.fetch(i.id);
+      let newBot = new Bot.Bot(g, status);
+      status.client.children.set(g.id, newBot);
       initBot(newBot);
       log("Initialization complete!", [
         "[INFO]",
