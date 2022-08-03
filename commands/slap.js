@@ -1,11 +1,21 @@
 //Slap command. Slaps a user (metaphorically)
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Slap";
 let description = "Slap someone!";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("user")
+        .setDescription("The user to slap.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: false,
@@ -27,17 +37,5 @@ module.exports = {
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`);
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "user",
-        description: "user to slap",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };

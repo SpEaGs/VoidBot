@@ -2,11 +2,13 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Ping";
 let description = "Ping!";
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: false,
@@ -24,9 +26,5 @@ module.exports = {
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} Pong!`);
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };

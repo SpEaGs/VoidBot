@@ -11,13 +11,21 @@ const prefix = utils.config.prefix;
 
 const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
-
-const MAIN = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("search")
+        .setDescription("URL or search terms.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: false,
@@ -55,18 +63,6 @@ module.exports = {
       }
     }
     search(params.args, params.msg, params.bot);
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "search",
-        description: "URL or search terms.",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };
 

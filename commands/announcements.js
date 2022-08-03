@@ -2,12 +2,23 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Announcements";
 let description =
   "Use this to opt in or out of announcements on this server if it is enabled";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("action")
+        .setDescription("opt in or out")
+        .setRequired(true)
+        .addChoices({ name: "in", value: "in" }, { name: "out", value: "out" })
+    ),
   name: name,
   description: description,
   alias: ["anno"],
@@ -65,21 +76,5 @@ module.exports = {
         }
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "action",
-        description: "opt in or out",
-        type: 3,
-        required: true,
-        choices: [
-          { name: "in", value: "in" },
-          { name: "out", value: "out" },
-        ],
-      },
-    ],
   },
 };

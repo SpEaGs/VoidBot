@@ -2,6 +2,7 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 const MAIN = require("../main.js");
 
@@ -9,6 +10,7 @@ let name = "Leave";
 let description = `Makes the bot leave whatever voice channel it's in.`;
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: ["l"],
@@ -41,9 +43,5 @@ module.exports = {
     params.bot.voiceChannel = false;
     params.bot.voiceConnection = false;
     utils.informClients(params.bot, { voiceChannel: params.bot.voiceChannel });
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };

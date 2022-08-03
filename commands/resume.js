@@ -2,13 +2,13 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
-
-const MAIN = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Resume";
 let description = "Resumes the bot's current audio stream.";
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: false,
@@ -45,9 +45,5 @@ module.exports = {
         break;
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };

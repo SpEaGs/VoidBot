@@ -3,11 +3,13 @@
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 const pubIP = utils.config.pubIP;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Webui";
 let description = "Sends a link to the WebUI page.";
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: [],
@@ -27,9 +29,5 @@ module.exports = {
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} The web UI can be found here: http://${pubIP}:3000`);
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };

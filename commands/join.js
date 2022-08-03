@@ -2,14 +2,22 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
-
-const MAIN = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Join";
 let description =
   "Makes the bot join the given voice channel, or, if none given, the voice channel the user is in.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("The voice channel to join.")
+        .setRequired(false)
+    ),
   name: name,
   description: description,
   alias: ["j", "sum", "summon"],
@@ -79,18 +87,6 @@ module.exports = {
           .send(`${mem} That channel doesn't exist or isn't a voice channel!`);
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "channel",
-        description: "Voice channel to join.",
-        type: 3,
-        required: false,
-      },
-    ],
   },
 };
 

@@ -3,11 +3,21 @@
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 const status = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Broadcast";
 let description = "Sends a given message to all servers the bot is in.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("message")
+        .setDescription("The message to broadcast.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: [],
@@ -24,17 +34,5 @@ module.exports = {
         .get(bot.defaultTextChannel.id)
         .send(`[BOT AUTHOR BROADCAST] ${toSend}`);
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "message",
-        description: "the message to broadcast",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };

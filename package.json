@@ -20,6 +20,7 @@
   },
   "homepage": "https://github.com/SpEaGs/VoidBot#readme",
   "dependencies": {
+    "@discordjs/rest": "^1.0.1",
     "@oauth-everything/passport-discord": "^1.0.2",
     "body-parser": "^1.20.0",
     "cookie-parser": "^1.4.5",

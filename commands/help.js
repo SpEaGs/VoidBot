@@ -4,12 +4,26 @@
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 const status = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Help";
 let description =
   "Displays a list of commands, or a given command's description, usage, and aliases (if any)";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) => {
+      option
+        .setName("command")
+        .setDescription("The command to get help with")
+        .setRequired(false);
+      for (let cmd of status.client.cmds) {
+        option.addChoices({ name: cmd.name, value: cmd.name });
+      }
+      return option;
+    }),
   name: name,
   description: description,
   alias: ["?"],
@@ -105,20 +119,5 @@ module.exports = {
           );
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "command",
-        description: "The command to get help with",
-        type: 3,
-        required: false,
-        choices: status.client.cmds.array().map((cmd) => {
-          return { name: cmd.name, value: cmd.name };
-        }),
-      },
-    ],
   },
 };

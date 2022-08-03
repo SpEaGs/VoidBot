@@ -2,12 +2,38 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Role";
 let description =
   "Adds/Removes a(the) given role(s) from a given user. Admin only.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("action")
+        .setDescription("Add or remove.")
+        .setRequired(true)
+        .addChoices(
+          { name: "add", value: "add" },
+          { name: "remove", value: "remove" }
+        )
+    )
+    .addStringOption((option) =>
+      option
+        .setName("user")
+        .setDescription("The user to add or remove roles from.")
+        .setRequire(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("roles")
+        .setDescription("The roles to be added or removed to/from the user.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: false,
@@ -146,34 +172,6 @@ module.exports = {
         break;
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "action",
-        description: "Add or remove.",
-        type: 3,
-        required: true,
-        choices: [
-          { name: "add", value: "add" },
-          { name: "remove", value: "remove" },
-        ],
-      },
-      {
-        name: "user",
-        description: "User to add or remove roles from.",
-        type: 3,
-        required: true,
-      },
-      {
-        name: "roles",
-        description: "roles to add or remove.",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };
 

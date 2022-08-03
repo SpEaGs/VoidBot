@@ -2,11 +2,13 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Nowplaying";
 let description = "Lists info about the currently playing audio.";
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: ["np"],
@@ -46,9 +48,5 @@ module.exports = {
             .padStart(2, "0")}}] (added by: ${nP.added_by})\`\nURL: ${nP.url}`
         );
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };

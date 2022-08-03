@@ -2,13 +2,23 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
-
-const MAIN = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Wrongsong";
 let description = "Removes a song from the queue.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addIntegerOption((option) =>
+      option
+        .setName("number")
+        .setDescription(
+          "The queue position of the song to remove. (find it with /playlist)"
+        )
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: ["ws"],
@@ -71,18 +81,5 @@ module.exports = {
           .send(`${mem} Removed \`${title}\` from the queue.`);
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "number",
-        description:
-          "Queue number of the song to remove. (find it with /playlist)",
-        type: 4,
-        required: true,
-      },
-    ],
   },
 };

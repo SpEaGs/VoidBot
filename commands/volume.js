@@ -2,11 +2,21 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Volume";
 let description = "Alters the bot's volume to the given value.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("number")
+        .setDescription("The number to set the volume to.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: ["vol"],
@@ -40,18 +50,6 @@ module.exports = {
         log(`Error updating volume:\n${error}`, ["[ERR]", "[VOLUME]"]);
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "value",
-        description: "Value to set volume to.",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };
 

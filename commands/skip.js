@@ -3,13 +3,13 @@
 const utils = require("../utils.js");
 const play = require("./play.js");
 const prefix = utils.config.prefix;
-
-const MAIN = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Skip";
 let description = "Skips the bot's currently playing audio stream.";
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: false,
@@ -28,10 +28,6 @@ module.exports = {
     } catch (error) {
       log(`Error skipping song:\n${error}`, ["[ERR]", "[SKIP]"]);
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };
 

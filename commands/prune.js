@@ -2,12 +2,28 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Prune";
 let description =
   "Prunes given number of messages from the given channel. Admin only.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addIntegerOption((option) =>
+      option
+        .setName("amount")
+        .setDescription("The number of messages to prune.")
+        .setRequired(true)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("channel")
+        .setDescription("The text channel to prune.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: false,
@@ -113,23 +129,5 @@ module.exports = {
         }
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "amount",
-        description: "Number of messages to prune.",
-        type: 4,
-        required: true,
-      },
-      {
-        name: "channel",
-        description: "Channel to prune from.",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };

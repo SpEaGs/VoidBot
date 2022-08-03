@@ -2,11 +2,13 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Playlist";
 let description = "Lists all entries in audio playlist.";
 
 module.exports = {
+  data: new SlashCommandBuilder().setName(name).setDescription(description),
   name: name,
   description: description,
   alias: ["pl"],
@@ -45,9 +47,5 @@ module.exports = {
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} Playlist: ${output.join("\n")}`);
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
   },
 };

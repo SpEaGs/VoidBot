@@ -2,11 +2,21 @@
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 const status = require("../main.js");
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Seen";
 let description = "Gets how long ago a user was last online/active.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("user")
+        .setDescription("The user to find.")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: false,
@@ -84,17 +94,5 @@ module.exports = {
         break;
       }
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "user",
-        description: "User to find.",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };

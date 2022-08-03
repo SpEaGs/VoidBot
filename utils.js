@@ -1,5 +1,7 @@
 const fs = require("fs");
-var status = require("./main.js");
+const { Routes } = require("discord.js");
+const { REST } = require("@discordjs/rest");
+const { TOKEN } = require("./tokens.json");
 
 //init config (create with defaults if not exists)
 let config = {};
@@ -186,11 +188,13 @@ function populateAdmin(bot) {
 
 //populates an internal list of commands
 function populateCmds(status) {
+  let cmdReg = [];
   log("Populating commands list...", ["[INFO]", "[UTILS]"]);
   let cmdFiles = fs.readdirSync("./commands/");
   status.client.cmds.clear();
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
+    cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
     for (let bot of status.client.children.array()) {
       if (!!command.regJSON) {
@@ -202,6 +206,24 @@ function populateCmds(status) {
     }
     log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);
   }
+  const rest = new REST({ version: "10" }.setToken(TOKEN));
+  (async () => {
+    try {
+      log("Sending slash command data...", ["[INFO]", "[UTILS]"]);
+      for (let b of status.client.children) {
+        await rest.put(
+          Routes.applicationGuildCommands(
+            status.client.application.id,
+            b.guildID
+          ),
+          { body: cmdReg }
+        );
+      }
+      log("Slash commands updated successfully!", ["[INFO]", "[UTILS]"]);
+    } catch (err) {
+      log("Error sending updates for slash commands.", ["[ERR]", "[UTILS]"]);
+    }
+  })();
   log("Command population done!", ["[INFO]", "[UTILS]"]);
 }
 

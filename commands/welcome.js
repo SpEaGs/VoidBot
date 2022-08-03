@@ -2,11 +2,21 @@
 
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
+const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Welcome";
 let description = "Sends a welcome message for the given user.";
 
 module.exports = {
+  data: new SlashCommandBuilder()
+    .setName(name)
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setName("user")
+        .setDescription("The user to welcome")
+        .setRequired(true)
+    ),
   name: name,
   description: description,
   alias: [],
@@ -34,17 +44,5 @@ module.exports = {
         utils.welcome(utils.findMemberFromGuild(arg, params.bot.guild), anno)
       );
     }
-  },
-  regJSON: {
-    name: name,
-    description: description,
-    options: [
-      {
-        name: "user",
-        description: "User to welcome.",
-        type: 3,
-        required: true,
-      },
-    ],
   },
 };
