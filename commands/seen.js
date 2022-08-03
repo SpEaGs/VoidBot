@@ -9,7 +9,7 @@ let description = "Gets how long ago a user was last online/active.";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option

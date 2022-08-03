@@ -9,7 +9,9 @@ let name = "Skip";
 let description = "Skips the bot's currently playing audio stream.";
 
 module.exports = {
-  data: new SlashCommandBuilder().setName(name).setDescription(description),
+  data: new SlashCommandBuilder()
+    .setName(name.toLowerCase())
+    .setDescription(description),
   name: name,
   description: description,
   alias: false,

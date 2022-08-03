@@ -9,7 +9,7 @@ let description = "Alters the bot's volume to the given value.";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option

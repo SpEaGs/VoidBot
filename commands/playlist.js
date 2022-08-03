@@ -8,7 +8,9 @@ let name = "Playlist";
 let description = "Lists all entries in audio playlist.";
 
 module.exports = {
-  data: new SlashCommandBuilder().setName(name).setDescription(description),
+  data: new SlashCommandBuilder()
+    .setName(name.toLowerCase())
+    .setDescription(description),
   name: name,
   description: description,
   alias: ["pl"],

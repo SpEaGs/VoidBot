@@ -18,7 +18,7 @@ let description = "Plays a given YT or SC URL (or from YT search terms).";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option

@@ -9,7 +9,7 @@ let description = "Removes a song from the queue.";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addIntegerOption((option) =>
       option

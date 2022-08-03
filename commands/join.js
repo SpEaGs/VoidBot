@@ -10,7 +10,7 @@ let description =
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option

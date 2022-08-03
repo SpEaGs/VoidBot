@@ -8,7 +8,9 @@ let name = "Ping";
 let description = "Ping!";
 
 module.exports = {
-  data: new SlashCommandBuilder().setName(name).setDescription(description),
+  data: new SlashCommandBuilder()
+    .setName(name.toLowerCase())
+    .setDescription(description),
   name: name,
   description: description,
   alias: false,

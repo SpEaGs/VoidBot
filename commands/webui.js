@@ -9,7 +9,9 @@ let name = "Webui";
 let description = "Sends a link to the WebUI page.";
 
 module.exports = {
-  data: new SlashCommandBuilder().setName(name).setDescription(description),
+  data: new SlashCommandBuilder()
+    .setName(name.toLowerCase())
+    .setDescription(description),
   name: name,
   description: description,
   alias: [],

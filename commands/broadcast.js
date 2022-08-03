@@ -10,7 +10,7 @@ let description = "Sends a given message to all servers the bot is in.";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option

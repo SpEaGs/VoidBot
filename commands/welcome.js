@@ -9,7 +9,7 @@ let description = "Sends a welcome message for the given user.";
 
 module.exports = {
   data: new SlashCommandBuilder()
-    .setName(name)
+    .setName(name.toLowerCase())
     .setDescription(description)
     .addStringOption((option) =>
       option
