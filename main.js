@@ -343,21 +343,22 @@ function initBot(bot) {
 }
 
 //discord.js client ready event handler (master client)
-(async () => {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
-    for (let i of status.client.guilds.cache) {
-      let g = await status.client.guilds.fetch(i.id);
-      let newBot = new Bot.Bot(g, status);
-      status.client.children.set(g.id, newBot);
-      initBot(newBot);
-      log("Initialization complete!", [
-        "[INFO]",
-        "[MAIN]",
-        `[${newBot.guildName}]`,
-      ]);
-    }
+    async () => {
+      for (let i of status.client.guilds.cache) {
+        let g = await status.client.guilds.fetch(i.id);
+        let newBot = new Bot.Bot(g, status);
+        status.client.children.set(g.id, newBot);
+        initBot(newBot);
+        log("Initialization complete!", [
+          "[INFO]",
+          "[MAIN]",
+          `[${newBot.guildName}]`,
+        ]);
+      }
+    };
     utils.populateCmds(status);
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
@@ -420,7 +421,7 @@ try {
 } catch (error) {
   log(`Error initializing client:\n` + error, ["[ERR]", "[MAIN]"]);
   process.exit(1);
-}})()
+}
 
 //discord.js client event for the bot entering a new server
 status.client.on("guildCreate", (guild) => {
