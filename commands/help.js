@@ -19,13 +19,6 @@ module.exports = {
         .setName("command")
         .setDescription("The command to get help with")
         .setRequired(false);
-      for (let cmd of status.client.cmds) {
-        option.addChoices({
-          name: cmd.name.toLowerCase(),
-          value: cmd.name.toLowerCase(),
-        });
-      }
-      return option;
     }),
   name: name,
   description: description,
