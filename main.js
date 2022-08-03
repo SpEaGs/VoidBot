@@ -306,10 +306,11 @@ function launchWebServer() {
   });
 }
 
-function initBot(bot) {
+async function initBot(bot) {
   utils.populateAdmin(status, bot);
   utils.populateUsers(status, bot);
-  for (let chan of bot.guild.channels.cache) {
+  let guild = await status.client.guilds.fetch(bot.guildID);
+  for (let chan of guild.channels.cache) {
     let cleanChanName = utils.cleanChannelName(chan.name);
     switch (chan.type) {
       case "voice": {
@@ -330,7 +331,7 @@ function initBot(bot) {
       }
     }
   }
-  for (let role of bot.guild.roles.cache) {
+  for (let role of guild.roles.cache) {
     if (role.id !== bot.guild.roles.everyone.id) {
       let cleanRoleName = utils.cleanChannelName(role.name);
       bot.roleArray.push({
