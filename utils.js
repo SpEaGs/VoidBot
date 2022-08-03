@@ -356,8 +356,8 @@ function msToTime(ms) {
 
 async function populateUsers(status, bot) {
   let seen = status.client.lastSeen;
-  let guild = status.client.guilds.fetch(bot.guildID);
-  for (let u of guild.members) {
+  let guild = await status.client.guilds.fetch(bot.guildID);
+  for (let u of guild.members.cache) {
     if (!seen[u.id] && u.presence.status != "online") {
       seen[u.id] = getTimeRaw();
     }
