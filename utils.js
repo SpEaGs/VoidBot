@@ -135,7 +135,7 @@ function botAdminCheck(id) {
 
 //finds a role in a given server from a given role name
 function findRoleFromGuild(rolename, guild) {
-  for (const role of guild.roles.cache.array()) {
+  for (const role of guild.roles.cache) {
     let check = role.name.toLowerCase().includes(rolename.toLowerCase());
     if (check) return role;
   }
@@ -144,7 +144,7 @@ function findRoleFromGuild(rolename, guild) {
 
 //finds a member in a given server from a given username
 function findMemberFromGuild(username, guild) {
-  for (let mem of guild.members.cache.array()) {
+  for (let mem of guild.members.cache) {
     if (mem.displayName.toLowerCase().includes(username.toLowerCase()))
       return mem;
   }
@@ -153,7 +153,7 @@ function findMemberFromGuild(username, guild) {
 
 //finds a channel in a given server from a given channel name
 function findChanFromGuild(channel, guild, chanType = "text") {
-  for (let chan of guild.channels.cache.array()) {
+  for (let chan of guild.channels.cache) {
     if (
       chan.type === chanType &&
       chan.name.toLowerCase().includes(channel.toLowerCase())
@@ -171,10 +171,10 @@ function populateAdmin(bot) {
     "[UTILS]",
     `[${bot.guildName}]`,
   ]);
-  let roles = guild.roles.cache.array();
+  let roles = guild.roles.cache;
   for (let r of roles) {
     if (r.permissions.has("ADMINISTRATOR")) {
-      for (let u of r.members.array()) {
+      for (let u of r.members) {
         bot.visAdminRoles.set(u.id, u);
       }
     }
@@ -196,7 +196,7 @@ function populateCmds(status) {
     let command = require(`./commands/${file}`);
     cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
-    for (let bot of status.client.children.array()) {
+    for (let bot of status.client.children) {
       if (!!command.regJSON) {
         status.client.api
           .applications(status.client.user.id)
@@ -229,7 +229,7 @@ function populateCmds(status) {
 
 //checks internal list of commands for a given alias
 function aliasCheck(alias, status) {
-  for (let cmd of status.client.cmds.array()) {
+  for (let cmd of status.client.cmds) {
     if (cmd.alias !== false && cmd.alias.includes(alias)) {
       return cmd;
     }
@@ -356,7 +356,7 @@ function msToTime(ms) {
 }
 
 function populateUsers(seen, bot) {
-  for (let u of bot.guild.members.cache.array()) {
+  for (let u of bot.guild.members.cache) {
     if (!seen[u.id] && u.presence.status != "online") {
       seen[u.id] = getTimeRaw();
     }

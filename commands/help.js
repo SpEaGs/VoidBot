@@ -37,7 +37,7 @@ module.exports = {
     let mem = params.msg.member;
     if (!params.args.length) {
       let commandArray = [];
-      for (let c of params.bot.status.client.cmds.array()) {
+      for (let c of params.bot.status.client.cmds) {
         commandArray.splice(commandArray.length, 0, `${prefix}${c.name}`);
       }
       try {
@@ -50,7 +50,7 @@ module.exports = {
     }
     if (params.args[0].toLowerCase() == "all") {
       let toReturnArray = [];
-      for (let c of params.bot.status.client.cmds.array()) {
+      for (let c of params.bot.status.client.cmds) {
         if (cmd.alias !== false) {
           toReturnArray.push(
             `\`${prefix}${c.name}\`:\n    Usage: ${s.usage}\n    ${

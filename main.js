@@ -31,10 +31,16 @@ if (process.env.NODE_ENV !== "production") {
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
-
+const intents = new Discord.IntentsBitField([
+  Discord.IntentsBitField.Flags.Guilds,
+  Discord.IntentsBitField.Flags.GuildMembers,
+]);
 //init some vars & export
 module.exports = {
-  client: new Discord.Client({ forceFetchUsers: true }),
+  client: new Discord.Client({
+    forceFetchUsers: true,
+    intents: intents,
+  }),
   fs: fs,
   systemUIPopulated: false,
   settingsUIPopulated: false,
@@ -155,7 +161,7 @@ function launchWebServer() {
 
   function initSocket(s) {
     s.on("disconnect", () => {
-      for (b of status.client.children.array()) {
+      for (b of status.client.children) {
         let index = b.socketSubs.indexOf(s);
         let adminIndex = b.adminSocketSubs.indexOf(s);
         if (index > -1) b.socketSubs.splice(index, 1);
@@ -168,7 +174,7 @@ function launchWebServer() {
         if (!u) return socket.disconnect();
         else {
           let guildsOut = [];
-          for (b of status.client.children.array()) {
+          for (b of status.client.children) {
             if (u.guilds.member.includes(b.guildID)) {
               if (u.guilds.admin.includes(b.guildID)) {
                 guildsOut.push(utils.dumbifyBot(b, true));
@@ -303,7 +309,7 @@ function launchWebServer() {
 function initBot(bot) {
   utils.populateAdmin(bot);
   utils.populateUsers(status.client.lastSeen, bot);
-  for (let chan of bot.guild.channels.cache.array()) {
+  for (let chan of bot.guild.channels.cache) {
     let cleanChanName = utils.cleanChannelName(chan.name);
     switch (chan.type) {
       case "voice": {
@@ -324,7 +330,7 @@ function initBot(bot) {
       }
     }
   }
-  for (let role of bot.guild.roles.cache.array()) {
+  for (let role of bot.guild.roles.cache) {
     if (role.id !== bot.guild.roles.everyone.id) {
       let cleanRoleName = utils.cleanChannelName(role.name);
       bot.roleArray.push({
@@ -394,9 +400,8 @@ try {
     });
 
     //populate info for child clients
-    let guilds = status.client.guilds.cache.array();
+    let guilds = status.client.guilds.cache;
     for (let i of guilds) {
-      i.members.fetch();
       let newBot = new Bot.Bot(i, status);
       status.client.children.set(i.id, newBot);
       initBot(newBot);
@@ -531,8 +536,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
       }
       if (
-        bot.guild.channels.cache.get(oldState.channel.id).members.array()
-          .length == 1 &&
+        bot.guild.channels.cache.get(oldState.channel.id).members.length == 1 &&
         bot.voiceChannel
       ) {
         if (bot.dispatcher) {
@@ -587,7 +591,7 @@ function cmd(e = "") {
       break;
     }
     case "refreshadmin": {
-      for (let bot of status.client.children.array()) {
+      for (let bot of status.client.children) {
         utils.populateAdmin(bot);
       }
       break;
@@ -605,7 +609,7 @@ function cmd(e = "") {
 
 function updateBot(e, bot) {
   if (!bot) bot = e;
-  for (let i of status.client.children.array()) {
+  for (let i of status.client.children) {
     if (i.guildID == bot.guildID) {
       i.defaultTextChannel = bot.defaultTextChannel;
       i.defaultVoiceChannel = bot.defaultVoiceChannel;

@@ -29,7 +29,7 @@ module.exports = {
   execute(params) {
     let client = status.client;
     let toSend = params.args.join(" ");
-    for (let bot of client.children.array()) {
+    for (let bot of client.children) {
       client.channels.cache
         .get(bot.defaultTextChannel.id)
         .send(`[BOT AUTHOR BROADCAST] ${toSend}`);
