@@ -362,7 +362,7 @@ try {
     utils.populateCmds(status);
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
-      let bot = status.client.children.get(interaction.guild_id);
+      let bot = status.client.children.get(interaction.guildId);
       //fetch admin lists & compare user id
       let admin = utils.adminCheck(bot, interaction.member.user);
       let botadmin = utils.botAdminCheck(interaction.member.user.id);
