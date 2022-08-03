@@ -26,7 +26,7 @@ module.exports = {
       option
         .setName("user")
         .setDescription("The user to add or remove roles from.")
-        .setRequire(true)
+        .setRequired(true)
     )
     .addStringOption((option) =>
       option
