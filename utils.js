@@ -170,9 +170,8 @@ async function populateAdmin(bot) {
     "[UTILS]",
     `[${bot.guildName}]`,
   ]);
-  let guild = await bot.guild.fetch();
-  for (let r of await guild.roles.fetch()) {
-    if (r.permissions.has("ADMINISTRATOR")) {
+  for (let r of bot.guild.roles.cache) {
+    if (await bot.guild.roles.fetch(r.id).permissions.has("ADMINISTRATOR")) {
       for (let u of r.members) {
         bot.visAdminRoles.set(u.id, u);
       }
