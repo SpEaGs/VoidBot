@@ -135,7 +135,7 @@ function botAdminCheck(id) {
 
 //finds a role in a given server from a given role name
 function findRoleFromGuild(rolename, guild) {
-  for (const role of guild.roles.cache) {
+  for (const role of guild.roles) {
     let check = role.name.toLowerCase().includes(rolename.toLowerCase());
     if (check) return role;
   }
@@ -144,7 +144,7 @@ function findRoleFromGuild(rolename, guild) {
 
 //finds a member in a given server from a given username
 function findMemberFromGuild(username, guild) {
-  for (let mem of guild.members.cache) {
+  for (let mem of guild.members) {
     if (mem.displayName.toLowerCase().includes(username.toLowerCase()))
       return mem;
   }
@@ -153,7 +153,7 @@ function findMemberFromGuild(username, guild) {
 
 //finds a channel in a given server from a given channel name
 function findChanFromGuild(channel, guild, chanType = "text") {
-  for (let chan of guild.channels.cache) {
+  for (let chan of guild.channels) {
     if (
       chan.type === chanType &&
       chan.name.toLowerCase().includes(channel.toLowerCase())
@@ -165,14 +165,12 @@ function findChanFromGuild(channel, guild, chanType = "text") {
 
 //populates an internal list of admin for a given server
 function populateAdmin(bot) {
-  let guild = bot.guild;
   log(`Populating list of admin roles...`, [
     "[INFO]",
     "[UTILS]",
     `[${bot.guildName}]`,
   ]);
-  let roles = guild.roles.cache;
-  for (let r of roles) {
+  for (let r of bot.guild.roles) {
     if (r.permissions.has("ADMINISTRATOR")) {
       for (let u of r.members) {
         bot.visAdminRoles.set(u.id, u);
@@ -356,7 +354,7 @@ function msToTime(ms) {
 }
 
 function populateUsers(seen, bot) {
-  for (let u of bot.guild.members.cache) {
+  for (let u of bot.guild.members) {
     if (!seen[u.id] && u.presence.status != "online") {
       seen[u.id] = getTimeRaw();
     }
