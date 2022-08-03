@@ -307,7 +307,7 @@ function launchWebServer() {
 }
 
 function initBot(bot) {
-  utils.populateAdmin(bot);
+  utils.populateAdmin(status, bot);
   utils.populateUsers(status.client.lastSeen, bot);
   for (let chan of bot.guild.channels.cache) {
     let cleanChanName = utils.cleanChannelName(chan.name);
@@ -593,7 +593,7 @@ function cmd(e = "") {
     }
     case "refreshadmin": {
       for (let bot of status.client.children) {
-        utils.populateAdmin(bot);
+        utils.populateAdmin(status, bot);
       }
       break;
     }

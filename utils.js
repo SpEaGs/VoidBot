@@ -164,13 +164,14 @@ function findChanFromGuild(channel, guild, chanType = "text") {
 }
 
 //populates an internal list of admin for a given server
-async function populateAdmin(bot) {
+async function populateAdmin(status, bot) {
   log(`Populating list of admin roles...`, [
     "[INFO]",
     "[UTILS]",
     `[${bot.guildName}]`,
   ]);
-  for (let r of bot.guild.roles.cache) {
+  let guild = await status.client.guilds.fetch(bot.guildID);
+  for (let r of guild.roles) {
     if (await bot.guild.roles.fetch(r.id).permissions.has("ADMINISTRATOR")) {
       for (let u of r.members) {
         bot.visAdminRoles.set(u.id, u);
