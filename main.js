@@ -345,6 +345,19 @@ function initBot(bot) {
 //discord.js client ready event handler (master client)
 try {
   status.client.once("ready", () => {
+    //populate info for child clients
+    for (let i of status.client.guilds.cache) {
+      i.roles.fetch();
+      i.members.fetch();
+      let newBot = new Bot.Bot(i, status);
+      status.client.children.set(i.id, newBot);
+      initBot(newBot);
+      log("Initialization complete!", [
+        "[INFO]",
+        "[MAIN]",
+        `[${newBot.guildName}]`,
+      ]);
+    }
     utils.populateCmds(status);
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
@@ -398,19 +411,6 @@ try {
           });
       }
     });
-
-    //populate info for child clients
-    let guilds = status.client.guilds.cache;
-    for (let i of guilds) {
-      let newBot = new Bot.Bot(i, status);
-      status.client.children.set(i.id, newBot);
-      initBot(newBot);
-      log("Initialization complete!", [
-        "[INFO]",
-        "[MAIN]",
-        `[${newBot.guildName}]`,
-      ]);
-    }
     setTimeout(() => {
       launchWebServer(guilds);
     }, 200);
