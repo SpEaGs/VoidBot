@@ -353,7 +353,7 @@ try {
         let g = await status.client.guilds.fetch(i.id);
         let newBot = new Bot.Bot(g, status);
         status.client.children.set(g.id, newBot);
-        initBot(newBot);
+        initBot(status.client.children.get(g.id));
         log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
       }
     })();
@@ -423,9 +423,8 @@ try {
 
 //discord.js client event for the bot entering a new server
 status.client.on("guildCreate", (guild) => {
-  let newBot = new Bot.Bot(guild, status);
+  let newBot = new Bot.Bot(await status.client.guilds.fetch(guild.id), status);
   log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guildName}]`]);
-  guild.members.fetch();
   status.client.children.set(guild.id, newBot);
   setTimeout(() => {
     initBot(newBot);
