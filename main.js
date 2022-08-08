@@ -423,7 +423,8 @@ try {
 
 //discord.js client event for the bot entering a new server
 status.client.on("guildCreate", (guild) => {
-  let newBot = new Bot.Bot(await status.client.guilds.fetch(guild.id), status);
+  let guildOut = await status.client.guilds.fetch(guild.id);
+  let newBot = new Bot.Bot(guildOut, status);
   log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guildName}]`]);
   status.client.children.set(guild.id, newBot);
   setTimeout(() => {
