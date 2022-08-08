@@ -34,6 +34,7 @@ const Bot = require("./bot.js");
 const intents = new Discord.IntentsBitField([
   Discord.IntentsBitField.Flags.Guilds,
   Discord.IntentsBitField.Flags.GuildMembers,
+  Discord.IntentsBitField.Flags.GuildPresences,
 ]);
 //init some vars & export
 module.exports = {
