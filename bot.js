@@ -5,16 +5,16 @@ const utils = require("./utils.js");
 const token = require("./tokens.json").TOKEN;
 
 class Bot extends EventEmitter {
-  constructor(guild, status) {
+  constructor(guildID, status) {
     super();
     //init bot's vars
     let log = global.log;
+    this.guild = status.client.guilds.fetch(guildID);
     this.status = status;
-    this.guildID = guild.id;
-    this.guildName = guild.name;
+    this.guildID = this.guild.id;
+    this.guildName = this.guild.name;
     this.fs = require("fs");
     this.visAdminRoles = new Discord.Collection();
-    this.guild = guild;
     this.dispatcher = false;
     this.voiceChannel = false;
     this.defaultVoiceChannel = false;
