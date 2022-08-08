@@ -350,6 +350,7 @@ try {
     //populate info for child clients
     (async () => {
       for (let i of status.client.guilds.cache) {
+        console.log(i);
         let g = await status.client.guilds.fetch(i.id);
         let newBot = new Bot.Bot(g.id, status);
         status.client.children.set(g.id, newBot);
