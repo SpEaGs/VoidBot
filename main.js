@@ -351,11 +351,11 @@ try {
     (async () => {
       for (let i of status.client.guilds.cache) {
         console.log(i);
-        let g = await status.client.guilds.fetch(i.id);
-        let newBot = new Bot.Bot(g.id, status);
-        status.client.children.set(g.id, newBot);
-        initBot(status.client.children.get(g.id));
-        log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
+        //let g = await status.client.guilds.fetch(i.id);
+        let newBot = new Bot.Bot(i.id, status);
+        status.client.children.set(i.id, newBot);
+        initBot(status.client.children.get(i.id));
+        log("Initialization complete!", ["[INFO]", "[MAIN]", `[${i.name}]`]);
       }
     })();
     utils.populateCmds(status);
