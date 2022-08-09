@@ -356,8 +356,8 @@ try {
     utils.populateCmds(status);
 
     status.client.on("interactionCreate", async (interaction) => {
+      if (!interaction.isChatInputCommand()) return;
       let bot = status.client.children.get(interaction.guildId);
-      console.log(interaction);
       //fetch admin lists & compare user id
       let admin = utils.adminCheck(bot, interaction.member.user);
       let botadmin = utils.botAdminCheck(interaction.member.user.id);
@@ -365,18 +365,9 @@ try {
       if (admin || botadmin) adminCheck = true;
 
       //get and run command
-      let cmd = status.client.cmds.get(interaction.data.name.toLowerCase());
+      let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
       if (cmd.admin && !adminCheck) {
-        status.client.api
-          .interactions(interaction.id, interaction.token)
-          .callback.post({
-            data: {
-              type: 4,
-              data: {
-                content: "You lack sufficient permissions for that command.",
-              },
-            },
-          });
+        interaction.reply("You lack sufficient permissions for that command.");
       } else {
         let member = bot.guild.members.cache.get(interaction.member.user.id);
         let msg = {
@@ -384,8 +375,9 @@ try {
           member: member,
         };
         let args = [];
-        if (interaction.data.options) {
-          for (let i of interaction.data.options) {
+        if (!!interaction.options) {
+          console.log(interaction);
+          for (let i of interaction.options) {
             args.push(i.value);
           }
         }
@@ -395,16 +387,7 @@ try {
           "[INFO]",
           `[${bot.guildName}]`,
         ]);
-        status.client.api
-          .interactions(interaction.id, interaction.token)
-          .callback.post({
-            data: {
-              type: 4,
-              data: {
-                content: "Command received!",
-              },
-            },
-          });
+        interaction.reply("Command received!");
       }
     });
     setTimeout(() => {
