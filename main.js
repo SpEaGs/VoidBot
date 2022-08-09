@@ -348,16 +348,13 @@ async function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
-    (async () => {
-      for (let i of status.client.guilds.cache) {
-        console.log(i);
-        //let g = await status.client.guilds.fetch(i.id);
-        let newBot = new Bot.Bot(i.id, status);
-        status.client.children.set(i.id, newBot);
-        initBot(status.client.children.get(i.id));
-        log("Initialization complete!", ["[INFO]", "[MAIN]", `[${i.name}]`]);
-      }
-    })();
+    for (let i of status.client.guilds.cache) {
+      console.log(i);
+      let newBot = new Bot.Bot(i.id, status);
+      status.client.children.set(i.id, newBot);
+      initBot(status.client.children.get(i.id));
+      log("Initialization complete!", ["[INFO]", "[MAIN]", `[${i.name}]`]);
+    }
     utils.populateCmds(status);
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
