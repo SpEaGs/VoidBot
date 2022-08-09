@@ -200,7 +200,7 @@ function populateCmds(status) {
   (async () => {
     try {
       log("Sending slash command data...", ["[INFO]", "[UTILS]"]);
-      for (let b of status.client.children) {
+      status.client.children.forEach((b) => {
         await rest.put(
           Routes.applicationGuildCommands(
             status.client.application.id,
@@ -208,7 +208,7 @@ function populateCmds(status) {
           ),
           { body: cmdReg }
         );
-      }
+      })
       log("Slash commands updated successfully!", ["[INFO]", "[UTILS]"]);
     } catch (err) {
       log("Error sending updates for slash commands.", ["[ERR]", "[UTILS]"]);
