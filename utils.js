@@ -164,7 +164,7 @@ function findChanFromGuild(channel, guild, chanType = "text") {
 }
 
 //populates an internal list of admin for a given server
-async function populateAdmin(bot) {
+function populateAdmin(bot) {
   log(`Populating list of admin roles...`, [
     "[INFO]",
     "[UTILS]",
@@ -194,14 +194,6 @@ function populateCmds(status) {
     let command = require(`./commands/${file}`);
     cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
-    for (let bot of status.client.children) {
-      if (!!command.regJSON) {
-        status.client.api
-          .applications(status.client.user.id)
-          .guilds(bot.guildID)
-          .commands.post({ data: command.regJSON });
-      }
-    }
     log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);
   }
   const rest = new REST({ version: "10" }).setToken(TOKEN);
@@ -353,14 +345,12 @@ function msToTime(ms) {
   return timeOut.join(", ");
 }
 
-async function populateUsers(status, bot) {
+function populateUsers(status, bot) {
   let seen = status.client.lastSeen;
-  let guild = await status.client.guilds.fetch(bot.guildID);
-  for (let u of guild.members.cache) {
-    if (!seen[u.id] && u.presence.status != "online") {
+  bot.guild.members.cache.forEach((u) => {
+    if (!seen[u.id] && u.presence.status !== "online")
       seen[u.id] = getTimeRaw();
-    }
-  }
+  });
 }
 
 function informClients(bot, data) {
