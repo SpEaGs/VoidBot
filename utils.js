@@ -348,7 +348,6 @@ function msToTime(ms) {
 function populateUsers(status, bot) {
   let seen = status.client.lastSeen;
   bot.guild.members.cache.forEach((u) => {
-    console.log(u);
     if (!seen[u.id] && !!u.presence && u.presence.status !== "online")
       seen[u.id] = getTimeRaw();
   });
