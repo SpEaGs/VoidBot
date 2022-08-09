@@ -5,11 +5,11 @@ const utils = require("./utils.js");
 const token = require("./tokens.json").TOKEN;
 
 class Bot extends EventEmitter {
-  constructor(guildID, status) {
+  constructor(guild, status) {
     super();
     //init bot's vars
     let log = global.log;
-    this.guild = status.client.guilds.fetch(guildID);
+    this.guild = guild;
     this.status = status;
     this.guildID = this.guild.id;
     this.guildName = this.guild.name;

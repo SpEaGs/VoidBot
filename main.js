@@ -310,8 +310,7 @@ function launchWebServer() {
 async function initBot(bot) {
   utils.populateAdmin(status, bot);
   utils.populateUsers(status, bot);
-  let guild = await status.client.guilds.fetch(bot.guildID);
-  for (let chan of guild.channels.cache) {
+  bot.guild.channels.cache.forEach((chan) => {
     let cleanChanName = utils.cleanChannelName(chan.name);
     switch (chan.type) {
       case "voice": {
@@ -331,8 +330,8 @@ async function initBot(bot) {
         break;
       }
     }
-  }
-  for (let role of guild.roles.cache) {
+  });
+  bot.guild.roles.cache.forEach((role) => {
     if (role.id !== bot.guild.roles.everyone.id) {
       let cleanRoleName = utils.cleanChannelName(role.name);
       bot.roleArray.push({
@@ -341,7 +340,7 @@ async function initBot(bot) {
         cName: cleanRoleName,
       });
     }
-  }
+  });
 }
 
 //discord.js client ready event handler (master client)
@@ -352,7 +351,7 @@ try {
     status.client.guilds.cache.forEach((g) => {
       utils.dumpJSON(p.toString(), g, 2);
       p++;
-      let newBot = new Bot.Bot(g.id, status);
+      let newBot = new Bot.Bot(g, status);
       status.client.children.set(g.id, newBot);
       initBot(status.client.children.get(g.id));
       log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
