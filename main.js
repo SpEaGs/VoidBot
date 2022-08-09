@@ -349,14 +349,14 @@ try {
   status.client.once("ready", () => {
     //populate info for child clients
     let p = 0;
-    for (let i of status.client.guilds.cache) {
+    status.client.guilds.forEach((g) => {
       utils.dumpJSON(p.toString(), i, 2);
       p++;
-      let newBot = new Bot.Bot(i.id, status);
-      status.client.children.set(i.id, newBot);
-      initBot(status.client.children.get(i.id));
-      log("Initialization complete!", ["[INFO]", "[MAIN]", `[${i.name}]`]);
-    }
+      let newBot = new Bot.Bot(g.id, status);
+      status.client.children.set(g.id, newBot);
+      initBot(status.client.children.get(g.id));
+      log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
+    });
     utils.populateCmds(status);
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
