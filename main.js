@@ -355,7 +355,7 @@ try {
     });
     utils.populateCmds(status);
 
-    status.client.ws.on("interactionCreate", async (interaction) => {
+    status.client.on("interactionCreate", async (interaction) => {
       let bot = status.client.children.get(interaction.guildId);
       console.log(interaction);
       //fetch admin lists & compare user id
