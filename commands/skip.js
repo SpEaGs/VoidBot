@@ -14,7 +14,6 @@ module.exports = {
     .setDescription(description),
   name: name,
   description: description,
-  alias: false,
   args: false,
   usage: `\`${prefix}skip\``,
   admin: false,

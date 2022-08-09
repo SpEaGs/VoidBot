@@ -14,7 +14,6 @@ module.exports = {
     .setDescription(description),
   name: name,
   description: description,
-  alias: [],
   args: false,
   usage: `\`${prefix}webui\``,
   admin: false,
@@ -22,14 +21,8 @@ module.exports = {
   server: true,
   execute(params) {
     let mem = params.msg.member;
-    try {
-      params.msg.reply(
-        `The web UI can be found here: http://${pubIP}:7777/dash`
-      );
-    } catch {
-      params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} The web UI can be found here: http://${pubIP}:3000`);
-    }
+    params.bot.guild.channels.cache
+      .get(params.bot.defaultTextChannel.id)
+      .send(`${mem} The web UI can be found here: http://${pubIP}:3000`);
   },
 };

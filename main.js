@@ -374,14 +374,7 @@ try {
           author: member,
           member: member,
         };
-        let args = [];
-        if (!!interaction.options) {
-          console.log(interaction);
-          for (let i of interaction.options) {
-            args.push(i.value);
-          }
-        }
-        let params = { msg, args, bot };
+        let params = { interaction, bot };
         cmd.execute(params);
         log(`${cmd.name} Command received from ${bot.guildName}`, [
           "[INFO]",

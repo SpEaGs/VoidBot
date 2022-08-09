@@ -19,7 +19,6 @@ module.exports = {
     ),
   name: name,
   description: description,
-  alias: ["vol"],
   args: true,
   usage: `\`${prefix}volume <0-100>\``,
   admin: false,
@@ -27,26 +26,21 @@ module.exports = {
   server: true,
   execute(params) {
     const regex = /\ud83d\udcaf/;
-    let mem = params.msg.member;
-    if (regex.test(params.args[0])) {
+    let mem = params.interaction.member;
+    let number = params.interaction.options.getString("number");
+    let log = global.log;
+    if (regex.test(number)) {
       returnVolume(100, params, true);
       return;
     } else {
       try {
-        returnVolume(params.args[0], params, false);
+        returnVolume(number, params, false);
       } catch (error) {
-        try {
-          params.msg.reply(
-            `${params.args[0]} is not valid, scrub! Try again!\n Usage: ${this.usage}`
+        params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(
+            `${mem} ${number} is not valid, scrub! Try again!\n Usage: ${this.usage}`
           );
-        } catch {
-          params.bot.guild.channels.cache
-            .get(params.bot.defaultTextChannel.id)
-            .send(
-              `${mem} ${params.args[0]} is not valid, scrub! Try again!\n Usage: ${this.usage}`
-            );
-        }
-        let log = global.log;
         log(`Error updating volume:\n${error}`, ["[ERR]", "[VOLUME]"]);
       }
     }
@@ -55,7 +49,7 @@ module.exports = {
 
 function returnVolume(volume = "", params, regBool) {
   let returnMsg = "";
-  let mem = params.msg.member;
+  let mem = params.interaction.member;
   switch (volume[0]) {
     case "+": {
       let volMod = volume.replace("+", "");
@@ -89,13 +83,9 @@ function returnVolume(volume = "", params, regBool) {
   }
   if (params.bot.dispatcher != false)
     params.bot.dispatcher.setVolume(parseFloat(params.bot.defaultVolume / 100));
-  try {
-    params.msg.reply(returnMsg);
-  } catch {
-    params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} ${returnMsg}`);
-  }
+  params.bot.guild.channels.cache
+    .get(params.bot.defaultTextChannel.id)
+    .send(`${mem} ${returnMsg}`);
   utils.saveConfig(params.bot);
   utils.informClients(params.bot, { defaultVolume: params.bot.defaultVolume });
 }

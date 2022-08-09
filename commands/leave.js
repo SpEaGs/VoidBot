@@ -13,22 +13,17 @@ module.exports = {
     .setDescription(description),
   name: name,
   description: description,
-  alias: ["l"],
   args: false,
   useage: `\`${prefix}leave\``,
   admin: false,
   botadmin: false,
   server: true,
   execute(params) {
-    let mem = params.msg.member;
+    let mem = params.interaction.member;
     if (!params.bot.voiceChannel) {
-      try {
-        return params.msg.reply(`I'm not in a voice channel...`);
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} I'm not in a voice channel...`);
-      }
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} I'm not in a voice channel...`);
     }
     params.bot.audioQueue = [];
     if (params.bot.dispatcher !== false) {

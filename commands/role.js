@@ -36,149 +36,56 @@ module.exports = {
     ),
   name: name,
   description: description,
-  alias: false,
   args: true,
   usage: `\`${prefix}role <add/remove> <user> <role>\``,
   admin: true,
   botadmin: true,
   server: true,
   execute(params) {
-    let msgmem = params.msg.member;
-    switch (params.args[0]) {
+    let mem = params.interaction.member;
+    let action = params.interaction.options.getString("action");
+    let user = params.interaction.options.getString("user");
+    let roles = params.interaction.options.getString("roles").split(" ");
+    let guildMem = utils.findMemberFromGuild(user, params.bot.guild);
+    if (!guildMem) {
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} That user wasn't found!`);
+    }
+    let notFound = [];
+    let rolesToAction = roles.map((r) => {
+      let toReturn = utils.findRoleFromGuild(r, params.bot.guild);
+      if (!toReturn) {
+        notFound.push(r);
+        return;
+      } else return toReturn;
+    });
+    switch (action) {
       case "add": {
-        mem = utils.findMemberFromGuild(params.args[1], params.bot.guild);
-        if (!mem) {
-          try {
-            return params.msg.reply("User not found!");
-          } catch {
-            return params.bot.guild.channels.cache
-              .get(params.bot.defaultTextChannel.id)
-              .send(`${msgmem} User not found!`);
-          }
-        }
-        if (params.args.length > 3) {
-          var rolesToFind = params.args.splice(2, params.args.length - 2);
-          var roles = [];
-          for (const name of rolesToFind) {
-            var roleToAdd = utils.findRoleFromGuild(name, params.bot.guild);
-            if (!roleToAdd === false) {
-              roles.splice(roles.length, 0, roleToAdd);
-            }
-          }
-          var rolenames = [];
-          for (const r of roles) {
-            rolenames.splice(rolenames.length, 0, r.name);
-          }
-          try {
-            params.msg.reply(
-              `Adding roles: \`${rolenames}\`\n to User: \`${mem.user.username}\``
-            );
-          } catch {
-            params.bot.guild.channels.cache
-              .get(params.bot.defaultTextChannel.id)
-              .send(
-                `${msgmem} Adding roles: \`${rolenames}\`\n to User: \`${mem.user.username}\``
-              );
-          }
-          add(mem, roles);
-        } else {
-          var role = utils.findRoleFromGuild(params.args[2], params.bot.guild);
-          if (!role === false) {
-            try {
-              params.msg.reply(
-                `Adding role: \`${role.name}\`\n to User: \`${mem.user.username}\``
-              );
-            } catch {
-              params.bot.guild.channels.cache
-                .get(params.bot.defaultTextChannel.id)
-                .send(
-                  `${msgmem} Adding role: \`${role.name}\`\n to User: \`${mem.user.username}\``
-                );
-            }
-            add(mem, role);
-          } else {
-            try {
-              return params.msg.reply("Role not found!");
-            } catch {
-              return params.bot.guild.channels.cache
-                .get(params.bot.defaultTextChannel.id)
-                .send(`${msgmem} Role not found!`);
-            }
-          }
-        }
+        params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(
+            `${mem} Adding role(s): \`${rolenames}\`\n to User: \`${mem.user.username}\``
+          );
+        guildMem.roles.add(rolesToAction);
         break;
       }
       case "remove": {
-        mem = utils.findMemberFromGuild(params.args[1], params.bot.guild);
-        if (!mem) {
-          try {
-            return params.msg.reply("User not found!");
-          } catch {
-            return params.bot.guild.channels.cache
-              .get(params.bot.defaultTextChannel.id)
-              .send(`${msgmem} User not found!`);
-          }
-        }
-        if (params.args.length > 3) {
-          var rolesToFind = params.args.splice(2, params.args.length - 2);
-          var roles = [];
-          for (const name of rolesToFind) {
-            var roleToRem = utils.findRoleFromGuild(name, params.bot.guild);
-            if (!roleToRem === false) {
-              roles.splice(roles.length, 0, roleToRem);
-            }
-          }
-          var rolenames = [];
-          for (const r of roles) {
-            rolenames.splice(rolenames.length, 0, r.name);
-          }
-          try {
-            params.msg.reply(
-              `Removing roles: \`${rolenames}\`\n from User: \`${mem.user.username}\``
-            );
-          } catch {
-            params.bot.guild.channels.cache
-              .get(params.bot.defaultTextChannel.id)
-              .send(
-                `${msgmem} Removing roles: \`${rolenames}\`\n from User: \`${mem.user.username}\``
-              );
-          }
-          rem(mem, roles);
-        } else {
-          var role = utils.findRoleFromGuild(params.args[2], params.bot.guild);
-          if (!role === false) {
-            try {
-              params.msg.reply(
-                `Removing role: \`${role.name}\` from user \`${mem.user.username}\``
-              );
-            } catch {
-              params.bot.guild.channels.cache
-                .get(params.bot.defaultTextChannel.id)
-                .send(
-                  `${msgmem} Removing role: \`${role.name}\` from user \`${mem.user.username}\``
-                );
-            }
-            rem(mem, role);
-          } else {
-            try {
-              return params.msg.reply("Role not found!");
-            } catch {
-              return params.bot.guild.channels.cache
-                .get(params.bot.defaultTextChannel.id)
-                .send(`${msgmem} Role not found!`);
-            }
-          }
-        }
+        params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(
+            `${msgmem} Removing roles: \`${rolenames}\`\n from User: \`${mem.user.username}\``
+          );
+        guildMem.roles.remove(rolesToAction);
         break;
       }
     }
+    if (!!notFound) {
+      params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(
+          `${mem} These roles were not found: \`${notFound.join("`, `")}\``
+        );
+    }
   },
 };
-
-function add(mem, roleRes) {
-  mem.roles.add(roleRes);
-}
-
-function rem(mem, roleRes) {
-  mem.roles.remove(roleRes);
-}

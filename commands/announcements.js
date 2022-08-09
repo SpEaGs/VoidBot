@@ -21,7 +21,6 @@ module.exports = {
     ),
   name: name,
   description: description,
-  alias: ["anno"],
   args: false,
   usage: `\`${prefix}announcements <in/out>\``,
   admin: false,
@@ -29,51 +28,28 @@ module.exports = {
   server: false,
   execute(params) {
     let log = global.log;
-    let mem = params.msg.member;
-    if (!params.args.length) {
-      try {
-        return params.msg.reply(
-          `You need to opt in or out.\nUsage: ${this.usage}`
+    let mem = params.interaction.member;
+    let action = params.interaction.options.getString("action");
+    switch (action) {
+      case "in": {
+        mem.roles.add(
+          utils.config.sharding[params.bot.guildID].announcementsRole.id
         );
-      } catch {
         return params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} You need to opt in or out.\nUsage: ${this.usage}`);
+          .send(
+            `${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`
+          );
       }
-    } else if (params.args.length >= 1) {
-      switch (params.args[0].toLowerCase()) {
-        case "in": {
-          mem.roles.add(
-            utils.config.sharding[params.bot.guildID].announcementsRole.id
+      case "out": {
+        mem.roles.remove(
+          utils.config.sharding[params.bot.guildID].announcementsRole.id
+        );
+        return params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(
+            `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`
           );
-          try {
-            return params.msg.reply(
-              `You've successfully opted IN to ${params.bot.guildName} announcements!`
-            );
-          } catch {
-            return params.bot.guild.channels.cache
-              .get(params.bot.defaultTextChannel.id)
-              .send(
-                `${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`
-              );
-          }
-        }
-        case "out": {
-          mem.roles.remove(
-            utils.config.sharding[params.bot.guildID].announcementsRole.id
-          );
-          try {
-            return params.msg.reply(
-              `You've successfully opted OUT of ${params.bot.guildName} announcements!`
-            );
-          } catch {
-            return params.bot.guild.channels.cache
-              .get(params.bot.defaultTextChannel.id)
-              .send(
-                `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`
-              );
-          }
-        }
       }
     }
   },

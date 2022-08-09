@@ -20,7 +20,6 @@ module.exports = {
     ),
   name: name,
   description: description,
-  alias: [],
   args: true,
   usage: `\`${prefix}broadcast <message>\``,
   admin: false,
@@ -28,11 +27,13 @@ module.exports = {
   server: true,
   execute(params) {
     let client = status.client;
-    let toSend = params.args.join(" ");
-    for (let bot of client.children) {
+    let message = "";
+    if (!params.interaction) message = params.msg;
+    else message = params.interaction.options.getString("message");
+    client.children.forEach((bot) => {
       client.channels.cache
         .get(bot.defaultTextChannel.id)
-        .send(`[BOT AUTHOR BROADCAST] ${toSend}`);
-    }
+        .send(`[BOT AUTHOR BROADCAST] ${message}`);
+    });
   },
 };

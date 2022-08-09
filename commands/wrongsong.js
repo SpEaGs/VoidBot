@@ -21,65 +21,40 @@ module.exports = {
     ),
   name: name,
   description: description,
-  alias: ["ws"],
   args: false,
   usage: `\`${prefix}wrongsong <number/np>\``,
   admin: false,
   botadmin: false,
   server: true,
   execute(params) {
-    let mem = params.msg.member;
-    let item = parseInt(params.args);
+    let mem = params.interaction.member;
+    let number = params.interaction.options.getInteger("number");
     if (!params.args.length) {
-      try {
-        return params.msg.reply(
-          `You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(
+          `${mem} You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`
         );
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`
-          );
-      }
-    } else if (item > params.bot.audioQueue.length) {
-      try {
-        return params.msg.reply(
-          `The playlist isn't even ${item} songs long...`
-        );
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} The playlist isn't even ${item} songs long...`);
-      }
-    } else if (item < 0) {
-      try {
-        return params.msg.reply(`That was a negative number...`);
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} That was a negative number...`);
-      }
-    } else if (isNaN(item)) {
-      try {
-        return params.msg.reply(`That's not a number you fool.`);
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} That's not a number you fool.`);
-      }
+    } else if (number > params.bot.audioQueue.length) {
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} The playlist isn't even ${number} songs long...`);
+    } else if (number < 0) {
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} That was a negative number...`);
+    } else if (isNaN(number)) {
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} That's not a number you fool.`);
     } else {
-      let i = item - 1;
+      let i = number - 1;
       let title = params.bot.audioQueue[i].videoDetails.title;
       params.bot.audioQueue.splice(i, 1);
       utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
-      try {
-        return params.msg.reply(`Removed \`${title}\` from the queue.`);
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} Removed \`${title}\` from the queue.`);
-      }
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} Removed \`${title}\` from the queue.`);
     }
   },
 };

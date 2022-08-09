@@ -38,15 +38,11 @@ module.exports = {
 };
 
 function stopAudio(params) {
-  let mem = params.msg.member;
+  let mem = params.interaction.member;
   try {
     params.bot.dispatcher.pause();
   } catch (error) {}
-  try {
-    params.msg.reply(`Audio stream ended.`);
-  } catch {
-    params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} Audio stream ended.`);
-  }
+  params.bot.guild.channels.cache
+    .get(params.bot.defaultTextChannel.id)
+    .send(`${mem} Audio stream ended.`);
 }

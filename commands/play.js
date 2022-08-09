@@ -12,6 +12,7 @@ const prefix = utils.config.prefix;
 const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 const { SlashCommandBuilder } = require("discord.js");
+const { urlencoded } = require("express");
 
 let name = "Play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
@@ -28,7 +29,6 @@ module.exports = {
     ),
   name: name,
   description: description,
-  alias: false,
   args: true,
   usage: `\`${prefix}play <URL or search terms>\``,
   admin: false,
@@ -37,8 +37,8 @@ module.exports = {
   playNextInQueue: playNextInQueue,
   execute(params) {
     let log = global.log;
-    let mem = params.msg.member;
-    params.bot.voiceChannel = params.msg.member.voice.channel;
+    let mem = params.interaction.member;
+    params.bot.voiceChannel = params.interaction.member.voice.channel;
     if (!params.bot.voiceChannel) {
       params.bot.voiceChannel = params.bot.guild.channels.cache.get(
         params.bot.defaultVoiceChannel.id
@@ -50,19 +50,13 @@ module.exports = {
         "[PLAY]",
         `[${params.bot.guildName}]`,
       ]);
-      try {
-        return params.msg.reply(
-          `I'm not in a voice channel, neither are you, and no default is set...`
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(
+          `${mem} I'm not in a voice channel, neither are you, and no default is set...`
         );
-      } catch {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} I'm not in a voice channel, neither are you, and no default is set...`
-          );
-      }
     }
-    search(params.args, params.msg, params.bot);
+    search(params.interaction.options.getString("search"), mem, params.bot);
   },
 };
 
@@ -88,27 +82,16 @@ function worker(status, taskList = [], interval = 1000) {
   }
 }
 
-function search(args, msg, status) {
-  let tasks = [];
-  let url = args.toString();
-  let mem = msg.member;
-  switch (url.toString().includes("http")) {
+function search(str, mem, status) {
+  let url = str;
+  switch (url.includes("http")) {
     case true: {
-      if (
-        !(
-          url.toString().includes(".youtube.com/") ||
-          url.toString().includes("soundcloud.com/")
-        )
-      ) {
-        try {
-          return msg.reply(`That was not a youtube or soundcloud link.`);
-        } catch {
-          return status.guild.channels.cache
-            .get(status.defaultTextChannel.id)
-            .send(`${mem} That was not a youtube or soundcloud link.`);
-        }
+      if (!(url.includes(".youtube.com/") || url.includes("soundcloud.com/"))) {
+        return status.guild.channels.cache
+          .get(status.defaultTextChannel.id)
+          .send(`${mem} That was not a youtube or soundcloud link.`);
       }
-      if (url.toString().includes("list=")) {
+      if (url.includes("list=")) {
         let plID = getParameterByName("list", url);
         if (!plID || plID === "") {
           return status.guild.channels.cache
@@ -116,15 +99,9 @@ function search(args, msg, status) {
             .send(`${mem} That link was broken or incomplete.`);
         }
         let requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
-        try {
-          msg.reply(`Hold onto your butts! I've got a playlist inbound...`);
-        } catch {
-          status.guild.channels.cache
-            .get(status.defaultTextChannel.id)
-            .send(
-              `${mem} Hold onto your butts! I've got a playlist inbound...`
-            );
-        }
+        status.guild.channels.cache
+          .get(status.defaultTextChannel.id)
+          .send(`${mem} Hold onto your butts! I've got a playlist inbound...`);
         let tasks = [];
         request(requestURL, (error, response) => {
           if (error || !response.statusCode == 200) {
@@ -136,28 +113,23 @@ function search(args, msg, status) {
               get_info(
                 "https://www.youtube.com/watch?v=" +
                   i.snippet.resourceId.videoId,
-                msg,
+                mem,
                 status
               );
             });
           });
           worker(status, tasks);
         });
-      } else get_info(url, msg, status);
+      } else get_info(url, mem, status);
       break;
     }
     case false: {
-      let searchKwds = args.join(" ");
       let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
-        searchKwds
+        url
       )}&key=${API_KEY}`;
-      try {
-        msg.reply(`Searching Youtube for \`${searchKwds}\`...`);
-      } catch {
-        status.guild.channels.cache
-          .get(status.defaultTextChannel.id)
-          .send(`${mem} Searching Youtube for \`${searchKwds}\`...`);
-      }
+      status.guild.channels.cache
+        .get(status.defaultTextChannel.id)
+        .send(`${mem} Searching Youtube for \`${url}\`...`);
       request(requestUrl, (error, response) => {
         if (error || !response.statusCode == 200) {
           log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
@@ -165,13 +137,9 @@ function search(args, msg, status) {
         }
         let body = response.body;
         if (body.items.length == 0) {
-          try {
-            msg.reply(`I got nothing... try being less specific?`);
-          } catch {
-            status.guild.channels.cache
-              .get(status.defaultTextChannel.id)
-              .send(`${mem}I got nothing... try being less specific?`);
-          }
+          status.guild.channels.cache
+            .get(status.defaultTextChannel.id)
+            .send(`${mem}I got nothing... try being less specific?`);
           log(`0 results from search.`, [
             "[INFO]",
             "[PLAY]",
@@ -182,7 +150,7 @@ function search(args, msg, status) {
         for (let i of body.items) {
           if (i.id.kind == "youtube#video") {
             url = "https://www.youtube.com/watch?v=" + i.id.videoId;
-            get_info(url, msg, status);
+            get_info(url, mem, status);
             break;
           }
         }
@@ -193,7 +161,7 @@ function search(args, msg, status) {
 }
 
 let errcount = 0;
-async function get_info(url, msg, status) {
+async function get_info(url, mem, status) {
   let vidInfo = {};
   if (url.toString().includes("soundcloud.com/")) {
     vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
@@ -208,7 +176,7 @@ async function get_info(url, msg, status) {
     vidInfo.imgURL = vidInfo.videoDetails.thumbnails.pop().url;
   }
   vidInfo.url = url;
-  vidInfo.added_by = msg.member.displayName;
+  vidInfo.added_by = mem.displayName;
   if (status.voiceConnection == false) {
     try {
       status.voiceChannel.join().then((connection) => {

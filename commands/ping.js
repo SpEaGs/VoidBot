@@ -13,7 +13,6 @@ module.exports = {
     .setDescription(description),
   name: name,
   description: description,
-  alias: false,
   args: false,
   usage: `\`${prefix}ping\``,
   admin: false,
@@ -21,12 +20,8 @@ module.exports = {
   server: false,
   execute(params) {
     let mem = params.msg.member;
-    try {
-      params.msg.reply("Pong!");
-    } catch {
-      params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} Pong!`);
-    }
+    params.bot.guild.channels.cache
+      .get(params.bot.defaultTextChannel.id)
+      .send(`${mem} Pong!`);
   },
 };
