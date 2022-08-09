@@ -172,7 +172,7 @@ async function populateAdmin(bot) {
   ]);
   bot.guild.roles.cache.forEach((r) => {
     if (r.permissions.has(PermissionsBitField.Flags.Administrator)) {
-      r.members.cache.forEach((u) => {
+      r.members.forEach((u) => {
         bot.visAdminRoles.set(u.id, u);
       });
     }
