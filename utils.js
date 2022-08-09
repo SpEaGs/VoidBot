@@ -171,7 +171,7 @@ async function populateAdmin(bot) {
     `[${bot.guildName}]`,
   ]);
   bot.guild.roles.cache.forEach((r) => {
-    if (r.permissions.has("ADMINISTRATOR")) {
+    if (r.permissions.has(8)) {
       r.members.cache.forEach((u) => {
         bot.visAdminRoles.set(u.id, u);
       });
