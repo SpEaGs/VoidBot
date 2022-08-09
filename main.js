@@ -348,9 +348,8 @@ async function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
-    utils.dumpJSON("guilds", status.client.guilds, 2);
     for (let i of status.client.guilds.cache) {
-      console.log(i);
+      utils.dumpJSON("guilds", i, 2);
       let newBot = new Bot.Bot(i.id, status);
       status.client.children.set(i.id, newBot);
       initBot(status.client.children.get(i.id));
