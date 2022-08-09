@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Routes } = require("discord.js");
+const { Routes, PermissionsBitField } = require("discord.js");
 const { REST } = require("@discordjs/rest");
 const { TOKEN } = require("./tokens.json");
 
@@ -171,7 +171,7 @@ async function populateAdmin(bot) {
     `[${bot.guildName}]`,
   ]);
   bot.guild.roles.cache.forEach((r) => {
-    if (r.permissions.has(8)) {
+    if (r.permissions.has(PermissionsBitField.Flags.Administrator)) {
       r.members.cache.forEach((u) => {
         bot.visAdminRoles.set(u.id, u);
       });
