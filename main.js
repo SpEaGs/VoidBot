@@ -357,6 +357,10 @@ try {
 
     status.client.ws.on("INTERACTION_CREATE", async (interaction) => {
       let bot = status.client.children.get(interaction.guildId);
+      log(`int: ${interaction.guildId} -- bot: ${bot.guildID}`, [
+        "[WARN]",
+        "[CMD]",
+      ]);
       //fetch admin lists & compare user id
       let admin = utils.adminCheck(bot, interaction.member.user);
       let botadmin = utils.botAdminCheck(interaction.member.user.id);
