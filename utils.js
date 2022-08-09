@@ -212,6 +212,7 @@ function populateCmds(status) {
       log("Slash commands updated successfully!", ["[INFO]", "[UTILS]"]);
     } catch (err) {
       log("Error sending updates for slash commands.", ["[ERR]", "[UTILS]"]);
+      log(err[("[ERR]", "[UTILS]")]);
     }
   })();
   log("Command population done!", ["[INFO]", "[UTILS]"]);
