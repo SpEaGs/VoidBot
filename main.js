@@ -349,7 +349,7 @@ try {
   status.client.once("ready", () => {
     //populate info for child clients
     let p = 0;
-    status.client.guilds.forEach((g) => {
+    status.client.guilds.cache.forEach((g) => {
       utils.dumpJSON(p.toString(), i, 2);
       p++;
       let newBot = new Bot.Bot(g.id, status);
