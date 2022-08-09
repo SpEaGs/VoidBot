@@ -348,7 +348,7 @@ async function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //populate info for child clients
-    log(status.client.guilds.cache.length, ["[WARN]", "[MAIN]"]);
+    utils.dumpJSON("guilds", status.client.guilds, 2);
     for (let i of status.client.guilds.cache) {
       console.log(i);
       let newBot = new Bot.Bot(i.id, status);
