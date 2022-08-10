@@ -135,11 +135,9 @@ function botAdminCheck(id) {
 
 //finds a role in a given server from a given role name
 function findRoleFromGuild(rolename, guild) {
-  for (const role of guild.roles.cache) {
-    let check = role.name.toLowerCase().includes(rolename.toLowerCase());
-    if (check) return role;
-  }
-  return false;
+  return guild.roles.cache.find((role) =>
+    role.name.toLowerCase().includes(rolename.toLowerCase())
+  );
 }
 
 //finds a member in a given server from a given username
