@@ -28,7 +28,7 @@ module.exports = {
   execute(params) {
     let client = status.client;
     let message = "";
-    if (!params.interaction) message = params.msg;
+    if (params.WS) message = params.interaction.args.message;
     else message = params.interaction.options.getString("message");
     client.children.forEach((bot) => {
       if (!!bot.defaultTextChannel) {
