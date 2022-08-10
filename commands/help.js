@@ -44,7 +44,7 @@ module.exports = {
       let toReturnArray = [];
       params.bot.status.client.cmds.forEach((c) => {
         toReturnArray.push(
-          `\`${prefix}${c.name}\`:\n    Usage: ${s.usage}\n    ${c.description}`
+          `\`${prefix}${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`
         );
       });
       return params.bot.guild.channels.cache
