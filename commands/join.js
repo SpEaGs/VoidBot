@@ -51,12 +51,11 @@ module.exports = {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} That channel doesn't exist and no default is set.`);
-    joinVoice(chan, params.bot);
-    callback();
+    joinVoice(chan, params.bot, callback);
   },
 };
 
-function joinVoice(voiceChannel, bot) {
+function joinVoice(voiceChannel, bot, callback = () => {}) {
   bot.voiceConnection = voice.joinVoiceChannel({
     channelId: voiceChannel.id,
     guildId: voiceChannel.guild.id,
@@ -64,4 +63,5 @@ function joinVoice(voiceChannel, bot) {
   });
   bot.voiceChannel = voiceChannel;
   utils.informClients(bot, { voiceChannel: bot.voiceChannel });
+  bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, callback);
 }
