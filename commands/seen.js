@@ -26,10 +26,8 @@ module.exports = {
   server: true,
   execute(params) {
     let mem = params.interaction.member;
-    let target = utils.findMemberFromGuild(
-      params.args.join(" "),
-      params.bot.guild
-    );
+    let user = params.interaction.options.getString("user");
+    let target = utils.findMemberFromGuild(user, params.bot.guild);
     if (!target) {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
