@@ -1,7 +1,6 @@
 //stop command. Ends the bot's active audio stream, paused or otherwise.
 
 const utils = require("../utils.js");
-const play = require("./play.js");
 const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -21,18 +20,19 @@ module.exports = {
   server: true,
   execute(params) {
     let log = global.log;
+    if (!params.bot.dispatcher)
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send("I'm not playing anything...");
     try {
-      stopAudio(params.bot.dispatcher, params.bot);
+      params.bot.guild.channels.cache
+        .get(bot.defaultTextChannel.id)
+        .send("Skipping...");
+      params.bot.dispatcher.stop();
       params.bot.dispatcher = false;
       params.bot.nowPlaying = false;
-      if (params.bot.audioQueue.length != 0) play.playNextInQueue(params.bot);
     } catch (error) {
       log(`Error skipping song:\n${error}`, ["[ERR]", "[SKIP]"]);
     }
   },
 };
-
-function stopAudio(dispatcher, bot) {
-  dispatcher.pause();
-  bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Skipping...`);
-}
