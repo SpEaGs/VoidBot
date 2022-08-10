@@ -52,7 +52,7 @@ module.exports = {
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} That channel doesn't exist and no default is set.`);
     joinVoice(chan, params.bot);
-    return callback();
+    callback();
   },
 };
 
