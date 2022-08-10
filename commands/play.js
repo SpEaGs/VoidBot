@@ -186,7 +186,7 @@ async function get_info(url, mem, status, interaction) {
   vidInfo.url = url;
   vidInfo.added_by = mem.displayName;
   if (!status.voiceConnection) {
-    joinCMD.execute({ bot: status, interaction: params.interaction });
+    joinCMD.execute({ bot: status, interaction: interaction });
     return play(vidInfo, status);
   }
   if (status.dispatcher != false) {
