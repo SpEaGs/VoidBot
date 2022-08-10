@@ -214,16 +214,15 @@ function createStream(status, info) {
         stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
         stream.on("end", () => {
           str = `./temp${status.guildID}.mp3`;
-          status.dispatcher = status.voiceConnection.play(str, {
-            volume:
-              parseFloat(utils.config.sharding[status.guildID].defaultVolume) /
-              100,
-            passes: 2,
-            bitrate: "auto",
+          status.dispatcher = voice.createAudioPlayer({
+            behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
           });
-          status.dispatcher.on("finish", () => {
+          status.dispatcher.playing = true;
+          status.voiceConnection.subscribe(status.dispatcher);
+          status.dispatcher.play(voice.createAudioResource(str));
+          status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
             endDispatcher(status);
-            fs.unlinkSync(`./temp${status.guildID}.mp3`);
+            fs.unlinkSync(str);
           });
         });
       });
