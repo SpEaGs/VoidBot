@@ -57,18 +57,11 @@ module.exports = {
 };
 
 function joinVoice(voiceChannel, bot) {
-  try {
-    voiceChannel.join().then((connection) => {
-      bot.voiceConnection = connection;
-    });
-  } catch {
-    bot.guild.channels.cache
-      .get(voiceChannel.id)
-      .join()
-      .then((connection) => {
-        bot.voiceConnection = connection;
-      });
-  }
+  bot.voiceConnection = voice.joinVoiceChannel({
+    channelId: voiceChannel.id,
+    guildId: voiceChannel.guild.id,
+    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+  });
   bot.voiceChannel = voiceChannel;
   utils.informClients(bot, { voiceChannel: bot.voiceChannel });
 }
