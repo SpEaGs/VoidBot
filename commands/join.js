@@ -26,7 +26,7 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: true,
-  execute(params, callback = false) {
+  execute(params) {
     let log = global.log;
     let mem = params.interaction.member;
     let channel = params.interaction.options.getString("channel");
@@ -51,9 +51,7 @@ module.exports = {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} That channel doesn't exist and no default is set.`);
-    joinVoice(chan, params.bot);
-    console.log(callback);
-    if (!!callback) return callback();
+    return joinVoice(chan, params.bot);
   },
 };
 
