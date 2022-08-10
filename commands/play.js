@@ -238,7 +238,9 @@ function createStream(status, info) {
 
 function endDispatcher(status) {
   if (status.audioQueue && status.audioQueue.length === 0) {
-    status.dispatcher.stop();
+    try {
+      status.dispatcher.stop();
+    } catch {}
     status.dispatcher = false;
     status.nowPlaying = false;
     utils.informClients(status, {
