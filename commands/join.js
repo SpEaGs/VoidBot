@@ -61,7 +61,7 @@ function joinVoice(voiceChannel, bot, callback = () => {}) {
     guildId: voiceChannel.guild.id,
     adapterCreator: voiceChannel.guild.voiceAdapterCreator,
   });
-  bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, callback);
+  callback();
   bot.voiceChannel = voiceChannel;
   utils.informClients(bot, { voiceChannel: bot.voiceChannel });
 }
