@@ -32,6 +32,8 @@ module.exports = {
     let channel = params.interaction.options.getString("channel");
     if (!channel) {
       let voiceChannel = params.interaction.member.voice.channel;
+      console.log(voiceChannel);
+      console.log(params.bot.voiceChannel);
       if (!!voiceChannel && voiceChannel === params.bot.voiceChannel)
         return params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
