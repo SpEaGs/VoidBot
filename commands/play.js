@@ -160,6 +160,7 @@ async function get_info(url, mem, status, interaction) {
     vidInfo.videoDetails.lengthSeconds = Math.trunc(
       vidInfo.videoDetails.duration / 1000
     );
+    vidInfo.videoDetails.title += ` - ${vidInfo.videoDetails.user.username}`;
     vidInfo.imgURL = vidInfo.videoDetails.artwork_url;
   } else if (url.toString().includes(".youtube.com/")) {
     vidInfo = await ytdl.getInfo(url);
