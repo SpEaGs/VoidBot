@@ -54,7 +54,6 @@ module.exports = {
     joinVoice(chan, params.bot);
     console.log(callback);
     if (!!callback) return callback();
-    else return;
   },
 };
 
