@@ -27,7 +27,7 @@ module.exports = {
     }
     params.bot.audioQueue = [];
     if (params.bot.dispatcher !== false) {
-      params.bot.dispatcher.end();
+      params.bot.dispatcher.stop();
       params.bot.dispatcher = false;
     }
     params.bot.voiceConnection.destroy();
