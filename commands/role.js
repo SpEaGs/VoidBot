@@ -65,9 +65,9 @@ module.exports = {
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(
-            `${mem} Adding role(s): \`${rolesToAction.join(
-              " "
-            )}\`\n to User: \`${mem.user.username}\``
+            `${mem} Adding role(s): \`${rolesToAction
+              .map((r) => r.name)
+              .join(" ")}\`\n to User: \`${mem.user.username}\``
           );
         guildMem.roles.add(rolesToAction);
         break;
@@ -76,9 +76,9 @@ module.exports = {
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(
-            `${mem} Removing roles: \`${rolesToAction.join(
-              " "
-            )}\`\n from User: \`${mem.user.username}\``
+            `${mem} Removing roles: \`${rolesToAction
+              .map((r) => r.name)
+              .join(" ")}\`\n from User: \`${mem.user.username}\``
           );
         guildMem.roles.remove(rolesToAction);
         break;
