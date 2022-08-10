@@ -243,7 +243,7 @@ function saveConfig(bot) {
   config.sharding[bot.guildID].defaultVoiceChannel = bot.defaultVoiceChannel;
   config.sharding[bot.guildID].announcements = bot.announcements;
   config.sharding[bot.guildID].announcementsRole = bot.announcementsRole;
-  config.sharding[bot.guildId].newMember = bot.newMember;
+  config.sharding[bot.guildID].newMember = bot.newMember;
   config.sharding[bot.guildID].newMemberRole = bot.newMemberRole;
   config.sharding[bot.guildID].defaultTextChannel = bot.defaultTextChannel;
   config.sharding[bot.guildID].welcomeTextChannel = bot.welcomeTextChannel;
