@@ -153,7 +153,7 @@ function findMemberFromGuild(username, guild) {
 }
 
 //finds a channel in a given server from a given channel name
-function findChanFromGuild(channel, guild, chanType = "text") {
+function findChanFromGuild(channel, guild, chanType = 0) {
   guild.channels.cache.forEach((chan) => {
     if (
       chan.type === chanType &&
