@@ -48,7 +48,7 @@ module.exports = {
       return;
     }
     let chan = utils.findChanFromGuild(
-      params.args.join(" "),
+      channel.join(" "),
       params.bot.guild,
       "voice"
     );
