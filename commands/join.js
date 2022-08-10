@@ -62,7 +62,7 @@ function joinVoice(voiceChannel, bot) {
       bot.voiceConnection = connection;
     });
   } catch {
-    bot.guild.channels
+    bot.guild.channels.cache
       .get(voiceChannel.id)
       .join()
       .then((connection) => {
