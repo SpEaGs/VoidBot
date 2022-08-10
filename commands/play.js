@@ -40,24 +40,6 @@ module.exports = {
   execute(params) {
     let log = global.log;
     let mem = params.interaction.member;
-    params.bot.voiceChannel = params.interaction.member.voice.channel;
-    if (!params.bot.voiceChannel) {
-      params.bot.voiceChannel = params.bot.guild.channels.cache.get(
-        params.bot.defaultVoiceChannel.id
-      );
-    }
-    if (!params.bot.voiceChannel) {
-      log(`No voice channel specified and no default.`, [
-        "[WARN]",
-        "[PLAY]",
-        `[${params.bot.guildName}]`,
-      ]);
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(
-          `${mem} I'm not in a voice channel, neither are you, and no default is set...`
-        );
-    }
     search(
       params.interaction.options.getString("search"),
       mem,
