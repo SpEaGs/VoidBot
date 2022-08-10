@@ -62,25 +62,37 @@ module.exports = {
     });
     switch (action) {
       case "add": {
-        params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} Adding role(s): \`${rolesToAction
-              .map((r) => r.name)
-              .join("`, `")}\`\n to User: \`${mem.user.username}\``
-          );
-        guildMem.roles.add(rolesToAction);
+        try {
+          params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(
+              `${mem} Adding role(s): \`${rolesToAction
+                .map((r) => r.name)
+                .join("`, `")}\`\n to User: \`${mem.user.username}\``
+            );
+          guildMem.roles.add(rolesToAction);
+        } catch {
+          params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send("One of those roles was too powerful...");
+        }
         break;
       }
       case "remove": {
-        params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} Removing roles: \`${rolesToAction
-              .map((r) => r.name)
-              .join("`, `")}\`\n from User: \`${mem.user.username}\``
-          );
-        guildMem.roles.remove(rolesToAction);
+        try {
+          params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(
+              `${mem} Removing roles: \`${rolesToAction
+                .map((r) => r.name)
+                .join("`, `")}\`\n from User: \`${mem.user.username}\``
+            );
+          guildMem.roles.remove(rolesToAction);
+        } catch {
+          params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send("One of those roles was too powerful...");
+        }
         break;
       }
     }
