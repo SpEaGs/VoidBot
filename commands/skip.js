@@ -26,7 +26,7 @@ module.exports = {
         .send("I'm not playing anything...");
     try {
       params.bot.guild.channels.cache
-        .get(bot.defaultTextChannel.id)
+        .get(params.bot.defaultTextChannel.id)
         .send("Skipping...");
       params.bot.dispatcher.stop();
       params.bot.dispatcher = false;
