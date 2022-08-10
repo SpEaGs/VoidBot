@@ -203,7 +203,6 @@ function launchWebServer() {
       let bot = status.client.children.find(
         (bot) => bot.guildID === payload.id
       );
-      let sockets = bot.adminSocketSubs;
       if (payload.data) {
         for (let i of Object.keys(payload.data)) {
           bot[i] = payload.data[i];
@@ -211,10 +210,12 @@ function launchWebServer() {
         switch (payload.admin) {
           case true: {
             utils.informAdminClients(bot, payload.data);
+            utils.saveConfig(bot);
             break;
           }
           case false: {
             utils.informClients(bot, payload.data);
+            utils.saveConfig(bot);
             break;
           }
         }
@@ -331,7 +332,6 @@ async function initBot(bot) {
       }
     }
   });
-  console.log(bot.voiceChannelArray);
   bot.guild.roles.cache.forEach((role) => {
     if (role.id !== bot.guild.roles.everyone.id) {
       let cleanRoleName = utils.cleanChannelName(role.name);
