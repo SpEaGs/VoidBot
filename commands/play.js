@@ -2,7 +2,7 @@
 //the command sender (or default if none)
 
 const ytdl = require("ytdl-core");
-const sc = require("soundcloud-downloader");
+const sc = require("soundcloud-downloader").default;
 const request = require("superagent");
 
 const utils = require("../utils.js");
