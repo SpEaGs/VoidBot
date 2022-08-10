@@ -53,13 +53,14 @@ module.exports = {
         .send(`${mem} That user wasn't found!`);
     }
     let notFound = [];
-    let rolesToAction = roles.map((r) => {
+    let rolesToAction = [];
+    roles.forEach((r) => {
       let toReturn = utils.findRoleFromGuild(r, params.bot.guild);
       console.log(toReturn);
       if (!toReturn) {
-        notFound.push(r);
-        return;
-      } else return toReturn;
+        console.log("!toReturn");
+        return notFound.push(r);
+      } else return rolesToAction.push(toReturn);
     });
     switch (action) {
       case "add": {
