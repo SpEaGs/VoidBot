@@ -3,6 +3,7 @@
 const utils = require("../utils.js");
 const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
+const voice = require("@discordjs/voice");
 
 let name = "Join";
 let description =
@@ -47,11 +48,7 @@ module.exports = {
       joinVoice(voiceChannel, params.bot);
       return;
     }
-    let chan = utils.findChanFromGuild(
-      channel.join(" "),
-      params.bot.guild,
-      "voice"
-    );
+    let chan = utils.findChanFromGuild(channel, params.bot.guild, "voice");
     if (chan === params.bot.voiceChannel) {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
