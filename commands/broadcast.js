@@ -31,9 +31,11 @@ module.exports = {
     if (!params.interaction) message = params.msg;
     else message = params.interaction.options.getString("message");
     client.children.forEach((bot) => {
-      client.channels.cache
-        .get(bot.defaultTextChannel.id)
-        .send(`[BOT AUTHOR BROADCAST] ${message}`);
+      if (!!bot.defaultTextChannel) {
+        client.channels.cache
+          .get(bot.defaultTextChannel.id)
+          .send(`[BOT AUTHOR BROADCAST] ${message}`);
+      }
     });
   },
 };
