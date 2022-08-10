@@ -56,9 +56,7 @@ module.exports = {
     let rolesToAction = [];
     roles.forEach((r) => {
       let toReturn = utils.findRoleFromGuild(r, params.bot.guild);
-      console.log(toReturn);
       if (!toReturn) {
-        console.log("!toReturn");
         return notFound.push(r);
       } else return rolesToAction.push(toReturn);
     });
