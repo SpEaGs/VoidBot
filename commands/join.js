@@ -50,6 +50,8 @@ module.exports = {
       return;
     }
     let chan = utils.findChanFromGuild(channel, params.bot.guild, "voice");
+    console.log(chan.name);
+    console.log(params.bot.voiceChannel);
     if (chan === params.bot.voiceChannel) {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
