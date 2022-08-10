@@ -569,9 +569,9 @@ function cmd(e = "") {
       break;
     }
     case "refreshadmin": {
-      for (let bot of status.client.children) {
+      status.client.children.forEach((bot) => {
         utils.populateAdmin(status, bot);
-      }
+      });
       break;
     }
     case "kill": {
