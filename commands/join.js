@@ -31,6 +31,7 @@ module.exports = {
     let mem = params.interaction.member;
     let channel = params.interaction.options.getString("channel");
     if (!channel) {
+      log("!channel", ["[WARN]", "[JOIN]"]);
       let voiceChannel = params.interaction.member.voice.channel;
       if (voiceChannel === params.bot.voiceChannel) {
         return params.bot.guild.channels.cache
