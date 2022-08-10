@@ -33,38 +33,26 @@ module.exports = {
     if (!channel) {
       log("!channel", ["[WARN]", "[JOIN]"]);
       let voiceChannel = params.interaction.member.voice.channel;
-      if (voiceChannel === params.bot.voiceChannel) {
+      if (!!voiceChannel && voiceChannel === params.bot.voiceChannel)
         return params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} I'm already in that voice channel...`);
-      }
-      if (
-        !voiceChannel &&
-        (!params.bot.dispatcher.playing || !params.bot.dispatcher)
-      ) {
+          .send(`${mem} I'm already in your voice channel...`);
+      if (!voiceChannel)
         return params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(`${mem} You're not in a voice channel and none were given...`);
-      }
-      joinVoice(voiceChannel, params.bot);
-      return;
+      return joinVoice(voiceChannel, params.bot);
     }
-    let chan = utils.findChanFromGuild(channel, params.bot.guild, 2);
-    console.log(chan);
-    console.log(params.bot.voiceChannel);
-    if (chan === params.bot.voiceChannel) {
+    let chan = utils.findChanFromGuild(channel, params.bot, 2);
+    if (!!chan && chan === params.bot.voiceChannel)
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} I'm already in that voice channel...`);
-    }
-    try {
-      joinVoice(chan, params.bot);
-      return;
-    } catch {
+    if (!chan)
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} That channel doesn't exist or isn't a voice channel!`);
-    }
+        .send(`${mem} That channel doesn't exist and no default is set.`);
+    return joinVoice(chan, params.bot);
   },
 };
 
