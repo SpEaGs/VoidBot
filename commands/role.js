@@ -67,7 +67,7 @@ module.exports = {
           .send(
             `${mem} Adding role(s): \`${rolesToAction
               .map((r) => r.name)
-              .join(" ")}\`\n to User: \`${mem.user.username}\``
+              .join("`, `")}\`\n to User: \`${mem.user.username}\``
           );
         guildMem.roles.add(rolesToAction);
         break;
@@ -78,7 +78,7 @@ module.exports = {
           .send(
             `${mem} Removing roles: \`${rolesToAction
               .map((r) => r.name)
-              .join(" ")}\`\n from User: \`${mem.user.username}\``
+              .join("`, `")}\`\n from User: \`${mem.user.username}\``
           );
         guildMem.roles.remove(rolesToAction);
         break;
