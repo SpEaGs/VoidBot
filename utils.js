@@ -158,16 +158,16 @@ function findChanFromGuild(channel, bot, chanType = 0) {
     case 0: {
       bot.textChannelArray.forEach((chan) => {
         if (chan.name.toLowerCase().includes(channel.toLowerCase()))
-          return bot.guild.channels.get(chan.id);
+          return bot.guild.channels.cache.get(chan.id);
       });
-      return bot.guild.channels.get(bot.defaultTextChannel.id);
+      return bot.guild.channels.cache.get(bot.defaultTextChannel.id);
     }
     case 2: {
       bot.voiceChannelArray.forEach((chan) => {
         if (chan.name.toLowerCase().includes(channel.toLowerCase()))
-          return bot.guild.channels.get(chan.id);
+          return bot.guild.channels.cache.get(chan.id);
       });
-      return bot.guild.channels.get(bot.defaultVoiceChannel.id);
+      return bot.guild.channels.cache.get(bot.defaultVoiceChannel.id);
     }
   }
 }
