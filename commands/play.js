@@ -172,8 +172,7 @@ async function get_info(url, mem, status, interaction) {
     status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
       play(vidInfo, status);
     });
-  }
-  if (status.dispatcher != false) {
+  } else if (!!status.dispatcher && status.dispatcher.playing) {
     addToQueue(vidInfo, status);
   } else {
     play(vidInfo, status);
@@ -202,9 +201,10 @@ function createStream(status, info) {
       status.dispatcher = voice.createAudioPlayer({
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
+      status.dispatcher.playing = true;
       status.voiceConnection.subscribe(status.dispatcher);
       status.dispatcher.play(voice.createAudioResource(str));
-      status.dispatcher.on(voice.AudioPlayerStatus.Idle, () => {
+      status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
         endDispatcher(status);
       });
       break;
@@ -238,6 +238,7 @@ function createStream(status, info) {
 
 function endDispatcher(status) {
   if (status.audioQueue && status.audioQueue.length === 0) {
+    status.dispatcher.stop();
     status.dispatcher = false;
     status.nowPlaying = false;
     utils.informClients(status, {
