@@ -23,6 +23,7 @@ module.exports = {
     switch (params.bot.dispatcher.paused) {
       case false: {
         params.bot.dispatcher.pause();
+        params.bot.dispatcher.paused = true;
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(

@@ -203,6 +203,7 @@ function createStream(status, info) {
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
       status.dispatcher.playing = true;
+      status.dispatcher.paused = false;
       status.voiceConnection.subscribe(status.dispatcher);
       status.dispatcher.play(voice.createAudioResource(str));
       status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
@@ -219,6 +220,7 @@ function createStream(status, info) {
             behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
           });
           status.dispatcher.playing = true;
+          status.dispatcher.paused = false;
           status.voiceConnection.subscribe(status.dispatcher);
           status.dispatcher.play(voice.createAudioResource(str));
           status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
