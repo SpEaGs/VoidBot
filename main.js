@@ -313,7 +313,7 @@ async function initBot(bot) {
   bot.guild.channels.cache.forEach((chan) => {
     let cleanChanName = utils.cleanChannelName(chan.name);
     switch (chan.type) {
-      case "voice": {
+      case 2: {
         bot.voiceChannelArray.push({
           id: chan.id,
           name: chan.name,
@@ -321,7 +321,7 @@ async function initBot(bot) {
         });
         break;
       }
-      case "text": {
+      case 0: {
         bot.textChannelArray.push({
           id: chan.id,
           name: chan.name,
