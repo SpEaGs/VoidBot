@@ -154,20 +154,20 @@ function findMemberFromGuild(username, guild) {
 
 //finds a channel in a given server from a given channel name
 function findChanFromGuild(channel, bot, chanType = 0) {
-  switch (chanType) {
-    case 0: {
-      bot.textChannelArray.forEach((chan) => {
-        if (chan.name.toLowerCase().includes(channel.toLowerCase()))
-          return bot.guild.channels.cache.get(chan.id);
-      });
-      return bot.guild.channels.cache.get(bot.defaultTextChannel.id);
-    }
-    case 2: {
-      bot.voiceChannelArray.forEach((chan) => {
-        if (chan.name.toLowerCase().includes(channel.toLowerCase()))
-          return bot.guild.channels.cache.get(chan.id);
-      });
-      return bot.guild.channels.cache.get(bot.defaultVoiceChannel.id);
+  let chan = bot.guild.channels.cache.find((c) => {
+    if (
+      c.name.toLowerCase().includes(channel.toLowerCase()) &&
+      c.type === chanType
+    )
+      return c;
+  });
+  if (!!chan) return chan;
+  else {
+    switch (chanType) {
+      case 0:
+        return bot.guild.channels.cache.get(bot.defaultTextChannel.id);
+      case 2:
+        return bot.guild.channels.cache.get(bot.defaultVoiceChannel.id);
     }
   }
 }
