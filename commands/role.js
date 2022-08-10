@@ -55,7 +55,7 @@ module.exports = {
     let notFound = [];
     let rolesToAction = roles.map((r) => {
       let toReturn = utils.findRoleFromGuild(r, params.bot.guild);
-      if (!toReturn) {
+      if (!!!toReturn) {
         notFound.push(r);
         return;
       } else return toReturn;
