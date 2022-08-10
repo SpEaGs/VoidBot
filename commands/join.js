@@ -49,7 +49,7 @@ module.exports = {
       joinVoice(voiceChannel, params.bot);
       return;
     }
-    let chan = utils.findChanFromGuild(channel, params.bot.guild, "voice");
+    let chan = utils.findChanFromGuild(channel, params.bot.guild, 2);
     console.log(chan);
     console.log(params.bot.voiceChannel);
     if (chan === params.bot.voiceChannel) {
