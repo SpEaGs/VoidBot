@@ -30,11 +30,7 @@ module.exports = {
       params.bot.dispatcher.end();
       params.bot.dispatcher = false;
     }
-    try {
-      params.bot.voiceChannel.leave();
-    } catch {
-      params.bot.guild.channels.cache.get(params.bot.voiceChannel.id).leave();
-    }
+    params.bot.voiceConnection.destroy();
     params.bot.voiceChannel = false;
     params.bot.voiceConnection = false;
     utils.informClients(params.bot, { voiceChannel: params.bot.voiceChannel });
