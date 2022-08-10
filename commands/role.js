@@ -84,7 +84,7 @@ module.exports = {
         break;
       }
     }
-    if (!!notFound) {
+    if (notFound !== []) {
       params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send(
