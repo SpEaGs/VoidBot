@@ -155,7 +155,6 @@ async function get_info(url, mem, status, interaction) {
   let vidInfo = {};
   if (url.toString().includes("soundcloud.com/")) {
     vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
-    utils.dumpJSON("sc_info.json", vidInfo.videoDetails, 2);
     vidInfo.trackSource = "SC";
     vidInfo.videoDetails.lengthSeconds = Math.trunc(
       vidInfo.videoDetails.duration / 1000
