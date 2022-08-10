@@ -350,8 +350,8 @@ try {
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
       let newBot = new Bot.Bot(g, status);
+      initBot(newBot);
       status.client.children.set(g.id, newBot);
-      initBot(status.client.children.get(g.id));
       log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
     });
     utils.populateCmds(status);
