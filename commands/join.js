@@ -65,19 +65,19 @@ module.exports = {
   },
 };
 
-function joinVoice(voiceChannel, status) {
+function joinVoice(voiceChannel, bot) {
   try {
     voiceChannel.join().then((connection) => {
-      status.voiceConnection = connection;
+      bot.voiceConnection = connection;
     });
   } catch {
-    status.guild.channels
+    bot.guild.channels
       .get(voiceChannel.id)
       .join()
       .then((connection) => {
-        status.voiceConnection = connection;
+        bot.voiceConnection = connection;
       });
   }
-  status.voiceChannel = voiceChannel;
-  utils.informClients(status, { voiceChannel: status.voiceChannel });
+  bot.voiceChannel = voiceChannel;
+  utils.informClients(bot, { voiceChannel: bot.voiceChannel });
 }
