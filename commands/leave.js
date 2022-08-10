@@ -26,7 +26,7 @@ module.exports = {
         .send(`${mem} I'm not in a voice channel...`);
     }
     params.bot.audioQueue = [];
-    if (params.bot.dispatcher !== false) {
+    if (!!params.bot.dispatcher) {
       params.bot.dispatcher.stop();
       params.bot.dispatcher = false;
     }
