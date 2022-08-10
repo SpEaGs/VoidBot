@@ -5,7 +5,8 @@ const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Stop";
-let description = "Stops the bot's currently playing audio stream.";
+let description =
+  "Stops the bot's currently playing audio stream and clears the queue.";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -13,7 +14,6 @@ module.exports = {
     .setDescription(description),
   name: name,
   description: description,
-  alias: false,
   args: false,
   usage: `\`${prefix}stop\``,
   admin: false,
@@ -21,9 +21,17 @@ module.exports = {
   server: true,
   execute(params) {
     let log = global.log;
+    let mem = params.interaction.member;
+    if (!params.bot.dispatcher)
+      return params.bot.guild.channels
+        .get(params.bot.defaultTextChannel.id)
+        .send("I'm not playing anything...");
     try {
       params.bot.audioQueue = [];
-      stopAudio(params);
+      params.bot.dispatcher.stop();
+      params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} Audio stream ended and queue cleared.`);
       params.bot.dispatcher = false;
       params.bot.nowPlaying = false;
     } catch (error) {
@@ -36,13 +44,3 @@ module.exports = {
     });
   },
 };
-
-function stopAudio(params) {
-  let mem = params.interaction.member;
-  try {
-    params.bot.dispatcher.pause();
-  } catch (error) {}
-  params.bot.guild.channels.cache
-    .get(params.bot.defaultTextChannel.id)
-    .send(`${mem} Audio stream ended.`);
-}
