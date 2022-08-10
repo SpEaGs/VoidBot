@@ -223,12 +223,16 @@ function launchWebServer() {
         return;
       }
       let mem = bot.guild.members.cache.get(payload.snowflake);
-      let paramsOut = { msg: { author: mem, member: mem }, args: [], bot: bot };
+      let paramsOut = {
+        interaction: { member: mem, args: {} },
+        bot: bot,
+        WS: true,
+      };
       switch (payload.action) {
         case false || null || undefined:
           break;
         default:
-          if (payload.aData) paramsOut.args = payload.aData.split(" ");
+          if (payload.aData) paramsOut.interaction.args = payload.aData;
           let cmd = status.client.cmds.get(payload.action);
           log(`${cmd.name} Command received from ${bot.guildName}`, [
             "[INFO]",

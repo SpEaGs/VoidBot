@@ -29,7 +29,12 @@ module.exports = {
   execute(params) {
     let log = global.log;
     let mem = params.interaction.member;
-    let channel = params.interaction.options.getString("channel");
+    let channel = "";
+    if (params.WS) {
+      channel = params.interaction.args.channel;
+    } else {
+      channel = params.interaction.options.getString("channel");
+    }
     if (!channel) {
       let voiceChannel = params.interaction.member.voice.channel;
       if (!!voiceChannel && voiceChannel === params.bot.voiceChannel)

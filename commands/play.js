@@ -40,12 +40,13 @@ module.exports = {
   execute(params) {
     let log = global.log;
     let mem = params.interaction.member;
-    search(
-      params.interaction.options.getString("search"),
-      mem,
-      params.bot,
-      params.interaction
-    );
+    let s;
+    if (params.WS) {
+      s = params.interaction.args.search;
+    } else {
+      s = params.interaction.options.getString("search");
+    }
+    search(s, mem, params);
   },
 };
 
@@ -71,7 +72,8 @@ function worker(status, taskList = [], interval = 1000) {
   }
 }
 
-function search(str, mem, status, interaction) {
+function search(str, mem, params) {
+  let status = params.bot;
   let url = str;
   switch (url.includes("http")) {
     case true: {
@@ -103,14 +105,13 @@ function search(str, mem, status, interaction) {
                 "https://www.youtube.com/watch?v=" +
                   i.snippet.resourceId.videoId,
                 mem,
-                status,
-                interaction
+                params
               );
             });
           });
           worker(status, tasks);
         });
-      } else get_info(url, mem, status, interaction);
+      } else get_info(url, mem, params);
       break;
     }
     case false: {
@@ -140,7 +141,7 @@ function search(str, mem, status, interaction) {
         for (let i of body.items) {
           if (i.id.kind == "youtube#video") {
             url = "https://www.youtube.com/watch?v=" + i.id.videoId;
-            get_info(url, mem, status, interaction);
+            get_info(url, mem, params);
             break;
           }
         }
@@ -151,7 +152,8 @@ function search(str, mem, status, interaction) {
 }
 
 let errcount = 0;
-async function get_info(url, mem, status, interaction) {
+async function get_info(url, mem, params) {
+  let status = params.bot;
   let vidInfo = {};
   if (url.toString().includes("soundcloud.com/")) {
     vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
@@ -169,7 +171,7 @@ async function get_info(url, mem, status, interaction) {
   vidInfo.url = url;
   vidInfo.added_by = mem.displayName;
   if (!status.voiceConnection) {
-    joinCMD.execute({ bot: status, interaction: interaction });
+    joinCMD.execute(params);
     status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
       play(vidInfo, status);
     });
