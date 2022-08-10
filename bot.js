@@ -18,7 +18,6 @@ class Bot extends EventEmitter {
     this.dispatcher = false;
     this.voiceChannel = false;
     this.defaultVoiceChannel = false;
-    this.defaultVolume = 0;
     this.voiceChannelArray = [];
     this.voiceConnection = false;
     this.audioQueue = [];
@@ -55,7 +54,6 @@ class Bot extends EventEmitter {
     utils.config.sharding[this.guildID].guildName = this.guildName;
 
     //load settings from config (loads defaults if previous config wasn't found)
-    this.defaultVolume = utils.config.sharding[this.guildID].defaultVolume;
     this.announcementsRole =
       utils.config.sharding[this.guildID].announcementsRole;
     this.newMemberRole = utils.config.sharding[this.guildID].newMemberRole;

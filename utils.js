@@ -16,7 +16,6 @@ if (!fs.existsSync("./config.json")) {
     sharding: {
       default: {
         guildName: "",
-        defaultVolume: 15,
         announcements: false,
         announcementsRole: false,
         newMember: false,
@@ -248,7 +247,6 @@ function cleanChannelName(name) {
 //saves given bot's settings to config file
 function saveConfig(bot) {
   config.sharding[bot.guildID].guildName = bot.guildName;
-  config.sharding[bot.guildID].defaultVolume = bot.defaultVolume;
   config.sharding[bot.guildID].defaultVoiceChannel = bot.defaultVoiceChannel;
   config.sharding[bot.guildID].announcements = bot.announcements;
   config.sharding[bot.guildID].announcementsRole = bot.announcementsRole;
@@ -295,7 +293,6 @@ function dumbifyBot(bot, admin = false) {
       announcementsRole: bot.announcementsRole,
       newMember: bot.newMember,
       newMemberRole: bot.newMemberRole,
-      defaultVolume: bot.defaultVolume,
       welcomeMsg: bot.welcomeMsg,
     });
   }

@@ -587,7 +587,6 @@ function updateBot(e, bot) {
     if (i.guildID == bot.guildID) {
       i.defaultTextChannel = bot.defaultTextChannel;
       i.defaultVoiceChannel = bot.defaultVoiceChannel;
-      i.defaultVolume = bot.defaultVolume;
       i.ruleTextChannel = bot.ruleTextChannel;
       i.welcomeTextChannel = bot.welcomeTextChannel;
       i.welcomeMsg = bot.welcomeMsg;

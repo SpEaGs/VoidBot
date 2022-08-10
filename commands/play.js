@@ -201,9 +201,7 @@ function createStream(status, info) {
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
       status.voiceConnection.subscribe(status.dispatcher);
-      status.dispatcher.play(
-        voice.createAudioResource(str, { inlineVolume: true })
-      );
+      status.dispatcher.play(voice.createAudioResource(str));
       status.dispatcher.on(voice.AudioPlayerStatus.Idle, () => {
         endDispatcher(status);
       });
