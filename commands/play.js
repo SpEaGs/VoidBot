@@ -169,7 +169,9 @@ async function get_info(url, mem, status, interaction) {
   vidInfo.added_by = mem.displayName;
   if (!status.voiceConnection) {
     joinCMD.execute({ bot: status, interaction: interaction });
-    bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, ()={play(vidInfo, status)})
+    bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
+      play(vidInfo, status);
+    });
   }
   if (status.dispatcher != false) {
     addToQueue(vidInfo, status);
