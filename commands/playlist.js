@@ -21,7 +21,7 @@ module.exports = {
   execute(params) {
     var output = [];
     var i = 0;
-    let mem = params.msg.member;
+    let mem = params.interaction.member;
     if (params.bot.audioQueue.length == 0) {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
