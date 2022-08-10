@@ -331,6 +331,7 @@ async function initBot(bot) {
       }
     }
   });
+  console.log(bot.voiceChannelArray);
   bot.guild.roles.cache.forEach((role) => {
     if (role.id !== bot.guild.roles.everyone.id) {
       let cleanRoleName = utils.cleanChannelName(role.name);
