@@ -248,6 +248,9 @@ function endDispatcher(status) {
       nowPlaying: false,
       paused: false,
     });
+    status.guild.channels.cache
+      .get(status.defaultTextChannel.id)
+      .send("Audio queue is empty.");
     return;
   } else {
     playNextInQueue(status);
