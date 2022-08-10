@@ -12,6 +12,7 @@ if (!fs.existsSync("./config.json")) {
     welcomeMsgPre: "A new pawn for my schemes!?!?",
     sendoffMsgPre: "Aww... there goes another pawn...",
     botAdmin: ["125759724707774464", "125758417934483456"],
+    webAppDomain: "http://76.179.53.45:3000/",
     sharding: {
       default: {
         guildName: "",
