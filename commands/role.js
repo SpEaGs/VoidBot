@@ -76,7 +76,7 @@ module.exports = {
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(
-            `${msgmem} Removing roles: \`${rolesToAction.join(
+            `${mem} Removing roles: \`${rolesToAction.join(
               " "
             )}\`\n from User: \`${mem.user.username}\``
           );
