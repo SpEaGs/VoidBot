@@ -153,15 +153,23 @@ function findMemberFromGuild(username, guild) {
 }
 
 //finds a channel in a given server from a given channel name
-function findChanFromGuild(channel, guild, chanType = 0) {
-  guild.channels.cache.forEach((chan) => {
-    if (
-      chan.type === chanType &&
-      chan.name.toLowerCase().includes(channel.toLowerCase())
-    )
-      return chan;
-  });
-  return false;
+function findChanFromGuild(channel, bot, chanType = 0) {
+  switch (chanType) {
+    case 0: {
+      bot.textChannelArray.forEach((chan) => {
+        if (chan.name.toLowerCase().includes(channel.toLowerCase()))
+          return bot.guild.channels.get(chan.id);
+      });
+      return bot.guild.channels.get(bot.defaultTextChannel.id);
+    }
+    case 2: {
+      bot.voiceChannelArray.forEach((chan) => {
+        if (chan.name.toLowerCase().includes(channel.toLowerCase()))
+          return bot.guild.channels.get(chan.id);
+      });
+      return bot.guild.channels.get(bot.defaultVoiceChannel.id);
+    }
+  }
 }
 
 //populates an internal list of admin for a given server
