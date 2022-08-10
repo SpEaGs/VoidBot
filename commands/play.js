@@ -13,6 +13,8 @@ const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 const { SlashCommandBuilder } = require("discord.js");
 const { urlencoded } = require("express");
+const voice = require("@discordjs/voice");
+const joinCMD = require("./join");
 
 let name = "Play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
@@ -56,7 +58,12 @@ module.exports = {
           `${mem} I'm not in a voice channel, neither are you, and no default is set...`
         );
     }
-    search(params.interaction.options.getString("search"), mem, params.bot);
+    search(
+      params.interaction.options.getString("search"),
+      mem,
+      params.bot,
+      params.interaction
+    );
   },
 };
 
@@ -82,7 +89,7 @@ function worker(status, taskList = [], interval = 1000) {
   }
 }
 
-function search(str, mem, status) {
+function search(str, mem, status, interaction) {
   let url = str;
   switch (url.includes("http")) {
     case true: {
@@ -114,13 +121,14 @@ function search(str, mem, status) {
                 "https://www.youtube.com/watch?v=" +
                   i.snippet.resourceId.videoId,
                 mem,
-                status
+                status,
+                interaction
               );
             });
           });
           worker(status, tasks);
         });
-      } else get_info(url, mem, status);
+      } else get_info(url, mem, status, interaction);
       break;
     }
     case false: {
@@ -150,7 +158,7 @@ function search(str, mem, status) {
         for (let i of body.items) {
           if (i.id.kind == "youtube#video") {
             url = "https://www.youtube.com/watch?v=" + i.id.videoId;
-            get_info(url, mem, status);
+            get_info(url, mem, status, interaction);
             break;
           }
         }
@@ -161,7 +169,7 @@ function search(str, mem, status) {
 }
 
 let errcount = 0;
-async function get_info(url, mem, status) {
+async function get_info(url, mem, status, interaction) {
   let vidInfo = {};
   if (url.toString().includes("soundcloud.com/")) {
     vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
@@ -177,23 +185,9 @@ async function get_info(url, mem, status) {
   }
   vidInfo.url = url;
   vidInfo.added_by = mem.displayName;
-  if (status.voiceConnection == false) {
-    try {
-      status.voiceChannel.join().then((connection) => {
-        status.voiceConnection = connection;
-        utils.informClients(status, { voiceChannel: status.voiceChannel });
-        play(vidInfo, status);
-      });
-    } catch {
-      status.guild.channels.cache
-        .get(status.voiceChannel.id)
-        .join()
-        .then((connection) => {
-          status.voiceConnection = connection;
-          play(vidInfo, status);
-        });
-    }
-    return;
+  if (!status.voiceConnection) {
+    joinCMD.execute({ bot: status, interaction: params.interaction });
+    return play(vidInfo, status);
   }
   if (status.dispatcher != false) {
     addToQueue(vidInfo, status);
@@ -221,13 +215,14 @@ function createStream(status, info) {
   switch (info.trackSource) {
     case "YT": {
       str = ytdl.downloadFromInfo(info, { filter: "audioonly" });
-      status.dispatcher = status.voiceConnection.play(str, {
-        volume:
-          parseFloat(utils.config.sharding[status.guildID].defaultVolume) / 100,
-        passes: 2,
-        bitrate: "auto",
+      status.dispatcher = voice.createAudioPlayer({
+        behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
-      status.dispatcher.on("finish", () => {
+      status.voiceConnection.subscribe(status.dispatcher);
+      status.dispatcher.play(
+        voice.createAudioResource(str, { inlineVolume: true })
+      );
+      status.dispatcher.on(voice.AudioPlayerStatus.Idle, () => {
         endDispatcher(status);
       });
       break;

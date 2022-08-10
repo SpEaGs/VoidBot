@@ -35,6 +35,7 @@ const intents = new Discord.IntentsBitField([
   Discord.IntentsBitField.Flags.Guilds,
   Discord.IntentsBitField.Flags.GuildMembers,
   Discord.IntentsBitField.Flags.GuildPresences,
+  Discord.IntentsBitField.Flags.GuildVoiceStates,
 ]);
 //init some vars & export
 module.exports = {
