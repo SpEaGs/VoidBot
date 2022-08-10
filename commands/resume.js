@@ -22,7 +22,7 @@ module.exports = {
     let mem = params.interaction.member;
     switch (params.bot.dispatcher.paused) {
       case true: {
-        params.bot.dispatcher.resume();
+        params.bot.dispatcher.unpause();
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(`${mem} Audio stream resumed.`);
