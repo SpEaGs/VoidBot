@@ -581,7 +581,7 @@ function cmd(e = "") {
     default:
       status.client.cmds
         .get("broadcast")
-        .execute({ interatcion: { args: { message: e } }, WS: true });
+        .execute({ interaction: { args: { message: e } }, WS: true });
       break;
   }
   return;
