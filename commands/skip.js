@@ -20,6 +20,7 @@ module.exports = {
   server: true,
   execute(params) {
     let log = global.log;
+    let mem = params.interaction.member;
     if (!params.bot.dispatcher)
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
@@ -27,7 +28,7 @@ module.exports = {
     try {
       params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
-        .send("Skipping...");
+        .send(`${mem} Skipping...`);
       params.bot.dispatcher.stop();
       params.bot.dispatcher = false;
       params.bot.nowPlaying = false;
