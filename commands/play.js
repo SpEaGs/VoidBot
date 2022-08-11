@@ -212,6 +212,10 @@ function createStream(status, info) {
         status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
           endDispatcher(status);
         });
+        status.dispatcher.on("error", (err) => {
+          log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
+          endDispatcher(status);
+        });
         break;
       }
       case "SC": {
@@ -227,6 +231,11 @@ function createStream(status, info) {
             status.voiceConnection.subscribe(status.dispatcher);
             status.dispatcher.play(voice.createAudioResource(str));
             status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+              endDispatcher(status);
+              fs.unlinkSync(str);
+            });
+            status.dispatcher.on("error", (err) => {
+              log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
               endDispatcher(status);
               fs.unlinkSync(str);
             });
