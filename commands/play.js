@@ -198,40 +198,47 @@ function play(info, status) {
 
 function createStream(status, info) {
   let str;
-  switch (info.trackSource) {
-    case "YT": {
-      str = ytdl.downloadFromInfo(info, { filter: "audioonly" });
-      status.dispatcher = voice.createAudioPlayer({
-        behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
-      });
-      status.dispatcher.playing = true;
-      status.dispatcher.paused = false;
-      status.voiceConnection.subscribe(status.dispatcher);
-      status.dispatcher.play(voice.createAudioResource(str));
-      status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-        endDispatcher(status);
-      });
-      break;
-    }
-    case "SC": {
-      sc.download(info.url, SC_API_KEY).then((stream) => {
-        stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
-        stream.on("end", () => {
-          str = `./temp${status.guildID}.mp3`;
-          status.dispatcher = voice.createAudioPlayer({
-            behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
-          });
-          status.dispatcher.playing = true;
-          status.dispatcher.paused = false;
-          status.voiceConnection.subscribe(status.dispatcher);
-          status.dispatcher.play(voice.createAudioResource(str));
-          status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-            endDispatcher(status);
-            fs.unlinkSync(str);
+  try {
+    switch (info.trackSource) {
+      case "YT": {
+        str = ytdl.downloadFromInfo(info, { filter: "audioonly" });
+        status.dispatcher = voice.createAudioPlayer({
+          behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
+        });
+        status.dispatcher.playing = true;
+        status.dispatcher.paused = false;
+        status.voiceConnection.subscribe(status.dispatcher);
+        status.dispatcher.play(voice.createAudioResource(str));
+        status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+          endDispatcher(status);
+        });
+        break;
+      }
+      case "SC": {
+        sc.download(info.url, SC_API_KEY).then((stream) => {
+          stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
+          stream.on("end", () => {
+            str = `./temp${status.guildID}.mp3`;
+            status.dispatcher = voice.createAudioPlayer({
+              behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
+            });
+            status.dispatcher.playing = true;
+            status.dispatcher.paused = false;
+            status.voiceConnection.subscribe(status.dispatcher);
+            status.dispatcher.play(voice.createAudioResource(str));
+            status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+              endDispatcher(status);
+              fs.unlinkSync(str);
+            });
           });
         });
-      });
-      break;
+        break;
+      }
+    }
+  } catch (err) {
+    log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
+    if (!!status.dispatcher) {
+      endDispatcher(status);
     }
   }
   utils.informClients(status, {
