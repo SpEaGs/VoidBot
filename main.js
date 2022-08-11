@@ -624,4 +624,21 @@ function clientLogin(t) {
   }
 }
 
+process.on("uncaughtException", (err) => {
+  if (err.captureStackTrace) err.captureStackTrace();
+  log(
+    `Uncaught exception:\n${err.name} position: ${err.lineNumber}:${err.columnNumber}\n${err.message}\n${err.stack}`,
+    ["[ERR]", "[CRITICAL]"]
+  );
+  try {
+    status.client.children.forEach((bot) => {
+      utils.saveConfig(bot);
+    });
+    status.client.destroy();
+    setTimeout(() => {
+      process.exit(1);
+    }, 3000);
+  } catch {}
+});
+
 clientLogin(token);
