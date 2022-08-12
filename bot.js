@@ -39,6 +39,8 @@ class Bot extends EventEmitter {
     this.socketSubs = [];
     this.adminSocketSubs = [];
 
+    this.saveConfigInterval = this.saveConfigInterval.bind(this);
+
     //login
     log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guildName}]`]);
     //this.client.login(token);
@@ -66,8 +68,12 @@ class Bot extends EventEmitter {
     this.defaultVoiceChannel =
       utils.config.sharding[this.guildID].defaultVoiceChannel;
 
-    //save config (should be done after every edit to the config object)
-    utils.dumpJSON("./config.json", utils.config, 2);
+    //save config at intervals: 5min
+    this.saveConfigInterval();
+    setInterval(this.saveConfigInterval, 1000 * 60 * 5);
+  }
+  saveConfigInterval() {
+    utils.saveConfig(this);
   }
 }
 
