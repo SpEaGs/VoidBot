@@ -19,7 +19,7 @@ module.exports = {
             .setName("channel")
             .setDescription("The text channel to set.")
             .setRequired(true)
-            .addChannelTypes([0])
+            .addChannelTypes(0)
         )
     )
     //defaultVoiceChannel
@@ -32,7 +32,7 @@ module.exports = {
             .setName("channel")
             .setDescription("The voice channel to set.")
             .setRequired(true)
-            .addChannelTypes([2])
+            .addChannelTypes(2)
         )
     )
     //welcomeMessage
@@ -54,7 +54,7 @@ module.exports = {
             .setName("channel")
             .setDescription("The text channel to set.")
             .setRequired(true)
-            .addChannelTypes([0])
+            .addChannelTypes(0)
         )
     )
     //newMember
