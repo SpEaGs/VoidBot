@@ -111,7 +111,7 @@ module.exports = {
             .setName("channel")
             .setDescription("The text channel to set.")
             .setRequired(true)
-            .addChannelTypes([0])
+            .addChannelTypes(0)
         )
     ),
   name: name,
