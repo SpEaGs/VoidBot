@@ -79,7 +79,7 @@ module.exports = {
         )
     )
     //announcements
-    .addSubCommand((subcommand) =>
+    .addSubcommand((subcommand) =>
       subcommand
         .setName("announcements")
         .setDescription("Turns on or off giving the announcements role.")
@@ -88,7 +88,7 @@ module.exports = {
         )
     )
     //announcementsRole
-    .addSubCommand((subcommand) =>
+    .addSubcommand((subcommand) =>
       subcommand
         .setName("announcementsrole")
         .setDescription(
@@ -102,7 +102,7 @@ module.exports = {
         )
     )
     //ruleTextChannel
-    .addSubCommand((subcommand) =>
+    .addSubcommand((subcommand) =>
       subcommand
         .setName("ruletextchannel")
         .setDecription("Sets the text channel used for server rules.")
