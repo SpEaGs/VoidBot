@@ -214,7 +214,6 @@ function createStream(status, info) {
         });
         status.dispatcher.once("error", (err) => {
           log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-          endDispatcher(status);
         });
         break;
       }
@@ -236,7 +235,6 @@ function createStream(status, info) {
             });
             status.dispatcher.once("error", (err) => {
               log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-              endDispatcher(status);
               fs.unlinkSync(str);
             });
           });
