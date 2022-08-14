@@ -12,7 +12,7 @@ module.exports = {
     //defaultTextChannel
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("defaultTextChannel")
+        .setName("defaulttextchannel")
         .setDescription("Sets the default text channel.")
         .addChannelOption((option) =>
           option
@@ -25,7 +25,7 @@ module.exports = {
     //defaultVoiceChannel
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("defaultVoiceChannel")
+        .setName("defaultvoicechannel")
         .setDescription("Sets the default voice channel.")
         .addChannelOption((option) =>
           option
@@ -38,7 +38,7 @@ module.exports = {
     //welcomeMessage
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("welcomeMessage")
+        .setName("welcomemessage")
         .setDescription("Turns on or off the welcome message.")
         .addBooleanOption((option) =>
           option.setName("state").setDescription("on or off").setRequired(true)
@@ -47,7 +47,7 @@ module.exports = {
     //welcomeTextChannel
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("welcomeTextChannel")
+        .setName("welcometextchannel")
         .setDescription("Sets the text channel for welcome messages")
         .addChannelOption((option) =>
           option
@@ -60,7 +60,7 @@ module.exports = {
     //newMember
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("newMember")
+        .setName("newmember")
         .setDescription("Turns on or off giving new members a default role.")
         .addBooleanOption((option) =>
           option.setName("state").setDescription("on or off.").setRequired(true)
@@ -69,7 +69,7 @@ module.exports = {
     //newMemberRole
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("newMemberRole")
+        .setName("newmemberrole")
         .setDescription("Sets the role to be given to new members.")
         .addRoleOption((option) =>
           option
@@ -90,7 +90,7 @@ module.exports = {
     //announcementsRole
     .addSubCommand((subcommand) =>
       subcommand
-        .setName("announcementsRole")
+        .setName("announcementsrole")
         .setDescription(
           "Sets the role to be given when opting in or out of announcements."
         )
@@ -104,7 +104,7 @@ module.exports = {
     //ruleTextChannel
     .addSubCommand((subcommand) =>
       subcommand
-        .setName("ruleTextChannel")
+        .setName("ruletextchannel")
         .setDecription("Sets the text channel used for server rules.")
         .addChannelOption((option) =>
           option
@@ -144,32 +144,32 @@ module.exports = {
     let state = params.interaction.options.getBoolean("state");
     let toReply = "";
     switch (params.interaction.options.getSubCommand()) {
-      case "defaultTextChannel": {
+      case "defaulttextchannel": {
         toReply = `Set the default text channel to: \`${chan.name}\``;
         params.bot.defaultTextChannel = chan;
         break;
       }
-      case "defaultVoiceChannel": {
+      case "defaultvoicechannel": {
         toReply = `Set the default voice channel to: \`${chan.name}\``;
         params.bot.defaultVoiceChannel = chan;
         break;
       }
-      case "welcomeMessage": {
+      case "welcomemessage": {
         toReply = `Set the welcome message to: \`${state}\``;
         params.bot.welcomeMsg = state;
         break;
       }
-      case "welcomeTextChannel": {
+      case "welcometextchannel": {
         toReply = `Set the welcome text channel to: \`${chan.name}\``;
         params.bot.welcomeTextChannel = chan;
         break;
       }
-      case "newMember": {
+      case "newmember": {
         toReply = `Set new member role dispensing to: \`${state}\``;
         params.bot.newMember = state;
         break;
       }
-      case "newMemberRole": {
+      case "newmemberrole": {
         toReply = `Set the new member role to: \`${ro.name}\``;
         params.bot.newMemberRole = ro;
         break;
@@ -179,12 +179,12 @@ module.exports = {
         params.bot.announcements = state;
         break;
       }
-      case "announcementsRole": {
+      case "announcementsrole": {
         toReply = `Set the announcements role to: \`${ro.name}\``;
         params.bot.announcementsRole = ro;
         break;
       }
-      case "ruleTextChannel": {
+      case "ruletextchannel": {
         toReply = `Set the rule text channel to: \`${chan.name}\``;
         params.bot.ruleTextChannel = chan;
         break;
