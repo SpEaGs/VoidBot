@@ -192,5 +192,16 @@ module.exports = {
     }
     params.interaction.reply({ content: toReply, ephemeral: true });
     utils.saveConfig(params.bot);
+    utils.informAdminClients(bot, {
+      defaultTextChannel: params.bot.defaultTextChannel,
+      defaultVoiceChannel: params.bot.defaultVoiceChannel,
+      welcomeMsg: params.bot.welcomeMsg,
+      welcomeTextChannel: params.bot.welcomeTextChannel,
+      newMember: params.bot.newMember,
+      newMemberRole: params.bot.newMemberRole,
+      announcements: params.bot.announcements,
+      announcementsRole: params.bot.announcementsRole,
+      ruleTextChannel: params.bot.ruleTextChannel,
+    });
   },
 };
