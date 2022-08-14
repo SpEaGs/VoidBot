@@ -246,9 +246,6 @@ function createStream(status, info) {
     }
   } catch (err) {
     log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-    if (!!status.dispatcher) {
-      endDispatcher(status);
-    }
   }
   utils.informClients(status, {
     audioQueue: status.audioQueue,
