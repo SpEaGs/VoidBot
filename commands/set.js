@@ -190,7 +190,7 @@ module.exports = {
         break;
       }
     }
-    params.interaction.reply({ content: toReply, ephemeral: true });
+    await params.interaction.reply({ content: toReply, ephemeral: true });
     utils.saveConfig(params.bot);
     utils.informAdminClients(params.bot, {
       defaultTextChannel: params.bot.defaultTextChannel,

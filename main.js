@@ -374,7 +374,7 @@ try {
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
       if (cmd.admin && !adminCheck) {
         try {
-          interaction.reply(
+          await interaction.reply(
             "You lack sufficient permissions for that command."
           );
         } catch {}
@@ -391,7 +391,7 @@ try {
           `[${bot.guildName}]`,
         ]);
         try {
-          interaction.reply("Command received!");
+          await interaction.reply("Command received!");
         } catch {}
       }
     });
