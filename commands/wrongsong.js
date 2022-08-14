@@ -28,7 +28,9 @@ module.exports = {
   server: true,
   execute(params) {
     let mem = params.interaction.member;
-    let number = params.interaction.options.getInteger("number");
+    let number;
+    if (params.WS) number = params.interaction.args.number;
+    else number = params.interaction.options.getInteger("number");
     if (number > params.bot.audioQueue.length) {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
