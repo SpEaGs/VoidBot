@@ -121,7 +121,7 @@ module.exports = {
   admin: true,
   botadmin: false,
   server: true,
-  execute(params) {
+  async execute(params) {
     let log = global.log;
     let channel = params.interaction.options.getChannel("channel");
     let chan;
