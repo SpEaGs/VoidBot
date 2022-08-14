@@ -143,7 +143,7 @@ module.exports = {
     }
     let state = params.interaction.options.getBoolean("state");
     let toReply = "";
-    switch (params.interaction.options.getSubCommand()) {
+    switch (params.interaction.options.getSubcommand()) {
       case "defaulttextchannel": {
         toReply = `Set the default text channel to: \`${chan.name}\``;
         params.bot.defaultTextChannel = chan;
