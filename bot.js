@@ -56,8 +56,10 @@ class Bot extends EventEmitter {
     utils.config.sharding[this.guildID].guildName = this.guildName;
 
     //load settings from config (loads defaults if previous config wasn't found)
+    this.announcements = utils.config.sharding[this.guildID].announcements;
     this.announcementsRole =
       utils.config.sharding[this.guildID].announcementsRole;
+    this.newMember = utils.config.sharding[this.guildID].newMember;
     this.newMemberRole = utils.config.sharding[this.guildID].newMemberRole;
     this.defaultTextChannel =
       utils.config.sharding[this.guildID].defaultTextChannel;
