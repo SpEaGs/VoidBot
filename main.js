@@ -373,7 +373,11 @@ try {
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
       if (cmd.admin && !adminCheck) {
-        interaction.reply("You lack sufficient permissions for that command.");
+        try {
+          interaction.reply(
+            "You lack sufficient permissions for that command."
+          );
+        } catch {}
       } else {
         let member = bot.guild.members.cache.get(interaction.member.user.id);
         let msg = {
@@ -386,7 +390,9 @@ try {
           "[INFO]",
           `[${bot.guildName}]`,
         ]);
-        interaction.reply("Command received!");
+        try {
+          interaction.reply("Command received!");
+        } catch {}
       }
     });
     setTimeout(() => {
