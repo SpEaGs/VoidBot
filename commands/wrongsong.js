@@ -29,13 +29,7 @@ module.exports = {
   execute(params) {
     let mem = params.interaction.member;
     let number = params.interaction.options.getInteger("number");
-    if (!params.args.length) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(
-          `${mem} You need to tell me which song to remove... Use \`${prefix}playlist\` to see a list then give me the number of the song you want to remove.`
-        );
-    } else if (number > params.bot.audioQueue.length) {
+    if (number > params.bot.audioQueue.length) {
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} The playlist isn't even ${number} songs long...`);
