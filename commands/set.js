@@ -97,7 +97,7 @@ module.exports = {
         .addRoleOption((option) =>
           option
             .setName("role")
-            .setDecription("The role to be given.")
+            .setDescription("The role to be given.")
             .setRequired(true)
         )
     )
@@ -109,7 +109,7 @@ module.exports = {
         .addChannelOption((option) =>
           option
             .setName("channel")
-            .setDecription("The text channel to set.")
+            .setDescription("The text channel to set.")
             .setRequired(true)
             .addChannelTypes([0])
         )
