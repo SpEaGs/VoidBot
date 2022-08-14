@@ -192,7 +192,7 @@ module.exports = {
     }
     params.interaction.reply({ content: toReply, ephemeral: true });
     utils.saveConfig(params.bot);
-    utils.informAdminClients(bot, {
+    utils.informAdminClients(params.bot, {
       defaultTextChannel: params.bot.defaultTextChannel,
       defaultVoiceChannel: params.bot.defaultVoiceChannel,
       welcomeMsg: params.bot.welcomeMsg,
