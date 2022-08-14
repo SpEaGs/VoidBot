@@ -105,7 +105,7 @@ module.exports = {
     .addSubcommand((subcommand) =>
       subcommand
         .setName("ruletextchannel")
-        .setDecription("Sets the text channel used for server rules.")
+        .setDescription("Sets the text channel used for server rules.")
         .addChannelOption((option) =>
           option
             .setName("channel")
