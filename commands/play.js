@@ -212,9 +212,8 @@ function createStream(status, info) {
         status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
           endDispatcher(status);
         });
-        status.dispatcher.on("error", (err) => {
+        status.dispatcher.once("error", (err) => {
           log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-          endDispatcher(status);
         });
         break;
       }
@@ -234,9 +233,8 @@ function createStream(status, info) {
               endDispatcher(status);
               fs.unlinkSync(str);
             });
-            status.dispatcher.on("error", (err) => {
+            status.dispatcher.once("error", (err) => {
               log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-              endDispatcher(status);
               fs.unlinkSync(str);
             });
           });
@@ -245,7 +243,7 @@ function createStream(status, info) {
       }
     }
   } catch (err) {
-    log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
+    log(`Caught audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
   }
   utils.informClients(status, {
     audioQueue: status.audioQueue,
