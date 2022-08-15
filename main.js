@@ -49,7 +49,7 @@ module.exports = {
   getStatus: getStatus,
   webAppDomain: utils.config.webAppDomain,
   sockets: [],
-  consoleSockets: [],
+  consoleSockets: new Discord.Collection(),
 };
 
 const status = require("./main.js");
@@ -247,7 +247,7 @@ function launchWebServer() {
   io.on("connection", (socket) => {
     socket.once("get_backlog", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
-        status.consoleSockets.push(socket);
+        status.consoleSockets.set(socket.id, socket);
         socket.emit("backlog", backlog);
       }
     });
