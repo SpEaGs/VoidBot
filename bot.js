@@ -71,11 +71,9 @@ class Bot extends EventEmitter {
       utils.config.sharding[this.guildID].defaultVoiceChannel;
 
     //save config at intervals: 5min
-    this.saveConfigInterval();
-    setInterval(this.saveConfigInterval, 1000 * 60 * 5);
-  }
-  saveConfigInterval() {
-    utils.saveConfig(this);
+    setInterval(() => {
+      utils.saveConfig(this);
+    }, 1000 * 60 * 5);
   }
 }
 
