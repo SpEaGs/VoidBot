@@ -162,12 +162,18 @@ function launchWebServer() {
   });
 
   function initSocket(s) {
-    s.on("disconnect", () => {
+    s.once("disconnect", () => {
       status.client.children.forEach((b) => {
-        let index = b.socketSubs.indexOf(s);
-        let adminIndex = b.adminSocketSubs.indexOf(s);
-        if (index > -1) b.socketSubs.splice(index, 1);
-        if (index > -1) b.adminSocketSubs.splice(index, 1);
+        let found = b.socketSubs.find(s.id);
+        if (!!found) {
+          found.disconnect();
+          b.socketSubs.delete(s.id);
+        }
+        let afound = b.adminSocketSubs.find(s.id);
+        if (!!afound) {
+          afound.disconnect();
+          b.adminSocketSubs.delete(s.id);
+        }
       });
     });
     s.on("guilds", (uToken) => {
@@ -180,11 +186,11 @@ function launchWebServer() {
             if (u.guilds.member.includes(b.guildID)) {
               if (u.guilds.admin.includes(b.guildID)) {
                 guildsOut.push(utils.dumbifyBot(b, true));
-                b.adminSocketSubs.push(s);
+                b.adminSocketSubs.set(s.id, s);
               } else {
                 guildsOut.push(utils.dumbifyBot(b));
               }
-              b.socketSubs.push(s);
+              b.socketSubs.set(s.id, s);
             }
           });
           s.emit("guilds_res", guildsOut);
