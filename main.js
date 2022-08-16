@@ -199,8 +199,8 @@ function launchWebServer() {
     });
     s.on("user", (uToken) => {
       User.findOne({ token: uToken }, (err, u) => {
-        if (err) return socket.disconnect();
-        if (!u) return socket.disconnect();
+        if (err) return s.disconnect();
+        if (!u) return s.disconnect();
         else {
           s.emit("user-res", u);
         }
