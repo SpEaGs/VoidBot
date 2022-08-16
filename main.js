@@ -350,7 +350,7 @@ try {
           status.sockets.delete(s.socket.id);
         }
       });
-    });
+    }, 1000 * 60 * 5);
 
     status.client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
