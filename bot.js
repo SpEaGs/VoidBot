@@ -36,8 +36,8 @@ class Bot extends EventEmitter {
       members: [],
       timeouts: {},
     };
-    this.socketSubs = [];
-    this.adminSocketSubs = [];
+    this.socketSubs = new Discord.Collection();
+    this.adminSocketSubs = new Discord.Collection();
 
     this.saveConfigInterval = this.saveConfigInterval.bind(this);
 
@@ -73,6 +73,12 @@ class Bot extends EventEmitter {
     //save config at intervals: 5min
     setInterval(() => {
       utils.saveConfig(this);
+      this.socketSubs.forEach((s) => {
+        if (!s.connected) this.socketSubs.delete(s.id);
+      });
+      this.adminSocketSubs.forEach((as) => {
+        if (!as.connected) this.adminSocketSubs.delete(as.id);
+      });
     }, 1000 * 60 * 5);
   }
 }
