@@ -48,7 +48,7 @@ module.exports = {
   settingsUIPopulated: false,
   getStatus: getStatus,
   webAppDomain: utils.config.webAppDomain,
-  sockets: [],
+  sockets: new Discord.Collection(),
   consoleSockets: new Discord.Collection(),
 };
 
@@ -264,46 +264,24 @@ function launchWebServer() {
             socket.emit("handshake_end", false);
             socket.disconnect();
           } else {
-            let oldSocketIndex = status.sockets.findIndex(
-              (socket) => socket.token === token
-            );
-            if (oldSocketIndex != -1) {
-              status.sockets[oldSocketIndex] = {
-                socket: socket,
-                token: token,
-                dToken: dToken,
-              };
-            } else
-              status.sockets.push({
-                socket: socket,
-                token: token,
-                dToken: dToken,
-              });
+            let oldSocket = status.sockets.find((s) => s.token === token);
+            if (!!oldSocket) {
+              status.sockets.delete(oldSocket.socket.id);
+            }
             initSocket(socket);
+            status.sockets.set(socket.id, {
+              socket: socket,
+              token: token,
+              dToken: dToken,
+            });
             socket.emit("handshake_end", true, u);
           }
         });
       } else {
-        let oldSocketIndex = status.sockets.findIndex(
-          (socket) => (socket.token = token)
-        );
-        if (oldSocketIndex != -1) {
-          status.sockets[oldSocketIndex] = {
-            socket: socket,
-            token: token,
-            dToken: false,
-          };
-        } else
-          status.sockets.push({
-            socket: socket,
-            token: token,
-            dToken: false,
-          });
         socket.emit("handshake_end", false);
         socket.disconnect();
       }
     });
-
     socket.emit("handshake");
   });
 
@@ -360,6 +338,19 @@ try {
       log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
     });
     utils.populateCmds(status);
+
+    setInterval(() => {
+      status.consoleSockets.forEach((s) => {
+        if (!s.connected) {
+          status.consoleSockets.delete(s.id);
+        }
+      });
+      status.sockets.forEach((s) => {
+        if (!s.socket.connected) {
+          status.sockets.delete(s.socket.id);
+        }
+      });
+    });
 
     status.client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
