@@ -6,9 +6,6 @@ const Discord = require("discord.js");
 const winston = require("winston");
 const fs = require("fs");
 
-const path = require("path");
-const url = require("url");
-
 const express = require("express");
 const cors = require("cors");
 const api = express();
