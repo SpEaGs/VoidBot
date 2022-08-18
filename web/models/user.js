@@ -1,9 +1,8 @@
 const db = require("mongoose");
-const { Schema } = db;
 
 const passportLocalDB = require("passport-local-mongoose");
 
-const User = new Schema({
+const User = new db.Schema({
   snowflake: {
     type: String,
     default: "",
