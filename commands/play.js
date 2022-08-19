@@ -167,7 +167,7 @@ async function get_info(url, mem, params) {
     try {
       vidInfo = await ytdl.getInfo(url);
     } catch (err) {
-      throw new Error(err);
+      throw err;
     }
     vidInfo.trackSource = "YT";
     vidInfo.imgURL = vidInfo.videoDetails.thumbnails.pop().url;
