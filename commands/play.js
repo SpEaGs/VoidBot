@@ -164,7 +164,11 @@ async function get_info(url, mem, params) {
     vidInfo.videoDetails.title += ` - ${vidInfo.videoDetails.user.username}`;
     vidInfo.imgURL = vidInfo.videoDetails.artwork_url;
   } else if (url.toString().includes(".youtube.com/")) {
-    vidInfo = await ytdl.getInfo(url);
+    try {
+      vidInfo = await ytdl.getInfo(url);
+    } catch (err) {
+      throw new Error(err);
+    }
     vidInfo.trackSource = "YT";
     vidInfo.imgURL = vidInfo.videoDetails.thumbnails.pop().url;
   }
