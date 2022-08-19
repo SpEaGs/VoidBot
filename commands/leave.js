@@ -19,8 +19,8 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
-    let mem = params.interaction.member;
     if (!params.bot.voiceChannel) {
+      let mem = params.interaction.member;
       return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} I'm not in a voice channel...`);
