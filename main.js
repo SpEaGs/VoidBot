@@ -111,7 +111,7 @@ require("./web/passport-setup");
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
-status.client.lastSeen = {};
+status.client.lastSeen = new Discord.Collection();
 
 //webserver
 function launchWebServer() {
@@ -491,55 +491,39 @@ status.client.on("guildMemberRemove", (member) => {
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
 status.client.on("voiceStateUpdate", (oldState, newState) => {
-  let bot = status.client.children.get(newState.member.guild.id);
+  let bot = status.client.children.get(newState.guild.id);
   if (oldState.member.id === status.client.user.id) return;
   if (
-    oldState.channel &&
-    newState.channel &&
+    !!oldState.channel &&
+    !!newState.channel &&
     oldState.channel.id === newState.channel.id
   )
     return;
   try {
+    let cachedTimeout = bot.voiceStateTimeouts.get(newState.member.id);
     if (!newState.channel) {
-      if (bot.voiceStateCaching.members.includes(newState.member.id)) {
+      if (!!cachedTimeout) {
         bot.guild.channels.cache
           .get(bot.defaultTextChannel.id)
           .send(
             `Look at this twat ${newState.member} joining a voice chat then leaving immediately!`
           );
-      }
-      bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(
-        (val) => val != newState.member.id
-      );
-      if (bot.voiceStateCaching.timeouts[newState.member.id] != null) {
-        clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
+        clearTimeout(cachedTimeout);
+        bot.voiceStateTimeouts.delete(newState.member.id);
       }
       if (
         bot.guild.channels.cache.get(oldState.channel.id).members.length == 1 &&
         bot.voiceChannel
       ) {
-        if (bot.dispatcher) {
-          bot.audioQueue = [];
-          bot.dispatcher.end();
-          bot.dispatcher = false;
-        }
-        try {
-          bot.voiceChannel.leave();
-        } catch (error) {
-          bot.guild.channels.cache.get(bot.voiceChannel.id).leave();
-        }
-        bot.voiceChannel = false;
-        bot.voiceConnection = false;
-        utils.informClients(bot, { voiceChannel: bot.voiceChannel });
+        status.client.cmds.get("leave").execute({ bot: bot });
       }
       return;
     }
-    bot.voiceStateCaching.members.push(newState.member.id);
-    bot.voiceStateCaching.timeouts[newState.member.id] = setTimeout(() => {
-      bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(
-        (val) => val != newState.member.id
-      );
-    }, 3 * 1000);
+    bot.voiceStateTimeouts.set(newState.member.id, () => {
+      setTimeout(() => {
+        bot.voiceStateTimeouts.delete(newState.member.id);
+      }, 1000 * 3);
+    });
     if (!oldState.channel) return;
   } catch (error) {
     log(`Error handling voiceStateUpdate event"\n` + error, [
@@ -553,13 +537,10 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
 //discord.js client event for when a user's presence updates.
 status.client.on("presenceUpdate", (oldPresence, newPresence) => {
   if (!!oldPresence && oldPresence.status == newPresence.status) return;
-  if (newPresence.status == "online") {
-    delete status.client.lastSeen[newPresence.user.id];
-    return;
-  } else {
-    status.client.lastSeen[newPresence.user.id] = utils.getTimeRaw();
-    return;
-  }
+  if (newPresence.status == "online")
+    return status.client.lastSeen.delete(newPresence.user.id);
+  else
+    return status.client.lastSeen.set(newPresence.user.id, utils.getTimeRaw());
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)
