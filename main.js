@@ -569,6 +569,7 @@ function cmd(e = "") {
   return;
 }
 
+/*
 function updateBot(e, bot) {
   if (!bot) bot = e;
   for (let i of status.client.children) {
@@ -584,6 +585,7 @@ function updateBot(e, bot) {
     }
   }
 }
+*/
 
 //discord.js client login (called when the electron window is open and ready)
 let loginAtt = 0;
