@@ -32,10 +32,7 @@ class Bot extends EventEmitter {
     this.ruleTextChannel = false;
     this.textChannelArray = [];
     this.roleArray = [];
-    this.voiceStateCaching = {
-      members: [],
-      timeouts: {},
-    };
+    this.voiceStateTimeouts = new Discord.Collection();
     this.socketSubs = new Discord.Collection();
     this.adminSocketSubs = new Discord.Collection();
 
