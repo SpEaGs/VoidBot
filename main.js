@@ -162,12 +162,12 @@ function launchWebServer() {
   function initSocket(s) {
     s.once("disconnect", () => {
       status.client.children.forEach((b) => {
-        let found = b.socketSubs.find(s.id);
+        let found = b.socketSubs.get(s.id);
         if (!!found) {
           found.disconnect();
           b.socketSubs.delete(s.id);
         }
-        let afound = b.adminSocketSubs.find(s.id);
+        let afound = b.adminSocketSubs.get(s.id);
         if (!!afound) {
           afound.disconnect();
           b.adminSocketSubs.delete(s.id);
