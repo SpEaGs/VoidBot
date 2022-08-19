@@ -614,6 +614,7 @@ process.on("uncaughtException", (err) => {
     `Uncaught exception:\n${err.name} position: ${err.lineNumber}:${err.columnNumber}\n${err.message}\n${err.stack}`,
     ["[ERR]", "[CRITICAL]"]
   );
+  utils.dumpJSON("ERR_DUMP.json", err, 2);
   try {
     status.client.children.forEach((bot) => {
       utils.saveConfig(bot);
