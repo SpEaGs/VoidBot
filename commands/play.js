@@ -192,6 +192,7 @@ function play(info, status) {
         .toString()
         .padStart(2, "0")}] (added by: ${info.added_by})\``
     );
+  info.videoDetails.startedAt = Date.now();
   status.nowPlaying = info;
   createStream(status, info);
 }
@@ -291,6 +292,7 @@ function playNextInQueue(status) {
         .toString()
         .padStart(2, "0")}] (added by: ${nextPlay.added_by})\``
     );
+  nextplay.videoDetails.startedAt = Date.now();
   status.nowPlaying = nextPlay;
   status.audioQueue.shift();
   createStream(status, nextPlay);
