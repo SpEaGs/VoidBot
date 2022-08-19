@@ -360,14 +360,14 @@ function populateUsers(status, bot) {
 
 function informClients(bot, data) {
   let payload = { guildID: bot.guildID, data: data };
-  for (let s of bot.socketSubs) {
+  bot.socketSubs.forEach((s) => {
     s.emit("guild_partial", payload);
-  }
+  });
 }
 
 function informAdminClients(bot, data) {
   let payload = { guildID: bot.guildID, data: data };
-  for (let s of bot.adminSocketSubs) {
+  bot.adminSocketSubs.forEach((s) => {
     s.emit("guild_partial", payload);
-  }
+  });
 }
