@@ -36,8 +36,6 @@ class Bot extends EventEmitter {
     this.socketSubs = new Discord.Collection();
     this.adminSocketSubs = new Discord.Collection();
 
-    this.saveConfigInterval = this.saveConfigInterval.bind(this);
-
     //login
     log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guildName}]`]);
     //this.client.login(token);
