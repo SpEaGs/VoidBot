@@ -517,11 +517,12 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
       }
       return;
     }
-    bot.voiceStateTimeouts.set(newState.member.id, () => {
+    bot.voiceStateTimeouts.set(
+      newState.member.id,
       setTimeout(() => {
         bot.voiceStateTimeouts.delete(newState.member.id);
-      }, 1000 * 3);
-    });
+      }, 1000 * 3)
+    );
     if (!oldState.channel) return;
   } catch (error) {
     log(`Error handling voiceStateUpdate event"\n` + error, [
