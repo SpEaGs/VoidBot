@@ -309,6 +309,7 @@ function dumbifyBot(bot, admin = false) {
       url: bot.nowPlaying.url,
       imgURL: bot.nowPlaying.imgURL,
       added_by: bot.nowPlaying.added_by,
+      startedAt: bot.nowPlaying.startedAt,
     };
     dumbBot.nowPlaying = np;
     dumbBot.paused = bot.dispatcher.paused;
