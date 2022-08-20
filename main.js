@@ -512,7 +512,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         clearTimeout(cachedTimeout);
         bot.voiceStateTimeouts.delete(newState.member.id);
       }
-      if (oldState.channel.members.length == 1 && bot.voiceChannel) {
+      if (oldState.channel.members.size == 1 && bot.voiceChannel) {
         status.client.cmds.get("leave").execute({ bot: bot });
       }
       return;
