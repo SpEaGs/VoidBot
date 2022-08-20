@@ -491,7 +491,6 @@ status.client.on("guildMemberRemove", (member) => {
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
 status.client.on("voiceStateUpdate", (oldState, newState) => {
-  let bot = status.client.children.get(newState.guild.id);
   if (oldState.member.id === status.client.user.id) return;
   if (
     !!oldState.channel &&
@@ -499,6 +498,9 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
     oldState.channel.id === newState.channel.id
   )
     return;
+  if (!oldState.channel && !newState.channel) return;
+  log("voiceStateUpdate", ["[WARN]", "[MAIN]"]);
+  let bot = status.client.children.get(newState.guild.id);
   try {
     let cachedTimeout = bot.voiceStateTimeouts.get(newState.member.id);
     if (!newState.channel) {
