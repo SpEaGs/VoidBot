@@ -1,6 +1,5 @@
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
-//const cookieKey = keys.COOKIE_KEY;
 
 const Discord = require("discord.js");
 const winston = require("winston");
@@ -16,8 +15,6 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
-//const cParse = require("cookie-parser");
-//const cSess = require("cookie-session");
 const passport = require("passport");
 const User = require("./web/models/user");
 
@@ -130,16 +127,6 @@ function launchWebServer() {
   };
 
   api.use(cors(corsOptions));
-  //api.use(cParse());
-  /*
-  api.use(
-    cSess({
-      name: "session",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      keys: [cookieKey],
-    })
-  );
-  */
   api.use(passport.initialize());
   api.use(passport.session());
 
@@ -567,24 +554,6 @@ function cmd(e = "") {
   }
   return;
 }
-
-/*
-function updateBot(e, bot) {
-  if (!bot) bot = e;
-  for (let i of status.client.children) {
-    if (i.guildID == bot.guildID) {
-      i.defaultTextChannel = bot.defaultTextChannel;
-      i.defaultVoiceChannel = bot.defaultVoiceChannel;
-      i.ruleTextChannel = bot.ruleTextChannel;
-      i.welcomeTextChannel = bot.welcomeTextChannel;
-      i.welcomeMsg = bot.welcomeMsg;
-      i.announcementsRole = bot.announcementsRole;
-      i.newMemberRole = bot.newMemberRole;
-      utils.saveConfig(i);
-    }
-  }
-}
-*/
 
 //discord.js client login (called when the electron window is open and ready)
 let loginAtt = 0;
