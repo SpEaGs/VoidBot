@@ -513,6 +513,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         clearTimeout(cachedTimeout);
         bot.voiceStateTimeouts.delete(newState.member.id);
       }
+      console.log(oldState.channel.members);
       if (
         bot.guild.channels.cache.get(oldState.channel.id).members.length == 1 &&
         bot.voiceChannel
