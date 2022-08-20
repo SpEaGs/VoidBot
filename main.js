@@ -499,7 +499,6 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
   )
     return;
   if (!oldState.channel && !newState.channel) return;
-  log("voiceStateUpdate", ["[WARN]", "[MAIN]"]);
   let bot = status.client.children.get(newState.guild.id);
   try {
     let cachedTimeout = bot.voiceStateTimeouts.get(newState.member.id);
@@ -513,11 +512,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         clearTimeout(cachedTimeout);
         bot.voiceStateTimeouts.delete(newState.member.id);
       }
-      console.log(oldState.channel.members);
-      if (
-        bot.guild.channels.cache.get(oldState.channel.id).members.length == 1 &&
-        bot.voiceChannel
-      ) {
+      if (oldState.channel.members.length == 1 && bot.voiceChannel) {
         status.client.cmds.get("leave").execute({ bot: bot });
       }
       return;
