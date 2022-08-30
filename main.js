@@ -566,24 +566,6 @@ function cmd(e = "") {
   return;
 }
 
-/*
-function updateBot(e, bot) {
-  if (!bot) bot = e;
-  for (let i of status.client.children) {
-    if (i.guildID == bot.guildID) {
-      i.defaultTextChannel = bot.defaultTextChannel;
-      i.defaultVoiceChannel = bot.defaultVoiceChannel;
-      i.ruleTextChannel = bot.ruleTextChannel;
-      i.welcomeTextChannel = bot.welcomeTextChannel;
-      i.welcomeMsg = bot.welcomeMsg;
-      i.announcementsRole = bot.announcementsRole;
-      i.newMemberRole = bot.newMemberRole;
-      utils.saveConfig(i);
-    }
-  }
-}
-*/
-
 //discord.js client login (called when the electron window is open and ready)
 let loginAtt = 0;
 function clientLogin(t) {
