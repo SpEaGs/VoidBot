@@ -1,6 +1,6 @@
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
-//const cookieKey = keys.COOKIE_KEY;
+const cookieKey = keys.COOKIE_KEY;
 
 const Discord = require("discord.js");
 const winston = require("winston");
@@ -16,8 +16,8 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
-//const cParse = require("cookie-parser");
-//const cSess = require("cookie-session");
+const cParse = require("cookie-parser");
+const cSess = require("cookie-session");
 const passport = require("passport");
 const User = require("./web/models/user");
 
@@ -130,8 +130,7 @@ function launchWebServer() {
   };
 
   api.use(cors(corsOptions));
-  //api.use(cParse());
-  /*
+  api.use(cParse());
   api.use(
     cSess({
       name: "session",
@@ -139,7 +138,6 @@ function launchWebServer() {
       keys: [cookieKey],
     })
   );
-  */
   api.use(passport.initialize());
   api.use(passport.session());
 
