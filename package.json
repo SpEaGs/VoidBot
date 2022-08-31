@@ -46,7 +46,6 @@
     "winston": "^3.8.1",
     "ytdl-core": "^4.10.0"
   },
-  "devDependencies": {},
   "build": {
     "appId": "Void.Bot",
     "files": [

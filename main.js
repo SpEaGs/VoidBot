@@ -139,7 +139,14 @@ function launchWebServer() {
     })
   );
   api.use(passport.initialize());
-  api.use(passport.session());
+  api.use(
+    passport.session({
+      secret: cookieKey,
+      resave: false,
+      saveUninitialized: true,
+      cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
+    })
+  );
 
   api.all("/", (req, res, next) => {
     res.header("Access-Control-AllowOrigin", "*");
