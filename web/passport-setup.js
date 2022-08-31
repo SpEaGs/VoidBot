@@ -8,7 +8,6 @@ const { Strategy, Scope } = require("@oauth-everything/passport-discord");
 const User = require("./models/user");
 
 passport.serializeUser((user, done) => {
-  console.log(JSON.stringify(user));
   done(null, user.token);
 });
 passport.deserializeUser((id, done) => {
@@ -75,7 +74,6 @@ passport.use(
                   done(err, false);
                 }
               });
-              console.log(JSON.stringify(newDBUser));
               done(null, newDBUser);
             } else {
               log("User found in DB.", ["[INFO]", "[WEBSERVER]"]);
@@ -91,7 +89,6 @@ passport.use(
                     "[WEBSERVER]",
                   ]);
               });
-              console.log(JSON.stringify(dbUser));
               done(null, dbUser);
             }
           });

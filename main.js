@@ -17,8 +17,6 @@ const io = require("socket.io")(server, {
     methods: ["GET", "POST"],
   },
 });
-const cParse = require("cookie-parser");
-const cSess = require("cookie-session");
 const passport = require("passport");
 const User = require("./web/models/user");
 

@@ -14,8 +14,8 @@ router.get("/discord", passport.authenticate("discord"));
 router.get(
   "/discord/callback",
   passport.authenticate("discord", {
-    failureRedirect: "/auth/fail",
-    successRedirect: "/auth/success",
+    failureRedirect: "/",
+    successRedirect: "/",
   })
 );
 router.get("/fail", (req, res) => {
