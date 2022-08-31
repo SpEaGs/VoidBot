@@ -7,6 +7,7 @@ const winston = require("winston");
 const fs = require("fs");
 
 const express = require("express");
+const session = require("express-session");
 const cors = require("cors");
 const api = express();
 const server = require("http").createServer(api);
@@ -133,7 +134,7 @@ function launchWebServer() {
   api.use(cParse());
   api.use(passport.initialize());
   api.use(
-    passport.session({
+    session({
       secret: cookieKey,
       resave: false,
       saveUninitialized: true,
