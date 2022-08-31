@@ -21,7 +21,7 @@ router.get(
 router.get("/fail", (req, res) => {
   res.send("Failed Auth");
 });
-router.get("success", (req, res) => {
+router.get("/success", (req, res) => {
   res.send("success");
 });
 
