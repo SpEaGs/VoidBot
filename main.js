@@ -131,13 +131,6 @@ function launchWebServer() {
 
   api.use(cors(corsOptions));
   api.use(cParse());
-  api.use(
-    cSess({
-      name: "session",
-      maxAge: 30 * 24 * 60 * 60 * 1000,
-      keys: [cookieKey],
-    })
-  );
   api.use(passport.initialize());
   api.use(
     passport.session({
