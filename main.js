@@ -131,8 +131,6 @@ function launchWebServer() {
   };
 
   api.use(cors(corsOptions));
-  api.use(cParse());
-  api.use(passport.initialize());
   api.use(
     session({
       secret: cookieKey,
@@ -141,6 +139,8 @@ function launchWebServer() {
       cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
     })
   );
+  api.use(passport.initialize());
+  api.use(passport.session());
 
   api.all("/", (req, res, next) => {
     res.header("Access-Control-AllowOrigin", "*");
