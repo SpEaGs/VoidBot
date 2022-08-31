@@ -27,13 +27,7 @@ passport.use(
       scope: [Scope.IDENTIFY, Scope.GUILDS],
     },
     (accessToken, refreshToken, profile, done) => {
-      let user = {
-        snowflake: profile.id,
-        username: profile.username,
-        discriminator: profile.displayName.split("#").pop(),
-        token: accessToken,
-        botAdmin: false,
-      };
+      let user = {};
       fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -41,54 +35,62 @@ passport.use(
       })
         .then((res) => res.json())
         .then((response) => {
-          user.guilds = {
+          let userGuilds = {
             admin: [],
             member: [],
           };
           for (let i of response) {
-            user.guilds.member.push(i.id);
+            userGuilds.member.push(i.id);
             if ((i.permissions & 0x8) == 0x8) {
-              user.guilds.admin.push(i.id);
+              userGuilds.admin.push(i.id);
             }
           }
-          User.findOne({ snowflake: user.snowflake }, (err, dbUser) => {
-            if (err)
+          User.findOne({ snowflake: profile.id }, (err, dbUser) => {
+            if (err) {
               log(`Error requesting user from DB:\n${err}`, [
                 "[ERR]",
                 "[WEBSERVER]",
               ]);
+              done(err, false);
+            }
             if (!dbUser) {
               log("No user entry found in the DB. Creating a new one...", [
                 "[INFO]",
                 "[WEBSERVER]",
               ]);
               let newDBUser = new User({
-                snowflake: user.snowflake,
-                username: user.username,
-                discriminator: user.discriminator,
-                guilds: user.guilds,
+                snowflake: profile.id,
+                username: profile.username,
+                discriminator: profile.displayname.split("#").pop(),
+                guilds: userGuilds,
                 token: accessToken,
-                botAdmin: false,
+                botAdmin: !!utils.config.botAdmin.includes(profile.id),
               });
-              if (utils.config.botAdmin.includes(user.snowflake))
-                newDBUser.botAdmin = true;
               newDBUser.save((err) => {
-                if (err)
+                if (err) {
                   log(`Error adding new user to DB:\n${err}`, [
                     "[ERR]",
                     "[WEBSERVER]",
                   ]);
+                  done(err, false);
+                }
               });
+              user = newDBUser;
             } else {
               log("User found in DB.", ["[INFO]", "[WEBSERVER]"]);
+              dbUser.guilds = userGuilds;
               dbUser.token = accessToken;
+              dbUser.botAdmin = !!utils.config.botAdmin.includes(
+                dbUser.snowflake
+              );
               dbUser.save((err) => {
                 if (err)
-                  log(`Error updating user with new token:\n${err}`, [
+                  log(`Error updating user with new data:\n${err}`, [
                     "[ERR]",
                     "[WEBSERVER]",
                   ]);
               });
+              user = dbUser;
             }
           });
           done(null, user);
@@ -98,6 +100,7 @@ passport.use(
             "[ERR]",
             "[WEBSERVER]",
           ]);
+          done(err, false);
         });
     }
   )
