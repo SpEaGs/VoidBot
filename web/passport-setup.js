@@ -28,7 +28,6 @@ passport.use(
       scope: [Scope.IDENTIFY, Scope.GUILDS],
     },
     (accessToken, refreshToken, profile, done) => {
-      let user = {};
       fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -76,7 +75,8 @@ passport.use(
                   done(err, false);
                 }
               });
-              user = newDBUser;
+              console.log(JSON.stringify(newDBUser));
+              done(null, newDBUser);
             } else {
               log("User found in DB.", ["[INFO]", "[WEBSERVER]"]);
               dbUser.guilds = userGuilds;
@@ -91,11 +91,10 @@ passport.use(
                     "[WEBSERVER]",
                   ]);
               });
-              user = dbUser;
+              console.log(JSON.stringify(dbUser));
+              done(null, dbUser);
             }
           });
-          console.log(JSON.stringify(user));
-          done(null, user);
         })
         .catch((err) => {
           log(`Error handling discord API request for guilds:\n${err}`, [
