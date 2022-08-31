@@ -14,9 +14,12 @@ router.get("/discord", passport.authenticate("discord"));
 router.get(
   "/discord/callback",
   passport.authenticate("discord", {
-    failureRedirect: "/",
+    failureRedirect: "/auth/fail",
     successRedirect: "/",
   })
 );
+router.get("/fail", (req, res) => {
+  res.send("Failed Auth");
+});
 
 module.exports = router;
