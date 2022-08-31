@@ -94,6 +94,7 @@ passport.use(
               user = dbUser;
             }
           });
+          console.log(user);
           done(null, user);
         })
         .catch((err) => {
