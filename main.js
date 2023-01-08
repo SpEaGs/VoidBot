@@ -1,666 +1,607 @@
-
-const keys = require('./tokens.json');
+const keys = require("./tokens.json");
 const token = keys.TOKEN;
-const hostname = keys.HOSTNAME;
 const cookieKey = keys.COOKIE_KEY;
-const dbPass = keys.DB_PASS;
 
-const Discord = require('discord.js');
-const winston = require('winston');
-const fs = require('fs');
+const Discord = require("discord.js");
+const winston = require("winston");
+const fs = require("fs");
 
-const electron = require('electron');
-const app = electron.app;
-const BrowserWindow = electron.BrowserWindow;
-const ipcMain = electron.ipcMain;
-const path = require('path');
-const url = require('url');
-
-const http = require('http');
-const express = require('express');
-const exApp = express();
-const cParse = require('cookie-parser');
-const cSession = require('cookie-session');
-const passport = require('passport');
-const passSetup = require('./web/passport-setup.js');
-
-global.db = require('mysql').createConnection({
-    host: 'localhost',
-    user: 'voidbot',
-    password: dbPass,
-    database: 'voidbot_db'
-})
-const port = 7777;
-
-const authRouter = require('./web/routers/auth.js');
-const dashRouter = require('./web/routers/dash.js');
-
-let server = http.createServer(exApp);
-
-const io = require('socket.io')(server, {});
-
-const utils = require('./utils.js');
-const Bot = require('./bot.js');
-
-let mainWindow;
-
-//log formatting and pipes to log files
-var backlog = []
-var logger = winston.createLogger({
-    level: 'info',
-    format: winston.format.combine(
-        winston.format.json(),
-        winston.format.colorize( {all:true, colors:{info: 'white', warning: 'yellow', error: 'red'}})
-    ),
-    transports: [
-        new winston.transports.File({ filename: 'error.log', level: 'error' }),
-        new winston.transports.File({ filename: 'combined.log' })
-    ]
+const express = require("express");
+const session = require("express-session");
+const cors = require("cors");
+const api = express();
+const server = require("http").createServer(api);
+const io = require("socket.io")(server, {
+  cors: {
+    origin: "http://76.179.53.45:3000",
+    methods: ["GET", "POST"],
+  },
 });
-logger.add(new winston.transports.Console({
-    format: winston.format.simple()
-}));
+const passport = require("passport");
+const User = require("./web/models/user");
 
+if (process.env.NODE_ENV !== "production") {
+  require("dotenv").config();
+}
+
+const utils = require("./utils.js");
+const Bot = require("./bot.js");
+const intents = new Discord.IntentsBitField([
+  Discord.IntentsBitField.Flags.Guilds,
+  Discord.IntentsBitField.Flags.GuildMembers,
+  Discord.IntentsBitField.Flags.GuildPresences,
+  Discord.IntentsBitField.Flags.GuildVoiceStates,
+]);
 //init some vars & export
 module.exports = {
-    eSender: {
-        socket: false,
-        ipc: false
-    },
-    client: new Discord.Client({forceFetchUsers: true}),
-    fs: fs,
-    systemUIPopulated: false,
-    settingsUIPopulated: false,
-    updateVol: updateVol,
-    getStatus: getStatus
-}
+  client: new Discord.Client({
+    forceFetchUsers: true,
+    intents: intents,
+  }),
+  fs: fs,
+  systemUIPopulated: false,
+  settingsUIPopulated: false,
+  getStatus: getStatus,
+  webAppDomain: utils.config.webAppDomain,
+  sockets: new Discord.Collection(),
+  consoleSockets: new Discord.Collection(),
+};
 
-//set up basic structure for calling/storing discord.js clients (master + children)
-const status = require('./main.js');
+const status = require("./main.js");
 
 function getStatus() {
-    return status;
+  return status;
 }
 
-status.client.children = new Discord.Collection();
-status.client.cmds = new Discord.Collection();
-status.client.lastSeen = {};
+//log formatting and pipes to log files
+var backlog = [];
+var logger = winston.createLogger({
+  level: "info",
+  format: winston.format.combine(
+    winston.format.json(),
+    winston.format.colorize({
+      all: true,
+      colors: { info: "white", warning: "yellow", error: "red" },
+    })
+  ),
+  transports: [
+    new winston.transports.File({ filename: "error.log", level: "error" }),
+    new winston.transports.File({ filename: "combined.log" }),
+  ],
+});
+logger.add(
+  new winston.transports.Console({
+    format: winston.format.simple(),
+  })
+);
+
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str, tags) {
-    let lo = { timeStamp: utils.getTime(),
-               tags: tags,
-               msg: str,
-               color: '' }
-    let l = `${lo.timeStamp} ${lo.tags.join(' ')}: ${lo.msg}`
-    switch (tags[0]) {
-        case '[INFO]': {
-            lo.color = 'white';
-            logger.info(l);
-            break;
-        }
-        case '[WARN]': {
-            lo.color = 'yellow';
-            logger.warn(l);
-            break;
-        }
-        case '[ERR]': {
-            lo.color = 'red';
-            logger.error(l);
-            break;
-        }
+  let lo = { timeStamp: utils.getTime(), tags: tags, msg: str };
+  let l = `${lo.timeStamp} ${lo.tags.join(" ")}: ${lo.msg}`;
+  switch (tags[0]) {
+    case "[INFO]": {
+      logger.info(l);
+      break;
     }
-    backlog.push(lo);
-    if (status.eSender.socket) status.eSender.socket.emit('stdout', lo);
-    if (status.eSender.ipc) status.eSender.ipc.send('stdout', lo);
+    case "[WARN]": {
+      logger.warn(l);
+      break;
+    }
+    case "[ERR]": {
+      logger.error(l);
+      break;
+    }
+  }
+  status.consoleSockets.forEach((s) => {
+    s.emit("stdout_check");
+    s.once("stdout_auth", (snowflake) => {
+      if (utils.config.botAdmin.includes(snowflake)) {
+        s.emit("stdout", lo);
+      }
+    });
+  });
+  backlog.push(lo);
 }
 global.log = log;
 
-//DB heartbeat
-function DBHeartbeat() {
-    db.query(`SELECT 1`, (err, result) => {
-        if (err) {
-            log(`DB Heartbeat error. Attempting another query in 10 seconds.`, ['[WARN]', '[WEBSERVER]']);
-            setTimeout(DBHeartbeat, 10 * 1000);
-        }
-        log('DB Heartbeat successful.', ['[INFO]', '[WEBSERVER]']);
-    })
-}
+require("./web/utils/connectdb");
+require("./web/passport-setup");
+
+status.client.children = new Discord.Collection();
+status.client.cmds = new Discord.Collection();
+status.client.lastSeen = new Discord.Collection();
 
 //webserver
 function launchWebServer() {
-    //connect to DB & init if needed
-    db.connect((err) => {
-        if (err) {
-            log(`Error connecting to DB: ${err}`, ['[ERR]', '[WEBSERVER]']);
-        }
-        else log('Successfully connected to DB!', ['[INFO]', '[WEBSERVER]']);
-    });
-    global.dbhb = setInterval(DBHeartbeat, 6 * 60 * 60 * 1000);
-    let initUDBSQL = `CREATE TABLE IF NOT EXISTS users (
-                    uID INT NOT NULL PRIMARY KEY AUTO_INCREMENT,
-                    username VARCHAR(30) NOT NULL,
-                    discriminator VARCHAR(5) NOT NULL,
-                    snowflake VARCHAR(18) NOT NULL,
-                    g_admin VARCHAR(2000),
-                    g_member VARCHAR(2000)
-                    )`;
-    db.query(initUDBSQL, (err, result) => {
-        if(err) log(`Error initializing UDB: ${err}`, ['[ERR]', '[WEBSERVER]']);
-    });
-    let initGDBSQL = `CREATE TABLE IF NOT EXISTS guilds ( snowflake VARCHAR(18) NOT NULL PRIMARY KEY )`
-    db.query(initGDBSQL, (err, result) => {
-        if(err) log(`Error initializing GDB: ${err}`, ['[ERR]', '[WEBSERVER]']);
-    });
-    for(i of status.client.children.array()) {
-        let pushGuildsSQL = `INSERT IGNORE INTO guilds SET ?`;
-        db.query(pushGuildsSQL, {snowflake: i.guildID}, (err, result) => {
-            if(err) log(`Error pushing guild ${i.guildID} to guilds table: ${err}`, ['[ERR]','[WEBSERVER]']);
-        })
+  const whitelist = process.env.WHITELISTED_DOMAINS
+    ? process.env.WHITELISTED_DOMAINS.split(",")
+    : [];
+  const corsOptions = {
+    origin: (origin, callback) => {
+      if (!origin || whitelist.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    credentials: true,
+  };
+
+  api.use(cors(corsOptions));
+  api.use(
+    session({
+      secret: cookieKey,
+      resave: false,
+      saveUninitialized: true,
+      cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
+    })
+  );
+  api.use(passport.initialize());
+  api.use(passport.session());
+
+  api.all("/", (req, res, next) => {
+    res.header("Access-Control-AllowOrigin", "*");
+    res.header("Access-Control-Allow-Headers", "X-Requested-Width");
+    next();
+  });
+  api.use("/auth", require("./web/routers/auth"));
+  api.get("/", (req, res) => {
+    if (!req.user) {
+      res.redirect(utils.config.webAppDomain + "test");
+    } else {
+      res.redirect(
+        `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
+      );
     }
+  });
 
-    exApp.set('view engine', 'pug');
-    exApp.set('views', './pug');
-
-    exApp.use('/assets', express.static('./assets'));
-    exApp.use('/favicon.ico', express.static('./favicon.ico'));
-
-
-    exApp.use(cParse());
-    exApp.use(cSession({
-        name: 'session',
-        maxAge: (30 * 24 * 60 * 60 * 1000),
-        keys: [cookieKey]
-    }))
-
-    exApp.use(passport.initialize());
-    exApp.use(passport.session());
-
-    exApp.use('/auth', authRouter);
-    exApp.use('/dash', dashRouter);
-
-    exApp.get('/', (req, res) => {
-        let user = req.user || false;
-        if(!user) {
-            res.redirect('/auth/login');
+  function initSocket(s) {
+    s.once("disconnect", () => {
+      status.client.children.forEach((b) => {
+        let found = b.socketSubs.get(s.id);
+        if (!!found) {
+          found.disconnect();
+          b.socketSubs.delete(s.id);
         }
-        else res.redirect('/dash');
+        let afound = b.adminSocketSubs.get(s.id);
+        if (!!afound) {
+          afound.disconnect();
+          b.adminSocketSubs.delete(s.id);
+        }
+      });
     });
-
-    server.listen(port, hostname, () => {
-        log(`Active and listening on port ${port}`, ['[INFO]', '[WEBSERVER]']);
-    });
-
-    status.eSender.socket = io;
-    status.eSender.socket.on('connection', (socket) => {
-        socket.emit('ready', 'ready');
-
-        socket.on('command', cmd);
-        socket.on('updateBot', updateBot);
-
-        socket.once('initConnect', () => {
-            for( let i of status.client.children.array()) {
-                socket.emit('add-client', utils.dumbifyBot(i));
+    s.on("guilds", (uToken) => {
+      User.findOne({ token: uToken }, (err, u) => {
+        if (err) return socket.disconnect();
+        if (!u) return socket.disconnect();
+        else {
+          let guildsOut = [];
+          status.client.children.forEach((b) => {
+            if (u.guilds.member.includes(b.guildID)) {
+              if (u.guilds.admin.includes(b.guildID)) {
+                guildsOut.push(utils.dumbifyBot(b, true));
+                b.adminSocketSubs.set(s.id, s);
+              } else {
+                guildsOut.push(utils.dumbifyBot(b));
+              }
+              b.socketSubs.set(s.id, s);
             }
+          });
+          s.emit("guilds_res", guildsOut);
+        }
+      });
+    });
+    s.on("user", (uToken) => {
+      User.findOne({ token: uToken }, (err, u) => {
+        if (err) return s.disconnect();
+        if (!u) return s.disconnect();
+        else {
+          s.emit("user-res", u);
+        }
+      });
+    });
+    s.on("g_data", (payload) => {
+      let bot = status.client.children.find(
+        (bot) => bot.guildID === payload.id
+      );
+      if (payload.data) {
+        for (let i of Object.keys(payload.data)) {
+          bot[i] = payload.data[i];
+        }
+        switch (payload.admin) {
+          case true: {
+            utils.informAdminClients(bot, payload.data);
+            utils.saveConfig(bot);
+            break;
+          }
+          case false: {
+            utils.informClients(bot, payload.data);
+            utils.saveConfig(bot);
+            break;
+          }
+        }
+        return;
+      }
+      let mem = bot.guild.members.cache.get(payload.snowflake);
+      let paramsOut = {
+        interaction: { member: mem, args: {} },
+        bot: bot,
+        WS: true,
+      };
+      switch (payload.action) {
+        case false || null || undefined:
+          break;
+        default:
+          if (payload.aData) paramsOut.interaction.args = payload.aData;
+          let cmd = status.client.cmds.get(payload.action);
+          log(`${cmd.name} Command received from ${bot.guildName}`, [
+            "[INFO]",
+            `[${bot.guildName}]`,
+          ]);
+          cmd.execute(paramsOut);
+          break;
+      }
+    });
+  }
+
+  io.on("connection", (socket) => {
+    socket.once("get_backlog", (snowflake) => {
+      if (utils.config.botAdmin.includes(snowflake)) {
+        status.consoleSockets.set(socket.id, socket);
+        socket.emit("backlog", backlog);
+      }
+    });
+    socket.on("sysCMD", (payload) => {
+      if (utils.config.botAdmin.includes(payload.snowflake)) {
+        cmd(payload.cmd);
+      }
+    });
+    socket.once("handshake_res", (authed, token, dToken = false) => {
+      if (authed && dToken) {
+        User.findOne({ token: dToken }, (err, u) => {
+          if (err) return socket.disconnect();
+          if (!u) {
+            socket.emit("handshake_end", false);
+            socket.disconnect();
+          } else {
+            let oldSocket = status.sockets.find((s) => s.token === token);
+            if (!!oldSocket) {
+              status.sockets.delete(oldSocket.socket.id);
+            }
+            initSocket(socket);
+            status.sockets.set(socket.id, {
+              socket: socket,
+              token: token,
+              dToken: dToken,
+            });
+            socket.emit("handshake_end", true, u);
+          }
         });
-
-        socket.on('gControls', (params) => {
-            let botOut = status.client.children.get(params.bot.guildID);
-            let memOut = botOut.guild.members.cache.get(params.data.snowflake);
-            let paramsOut = {
-                msg: { member: memOut },
-                args: false,
-                bot: botOut
-            }
-            if (params.data.value) {
-                paramsOut.args = params.data.value.toString().split(' ');
-            };
-            if (params.control === 'pausePlay') {
-                switch (botOut.dispatcher.paused) {
-                    case true: {
-                        status.client.cmds.get('resume').execute(paramsOut);
-                        break;
-                    }
-                    case false: {
-                        status.client.cmds.get('pause').execute(paramsOut);
-                        break;
-                    }
-                }
-            }
-            else {
-                status.client.cmds.get(params.control).execute(paramsOut);
-            }
-        });
-
-        socket.on('getBotInfo', (guilds) => {
-            let bots = [];
-            for (let i of status.client.children.array()) {
-                if (guilds.includes(i.guildID)) {
-                    bots.push(utils.dumbifyBot(i));
-                }
-            }
-            socket.emit('sendBotInfo', (bots));
-        })
-
-        setTimeout(() => {
-            socket.emit('populated');
-            socket.emit('init-backlog', backlog);
-        }, 2000);
+      } else {
+        socket.emit("handshake_end", false);
+        socket.disconnect();
+      }
     });
+    socket.emit("handshake");
+  });
+
+  server.listen(process.env.PORT || 8081, () => {
+    const port = server.address().port;
+    log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
+  });
 }
 
-function initBot(bot) {
-    utils.populateAdmin(bot);
-    utils.populateUsers(status.client.lastSeen, bot);
-    for (let chan of bot.guild.channels.cache.array()) {
-        let cleanChanName = utils.cleanChannelName(chan.name);
-        switch (chan.type) {
-            case "voice": {
-                bot.voiceChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
-            }
-            case "text": {
-                bot.textChannelArray.push({ id: chan.id, name: chan.name, cName: cleanChanName }); break;
-            }
-        }
+async function initBot(bot) {
+  utils.populateAdmin(bot);
+  utils.populateUsers(status, bot);
+  bot.guild.channels.cache.forEach((chan) => {
+    let cleanChanName = utils.cleanChannelName(chan.name);
+    switch (chan.type) {
+      case 2: {
+        bot.voiceChannelArray.push({
+          id: chan.id,
+          name: chan.name,
+          cName: cleanChanName,
+        });
+        break;
+      }
+      case 0: {
+        bot.textChannelArray.push({
+          id: chan.id,
+          name: chan.name,
+          cName: cleanChanName,
+        });
+        break;
+      }
     }
-    for (let role of bot.guild.roles.cache.array()) {
-        let cleanRoleName = utils.cleanChannelName(role.name);
-        bot.roleArray.push({ id: role.id, name: role.name, cName: cleanRoleName });
+  });
+  bot.guild.roles.cache.forEach((role) => {
+    if (role.id !== bot.guild.roles.everyone.id) {
+      let cleanRoleName = utils.cleanChannelName(role.name);
+      bot.roleArray.push({
+        id: role.id,
+        name: role.name,
+        cName: cleanRoleName,
+      });
     }
-    status.eSender.ipc.send('add-client', utils.dumbifyBot(bot));
+  });
 }
 
 //discord.js client ready event handler (master client)
 try {
-    status.client.once('ready', () => {
-        utils.populateCmds(status);
-        
-        status.client.ws.on('INTERACTION_CREATE', async interaction => {
-            let bot = status.client.children.get(interaction.guild_id);
-            //fetch admin lists & compare user id
-            let admin = utils.adminCheck(bot, interaction.member.user);
-            let botadmin = utils.botAdminCheck(interaction.member.user.id);
-            let adminCheck = false;
-            if (admin || botadmin) adminCheck = true;
-
-            //get and run command
-            let cmd = status.client.cmds.get(interaction.data.name);
-            if (cmd.admin && !adminCheck) {
-                status.client.api.interactions(interaction.id, interaction.token).callback.post({data: {
-                    type: 4,
-                    data: {
-                        content: 'You lack sufficient permissions for that command.'
-                    }
-                }})
-            }
-            else {
-                let member = bot.guild.members.cache.get(interaction.member.user.id);
-                let msg = {
-                    author: member,
-                    member: member
-                }
-                let args = []
-                if (interaction.data.options) {
-                    for (let i of interaction.data.options) {
-                        args.push(i.value);
-                    }
-                }
-                let params = {msg, args, bot}
-                cmd.execute(params);
-                status.client.api.interactions(interaction.id, interaction.token).callback.post({data: {
-                    type: 4,
-                    data: {
-                        content: 'Command received!'
-                    }
-                }})
-            }
-        })
-
-        //populate info for child clients
-        let guilds = status.client.guilds.cache.array();
-        for (let i of guilds) {
-            i.members.fetch();
-            let id = i.id;
-            let newBot = new Bot.Bot(i, status);
-            status.client.children.set(id, newBot);
-            initBot(newBot);
-            log('Initialization complete!', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
-        }
-        setTimeout(() => {
-            launchWebServer(guilds)
-        }, 200);
-
-        log('VoidBot Ready! Hello World!', ['[INFO]', '[MAIN]']);
+  status.client.once("ready", () => {
+    //populate info for child clients
+    status.client.guilds.cache.forEach((g) => {
+      let newBot = new Bot.Bot(g, status);
+      initBot(newBot);
+      status.client.children.set(g.id, newBot);
+      log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
     });
-}
-catch (error) {
-    log(`Error initializing client:\n`+error, ['[ERR]', '[MAIN]']);
-    process.exit(1);
-};
+    utils.populateCmds(status);
 
-//discord.js client event for the bot receiving a message
-status.client.on('message', msg => {
-    let bot = status.client.children.get(msg.guild.id);
-    //check incoming message for command and log if true
-    if (msg.author.id == status.client.user.id) return;
-    if (!msg.content.startsWith(utils.config.prefix)) return;
-    log(`${msg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`, '[CMD]']);
-
-    //parse for command arguments
-    const args = msg.content.slice(utils.config.prefix.length).split(/ +/);
-    const cmdName = args.shift().toLowerCase();
-
-    //fetch admin lists & compare user id
-    let admin = utils.adminCheck(bot, msg.author);
-    let botadmin = utils.botAdminCheck(msg.author.id);
-    let adminCheck = false;
-    if (admin || botadmin) adminCheck = true;
-
-    //check system commands & run if found (these are commands related to the bot, not things it does.)
-    if (botadmin) {
-        var sysCmd = utils.systemCMDs(cmdName, status);
-        if (sysCmd) return;
-    }
-
-    //check for command alias, arguments, and admin
-    let aliCheck = utils.aliasCheck(cmdName, status);
-    let cmdRec = true;
-    if (!status.client.cmds.has(cmdName) && !aliCheck) {
-        log(`Not Recognized.`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`, '[CMD]']);
-        cmdRec = false;
-    }
-    if (bot.defaultTextChannel && msg.channel.id != bot.defaultTextChannel.id) {
-        switch (cmdRec) {
-            case true: {
-                msg.delete({reason:"Wrong channel for bot commands."});
-                bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author, cmdRec));
-                break;
-            }
-            case false: {
-                bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(utils.wrongChannel(msg.author, cmdRec));
-                break;
-            }
+    setInterval(() => {
+      status.consoleSockets.forEach((s) => {
+        if (!s.connected) {
+          status.consoleSockets.delete(s.id);
         }
-    }
-    if (!cmdRec) return;
-    let cmd = aliCheck;
-    if (!aliCheck) cmd = status.client.cmds.get(cmdName);
-    if (cmd.server && msg.channel.type !== 'text') return msg.reply('That command only works on a server!');
-    if (cmd.args && !args.length) return msg.reply(`That command needs arguments.\nUsage: ${cmd.usage}`);
-    if (cmd.admin && !adminCheck) return msg.reply('You do not have sufficient permissions to use that command you fool!');
-            
-    //run command
-    try {
-        let params = { msg, args, bot };
+      });
+      status.sockets.forEach((s) => {
+        if (!s.socket.connected) {
+          status.sockets.delete(s.socket.id);
+        }
+      });
+    }, 1000 * 60 * 5);
+
+    status.client.on("interactionCreate", async (interaction) => {
+      if (!interaction.isChatInputCommand()) return;
+      let bot = status.client.children.get(interaction.guildId);
+      //fetch admin lists & compare user id
+      let admin = utils.adminCheck(bot, interaction.member.user);
+      let botadmin = utils.botAdminCheck(interaction.member.user.id);
+      let adminCheck = false;
+      if (admin || botadmin) adminCheck = true;
+
+      //get and run command
+      let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
+      if (cmd.admin && !adminCheck) {
+        try {
+          await interaction.reply(
+            "You lack sufficient permissions for that command."
+          );
+        } catch {}
+      } else {
+        let member = bot.guild.members.cache.get(interaction.member.user.id);
+        let msg = {
+          author: member,
+          member: member,
+        };
+        let params = { interaction, bot };
         cmd.execute(params);
-    }
-    catch (error) {
-        log(`Error executing command:\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
-        msg.reply('There was an error executing that command! Please ask an admin or `SpEaGs#2936` to check the logs.');
-    };
-});
+        log(`${cmd.name} Command received from ${bot.guildName}`, [
+          "[INFO]",
+          `[${bot.guildName}]`,
+        ]);
+        try {
+          await interaction.reply("Command received!");
+        } catch {}
+      }
+    });
+    setTimeout(() => {
+      launchWebServer();
+    }, 200);
+
+    log("VoidBot Ready! Hello World!", ["[INFO]", "[MAIN]"]);
+  });
+} catch (error) {
+  log(`Error initializing client:\n` + error, ["[ERR]", "[MAIN]"]);
+  process.exit(1);
+}
 
 //discord.js client event for the bot entering a new server
-status.client.on('guildCreate', guild => {
-    let newBot = new Bot.Bot(guild, status);
-    log('New server added.', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
-    guild.members.fetch();
-    status.client.children.set(guild.id, newBot);
-    setTimeout(() => {
-        initBot(newBot);
-        log('Initialization complete!', ['[INFO]', '[MAIN]', `[${newBot.guildName}]`]);
-    }, 400);
-    status.eSender.socket.emit('new-guild');
+status.client.on("guildCreate", async (guild) => {
+  let guildOut = await status.client.guilds.fetch(guild.id);
+  let newBot = new Bot.Bot(guildOut, status);
+  log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guildName}]`]);
+  status.client.children.set(guild.id, newBot);
+  setTimeout(() => {
+    initBot(newBot);
+    log("Initialization complete!", [
+      "[INFO]",
+      "[MAIN]",
+      `[${newBot.guildName}]`,
+    ]);
+  }, 400);
 });
 
 //discord.js client event for the bot leaving or being kicked from a server
-status.client.on('guildDelete', guild => {
-    let bot = status.client.children.get(guild.id);
-    log('Server removed. Deleting config and data.', ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
-    status.client.children.delete(guild.id);
-    delete utils.config.sharding[guild.id];
-    utils.dumpJSON('config.json', utils.config, 2);
-    status.eSender.ipc.send('rem-client', guild.id);
-    status.eSender.socket.emit('rem-client', guild.id);
+status.client.on("guildDelete", (guild) => {
+  let bot = status.client.children.get(guild.id);
+  log("Server removed. Deleting config and data.", [
+    "[INFO]",
+    "[MAIN]",
+    `[${bot.guildName}]`,
+  ]);
+  status.client.children.delete(guild.id);
+  delete utils.config.sharding[guild.id];
+  utils.dumpJSON("config.json", utils.config, 2);
 });
 
 //discord.js client event for new members joining a server
-status.client.on('guildMemberAdd', member => {
-    let bot = status.client.children.get(member.guild.id);
-    log(`New member joined. Welcome message set to: ${bot.welcomeMsg}`, ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
-    try {
-        if (bot.welcomeMsg === false) return;
-        if (bot.welcomeTextChannel != false) {
-            let anno = false;
-            if (bot.announcementsRole != false) anno = true;
-            if (bot.ruleTextChannel != false) {
-                bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno)
-                +`\nPlease read the rules in ${bot.guild.channels.cache.get(bot.ruleTextChannel.id).toString()}`);
-            }
-            else bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.welcome(member, anno));
-        };
-        if (bot.newMemberRole != false) {
-            member.roles.add(bot.newMemberRole.id);
-        }
+status.client.on("guildMemberAdd", (member) => {
+  let bot = status.client.children.get(member.guild.id);
+  log(`New member joined. Welcome message set to: ${bot.welcomeMsg}`, [
+    "[INFO]",
+    "[MAIN]",
+    `[${bot.guildName}]`,
+  ]);
+  try {
+    if (bot.welcomeMsg === false) return;
+    if (bot.welcomeTextChannel != false) {
+      let anno = false;
+      if (bot.announcementsRole != false) anno = true;
+      if (bot.ruleTextChannel != false) {
+        bot.guild.channels.cache
+          .get(bot.welcomeTextChannel.id)
+          .send(
+            utils.welcome(member, anno) +
+              `\nPlease read the rules in ${bot.guild.channels.cache
+                .get(bot.ruleTextChannel.id)
+                .toString()}`
+          );
+      } else
+        bot.guild.channels.cache
+          .get(bot.welcomeTextChannel.id)
+          .send(utils.welcome(member, anno));
     }
-    catch (error) {
-        log(`Error handling guildMemberAdd event:\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
-    };
+    if (bot.newMemberRole != false) {
+      member.roles.add(bot.newMemberRole.id);
+    }
+  } catch (error) {
+    log(`Error handling guildMemberAdd event:\n` + error, [
+      "[WARN]",
+      "[MAIN]",
+      `[${bot.guildName}]`,
+    ]);
+  }
 });
 
 //discord.js client event for when a member leaves a server
-status.client.on('guildMemberRemove', member => {
-    let bot = status.client.children.get(member.guild.id);
-    log('A member left the server.', ['[INFO]', '[MAIN]', `[${bot.guildName}]`]);
-    try {
-        if (bot.welcomeMsg == false) return;
-        if (bot.welcomeTextChannel != false) {
-            bot.guild.channels.cache.get(bot.welcomeTextChannel.id).send(utils.sendoff(member));
-        }
+status.client.on("guildMemberRemove", (member) => {
+  let bot = status.client.children.get(member.guild.id);
+  log("A member left the server.", ["[INFO]", "[MAIN]", `[${bot.guildName}]`]);
+  try {
+    if (bot.welcomeMsg == false) return;
+    if (bot.welcomeTextChannel != false) {
+      bot.guild.channels.cache
+        .get(bot.welcomeTextChannel.id)
+        .send(utils.sendoff(member));
     }
-    catch (error) {
-        log(`Error handling guildMemberRemove event:\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
-    };
+  } catch (error) {
+    log(`Error handling guildMemberRemove event:\n` + error, [
+      "[WARN]",
+      "[MAIN]",
+      `[${bot.guildName}]`,
+    ]);
+  }
 });
 
 //discord.js client event for when a guild member updates voice status (join/leave/mute/unmute/deafen/undeafen)
-status.client.on('voiceStateUpdate', (oldState, newState) => {
-    let bot = status.client.children.get(newState.member.guild.id);
-    if (oldState.member.id === status.client.user.id) return;
-    if (oldState.channel && newState.channel && oldState.channel.id === newState.channel.id) return;
-    try {
-        if (!newState.channel) {
-            if (bot.voiceStateCaching.members.includes(newState.member.id)) {
-                bot.guild.channels.cache.get(bot.defaultTextChannel.id).send(`Look at this twat ${newState.member} joining a voice chat then leaving immediately!`);
-            }
-            bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(val => val != newState.member.id);
-            if (bot.voiceStateCaching.timeouts[newState.member.id] != null) {
-                clearTimeout(bot.voiceStateCaching.timeouts[newState.member.id]);
-            }
-            if (bot.guild.channels.cache.get(oldState.channel.id).members.array().length == 1
-                && bot.voiceChannel) {
-                    if (bot.dispatcher) {
-                        bot.audioQueue = [];
-                        bot.dispatcher.end();
-                        bot.dispatcher = false;
-                    }
-                    try {
-                        bot.voiceChannel.leave();
-                    }
-                    catch {
-                        bot.guild.channels.cache.get(bot.voiceChannel.id).leave();
-                    }
-                    bot.voiceChannel = false;
-                    bot.voiceConnection = false;
-                    status.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(bot)]);
-                }
-            return;
-        };
-        bot.voiceStateCaching.members.push(newState.member.id);
-        bot.voiceStateCaching.timeouts[newState.member.id] = setTimeout(() => {
-            bot.voiceStateCaching.members = bot.voiceStateCaching.members.filter(val => val != newState.member.id);
-        }, 3 * 1000);
-        if (!oldState.channel) return;
+status.client.on("voiceStateUpdate", (oldState, newState) => {
+  if (oldState.member.id === status.client.user.id) return;
+  if (
+    !!oldState.channel &&
+    !!newState.channel &&
+    oldState.channel.id === newState.channel.id
+  )
+    return;
+  if (!oldState.channel && !newState.channel) return;
+  let bot = status.client.children.get(newState.guild.id);
+  try {
+    let cachedTimeout = bot.voiceStateTimeouts.get(newState.member.id);
+    if (!newState.channel) {
+      if (!!cachedTimeout) {
+        bot.guild.channels.cache
+          .get(bot.defaultTextChannel.id)
+          .send(
+            `Look at this twat ${newState.member} joining a voice chat then leaving immediately!`
+          );
+        clearTimeout(cachedTimeout);
+        bot.voiceStateTimeouts.delete(newState.member.id);
+      }
+      if (oldState.channel.members.size == 1 && bot.voiceChannel) {
+        status.client.cmds.get("leave").execute({ bot: bot });
+      }
+      return;
     }
-    catch (error) {
-        log(`Error handling voiceStateUpdate event"\n`+error, ['[WARN]', '[MAIN]', `[${bot.guildName}]`]);
-    };
+    bot.voiceStateTimeouts.set(
+      newState.member.id,
+      setTimeout(() => {
+        bot.voiceStateTimeouts.delete(newState.member.id);
+      }, 1000 * 3)
+    );
+    if (!oldState.channel) return;
+  } catch (error) {
+    log(`Error handling voiceStateUpdate event"\n` + error, [
+      "[WARN]",
+      "[MAIN]",
+      `[${bot.guildName}]`,
+    ]);
+  }
 });
 
 //discord.js client event for when a user's presence updates.
-status.client.on('presenceUpdate', (oldPresence, newPresence) => {
-    if (oldPresence.status == newPresence.status) return;
-    if (newPresence.status == 'online') {
-        delete status.client.lastSeen[newPresence.user.id];
-        return;
-    }
-    else {
-        status.client.lastSeen[newPresence.user.id] = utils.getTimeRaw();
-        return;
-    }
+status.client.on("presenceUpdate", (oldPresence, newPresence) => {
+  if (!!oldPresence && oldPresence.status == newPresence.status) return;
+  if (newPresence.status == "online")
+    return status.client.lastSeen.delete(newPresence.user.id);
+  else
+    return status.client.lastSeen.set(newPresence.user.id, utils.getTimeRaw());
 });
-
-//set up electron window, login client, and launch web UI
-function createWindow() {
-
-    let bounds = utils.config.windowState.bounds;
-    let max = utils.config.windowState.max;
-    let x, y, wid, hei;
-    if (bounds) {
-        let area = electron.screen.getPrimaryDisplay().workArea;
-        if (
-            bounds.x >= area.x &&
-            bounds.y >= area.y &&
-            bounds.x + bounds.width <= area.x + area.width &&
-            bounds.y + bounds.height <= area.y + area.height
-        ) {
-            x = bounds.x;
-            y = bounds.y;
-        }
-        if (bounds.width <= area.width || bounds.height <= area.height) {
-            wid = bounds.width;
-            hei = bounds.height;
-        }
-        else { wid = 1080, hei = 720, x = 0, y = 0 }
-    }
-    mainWindow = new BrowserWindow({
-        webPreferences: {
-            nodeIntegration: true,
-            contextIsolation: false
-        },
-        x: x,
-        y: y,
-        width: wid,
-        height: hei,
-        minWidth: 1080,
-        minHeight: 620,
-        frame: false
-    });
-    if (max) mainWindow.maximize();
-    if (process.env.NODE_ENV == 'development') mainWindow.webContents.openDevTools();
-    mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname,'index.html'),
-        protocol: 'file',
-        slashes: true
-    }));
-    mainWindow.webContents.once('dom-ready', () => { clientLogin(token); });
-    mainWindow.on('closed', () => { mainWindow = null; });
-    mainWindow.on('resize', saveBoundsSoon);
-    mainWindow.on('move', saveBoundsSoon);
-}
-
-//event handlers for electron window
-app.once('ready', () => { createWindow(); });
-
-app.once('window-all-closed', () => {
-    if (process.platform !== 'darwin') {
-        app.quit();
-    }
-});
-
-app.on('activate', () => {
-    if (mainWindow === null) createWindow();
-});
-
-let saveBoundsCookie;
-function saveBoundsSoon() {
-    if (saveBoundsCookie) clearTimeout(saveBoundsCookie);
-    saveBoundsCookie = setTimeout(() => {
-        saveBoundsCookie = undefined;
-        utils.config.windowState.bounds = mainWindow.getNormalBounds();
-        utils.config.windowState.max = mainWindow.isMaximized();
-        utils.dumpJSON('./config.json', utils.config, 2)
-    }, 1000);
-}
 
 //UI & backend communication event handlers (not really sure how else to word this)
-function cmd(e, arg) {
-    if(!arg) arg=e;
-    switch (arg[0]) {
-        case 'refreshcmds': {
-            utils.systemCMDs(arg[0], status);
-            break;
-        }
-        case 'refreshadmin': {
-            for (let bot of status.client.children.array()) {
-                utils.systemCMDs(arg[0], bot);
-            }
-            break;
-        }
-        case 'kill': {
-            utils.systemCMDs(arg[0], status);
-            break;
-        }
-        default: return;
+function cmd(e = "") {
+  switch (e) {
+    case "refreshcmds": {
+      utils.populateCmds(status);
+      break;
     }
-    return;
-}
-ipcMain.on('command', cmd);
-
-function updateBot(e, bot) {
-    if(!bot) bot=e;
-    for (let i of status.client.children.array()) {
-        if (i.guildID == bot.guildID) {
-            i.defaultTextChannel = bot.defaultTextChannel;
-            i.defaultVoiceChannel = bot.defaultVoiceChannel;
-            i.defaultVolume = bot.defaultVolume;
-            i.ruleTextChannel = bot.ruleTextChannel;
-            i.welcomeTextChannel = bot.welcomeTextChannel;
-            i.welcomeMsg = bot.welcomeMsg;
-            i.announcementsRole = bot.announcementsRole;
-            i.newMemberRole = bot.newMemberRole;
-            utils.saveConfig(i);
-        }
+    case "refreshadmin": {
+      status.client.children.forEach((bot) => {
+        utils.populateAdmin(status, bot);
+      });
+      break;
     }
-    if (status.eSender.socket !== false) {
-        status.eSender.socket.emit('updateBotUI', bot);
-    };
-    if (status.eSender.ipc !== false) {
-        status.eSender.ipc.send('updateBotUI', utils.dumbifyBot(bot));
-    };
+    case "kill": {
+      status.client.destroy();
+      process.exit(0);
+    }
+    default:
+      status.client.cmds
+        .get("broadcast")
+        .execute({ interaction: { args: { message: e } }, WS: true });
+      break;
+  }
+  return;
 }
-ipcMain.on('updateBot', updateBot);
-
-function updateVol(bot){
-    status.eSender.ipc.send('updateVol', utils.dumbifyBot(bot));
-    status.eSender.socket.emit('sendBotInfo', [utils.dumbifyBot(bot)]);
-}
-
-ipcMain.once('init-eSender', (event, arg) => { status.eSender.ipc = event.sender; });
 
 //discord.js client login (called when the electron window is open and ready)
-let loginAtt = 0
+let loginAtt = 0;
 function clientLogin(t) {
-    loginAtt++;
-    log(`Logging in... attempt: ${loginAtt}`, ['[INFO]', '[MAIN]']);
-    try {
-        status.client.login(t);
-        log(`Login successful!`, ['[INFO]', '[MAIN]']);
-    }
-    catch (error) {
-        if (loginAtt <= 5) {
-            log(`Error logging in client. Trying again in 5s...`, ['[WARN]', '[MAIN]']);
-            setTimeout(function(){clientLogin(t)}, 5000);
-        }
-        else log(`Error logging in client:\n`+error, ['[ERR]','[MAIN]']);
-    }
+  loginAtt++;
+  log(`Logging in... attempt: ${loginAtt}`, ["[INFO]", "[MAIN]"]);
+  try {
+    status.client.login(t);
+    log(`Login successful!`, ["[INFO]", "[MAIN]"]);
+  } catch (error) {
+    if (loginAtt <= 5) {
+      log(`Error logging in client. Trying again in 5s...`, [
+        "[WARN]",
+        "[MAIN]",
+      ]);
+      setTimeout(function () {
+        clientLogin(t);
+      }, 5000);
+    } else log(`Error logging in client:\n` + error, ["[ERR]", "[MAIN]"]);
+  }
 }
+
+process.on("uncaughtException", (err) => {
+  if (err.captureStackTrace) err.captureStackTrace();
+  log(
+    `Uncaught exception:\n${err.name} position: ${err.lineNumber}:${err.columnNumber}\n${err.message}\n${err.stack}`,
+    ["[ERR]", "[CRITICAL]"]
+  );
+  utils.dumpJSON("ERR_DUMP.json", err, 2);
+  try {
+    status.client.children.forEach((bot) => {
+      utils.saveConfig(bot);
+    });
+    status.client.destroy();
+    setTimeout(() => {
+      process.exit(1);
+    }, 3000);
+  } catch {}
+});
+
+clientLogin(token);

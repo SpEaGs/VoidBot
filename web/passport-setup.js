@@ -1,86 +1,105 @@
+const passport = require("passport");
+const keys = require("../tokens.json");
+const fetch = require("node-fetch");
+const utils = require("../utils.js");
 
-const passport = require('passport');
-const keys = require('../tokens.json');
-const fetch = require('node-fetch');
+const { Strategy, Scope } = require("@oauth-everything/passport-discord");
 
-const { Strategy, Scope } = require('@oauth-everything/passport-discord');
+const User = require("./models/user");
 
 passport.serializeUser((user, done) => {
-    done(null, user.id);
+  done(null, user.token);
 });
 passport.deserializeUser((id, done) => {
-    let sql = `SELECT * FROM users WHERE snowflake = ${id}`
-    let findUser = db.query(sql, (err, result) => {
-        let userIn = result[0];
-        let userOut = {
-            id: userIn.snowflake,
-            name: userIn.username,
-            discriminator: userIn.discriminator,
-            guilds: {
-                admin: userIn.g_admin.split(','),
-                member: userIn.g_member.split(',')
-            }
-        }
-        if (userIn.g_admin === "") {
-            userOut.guilds.admin = false;
-        }
-        done(null, userOut);
-    });
+  User.findOne({ token: id }, (err, user) => {
+    if (err) return done(err, false);
+    if (user) return done(null, user);
+    else return done(null, false);
+  });
 });
 
-passport.use( new Strategy({
-    clientID: keys.CLIENT_ID,
-    clientSecret: keys.CLIENT_SECRET,
-    callbackURL: `/auth/discord/callback`,
-    scope: [Scope.IDENTIFY, Scope.GUILDS]
-}, (accessToken, refreshToken, profile, done) => {
-    let user = {
-        id: profile.id,
-        name: profile.username,
-        discriminator: profile.displayName.split('#').pop()
-    }
-    fetch('https://discordapp.com/api/users/@me/guilds', {
+passport.use(
+  new Strategy(
+    {
+      clientID: keys.CLIENT_ID,
+      clientSecret: keys.CLIENT_SECRET,
+      callbackURL: `/auth/discord/callback`,
+      scope: [Scope.IDENTIFY, Scope.GUILDS],
+    },
+    (accessToken, refreshToken, profile, done) => {
+      fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
-            Authorization: `Bearer ${accessToken}`
-        }
-    })
-    .then(res => res.json())
-    .then(response => {
-        user.guilds = {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      })
+        .then((res) => res.json())
+        .then((response) => {
+          let userGuilds = {
             admin: [],
-            member: []
-        }
-        db.query(`SELECT * FROM guilds`, (err, result) => {
-            for (let i of response) {
-                //if (result.includes(i.id)) {
-                    user.guilds.member.push(i.id);
-                    if ((i.permissions & 0x8) == 0x8) {
-                        user.guilds.admin.push(i.id);
-                    }
-                //}
+            member: [],
+          };
+          for (let i of response) {
+            userGuilds.member.push(i.id);
+            if ((i.permissions & 0x8) == 0x8) {
+              userGuilds.admin.push(i.id);
             }
-        });
-        db.query(`SELECT * FROM users WHERE snowflake = "${user.id}"`, (err, result) => {
-            if (err) log(`Error requesting user from DB:\n${err}`, ['[ERR]', '[WEBSERVER]']);
-            if (!result.length) {
-                log('No user entry found in the DB. Creating a new one...', ['[INFO]', '[WEBSERVER]']);
-                let newUser = {
-                    username: user.name,
-                    discriminator: user.discriminator,
-                    snowflake: user.id,
-                    g_admin: user.guilds.admin.join(','),
-                    g_member: user.guilds.member.join(',')
+          }
+          User.findOne({ snowflake: profile.id }, (err, dbUser) => {
+            if (err) {
+              log(`Error requesting user from DB:\n${err}`, [
+                "[ERR]",
+                "[WEBSERVER]",
+              ]);
+              done(err, false);
+            }
+            if (!dbUser) {
+              log("No user entry found in the DB. Creating a new one...", [
+                "[INFO]",
+                "[WEBSERVER]",
+              ]);
+              let newDBUser = new User({
+                snowflake: profile.id,
+                username: profile.username,
+                discriminator: profile.displayname.split("#").pop(),
+                guilds: userGuilds,
+                token: accessToken,
+                botAdmin: !!utils.config.botAdmin.includes(profile.id),
+              });
+              newDBUser.save((err) => {
+                if (err) {
+                  log(`Error adding new user to DB:\n${err}`, [
+                    "[ERR]",
+                    "[WEBSERVER]",
+                  ]);
+                  done(err, false);
                 }
-                let addUserSQL = `INSERT INTO users SET ?`
-                let addUserQuery = db.query(addUserSQL, newUser, (err, result2) => {
-                    if (err) log(`Error adding new user to DB: ${err}`, ['[ERR]', '[WEBSERVER]']);
-                    log(`New user entry successful!`, ['[INFO]', '[WEBSERVER]']);
-                })
+              });
+              done(null, newDBUser);
+            } else {
+              log("User found in DB.", ["[INFO]", "[WEBSERVER]"]);
+              dbUser.guilds = userGuilds;
+              dbUser.token = accessToken;
+              dbUser.botAdmin = !!utils.config.botAdmin.includes(
+                dbUser.snowflake
+              );
+              dbUser.save((err) => {
+                if (err)
+                  log(`Error updating user with new data:\n${err}`, [
+                    "[ERR]",
+                    "[WEBSERVER]",
+                  ]);
+              });
+              done(null, dbUser);
             }
+          });
         })
-        done(null, user);
-    })
-    .catch(err => {
-        log(`Error handling discord API request for guilds: ${err}`, ['[ERR]', '[WEBSERVER]']);
-    });
-}))
+        .catch((err) => {
+          log(`Error handling discord API request for guilds:\n${err}`, [
+            "[ERR]",
+            "[WEBSERVER]",
+          ]);
+          done(err, false);
+        });
+    }
+  )
+);
