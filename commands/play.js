@@ -164,6 +164,7 @@ function search(str, mem, params) {
                         search(`${i.name} ${i.artists[0].name}`, mem, params);
                       });
                     });
+                    worker(status, tasks);
                     return;
                   })
                   .catch((err) => {
