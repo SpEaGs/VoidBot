@@ -342,9 +342,7 @@ try {
           `${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`
         )}`,
       },
-      form: {
-        grant_type: "client_credentials",
-      },
+      body: new URLSearchParams().append("grant_type", "client_credentials"),
     })
       .then((response) => response.json())
       .then((res) => {
