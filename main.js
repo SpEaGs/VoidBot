@@ -337,7 +337,7 @@ try {
     fetch("https://accounts.spotify.com/api/token", {
       method: "post",
       headers: {
-        "Content-Type": "x-www-form-urlencoded",
+        "Content-Type": "application/x-www-form-urlencoded",
         Authorization: `Basic ${new Buffer(
           `${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`
         )}`,
