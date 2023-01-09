@@ -172,27 +172,27 @@ function search(str, mem, params) {
           .then((res) => {
             utils.dumpJSON("temp2.json", res, 2);
             token = res["access_token"];
-          });
-        log(token, ["[WARN]", "[PLAY]"]);
-        let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
-        fetch(spotifyReqURL, {
-          method: "get",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        })
-          .then((response) => response.json())
-          .then((res) => {
-            utils.dumpJSON("temp.json", res, 2);
-            search(`${res.name} ${res.artists[0].name}`, mem, params);
-            return;
-          })
-          .catch((err) => {
-            log(`Error getting spotify song info: ${err}`, [
-              "[WARN]",
-              "[PLAY]",
-            ]);
+            log(token, ["[WARN]", "[PLAY]"]);
+            let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
+            fetch(spotifyReqURL, {
+              method: "get",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+            })
+              .then((response) => response.json())
+              .then((res) => {
+                utils.dumpJSON("temp.json", res, 2);
+                search(`${res.name} ${res.artists[0].name}`, mem, params);
+                return;
+              })
+              .catch((err) => {
+                log(`Error getting spotify song info: ${err}`, [
+                  "[WARN]",
+                  "[PLAY]",
+                ]);
+              });
           });
       }
       break;
