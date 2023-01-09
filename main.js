@@ -343,7 +343,7 @@ try {
         )}`,
       },
     }).then((response) => {
-      utils.dumpJSON("spotify_token.json", response.body, 2);
+      utils.dumpJSON("spotify_token.json", response.body.access_token, 2);
     });
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
