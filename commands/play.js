@@ -172,11 +172,7 @@ function search(str, mem, params) {
                 "[PLAY]",
               ]);
             }
-            search(
-              `${response.body.name} ${response.body.artists[0].name}`,
-              mem,
-              params
-            );
+            search(`${res.body.name} ${res.body.artists[0].name}`, mem, params);
             return;
           });
       }
