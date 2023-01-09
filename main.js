@@ -343,7 +343,7 @@ try {
         )}`,
       },
     }).then((response) => {
-      log(JSON.stringify(response), ["[WARN]", ["MAIN"]]);
+      log(JSON.stringify(response.body), ["[WARN]", "[MAIN]"]);
     });
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
