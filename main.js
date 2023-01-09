@@ -342,11 +342,6 @@ try {
       method: "post",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${(
-          keys.SP_CLIENT_ID +
-          ":" +
-          keys.SP_CLIENT_SECRET
-        ).toString("base64")}`,
       },
       body: params,
     })
