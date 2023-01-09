@@ -166,15 +166,14 @@ function search(str, mem, params) {
         })
           .then((response) => response.json())
           .then((res) => {
-            if (!res.satusCode == 200) {
-              log(`Error getting spotify song info: ${res.statusCode}`, [
-                "[WARN]",
-                "[PLAY]",
-              ]);
-            }
-            log(JSON.stringify(res), ["[WARN]", "[PLAY]"]);
             search(`${res.body.name} ${res.body.artists[0].name}`, mem, params);
             return;
+          })
+          .catch((err) => {
+            log(`Error getting spotify song info: ${err}`, [
+              "[WARN]",
+              "[PLAY]",
+            ]);
           });
       }
       break;
