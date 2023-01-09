@@ -78,7 +78,7 @@ function worker(status, taskList = [], interval = 1000) {
 function search(str, mem, params) {
   let status = params.bot;
   let url = str;
-  let resType;
+  let resType = "ytsc";
   switch (url.includes("http")) {
     case true: {
       if (
@@ -98,6 +98,7 @@ function search(str, mem, params) {
       try {
         switch (url.includes("list=")) {
           case true: {
+            resType = "ytpl";
             plID = getParameterByName("list", url);
             requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
             status.guild.channels.cache
@@ -126,6 +127,7 @@ function search(str, mem, params) {
           }
           case false: {
             if (!url.includes("/playlist/")) break;
+            resType = "sppl";
             plID = url.split("/").reverse()[0].split("?")[0];
             status.guild.channels.cache
               .get(status.defaultTextChannel.id)
@@ -175,6 +177,7 @@ function search(str, mem, params) {
           }
         }
         if (url.includes("/track/")) {
+          resType = "sp";
           plID = url.split("/").reverse()[0].split("?")[0];
           let urlparams = new URLSearchParams();
           let token;
@@ -217,7 +220,7 @@ function search(str, mem, params) {
           .get(status.defaultTextChannel.id)
           .send(`${mem} That link was broken or incomplete.`);
       }
-      get_info(url, mem, params);
+      if (resType === "ytsc") get_info(url, mem, params);
       break;
     }
     case false: {
