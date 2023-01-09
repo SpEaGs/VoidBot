@@ -159,6 +159,7 @@ function search(str, mem, params) {
                 })
                   .then((response) => response.json())
                   .then((res) => {
+                    utils.dumpJSON("temp.json", res, 2);
                     res.tracks.items.forEach((i) => {
                       tasks.push(() => {
                         search(`${i.name} ${i.artists[0].name}`, mem, params);
