@@ -185,7 +185,7 @@ function search(str, mem, params) {
         })
           .then((response) => response.json())
           .then((res) => {
-            utils.dumpJSON("temp.json", res.artists, 2);
+            utils.dumpJSON("temp.json", res, 2);
             search(`${res.name} ${res.artists[0].name}`, mem, params);
             return;
           })
