@@ -89,6 +89,7 @@ function getSpotifyToken() {
   })
     .then((response) => response.json())
     .then((res) => {
+      utils.dumpJSON("temp2.json", res, 2);
       return res.access_token;
     });
 }
