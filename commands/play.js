@@ -3,6 +3,7 @@
 
 const ytdl = require("ytdl-core");
 const sc = require("soundcloud-downloader").default;
+const fetch = require("node-fetch");
 const request = require("superagent");
 
 const utils = require("../utils.js");
@@ -156,19 +157,29 @@ function search(str, mem, params) {
         plID = url.split("/").reverse()[0].split("?")[0];
         log(plID, ["[WARN]", "[PLAY]"]);
         let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
-        request.request.set("Authorization", `Bearer ${SP_API_KEY}`);
-        request(spotifyReqURL, (error, response) => {
-          if (error || !response.statusCode == 200) {
-            log("Error getting spotify song info", ["[WARN]", "[PLAY]"]);
+        request.set("Authorization", `Bearer ${SP_API_KEY}`);
+        fetch(spotifyReqURL, {
+          method: "get",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${SP_API_KEY}`,
+          },
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            if (!res.satusCode == 200) {
+              log(`Error getting spotify song info: ${res.statusCode}`, [
+                "[WARN]",
+                "[PLAY]",
+              ]);
+            }
+            search(
+              `${response.body.name} ${response.body.artists[0].name}`,
+              mem,
+              params
+            );
             return;
-          }
-          search(
-            `${response.body.name} ${response.body.artists[0].name}`,
-            mem,
-            params
-          );
-          return;
-        });
+          });
       }
       break;
     }
