@@ -157,7 +157,6 @@ function search(str, mem, params) {
         plID = url.split("/").reverse()[0].split("?")[0];
         log(plID, ["[WARN]", "[PLAY]"]);
         let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
-        request.set("Authorization", `Bearer ${SP_API_KEY}`);
         fetch(spotifyReqURL, {
           method: "get",
           headers: {
