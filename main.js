@@ -334,6 +334,8 @@ async function initBot(bot) {
 try {
   status.client.once("ready", () => {
     //collect spotify access token
+    let params = new URLSearchParams();
+    params.append("grant_type", "client_credentials");
     fetch("https://accounts.spotify.com/api/token", {
       method: "post",
       headers: {
@@ -342,7 +344,7 @@ try {
           `${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`
         )}`,
       },
-      body: new URLSearchParams().append("grant_type", "client_credentials"),
+      body: params,
     })
       .then((response) => response.json())
       .then((res) => {
