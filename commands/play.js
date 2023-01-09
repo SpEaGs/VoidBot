@@ -75,25 +75,6 @@ function worker(status, taskList = [], interval = 1000) {
   }
 }
 
-function getSpotifyToken() {
-  let params = new URLSearchParams();
-  params.append("grant_type", "client_credentials");
-  params.append("client_id", SP_CLIENT_ID);
-  params.append("client_secret", SP_CLIENT_SECRET);
-  fetch("https://accounts.spotify.com/api/token", {
-    method: "post",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
-    body: params,
-  })
-    .then((response) => response.json())
-    .then((res) => {
-      utils.dumpJSON("temp2.json", res, 2);
-      return res.access_token;
-    });
-}
-
 function search(str, mem, params) {
   let status = params.bot;
   let url = str;
@@ -175,7 +156,23 @@ function search(str, mem, params) {
       }
       if (url.includes("/track/")) {
         plID = url.split("/").reverse()[0].split("?")[0];
-        let token = getSpotifyToken();
+        let urlparams = new URLSearchParams();
+        let token;
+        urlparams.append("grant_type", "client_credentials");
+        urlparams.append("client_id", SP_CLIENT_ID);
+        urlparams.append("client_secret", SP_CLIENT_SECRET);
+        fetch("https://accounts.spotify.com/api/token", {
+          method: "post",
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+          body: urlparams,
+        })
+          .then((response) => response.json())
+          .then((res) => {
+            utils.dumpJSON("temp2.json", res, 2);
+            token = res.access_token;
+          });
         log(token, ["[WARN]", "[PLAY]"]);
         let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
         fetch(spotifyReqURL, {
