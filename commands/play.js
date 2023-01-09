@@ -162,7 +162,11 @@ function search(str, mem, params) {
                     utils.dumpJSON("temp.json", res, 2);
                     res.tracks.items.forEach((i) => {
                       tasks.push(() => {
-                        search(`${i.name} ${i.artists[0].name}`, mem, params);
+                        search(
+                          `${i.track.name} ${i.track.artists[0].name}`,
+                          mem,
+                          params
+                        );
                       });
                     });
                     worker(status, tasks);
