@@ -15,7 +15,6 @@ const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 const SP_CLIENT_ID = require("../tokens.json").SP_CLIENT_ID;
 const SP_CLIENT_SECRET = require("../tokens.json").SP_CLIENT_SECRET;
 const { SlashCommandBuilder } = require("discord.js");
-const { urlencoded } = require("express");
 const voice = require("@discordjs/voice");
 const joinCMD = require("./join");
 
