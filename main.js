@@ -345,7 +345,7 @@ try {
     })
       .then((response) => response.json())
       .then((res) => {
-        utils.dumpJSON("spotify_token.json", res.body, 2);
+        utils.dumpJSON("spotify_token.json", res, 2);
       });
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
