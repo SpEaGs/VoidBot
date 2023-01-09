@@ -156,6 +156,7 @@ function search(str, mem, params) {
       if (url.includes("/track/")) {
         plID = url.split("/").reverse()[0].split("?")[0];
         log(plID, ["[WARN]", "[PLAY]"]);
+        return;
         let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
         fetch(spotifyReqURL, {
           method: "get",
