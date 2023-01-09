@@ -172,6 +172,7 @@ function search(str, mem, params) {
                 "[PLAY]",
               ]);
             }
+            log(res, ["[WARN]", "[PLAY]"]);
             search(`${res.body.name} ${res.body.artists[0].name}`, mem, params);
             return;
           });
