@@ -342,9 +342,11 @@ try {
           `${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`
         )}`,
       },
-    }).then((response) => {
-      utils.dumpJSON("spotify_token.json", response.body, 2);
-    });
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        utils.dumpJSON("spotify_token.json", res.body, 2);
+      });
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
       let newBot = new Bot.Bot(g, status);
