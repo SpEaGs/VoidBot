@@ -75,43 +75,100 @@ function worker(status, taskList = [], interval = 1000) {
 function search(str, mem, params) {
   let status = params.bot;
   let url = str;
+  let resType;
   switch (url.includes("http")) {
     case true: {
-      if (!(url.includes(".youtube.com/") || url.includes("soundcloud.com/"))) {
+      if (
+        !(
+          url.includes(".youtube.com/") ||
+          url.includes("soundcloud.com/") ||
+          url.includes("spotify.com/")
+        )
+      ) {
         return status.guild.channels.cache
           .get(status.defaultTextChannel.id)
-          .send(`${mem} That was not a youtube or soundcloud link.`);
+          .send(`${mem} That was not a youtube, soundcloud, or spotify link.`);
       }
-      if (url.includes("list=")) {
-        let plID = getParameterByName("list", url);
-        if (!plID || plID === "") {
-          return status.guild.channels.cache
-            .get(status.defaultTextChannel.id)
-            .send(`${mem} That link was broken or incomplete.`);
+      let plID;
+      let requestURL;
+      let tasks = [];
+      try {
+        switch (url.includes("list=")) {
+          case true: {
+            resType = "yt-pl";
+            plID = getParameterByName("list", url);
+            requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
+            request(requestURL, (error, response) => {
+              if (error || !response.statusCode == 200) {
+                log("Error getting playlist info", ["[WARN], [PLAY]"]);
+                return;
+              }
+              response.body.items.forEach((i) => {
+                tasks.push(() => {
+                  get_info(
+                    "https://www.youtube.com/watch?v=" +
+                      i.snippet.resourceId.videoId,
+                    mem,
+                    params
+                  );
+                });
+              });
+              worker(status, tasks);
+            });
+            break;
+          }
+          case false: {
+            if (!url.includes("/playlist/")) break;
+            resType = "sp-pl";
+            plID = url.split("/").reverse()[0].split("?")[0];
+            log(plID, ["[WARN]", "[PLAY]"]);
+            return;
+            let spotifyReqURL = `https://api.spotify.com/v1/playlists/${plID}`;
+            status.guild.channels.cache
+              .get(status.defaultTextChannel.id)
+              .send(
+                `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
+              );
+            request(spotifyReqURL, (error, response) => {
+              if (error || !response.statusCode == 200) {
+                log("Error getting spotify playlist info", [
+                  "[WARN]",
+                  "[PLAY]",
+                ]);
+                return;
+              }
+              response.body.tracks.items.forEach((i) => {
+                tasks.push(() => {
+                  search(`${i.name} ${i.artists[0].name}`, mem, params);
+                });
+              });
+            });
+            break;
+          }
         }
-        let requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
-        status.guild.channels.cache
+      } catch {
+        return status.guild.channels.cache
           .get(status.defaultTextChannel.id)
-          .send(`${mem} Hold onto your butts! I've got a playlist inbound...`);
-        let tasks = [];
-        request(requestURL, (error, response) => {
+          .send(`${mem} That link was broken or incomplete.`);
+      }
+      if (url.includes("/track/")) {
+        plID = url.split("/").reverse()[0].split("?")[0];
+        log(plID, ["[WARN]", "[PLAY]"]);
+        return;
+        let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
+        request(spotifyReqURL, (error, response) => {
           if (error || !response.statusCode == 200) {
-            log("Error getting playlist info", ["[WARN], [PLAY]"]);
+            log("Error getting spotify song info", ["[WARN]", "[PLAY]"]);
             return;
           }
-          response.body.items.forEach((i) => {
-            tasks.push(() => {
-              get_info(
-                "https://www.youtube.com/watch?v=" +
-                  i.snippet.resourceId.videoId,
-                mem,
-                params
-              );
-            });
-          });
-          worker(status, tasks);
+          search(
+            `${response.body.name} ${response.body.artists[0].name}`,
+            mem,
+            params
+          );
+          return;
         });
-      } else get_info(url, mem, params);
+      }
       break;
     }
     case false: {
