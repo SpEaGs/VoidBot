@@ -20,8 +20,6 @@ const io = require("socket.io")(server, {
 const passport = require("passport");
 const User = require("./web/models/user");
 
-const fetch = require("node-fetch");
-
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
 }
@@ -333,22 +331,6 @@ async function initBot(bot) {
 //discord.js client ready event handler (master client)
 try {
   status.client.once("ready", () => {
-    //collect spotify access token
-    let params = new URLSearchParams();
-    params.append("grant_type", "client_credentials");
-    params.append("client_id", keys.SP_CLIENT_ID);
-    params.append("client_secret", keys.SP_CLIENT_SECRET);
-    fetch("https://accounts.spotify.com/api/token", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/x-www-form-urlencoded",
-      },
-      body: params,
-    })
-      .then((response) => response.json())
-      .then((res) => {
-        utils.dumpJSON("spotify_token.json", res, 2);
-      });
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
       let newBot = new Bot.Bot(g, status);

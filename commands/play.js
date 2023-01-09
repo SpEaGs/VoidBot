@@ -12,7 +12,8 @@ const prefix = utils.config.prefix;
 
 const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
-const SP_API_KEY = require("../tokens.json").TOKEN_S;
+const SP_CLIENT_ID = require("../tokens.json").SP_CLIENT_ID;
+const SP_CLIENT_SECRET = require("../tokens.json").SP_CLIENT_SECRET;
 const { SlashCommandBuilder } = require("discord.js");
 const { urlencoded } = require("express");
 const voice = require("@discordjs/voice");
@@ -72,6 +73,24 @@ function worker(status, taskList = [], interval = 1000) {
       worker(status, taskList, interval);
     }, interval);
   }
+}
+
+function getSpotifyToken() {
+  let params = new URLSearchParams();
+  params.append("grant_type", "client_credentials");
+  params.append("client_id", SP_CLIENT_ID);
+  params.append("client_secret", SP_CLIENT_SECRET);
+  fetch("https://accounts.spotify.com/api/token", {
+    method: "post",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+    },
+    body: params,
+  })
+    .then((response) => response.json())
+    .then((res) => {
+      return res.access_token;
+    });
 }
 
 function search(str, mem, params) {
@@ -155,14 +174,13 @@ function search(str, mem, params) {
       }
       if (url.includes("/track/")) {
         plID = url.split("/").reverse()[0].split("?")[0];
-        log(plID, ["[WARN]", "[PLAY]"]);
-        return;
+        let token = getSpotifyToken();
         let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
         fetch(spotifyReqURL, {
           method: "get",
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${SP_API_KEY}`,
+            Authorization: `Bearer ${token}`,
           },
         })
           .then((response) => response.json())
