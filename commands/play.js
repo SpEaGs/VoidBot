@@ -171,7 +171,7 @@ function search(str, mem, params) {
           .then((response) => response.json())
           .then((res) => {
             utils.dumpJSON("temp2.json", res, 2);
-            token = res.access_token;
+            token = res["access_token"];
           });
         log(token, ["[WARN]", "[PLAY]"]);
         let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
