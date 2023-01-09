@@ -336,8 +336,9 @@ try {
     //collect spotify access token
     let params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
-    console.log(
-      `Basic ${new Buffer(`${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`)}`
+    log(
+      `Basic ${new Buffer(`${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`)}`,
+      ["[WARN]", "[MAIN]"]
     );
     fetch("https://accounts.spotify.com/api/token", {
       method: "post",
