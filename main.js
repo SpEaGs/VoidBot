@@ -336,15 +336,15 @@ try {
     //collect spotify access token
     let params = new URLSearchParams();
     params.append("grant_type", "client_credentials");
-    log(`Basic ${`${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`}`, [
-      "[WARN]",
-      "[MAIN]",
-    ]);
     fetch("https://accounts.spotify.com/api/token", {
       method: "post",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        Authorization: `Basic ${`${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`}`,
+        Authorization: `Basic ${(
+          keys.SP_CLIENT_ID +
+          ":" +
+          keys.SP_CLIENT_SECRET
+        ).toString(base64)}`,
       },
       body: params,
     })
