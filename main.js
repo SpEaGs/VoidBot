@@ -342,9 +342,11 @@ try {
           `${keys.SP_CLIENT_ID}:${keys.SP_CLIENT_SECRET}`
         )}`,
       },
-    }).then((response) => {
-      log(JSON.stringify(response.body), ["[WARN]", "[MAIN]"]);
-    });
+    })
+      .then((response) => response.json())
+      .then((res) => {
+        log(JSON.stringify(res.body), ["[WARN]", "[MAIN]"]);
+      });
     //populate info for child clients
     status.client.guilds.cache.forEach((g) => {
       let newBot = new Bot.Bot(g, status);
