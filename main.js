@@ -13,7 +13,7 @@ const api = express();
 const server = require("http").createServer(api);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "http://76.179.53.45:3000",
+    origin: "http://voidbot.speags.com:2053",
     methods: ["GET", "POST"],
   },
 });
