@@ -286,7 +286,7 @@ function launchWebServer() {
     socket.emit("handshake");
   });
 
-  server.listen(process.env.PORT || 8081, () => {
+  server.listen(process.env.PORT || 2083, () => {
     const port = server.address().port;
     log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
