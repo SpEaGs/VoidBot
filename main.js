@@ -10,7 +10,7 @@ const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const api = express();
-const server = require("http").createServer(api);
+const server = require("https").createServer(api);
 const io = require("socket.io")(server, {
   cors: {
     origin: "https://voidbot.speags.com:2053",
