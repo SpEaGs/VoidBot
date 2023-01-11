@@ -19,6 +19,7 @@ module.exports = {
   server: true,
   execute(params) {
     let playlistOut = shuffle(params.bot.audioQueue);
+    params.bot.audioQueue = playlistOut;
     let mem = params.interaction.member;
     params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
