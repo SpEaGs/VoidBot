@@ -37,6 +37,6 @@ function shuffle(arr) {
       arr[currentIndex],
     ];
   }
-  log(JSON.stringify(arr), ["[WARN]", "[SHUFFLE]"]);
+  utils.dumpJSON("list.json", arr, 2);
   return arr;
 }
