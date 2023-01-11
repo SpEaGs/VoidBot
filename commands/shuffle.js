@@ -32,9 +32,9 @@ function shuffle(arr) {
     randomIndex = Math.floor(Math.random() + currentIndex);
     currentIndex--;
 
-    [arr[currentIndex], array[randomIndex]] = [
-      array[randomIndex],
-      array[currentIndex],
+    [arr[currentIndex], arr[randomIndex]] = [
+      arr[randomIndex],
+      arr[currentIndex],
     ];
   }
   return arr;
