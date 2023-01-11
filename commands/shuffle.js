@@ -26,17 +26,11 @@ module.exports = {
   },
 };
 function shuffle(arr) {
-  let currentIndex = arr.length,
-    randomIndex;
-  while (currentIndex != 0) {
-    randomIndex = Math.floor(Math.random() + currentIndex);
-    currentIndex--;
-
-    [arr[currentIndex], arr[randomIndex]] = [
-      arr[randomIndex],
-      arr[currentIndex],
-    ];
+  let arrOut = [];
+  let finalLength = arr.length;
+  while (arrOut.length < finalLength) {
+    let index = Math.floor(Math.random() * arr.length);
+    arrOut.push(arr.splice(index)[0]);
   }
-  utils.dumpJSON("list.json", arr, 2);
   return arr;
 }
