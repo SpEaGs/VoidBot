@@ -26,7 +26,7 @@ module.exports = {
   execute(params) {
     let mem = params.interaction.member;
     let slappee = utils.findMemberFromGuild(
-      params.args.join(" "),
+      (name = params.args.length > 0 ? params.args.join(" ") : params.args[0]),
       params.bot.guild
     );
     params.bot.guild.channels.cache
