@@ -31,7 +31,7 @@ function shuffle(arr) {
   let finalLength = parseInt(JSON.stringify(arrIn.length));
   while (arrOut.length < finalLength) {
     let index = Math.floor(Math.random() * arr.length);
-    arrOut.push(arr.splice(index, 1));
+    arrOut.push(arr.splice(index, 1)[0]);
   }
   utils.dumpJSON("temp.json", arrOut, 2);
   return arrOut;
