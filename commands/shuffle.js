@@ -33,6 +33,6 @@ function shuffle(arr) {
     let index = Math.floor(Math.random() * arr.length);
     arrOut.push(arr.splice(index, 1));
   }
-  utils.dumpJSON("temp.json", arrOut);
+  utils.dumpJSON("temp.json", arrOut, 2);
   return arrOut;
 }
