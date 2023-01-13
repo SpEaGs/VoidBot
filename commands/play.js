@@ -74,7 +74,7 @@ function worker(status, taskList = [], interval = 1000) {
   }
 }
 
-function search(str, mem, params) {
+function search(str, mem, params, verbose = true) {
   let status = params.bot;
   let url = str;
   let resType = "ytsc";
@@ -163,7 +163,8 @@ function search(str, mem, params) {
                         search(
                           `${i.track.name} ${i.track.artists[0].name}`,
                           mem,
-                          params
+                          params,
+                          false
                         );
                       });
                     });
@@ -231,9 +232,10 @@ function search(str, mem, params) {
       let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
         url
       )}&key=${API_KEY}`;
-      status.guild.channels.cache
-        .get(status.defaultTextChannel.id)
-        .send(`${mem} Searching Youtube for \`${url}\`...`);
+      if (verbose)
+        status.guild.channels.cache
+          .get(status.defaultTextChannel.id)
+          .send(`${mem} Searching Youtube for \`${url}\`...`);
       request(requestUrl, (error, response) => {
         if (error || !response.statusCode == 200) {
           log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
