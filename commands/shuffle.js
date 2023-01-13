@@ -18,6 +18,10 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.bot.audioQueue.length)
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${mem} There's nothing in the queue to shuffle...`);
     params.bot.audioQueue = shuffle(params.bot.audioQueue);
     let mem = params.interaction.member;
     params.bot.guild.channels.cache
