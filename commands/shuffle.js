@@ -33,5 +33,5 @@ function shuffle(arr) {
     let index = Math.floor(Math.random() * arr.length);
     arrOut.push(arr.splice(index)[0]);
   }
-  return arr;
+  return arrOut;
 }
