@@ -18,8 +18,7 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
-    let playlistOut = shuffle(params.bot.audioQueue);
-    params.bot.audioQueue = playlistOut;
+    params.bot.audioQueue = shuffle(params.bot.audioQueue);
     let mem = params.interaction.member;
     params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
@@ -27,11 +26,12 @@ module.exports = {
   },
 };
 function shuffle(arr) {
+  let arrIn = arr.slice(0);
   let arrOut = [];
-  let finalLength = arr.length;
+  let finalLength = parseInt(JSON.stringify(arrIn.length));
   while (arrOut.length < finalLength) {
     let index = Math.floor(Math.random() * arr.length);
-    arrOut.push(arr.splice(index)[0]);
+    arrOut.push(arr.splice(index, 1));
   }
   return arr;
 }
