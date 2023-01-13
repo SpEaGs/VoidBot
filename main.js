@@ -10,10 +10,10 @@ const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const api = express();
-const server = require("http").createServer(api);
+const server = require("https").createServer(api);
 const io = require("socket.io")(server, {
   cors: {
-    origin: "http://76.179.53.45:3000",
+    origin: "https://voidbot.speags.com:2053",
     methods: ["GET", "POST"],
   },
 });
@@ -286,7 +286,7 @@ function launchWebServer() {
     socket.emit("handshake");
   });
 
-  server.listen(process.env.PORT || 8081, () => {
+  server.listen(process.env.PORT || 2083, () => {
     const port = server.address().port;
     log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
