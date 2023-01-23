@@ -2,6 +2,7 @@ const keys = require("./tokens.json");
 const token = keys.TOKEN;
 const cookieKey = keys.COOKIE_KEY;
 const ssl = JSON.parse(process.env.HTTPS);
+
 const Discord = require("discord.js");
 const winston = require("winston");
 const fs = require("fs");
@@ -10,7 +11,7 @@ const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const api = express();
-const server = require(!!ssl ? "https" : "http").createServer(api);
+const server = require(ssl ? "https" : "http").createServer(api);
 const io = require("socket.io")(server, {
   cors: {
     origin: `https://speags.com/voidbot`,
@@ -286,7 +287,7 @@ function launchWebServer() {
     socket.emit("handshake");
   });
 
-  server.listen(!!ssl ? 2083 : 5000, () => {
+  server.listen(ssl ? 2083 : 5000, () => {
     const port = server.address().port;
     log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
