@@ -1,8 +1,7 @@
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 const cookieKey = keys.COOKIE_KEY;
-const ssl = process.env.HTTPS;
-console.log(ssl);
+const ssl = JSON.parse(process.env.HTTPS);
 const Discord = require("discord.js");
 const winston = require("winston");
 const fs = require("fs");
