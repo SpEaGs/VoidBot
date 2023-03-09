@@ -330,6 +330,7 @@ function createStream(status, info) {
         status.voiceConnection.subscribe(status.dispatcher);
         status.dispatcher.play(voice.createAudioResource(str));
         status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+          log("Voice Idle", ["[WARN]", "[PLAY]"]);
           endDispatcher(status);
         });
         status.dispatcher.once("error", (err) => {
@@ -350,6 +351,7 @@ function createStream(status, info) {
             status.voiceConnection.subscribe(status.dispatcher);
             status.dispatcher.play(voice.createAudioResource(str));
             status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+              log("Voice Idle", ["[WARN]", "[PLAY]"]);
               endDispatcher(status);
               fs.unlinkSync(str);
             });
