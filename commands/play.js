@@ -322,9 +322,9 @@ function createStream(status, info) {
     switch (info.trackSource) {
       case "YT": {
         let stream = ytdl.downloadFromInfo(info);
-        stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
+        stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp4`));
         stream.on("end", () => {
-          str = `./temp${status.guildID}.mp3`;
+          str = `./temp${status.guildID}.mp4`;
           status.dispatcher = voice.createAudioPlayer({
             behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
           });
