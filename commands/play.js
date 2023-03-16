@@ -335,7 +335,7 @@ function createStream(status, info) {
           status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
             log("Voice Idle", ["[WARN]", "[PLAY]"]);
             endDispatcher(status);
-            fs.unlinkSync(str);
+            //fs.unlinkSync(str);
           });
           status.dispatcher.once("error", (err) => {
             log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
