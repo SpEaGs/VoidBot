@@ -1,7 +1,6 @@
 //WebUI command. Sends a link to the Bot's WebUI dashboard.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const pubIP = utils.config.pubIP;
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -15,7 +14,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}webui\``,
+  usage: `\`/webui\``,
   admin: false,
   botadmin: false,
   server: true,

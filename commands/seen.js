@@ -1,6 +1,5 @@
 //Seen command. Gets when a user was last seen
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const status = require("../main.js");
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -20,7 +19,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}seen <user to find>\``,
+  usage: `\`/seen <user to find>\``,
   admin: false,
   botadmin: false,
   server: true,

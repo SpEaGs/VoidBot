@@ -1,7 +1,6 @@
 //Join command. Makes the bot join the given voice channel, or, if none given, the voice channel the user is in.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 const voice = require("@discordjs/voice");
 
@@ -22,12 +21,11 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  useage: `\`${prefix}join <voice channel>\``,
+  useage: `\`/join <voice channel>\``,
   admin: false,
   botadmin: false,
   server: true,
   execute(params) {
-    let log = global.log;
     let mem = params.interaction.member;
     let channel = "";
     if (params.WS) {

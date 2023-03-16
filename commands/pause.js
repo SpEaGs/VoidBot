@@ -1,7 +1,6 @@
 //Pause command. Pauses the bot's current audio stream.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Pause";
@@ -14,7 +13,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}pause\``,
+  usage: `\`/pause\``,
   admin: false,
   botadmin: false,
   server: true,
@@ -26,9 +25,7 @@ module.exports = {
         params.bot.dispatcher.paused = true;
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} Audio stream paused. Use \`${prefix}resume\` to resume.`
-          );
+          .send(`${mem} Audio stream paused. Use \`/resume\` to resume.`);
         utils.informClients(params.bot, {
           paused: params.bot.dispatcher.paused,
         });
@@ -38,7 +35,7 @@ module.exports = {
         params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(
-            `${mem} Audio stream is already paused. Use \`${prefix}resume\` to resume.`
+            `${mem} Audio stream is already paused. Use \`/resume\` to resume.`
           );
         break;
       }

@@ -1,6 +1,5 @@
 //Slap command. Slaps a user (metaphorically)
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Slap";
@@ -19,7 +18,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}slap <user to slap>\``,
+  usage: `\`/slap <user to slap>\``,
   admin: false,
   botadmin: false,
   server: true,

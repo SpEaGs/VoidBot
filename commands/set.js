@@ -1,5 +1,4 @@
 const utils = require("../utils");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Set";
@@ -117,7 +116,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}set <setting> <value>\``,
+  usage: `\`/set <setting> <value>\``,
   admin: true,
   botadmin: false,
   server: true,

@@ -1,7 +1,5 @@
 //Ping command. Returns 'Pong!'
 
-const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Ping";
@@ -14,7 +12,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}ping\``,
+  usage: `\`/ping\``,
   admin: false,
   botadmin: false,
   server: false,

@@ -1,7 +1,5 @@
 //Now Playing command. Lists info about the currently playing audio.
 
-const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Nowplaying";
@@ -14,7 +12,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}nowplaying\``,
+  usage: `\`/nowplaying\``,
   admin: false,
   botadmin: false,
   server: true,

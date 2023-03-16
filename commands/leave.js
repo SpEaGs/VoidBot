@@ -1,7 +1,6 @@
 //Leave command. Makes the bot stop playing audio, clear any queued songs, and leave whatever voice channel it's connected to.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Leave";
@@ -14,7 +13,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  useage: `\`${prefix}leave\``,
+  useage: `\`/leave\``,
   admin: false,
   botadmin: false,
   server: true,

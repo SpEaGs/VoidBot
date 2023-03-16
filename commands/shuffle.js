@@ -1,6 +1,5 @@
 //Shuffle command. Shuffles the active playlist
-const utils = require("../utils.js");
-const prefix = utils.config.prefix;
+
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Shuffle";
@@ -13,7 +12,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}shuffle\``,
+  usage: `\`/shuffle\``,
   admin: false,
   botadmin: false,
   server: true,

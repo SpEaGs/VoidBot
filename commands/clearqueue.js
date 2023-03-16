@@ -1,7 +1,5 @@
 //Clear Queue command. Clears the active audio queue.
 
-const utils = require("../utils.js");
-const prefix = utils.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 const name = "Clearqueue";
@@ -15,7 +13,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  useage: `\`${prefix}clearqueue\``,
+  useage: `\`/clearqueue\``,
   admin: false,
   botadmin: false,
   server: true,

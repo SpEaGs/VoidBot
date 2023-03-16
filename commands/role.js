@@ -1,7 +1,6 @@
 //Role command. adds/removes given role from given user
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Role";
@@ -37,7 +36,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}role <add/remove> <user> <role>\``,
+  usage: `\`/role <add/remove> <user> <role>\``,
   admin: true,
   botadmin: true,
   server: true,

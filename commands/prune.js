@@ -1,7 +1,6 @@
 //Prune command. Deletes given number of messages from the channel in which the command was sent.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Prune";
@@ -27,7 +26,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}prune {amount} {channel}\``,
+  usage: `\`/prune {amount} {channel}\``,
   admin: true,
   botadmin: false,
   server: true,

@@ -1,7 +1,6 @@
 //stop command. Ends the bot's active audio stream, paused or otherwise.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Stop";
@@ -15,7 +14,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}stop\``,
+  usage: `\`/stop\``,
   admin: false,
   botadmin: false,
   server: true,

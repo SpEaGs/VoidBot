@@ -1,7 +1,6 @@
 //Announcements command. Lets the user opt in or out of the announcements role on the server they use this command in (if enabled)
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Announcements";
@@ -22,7 +21,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}announcements <in/out>\``,
+  usage: `\`/announcements <in/out>\``,
   admin: false,
   botadmin: false,
   server: false,

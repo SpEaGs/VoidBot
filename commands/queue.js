@@ -1,7 +1,5 @@
 //Queue command. Lists all entries in the audio queue.
 
-const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Queue";
@@ -14,7 +12,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}queue\``,
+  usage: `\`queue\``,
   admin: false,
   botadmin: false,
   server: true,

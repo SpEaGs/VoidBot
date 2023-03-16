@@ -1,7 +1,6 @@
 //Welcome command. sends a welcome message for the given user in the same channel as the command
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Welcome";
@@ -20,7 +19,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}welcome <user>\``,
+  usage: `\`/welcome <user>\``,
   admin: false,
   botadmin: false,
   server: true,

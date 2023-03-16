@@ -8,7 +8,6 @@ const request = require("superagent");
 
 const utils = require("../utils.js");
 const { fs } = require("../main.js");
-const prefix = utils.config.prefix;
 
 const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
@@ -34,7 +33,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}play <URL or search terms>\``,
+  usage: `\`/play <URL or search terms>\``,
   admin: false,
   botadmin: false,
   server: true,

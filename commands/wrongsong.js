@@ -1,7 +1,6 @@
 //Wrongsong command. Used to remove a song from the queue.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Wrongsong";
@@ -22,7 +21,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}wrongsong <number/np>\``,
+  usage: `\`/wrongsong <number/np>\``,
   admin: false,
   botadmin: false,
   server: true,

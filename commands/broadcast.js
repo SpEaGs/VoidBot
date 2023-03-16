@@ -1,7 +1,5 @@
 //Broadcast command. Sends a given message the default text channel of all servers the bot is in.
 
-const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const status = require("../main.js");
 const { SlashCommandBuilder } = require("discord.js");
 
@@ -21,7 +19,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`${prefix}broadcast <message>\``,
+  usage: `\`/broadcast <message>\``,
   admin: false,
   botadmin: true,
   server: true,

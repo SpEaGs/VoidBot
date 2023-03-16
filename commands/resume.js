@@ -1,7 +1,6 @@
 //Resume command. Resumes the bot's current audio stream.
 
 const utils = require("../utils.js");
-const prefix = utils.config.prefix;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Resume";
@@ -14,7 +13,7 @@ module.exports = {
   name: name,
   description: description,
   args: false,
-  usage: `\`${prefix}resume\``,
+  usage: `\`/resume\``,
   admin: false,
   botadmin: false,
   server: true,
