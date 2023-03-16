@@ -321,25 +321,24 @@ function createStream(status, info) {
   try {
     switch (info.trackSource) {
       case "YT": {
-        ytdl.downloadFromInfo(info, { filter: "audioonly" }).then((stream) => {
-          stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
-          stream.on("end", () => {
-            str = `./temp${status.guildID}.mp3`;
-            status.dispatcher = voice.createAudioPlayer({
-              behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
-            });
-            status.dispatcher.playing = true;
-            status.dispatcher.paused = false;
-            status.voiceConnection.subscribe(status.dispatcher);
-            status.dispatcher.play(voice.createAudioResource(str));
-            status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-              log("Voice Idle", ["[WARN]", "[PLAY]"]);
-              endDispatcher(status);
-              fs.unlinkSync(str);
-            });
-            status.dispatcher.once("error", (err) => {
-              log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-            });
+        let stream = ytdl.downloadFromInfo(info, { filter: "audioonly" });
+        stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
+        stream.on("end", () => {
+          str = `./temp${status.guildID}.mp3`;
+          status.dispatcher = voice.createAudioPlayer({
+            behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
+          });
+          status.dispatcher.playing = true;
+          status.dispatcher.paused = false;
+          status.voiceConnection.subscribe(status.dispatcher);
+          status.dispatcher.play(voice.createAudioResource(str));
+          status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+            log("Voice Idle", ["[WARN]", "[PLAY]"]);
+            endDispatcher(status);
+            fs.unlinkSync(str);
+          });
+          status.dispatcher.once("error", (err) => {
+            log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
           });
         });
         break;
