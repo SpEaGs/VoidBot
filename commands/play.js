@@ -316,55 +316,46 @@ function play(info, status) {
   createStream(status, info);
 }
 
+function makeDispatcher(stream, status, source = "YT") {
+  let tag = "mp3";
+  if (source === "YT") tag = "m4a";
+  let filename = `temp${status.guildID}.${tag}`;
+  stream.pipe(fs.createWriteStream(filename));
+  stream.on("end", () => {
+    status.dispatcher = voice.createAudioPlayer({
+      behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
+    });
+    status.dispatcher.playing = true;
+    status.dispatcher.paused = false;
+    status.voiceConnection.subscribe(status.dispatcher);
+    status.dispatcher.play(voice.createAudioResource(filename));
+    status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+      log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guildName}]`]);
+      endDispatcher(status);
+      fs.unlinkSync(filename);
+    });
+    status.dispatcher.once("error", (err) => {
+      log(`Audio stream error:\n${err}`, [
+        "[ERR]",
+        "[PLAY]",
+        `[${status.guildName}]`,
+      ]);
+    });
+  });
+}
+
 function createStream(status, info) {
   let str;
   try {
     switch (info.trackSource) {
       case "YT": {
         let stream = ytdl.downloadFromInfo(info, { filter: "audioonly" });
-        stream.pipe(fs.createWriteStream(`temp${status.guildID}.m4a`));
-        stream.on("end", () => {
-          str = `./temp${status.guildID}.m4a`;
-          status.dispatcher = voice.createAudioPlayer({
-            behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
-          });
-          status.dispatcher.playing = true;
-          status.dispatcher.paused = false;
-          status.voiceConnection.subscribe(status.dispatcher);
-          status.dispatcher.play(voice.createAudioResource(str));
-          status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-            log("Voice Idle", ["[WARN]", "[PLAY]"]);
-            endDispatcher(status);
-            fs.unlinkSync(str);
-          });
-          status.dispatcher.once("error", (err) => {
-            log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-          });
-        });
+        makeDispatcher(stream, status);
         break;
       }
       case "SC": {
         sc.download(info.url, SC_API_KEY).then((stream) => {
-          stream.pipe(fs.createWriteStream(`temp${status.guildID}.mp3`));
-          stream.on("end", () => {
-            str = `./temp${status.guildID}.mp3`;
-            status.dispatcher = voice.createAudioPlayer({
-              behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
-            });
-            status.dispatcher.playing = true;
-            status.dispatcher.paused = false;
-            status.voiceConnection.subscribe(status.dispatcher);
-            status.dispatcher.play(voice.createAudioResource(str));
-            status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-              log("Voice Idle", ["[WARN]", "[PLAY]"]);
-              endDispatcher(status);
-              fs.unlinkSync(str);
-            });
-            status.dispatcher.once("error", (err) => {
-              log(`Audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
-              fs.unlinkSync(str);
-            });
-          });
+          makeDispatcher(stream, status, "SC");
         });
         break;
       }
