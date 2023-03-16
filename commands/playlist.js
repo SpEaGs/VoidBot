@@ -36,9 +36,16 @@ module.exports = {
           .toString()
           .padStart(2, "0")}] (added by: ${item.added_by})\``
       );
+      if (output.length === 10) {
+        params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(output.join("\n"));
+        output = [];
+        if (i === params.bot.audioQueue.length) return;
+      }
     }
     return params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} Playlist: ${output.join("\n")}`);
+      .send(output.join("\n"));
   },
 };
