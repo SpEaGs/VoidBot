@@ -14,7 +14,7 @@ const api = express();
 const server = require(ssl ? "https" : "http").createServer(api);
 const io = require("socket.io")(server, {
   cors: {
-    origin: `https://speags.com/`,
+    origin: `https://speags.com`,
     methods: ["GET", "POST"],
   },
 });
