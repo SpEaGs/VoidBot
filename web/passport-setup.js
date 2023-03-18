@@ -27,6 +27,7 @@ passport.use(
       scope: [Scope.IDENTIFY, Scope.GUILDS],
     },
     (accessToken, refreshToken, profile, done) => {
+      utils.dumpJSON("profile.json", profile, 2);
       fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
