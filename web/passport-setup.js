@@ -27,7 +27,6 @@ passport.use(
       scope: [Scope.IDENTIFY, Scope.GUILDS],
     },
     (accessToken, refreshToken, profile, done) => {
-      utils.dumpJSON("profile.json", profile, 2);
       fetch("https://discordapp.com/api/users/@me/guilds", {
         headers: {
           Authorization: `Bearer ${accessToken}`,
@@ -61,7 +60,7 @@ passport.use(
               let newDBUser = new User({
                 snowflake: profile.id,
                 username: profile.username,
-                discriminator: profile.displayname.split("#").pop(),
+                discriminator: profile.displayName.split("#").pop(),
                 guilds: userGuilds,
                 token: accessToken,
                 botAdmin: !!utils.config.botAdmin.includes(profile.id),
