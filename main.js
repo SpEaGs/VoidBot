@@ -12,7 +12,9 @@ const session = require("express-session");
 const cors = require("cors");
 const api = express();
 const server = require(ssl ? "https" : "http").createServer(api);
-const io = require("socket.io")(server, {
+const SERVER = require("socket.io").Server;
+const io = new SERVER(server, {
+  path: "/apis/voidbot",
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
