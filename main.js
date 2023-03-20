@@ -174,8 +174,8 @@ function launchWebServer() {
     });
     s.on("guilds", (uToken) => {
       User.findOne({ token: uToken }, (err, u) => {
-        if (err) return socket.disconnect();
-        if (!u) return socket.disconnect();
+        if (err) return;
+        if (!u) return;
         else {
           let guildsOut = [];
           status.client.children.forEach((b) => {
@@ -195,8 +195,8 @@ function launchWebServer() {
     });
     s.on("user", (uToken) => {
       User.findOne({ token: uToken }, (err, u) => {
-        if (err) return s.disconnect();
-        if (!u) return s.disconnect();
+        if (err) return;
+        if (!u) return;
         else {
           s.emit("user-res", u);
         }
@@ -261,10 +261,9 @@ function launchWebServer() {
     socket.once("handshake_res", (authed, token, dToken = false) => {
       if (authed && dToken) {
         User.findOne({ token: dToken }, (err, u) => {
-          if (err) return socket.disconnect();
+          if (err) return;
           if (!u) {
             socket.emit("handshake_end", false);
-            socket.disconnect();
           } else {
             let oldSocket = status.sockets.find((s) => s.token === token);
             if (!!oldSocket) {
@@ -281,7 +280,6 @@ function launchWebServer() {
         });
       } else {
         socket.emit("handshake_end", false);
-        socket.disconnect();
       }
     });
     socket.emit("handshake");
