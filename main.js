@@ -153,6 +153,7 @@ function launchWebServer() {
     if (!req.user) {
       res.redirect(utils.config.webAppDomain + "test");
     } else {
+      log(req.user.token, ["[WARN]", "[API]"]);
       res.redirect(
         `${utils.config.webAppDomain}token?dtoken=${req.user.token}`
       );
