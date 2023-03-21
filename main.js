@@ -14,7 +14,7 @@ const api = express();
 const server = require(ssl ? "https" : "http").createServer(api);
 const SERVER = require("socket.io").Server;
 const io = new SERVER(server, {
-  path: "/apis/voidbot",
+  path: "/apis/voidbot/",
   cors: {
     origin: `*`,
     methods: ["GET", "POST"],
