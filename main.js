@@ -151,10 +151,8 @@ function launchWebServer() {
   api.use("/auth", require("./web/routers/auth"));
   api.get("/user", (req, res) => {
     if (!req.user) {
-      log(req.user, ["[WARN]", "[API]"]);
       res.redirect(utils.config.webAppDomain + "test");
     } else {
-      log(`token: ${req.user.token}`, ["[WARN]", "[API]"]);
       res.redirect(`${utils.config.webAppDomain}?dtoken=${req.user.token}`);
     }
   });
