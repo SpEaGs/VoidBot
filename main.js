@@ -155,6 +155,7 @@ function launchWebServer() {
       res.redirect(utils.config.webAppDomain + "test");
     } else {
       log(`token: ${req.user.token}`, ["[WARN]", "[API]"]);
+      localStorage.setItem("dtoken", req.user.token);
       res.redirect(`${utils.config.webAppDomain}?dtoken=${req.user.token}`);
     }
   });
