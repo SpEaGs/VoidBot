@@ -149,14 +149,14 @@ function launchWebServer() {
     next();
   });
   api.use("/auth", require("./web/routers/auth"));
-  api.get("/", (req, res) => {
+  api.get("/user", (req, res) => {
     if (!req.user) {
       log(req.user, ["[WARN]", "[API]"]);
-      localStorage.setItem("dtoken", false);
+      window.localStorage.setItem("dtoken", false);
       res.redirect(utils.config.webAppDomain + "test");
     } else {
       log(`token: ${req.user.token}`, ["[WARN]", "[API]"]);
-      localStorage.setItem("dtoken", req.user.token);
+      window.localStorage.setItem("dtoken", req.user.token);
       res.redirect(`${utils.config.webAppDomain}?dtoken=${req.user.token}`);
     }
   });
