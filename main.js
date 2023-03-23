@@ -11,7 +11,11 @@ const express = require("express");
 const session = require("express-session");
 const cors = require("cors");
 const api = express();
-const server = require(ssl ? "https" : "http").createServer(api);
+const certs = {
+  key: fs.readFileSync("/home/pi/.ssl/vb_backend.key"),
+  cert: fs.readFileSync("/home/pi/.ssl/vb_backend.crt"),
+};
+const server = require("https").createServer(certs, api);
 const SERVER = require("socket.io").Server;
 const io = new SERVER(server, {
   path: "/apis/voidbot/",
