@@ -14,8 +14,8 @@ router.get("/discord", passport.authenticate("discord"));
 router.get(
   "/discord/callback",
   passport.authenticate("discord", {
-    failureRedirect: "/voidbot",
-    successRedirect: "/voidbot",
+    failureRedirect: "/",
+    successRedirect: "/",
   })
 );
 
