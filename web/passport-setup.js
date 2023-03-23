@@ -23,7 +23,7 @@ passport.use(
     {
       clientID: keys.CLIENT_ID,
       clientSecret: keys.CLIENT_SECRET,
-      callbackURL: `http://speags.com/apis/voidbot/auth/discord/callback`,
+      callbackURL: `https://speags.com/apis/voidbot/auth/discord/callback`,
       scope: [Scope.IDENTIFY, Scope.GUILDS],
     },
     (accessToken, refreshToken, profile, done) => {
