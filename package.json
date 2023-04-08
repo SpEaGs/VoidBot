@@ -45,7 +45,7 @@
     "soundcloud-downloader": "^1.0.0",
     "superagent": "^5.3.1",
     "winston": "^3.8.1",
-    "ytdl-core": "^4.11.2"
+    "ytdl-core": "^4.11.3"
   },
   "build": {
     "appId": "Void.Bot",
