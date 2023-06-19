@@ -19,7 +19,7 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
-    let mem = params.msg.member;
+    let mem = params.interaction.member;
     params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
       .send(`${mem} The web UI can be found here: http://${webURL}`);
