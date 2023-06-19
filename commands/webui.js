@@ -1,7 +1,7 @@
 //WebUI command. Sends a link to the Bot's WebUI dashboard.
 
 const utils = require("../utils.js");
-const pubIP = utils.config.pubIP;
+const webURL = utils.config.webURL;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Webui";
@@ -22,6 +22,6 @@ module.exports = {
     let mem = params.msg.member;
     params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} The web UI can be found here: http://${pubIP}:3000`);
+      .send(`${mem} The web UI can be found here: http://${webURL}`);
   },
 };
