@@ -12,6 +12,7 @@ if (!fs.existsSync("./config.json")) {
     sendoffMsgPre: "Aww... there goes another pawn...",
     botAdmin: ["125759724707774464", "125758417934483456"],
     webAppDomain: "https://speags.com/voidbot/",
+    cmdToggles: [],
     sharding: {
       default: {
         guildName: "",
@@ -185,6 +186,8 @@ function populateCmds(status) {
   status.client.cmds.clear();
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
+    if (!config.cmdToggles.find((c) => c.name === command.name))
+      config.cmdToggles.push({ name: command.name.toLowerCase(), state: true });
     cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
     log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);

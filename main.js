@@ -257,6 +257,11 @@ function launchWebServer() {
         socket.emit("backlog", backlog);
       }
     });
+    socket.on("get_cmds", (snowflake) => {
+      if (utils.config.botAdmin.includes(snowflake)) {
+        socket.emit("cmdList", utils.config.cmdToggles);
+      }
+    });
     socket.on("sysCMD", (payload) => {
       if (utils.config.botAdmin.includes(payload.snowflake)) {
         cmd(payload.cmd);
@@ -367,7 +372,11 @@ try {
 
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
-      if (cmd.admin && !adminCheck) {
+      if (!utils.config.cmdToggles[interaction.commandName.toLowerCase()]) {
+        try {
+          await interaction.reply("That command is currently disabled.");
+        } catch {}
+      } else if (cmd.admin && !adminCheck) {
         try {
           await interaction.reply(
             "You lack sufficient permissions for that command."
