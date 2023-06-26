@@ -189,7 +189,7 @@ function populateCmds(status) {
     let command = require(`./commands/${file}`);
     if (
       config.cmdToggles &&
-      !config.cmdToggles.find((c) => c.name === command.name)
+      !config.cmdToggles.find((c) => c.name === command.name.toLowerCase())
     )
       config.cmdToggles.push({ name: command.name.toLowerCase(), state: true });
     cmdReg.push(command.data.toJSON());
