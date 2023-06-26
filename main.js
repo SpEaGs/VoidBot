@@ -372,9 +372,8 @@ try {
 
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
-      if (
-        !utils.config.cmdToggles[interaction.commandName.toLowerCase()].state
-      ) {
+      log(interaction.commandName.toLowerCase(), ["[WARN]", "[MAIN]"]);
+      if (!utils.config.cmdToggles[interaction.commandName.toLowerCase()]) {
         try {
           await interaction.reply("That command is currently disabled.");
         } catch {}
