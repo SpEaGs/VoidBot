@@ -251,15 +251,10 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    socket.once("get_backlog", (snowflake) => {
+    socket.once("get_console", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
         status.consoleSockets.set(socket.id, socket);
-        socket.emit("backlog", backlog);
-      }
-    });
-    socket.once("get_cmds", (snowflake) => {
-      if (utils.config.botAdmin.includes(snowflake)) {
-        socket.emit("cmdList", utils.config.cmdToggles);
+        socket.emit("console", backlog, utils.config.cmdToggles);
       }
     });
     socket.on("sysCMD", (payload) => {
