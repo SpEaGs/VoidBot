@@ -257,7 +257,7 @@ function launchWebServer() {
         socket.emit("backlog", backlog);
       }
     });
-    socket.on("get_cmds", (snowflake) => {
+    socket.once("get_cmds", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
         socket.emit("cmdList", utils.config.cmdToggles);
       }
