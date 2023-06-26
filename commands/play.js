@@ -76,155 +76,230 @@ function worker(status, taskList = [], interval = 1000) {
 function search(str, mem, params, verbose = true) {
   let status = params.bot;
   let url = str;
-  let resType = "ytsc";
   switch (url.includes("http")) {
     case true: {
-      if (
-        !(
-          url.includes(".youtube.com/") ||
-          url.includes("soundcloud.com/") ||
-          url.includes("spotify.com/")
-        )
-      ) {
-        return status.guild.channels.cache
-          .get(status.defaultTextChannel.id)
-          .send(`${mem} That was not a youtube, soundcloud, or spotify link.`);
-      }
       let plID;
       let requestURL;
       let tasks = [];
-      try {
-        switch (url.includes("list=")) {
-          case true: {
-            resType = "ytpl";
-            plID = getParameterByName("list", url);
-            requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
-            status.guild.channels.cache
-              .get(status.defaultTextChannel.id)
-              .send(
-                `${mem} Hold onto your butts! I've got a playlist inbound...`
-              );
-            request(requestURL, (error, response) => {
-              if (error || !response.statusCode == 200) {
-                log("Error getting playlist info", ["[WARN], [PLAY]"]);
-                return;
-              }
-              response.body.items.forEach((i) => {
-                tasks.push(() => {
-                  get_info(
-                    "https://www.youtube.com/watch?v=" +
-                      i.snippet.resourceId.videoId,
-                    mem,
-                    params
-                  );
+      switch (true) {
+        case url.includes("youtube.com/"): {
+          try {
+            if (url.includes("list=:")) {
+              plID = getParameterByName("list", url);
+              requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
+              status.guild.channels.cache
+                .get(status.defaultTextChannel.id)
+                .send(
+                  `${mem} Hold onto your butts! I've got a playlist inbound...`
+                );
+              request(requestURL, (error, response) => {
+                if (error || !response.statusCode == 200) {
+                  log("Error getting playlist info", ["[WARN], [PLAY]"]);
+                  return;
+                }
+                response.body.items.forEach((i) => {
+                  tasks.push(() => {
+                    get_info(
+                      "https://www.youtube.com/watch?v=" +
+                        i.snippet.resourceId.videoId,
+                      mem,
+                      params
+                    );
+                  });
                 });
+                worker(status, tasks);
               });
-              worker(status, tasks);
-            });
-            break;
-          }
-          case false: {
-            if (!url.includes("/playlist/")) break;
-            resType = "sppl";
-            plID = url.split("/").reverse()[0].split("?")[0];
-            status.guild.channels.cache
+              break;
+            } else {
+              get_info(url, mem, params);
+              break;
+            }
+          } catch {
+            return status.guild.channels.cache
               .get(status.defaultTextChannel.id)
-              .send(
-                `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
-              );
-            let urlparams = new URLSearchParams();
-            let token;
-            urlparams.append("grant_type", "client_credentials");
-            urlparams.append("client_id", SP_CLIENT_ID);
-            urlparams.append("client_secret", SP_CLIENT_SECRET);
-            fetch("https://accounts.spotify.com/api/token", {
-              method: "post",
-              headers: {
-                "Content-Type": "application/x-www-form-urlencoded",
-              },
-              body: urlparams,
-            })
-              .then((response) => response.json())
-              .then((res) => {
-                token = res["access_token"];
-                let spotifyReqURL = `https://api.spotify.com/v1/playlists/${plID}`;
-                fetch(spotifyReqURL, {
-                  method: "get",
+              .send(`${mem} That Youtube link was incomplete or broken.`);
+          }
+        }
+        case url.includes("spotify.com/"): {
+          try {
+            switch (true) {
+              case url.includes("/album/"): {
+                alID = url.split("/").reverse()[0].split("?"[0]);
+                status.guilds.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(
+                    `${mem} Hold onto your butts! I've got a Spotify album inbound...`
+                  );
+                let urlparams = new URLSearchParams();
+                let token;
+                urlparams.append("grant_type", "client_credentials");
+                urlparams.append("client_id", SP_CLIENT_ID);
+                urlparams.append("client_secret", SP_CLIENT_SECRET);
+                fetch("https://accounts.spotify.com/api/token", {
+                  method: "post",
                   headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${token}`,
+                    "Content-Type": "application/x-www-form-urlencoded",
                   },
+                  body: urlparams,
                 })
                   .then((response) => response.json())
                   .then((res) => {
-                    res.tracks.items.forEach((i) => {
-                      tasks.push(() => {
-                        search(
-                          `${i.track.name} ${i.track.artists[0].name}`,
-                          mem,
-                          params,
-                          false
-                        );
+                    token = res["access_token"];
+                    let spotifyReqURL = `https://api.spotify.com/v1/albums/${alID}`;
+                    fetch(spotifyReqURL, {
+                      method: "get",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                    })
+                      .then((response) => response.json())
+                      .then((res) => {
+                        res.tracks.items
+                          .forEach((i) => {
+                            tasks.push(() => {
+                              search(
+                                `${i.track.name} ${i.track.artists[0].name}`,
+                                mem,
+                                params,
+                                false
+                              );
+                            });
+                            worker(status, tasks);
+                            return;
+                          })
+                          .catch((err) => {
+                            log(`Error getting spotify album info: ${err}`, [
+                              "[WARN]",
+                              "[PLAY]",
+                            ]);
+                          });
                       });
-                    });
-                    worker(status, tasks);
-                    return;
-                  })
-                  .catch((err) => {
-                    log(`Error getting spotify playlist info: ${err}`, [
-                      "[WARN]",
-                      "[PLAY]",
-                    ]);
                   });
-              });
+                break;
+              }
+              case url.includes("/playlist/"): {
+                plID = url.split("/").reverse()[0].split("?")[0];
+                status.guild.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(
+                    `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
+                  );
+                let urlparams = new URLSearchParams();
+                let token;
+                urlparams.append("grant_type", "client_credentials");
+                urlparams.append("client_id", SP_CLIENT_ID);
+                urlparams.append("client_secret", SP_CLIENT_SECRET);
+                fetch("https://accounts.spotify.com/api/token", {
+                  method: "post",
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                  },
+                  body: urlparams,
+                })
+                  .then((response) => response.json())
+                  .then((res) => {
+                    token = res["access_token"];
+                    let spotifyReqURL = `https://api.spotify.com/v1/playlists/${plID}`;
+                    fetch(spotifyReqURL, {
+                      method: "get",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                    })
+                      .then((response) => response.json())
+                      .then((res) => {
+                        res.tracks.items.forEach((i) => {
+                          tasks.push(() => {
+                            search(
+                              `${i.track.name} ${i.track.artists[0].name}`,
+                              mem,
+                              params,
+                              false
+                            );
+                          });
+                        });
+                        worker(status, tasks);
+                        return;
+                      })
+                      .catch((err) => {
+                        log(`Error getting spotify playlist info: ${err}`, [
+                          "[WARN]",
+                          "[PLAY]",
+                        ]);
+                      });
+                  });
+                break;
+              }
+              case url.includes("/track/"): {
+                plID = url.split("/").reverse()[0].split("?")[0];
+                let urlparams = new URLSearchParams();
+                let token;
+                urlparams.append("grant_type", "client_credentials");
+                urlparams.append("client_id", SP_CLIENT_ID);
+                urlparams.append("client_secret", SP_CLIENT_SECRET);
+                fetch("https://accounts.spotify.com/api/token", {
+                  method: "post",
+                  headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                  },
+                  body: urlparams,
+                })
+                  .then((response) => response.json())
+                  .then((res) => {
+                    token = res["access_token"];
+                    let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
+                    fetch(spotifyReqURL, {
+                      method: "get",
+                      headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${token}`,
+                      },
+                    })
+                      .then((response) => response.json())
+                      .then((res) => {
+                        search(
+                          `${res.name} ${res.artists[0].name}`,
+                          mem,
+                          params
+                        );
+                        return;
+                      })
+                      .catch((err) => {
+                        log(`Error getting spotify song info: ${err}`, [
+                          "[WARN]",
+                          "[PLAY]",
+                        ]);
+                      });
+                  });
+                break;
+              }
+              default: {
+                return status.guild.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(`${mem} That was not a supported Spotify link.`);
+              }
+            }
             break;
+          } catch {
+            return status.guild.channels.cache
+              .get(status.defaultTextChannel.id)
+              .send(`${mem} That Spotify link was incomplete or broken.`);
           }
         }
-        if (url.includes("/track/")) {
-          resType = "sp";
-          plID = url.split("/").reverse()[0].split("?")[0];
-          let urlparams = new URLSearchParams();
-          let token;
-          urlparams.append("grant_type", "client_credentials");
-          urlparams.append("client_id", SP_CLIENT_ID);
-          urlparams.append("client_secret", SP_CLIENT_SECRET);
-          fetch("https://accounts.spotify.com/api/token", {
-            method: "post",
-            headers: {
-              "Content-Type": "application/x-www-form-urlencoded",
-            },
-            body: urlparams,
-          })
-            .then((response) => response.json())
-            .then((res) => {
-              token = res["access_token"];
-              let spotifyReqURL = `https://api.spotify.com/v1/tracks/${plID}`;
-              fetch(spotifyReqURL, {
-                method: "get",
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              })
-                .then((response) => response.json())
-                .then((res) => {
-                  search(`${res.name} ${res.artists[0].name}`, mem, params);
-                  return;
-                })
-                .catch((err) => {
-                  log(`Error getting spotify song info: ${err}`, [
-                    "[WARN]",
-                    "[PLAY]",
-                  ]);
-                });
-            });
+        case url.includes("soundcloud.com/"): {
+          get_info(url, mem, params);
+          break;
         }
-      } catch {
-        return status.guild.channels.cache
-          .get(status.defaultTextChannel.id)
-          .send(`${mem} That link was broken or incomplete.`);
+        default: {
+          return status.guild.channels.cache
+            .get(status.defaultTextChannel.id)
+            .send(
+              `${mem} That was not a pure Youtube, Soundcloud, or Spotify link.`
+            );
+        }
       }
-      if (resType === "ytsc") get_info(url, mem, params);
       break;
     }
     case false: {
