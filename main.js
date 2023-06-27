@@ -259,7 +259,7 @@ function launchWebServer() {
     });
     socket.on("sysCMD", (payload) => {
       if (utils.config.botAdmin.includes(payload.snowflake)) {
-        cmd(payload.cmd);
+        cmd(payload.cmd, payload.data);
       }
     });
     socket.once("handshake_res", (authed, token, dToken = false) => {
