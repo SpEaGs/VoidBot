@@ -551,7 +551,7 @@ status.client.on("presenceUpdate", (oldPresence, newPresence) => {
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)
-function cmd(e = "") {
+function cmd(e = "", args = false) {
   switch (e) {
     case "refreshcmds": {
       utils.populateCmds(status);
@@ -566,6 +566,15 @@ function cmd(e = "") {
     case "kill": {
       status.client.destroy();
       process.exit(0);
+    }
+    case "togglecmd": {
+      utils.cmdToggles.find((i) => {
+        i.name === args.name;
+      }).state = args.state;
+      utils.dumpJSON("./config.json", utils.config, 2);
+      status.consoleSockets.forEach((s) => {
+        s.emit("cmdList", utils.config.cmdToggles);
+      });
     }
     default:
       status.client.cmds
