@@ -370,7 +370,7 @@ try {
       if (
         !utils.config.cmdToggles.find(
           (i) => i.name === interaction.commandName.toLowerCase()
-        )
+        ).state
       ) {
         try {
           await interaction.reply("That command is currently disabled.");
