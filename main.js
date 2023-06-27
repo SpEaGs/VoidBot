@@ -575,6 +575,7 @@ function cmd(e = "", args = false) {
       status.consoleSockets.forEach((s) => {
         s.emit("cmdList", utils.config.cmdToggles);
       });
+      break;
     }
     default:
       status.client.cmds
