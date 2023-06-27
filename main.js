@@ -568,9 +568,8 @@ function cmd(e = "", args = false) {
       process.exit(0);
     }
     case "togglecmd": {
-      utils.config.cmdToggles.find((i) => {
-        i.name === args.name;
-      }).state = args.state;
+      utils.config.cmdToggles.find((i) => i.name === args.name).state =
+        args.state;
       utils.dumpJSON("./config.json", utils.config, 2);
       status.consoleSockets.forEach((s) => {
         s.emit("cmdList", utils.config.cmdToggles);
