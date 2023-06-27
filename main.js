@@ -568,7 +568,7 @@ function cmd(e = "", args = false) {
       process.exit(0);
     }
     case "togglecmd": {
-      utils.cmdToggles.find((i) => {
+      utils.config.cmdToggles.find((i) => {
         i.name === args.name;
       }).state = args.state;
       utils.dumpJSON("./config.json", utils.config, 2);
