@@ -560,7 +560,7 @@ function cmd(e = "") {
     }
     case "refreshadmin": {
       status.client.children.forEach((bot) => {
-        utils.populateAdmin(status, bot);
+        utils.populateAdmin(bot);
       });
       break;
     }

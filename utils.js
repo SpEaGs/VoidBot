@@ -186,7 +186,10 @@ function populateCmds(status) {
   status.client.cmds.clear();
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
-    if (!config.cmdToggles.find((c) => c.name === command.name))
+    if (
+      !config.cmdToggles.find((c) => c.name === command.name) &&
+      !command.name.toLowerCase() === "botadmin"
+    )
       config.cmdToggles.push({ name: command.name.toLowerCase(), state: true });
     cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
