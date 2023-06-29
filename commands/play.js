@@ -447,9 +447,7 @@ function endDispatcher(status) {
   if (status.audioQueue && status.audioQueue.length === 0) {
     try {
       status.dispatcher.stop();
-    } catch {
-      log("derp", ["[WARN]", "[PLAY]"]);
-    }
+    } catch {}
     status.dispatcher = false;
     status.nowPlaying = false;
     utils.informClients(status, {

@@ -251,20 +251,15 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    socket.once("get_backlog", (snowflake) => {
+    socket.once("get_console", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
         status.consoleSockets.set(socket.id, socket);
-        socket.emit("backlog", backlog);
-      }
-    });
-    socket.once("get_cmds", (snowflake) => {
-      if (utils.config.botAdmin.includes(snowflake)) {
-        socket.emit("cmdList", utils.config.cmdToggles);
+        socket.emit("console", backlog, utils.config.cmdToggles);
       }
     });
     socket.on("sysCMD", (payload) => {
       if (utils.config.botAdmin.includes(payload.snowflake)) {
-        cmd(payload.cmd);
+        cmd(payload.cmd, payload.data);
       }
     });
     socket.once("handshake_res", (authed, token, dToken = false) => {
@@ -372,7 +367,11 @@ try {
 
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
-      if (!utils.config.cmdToggles[interaction.commandName.toLowerCase()]) {
+      if (
+        !utils.config.cmdToggles.find(
+          (i) => i.name === interaction.commandName.toLowerCase()
+        ).state
+      ) {
         try {
           await interaction.reply("That command is currently disabled.");
         } catch {}
@@ -552,7 +551,7 @@ status.client.on("presenceUpdate", (oldPresence, newPresence) => {
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)
-function cmd(e = "") {
+function cmd(e = "", args = false) {
   switch (e) {
     case "refreshcmds": {
       utils.populateCmds(status);
@@ -567,6 +566,15 @@ function cmd(e = "") {
     case "kill": {
       status.client.destroy();
       process.exit(0);
+    }
+    case "togglecmd": {
+      utils.config.cmdToggles.find((i) => i.name === args.name).state =
+        args.state;
+      utils.dumpJSON("./config.json", utils.config, 2);
+      status.consoleSockets.forEach((s) => {
+        s.emit("cmdList", utils.config.cmdToggles);
+      });
+      break;
     }
     default:
       status.client.cmds
