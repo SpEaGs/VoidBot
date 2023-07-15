@@ -447,25 +447,13 @@ status.client.on("guildMemberAdd", (member) => {
     `[${bot.guildName}]`,
   ]);
   try {
-    if (bot.welcomeMsg === false) return;
-    if (bot.welcomeTextChannel != false) {
-      let anno = false;
-      if (bot.announcementsRole != false) anno = true;
-      if (bot.ruleTextChannel != false) {
-        bot.guild.channels.cache
-          .get(bot.welcomeTextChannel.id)
-          .send(
-            utils.welcome(member, anno) +
-              `\nPlease read the rules in ${bot.guild.channels.cache
-                .get(bot.ruleTextChannel.id)
-                .toString()}`
-          );
-      } else
-        bot.guild.channels.cache
-          .get(bot.welcomeTextChannel.id)
-          .send(utils.welcome(member, anno));
+    if (!bot.welcomeMsg) return;
+    if (!!bot.welcomeTextChannel) {
+      bot.guild.channels.cache
+        .get(bot.welcomeTextChannel.id)
+        .send(utils.welcome(member, bot));
     }
-    if (bot.newMemberRole != false) {
+    if (!!bot.newMemberRole) {
       member.roles.add(bot.newMemberRole.id);
     }
   } catch (error) {

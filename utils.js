@@ -78,16 +78,21 @@ function zeroify(num) {
 }
 
 //handles the welcome message when a new member joins a server
-function welcome(mem, anno) {
-  let toReturn =
-    `${config.welcomeMsgPre} Welcome ${mem.toString()} to ${mem.guild.name}!` +
-    "\nI'm a bot! You can use `/help` to view a list of commands or `/? (command)` without the parentheses to get help with a specific command.";
-  if (anno)
-    toReturn +=
-      "\nIf you would like to receive notifications for announcements from this server, do `/announcements in`. You can opt out at any time by doing `/announcements out`.";
-  toReturn +=
-    "\nIf you encounter any bugs or issues with me, or have any suggestions for new features, DM `SpEaGs#2936`.";
-  return toReturn;
+function welcome(mem, bot) {
+  let welcome = `${config.welcomeMsgPre} Welcome ${mem.toString()} to ${
+    mem.guild.name
+  }!${
+    !!bot.ruleTextChannel
+      ? `\nPlease read the rules in ${bot.guild.channels.cache
+          .get(bot.ruleTextChannel.id)
+          .toString()}`
+      : ""
+  }${
+    bot.announcements
+      ? "\nIf you would like to receive notifications for announcements from this server, do `/announcements in`. You can opt out at any time by doing `/announcements out`."
+      : ""
+  }\nI'm a bot! You can use \`/help\` to view a list of commands or \`/help (command)\` without the parentheses to get help with a specific command.\nIf you encounter any bugs or issues with me, or have any suggestions for new features, feel free to open a ticket on the github page: https:///github.com/SpEaGs/VoidBot.`;
+  return welcome;
 }
 
 //handles the sendoff message when a member leaves a server
