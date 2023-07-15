@@ -23,7 +23,7 @@ module.exports = {
             .setName("command")
             .setDescription("Command to toggle")
             .setRequired(true)
-            .addChoices(...cmdChoices);
+            .addChoices(cmdChoices);
         });
     })
     .addSubcommand((subcommand) => {
