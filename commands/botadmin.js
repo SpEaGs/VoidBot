@@ -8,8 +8,6 @@ const cmdChoices = utils.config.cmdToggles.map((i) => {
   return { name: i.name, value: i.name };
 });
 
-console.log(...cmdChoices);
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
@@ -22,8 +20,10 @@ module.exports = {
           option
             .setName("command")
             .setDescription("Command to toggle")
-            .setRequired(true)
-            .addChoices(cmdChoices);
+            .setRequired(true);
+          cmdChoices.forEach((i) => {
+            option.addChoices(i);
+          });
         });
     })
     .addSubcommand((subcommand) => {
