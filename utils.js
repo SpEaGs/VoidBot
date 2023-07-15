@@ -189,7 +189,7 @@ function populateCmds(status) {
   log("Populating commands list...", ["[INFO]", "[UTILS]"]);
   let cmdFiles = fs.readdirSync("./commands/");
   status.client.cmds.clear();
-  if (!config.cmdToggles) config.cmdToggles = [];
+  let togglesOBJ = {};
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
     if (
@@ -200,11 +200,15 @@ function populateCmds(status) {
           !command.name.toLowerCase() === "botadmin"
       )
     )
-      config.cmdToggles.push({ name: command.name.toLowerCase(), state: true });
+      config.cmdToggles[command.name.toLowerCase()] = {
+        name: command.name.toLowerCase(),
+        state: true,
+      };
     cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
     log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);
   }
+  config.cmdToggles = Object.values(togglesOBJ);
   dumpJSON("./config.json", config, 2);
   const rest = new REST({ version: "10" }).setToken(TOKEN);
   (async () => {
