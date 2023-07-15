@@ -16,16 +16,13 @@ module.exports = {
       subcommand
         .setName("togglecmd")
         .setDescription("Toggles a given command")
-        .addStringOption((option) => {
+        .addStringOption((option) =>
           option
             .setName("command")
             .setDescription("Command to toggle")
-            .setRequired(true);
-          cmdChoices.forEach((i) => {
-            option.addChoices(i);
-          });
-          return option;
-        })
+            .setRequired(true)
+            .addChoices(...cmdChoices)
+        )
     )
     .addSubcommand((subcommand) =>
       subcommand
