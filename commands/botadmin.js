@@ -8,6 +8,8 @@ const cmdChoices = utils.config.cmdToggles.map((i) => {
   return { name: i.name, value: i.name };
 });
 
+console.log(...cmdChoices);
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
