@@ -12,7 +12,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
     .setDescription(description)
-    .addSubcommand((subcommand) => {
+    /*.addSubcommand((subcommand) => {
       subcommand
         .setName("togglecmd")
         .setDescription("Toggles a given command")
@@ -25,7 +25,7 @@ module.exports = {
             option.addChoices(i);
           });
         });
-    })
+    })*/
     .addSubcommand((subcommand) => {
       subcommand
         .setName("refreshcmds")
@@ -51,11 +51,11 @@ module.exports = {
     let log = global.log;
     let cmd = params.interaction.options.getString("command");
     switch (params.interaction.options.getSubcommand()) {
-      case "togglecmd": {
+      /*case "togglecmd": {
         log(`Toggling command: ${cmd}`, ["[WARN]", "[BOTADMIN]"]);
         toggleBool(utils.config.cmdToggles.find((i) => i.name === cmd).state);
         return utils.dumpJSON("../config.json", utils.config, 2);
-      }
+      }*/
       case "refreshcmds": {
         return utils.populateCmds(params.bot.status);
       }
