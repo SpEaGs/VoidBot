@@ -201,7 +201,7 @@ function populateCmds(status) {
           !command.name.toLowerCase() === "botadmin"
       )
     )
-      config.cmdToggles[command.name.toLowerCase()] = {
+      config.togglesOBJ[command.name.toLowerCase()] = {
         name: command.name.toLowerCase(),
         state: true,
       };
