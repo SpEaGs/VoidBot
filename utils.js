@@ -186,6 +186,7 @@ function populateAdmin(bot) {
 //populates an internal list of commands
 function populateCmds(status) {
   let cmdReg = [];
+
   log("Populating commands list...", ["[INFO]", "[UTILS]"]);
   let cmdFiles = fs.readdirSync("./commands/");
   status.client.cmds.clear();
