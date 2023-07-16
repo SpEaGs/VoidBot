@@ -17,7 +17,7 @@ module.exports = {
   botadmin: false,
   server: false,
   execute(params) {
-    let mem = params.msg.member;
+    let mem = params.interaction.member;
     params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
       .send(`${mem} Pong!`);
