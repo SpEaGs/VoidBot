@@ -190,9 +190,10 @@ function populateCmds(status) {
   let cmdFiles = fs.readdirSync("./commands/");
 
   status.client.cmds.clear();
+
+  config.cmdToggles = [];
   for (let file of cmdFiles) {
     let command = require(`./commands/${file}`);
-    config.cmdToggles = [];
     if (command.name.toLowerCase() !== "botadmin")
       config.cmdToggles.push({ name: command.name.toLowerCase(), state: true });
     cmdReg.push(command.data.toJSON());
