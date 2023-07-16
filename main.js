@@ -81,7 +81,6 @@ logger.add(
     format: winston.format.simple(),
   })
 );
-
 //wraps logger to a function so that console output can also be sent to the UI
 function log(str, tags) {
   let lo = { timeStamp: utils.getTime(), tags: tags, msg: str };
