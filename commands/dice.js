@@ -38,7 +38,7 @@ module.exports = {
     let rolls = params.interaction.options.getInteger("rolls");
     let i = 0;
     let rollsOut = [];
-    let total;
+    let total = 0;
     while (i <= rolls) {
       i++;
       let roll = Math.round(Math.random() * sides);
