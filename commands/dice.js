@@ -36,6 +36,7 @@ module.exports = {
     let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
+
     let i = 0;
     let rollsOut = [];
     let total = 0;
