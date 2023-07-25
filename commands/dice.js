@@ -12,7 +12,7 @@ module.exports = {
     .addIntegerOption((option) =>
       option
         .setName("sides")
-        .setDescription("Number of sides the die/dice will have. (2-100)")
+        .setDescription("Number of sides the die will have. (2-100)")
         .setRequired(true)
         .setMinValue(2)
         .setMaxValue(100)
