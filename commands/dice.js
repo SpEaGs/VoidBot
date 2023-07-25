@@ -47,6 +47,7 @@ module.exports = {
       total += roll;
       rollsOut.push(roll);
     }
+
     return params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
       .send(
