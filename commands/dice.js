@@ -32,6 +32,7 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: false,
+
   async execute(params) {
     let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
