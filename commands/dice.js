@@ -33,8 +33,8 @@ module.exports = {
   botadmin: false,
   server: false,
   async execute(params) {
-    let sides = params.interaction.getInteger("sides");
-    let rolls = params.interaction.getInteger("rolls");
+    let sides = params.interaction.options.getInteger("sides");
+    let rolls = params.interaction.options.getInteger("rolls");
     let i = 0;
     let rollsOut = [];
     let total;
