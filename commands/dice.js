@@ -33,6 +33,7 @@ module.exports = {
   botadmin: false,
   server: false,
   async execute(params) {
+    let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
     let i = 0;
@@ -44,8 +45,12 @@ module.exports = {
       total += roll;
       rollsOut.push(roll);
     }
-    return await params.interaction.followUp(
-      `Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(" ")} total: ${total}`
-    );
+    return params.bot.guild.channels.cache
+      .get(params.bot.defaultTextChannel.id)
+      .send(
+        `${mem} Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(
+          " "
+        )} total: ${total}`
+      );
   },
 };
