@@ -12,8 +12,8 @@ const session = require("express-session");
 const cors = require("cors");
 const api = express();
 const certs = {
-  key: fs.readFileSync("/home/pi/ssl/backend.key"),
-  cert: fs.readFileSync("/home/pi/ssl/backend.crt"),
+  key: fs.readFileSync("/home/speags/ssl/backend.key"),
+  cert: fs.readFileSync("/home/speags/ssl/backend.crt"),
 };
 const server = require("https").createServer(certs, api);
 const SERVER = require("socket.io").Server;
