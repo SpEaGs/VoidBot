@@ -1,21 +1,15 @@
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
-const cookieKey = keys.COOKIE_KEY;
-const ssl = JSON.parse(process.env.HTTPS);
 
 const Discord = require("discord.js");
 const winston = require("winston");
 const fs = require("fs");
 
-const express = require("express");
-const session = require("express-session");
-const cors = require("cors");
-const api = express();
 const certs = {
   key: fs.readFileSync("/home/speags/ssl/backend.key"),
   cert: fs.readFileSync("/home/speags/ssl/backend.crt"),
 };
-const server = require("https").createServer(certs, api);
+const server = require("https").createServer(certs);
 const SERVER = require("socket.io").Server;
 const io = new SERVER(server, {
   path: "/apis/voidbot/",
@@ -24,8 +18,6 @@ const io = new SERVER(server, {
     methods: ["GET", "POST"],
   },
 });
-const passport = require("passport");
-const User = require("./web/models/user");
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -112,55 +104,12 @@ function log(str, tags) {
 }
 global.log = log;
 
-require("./web/utils/connectdb");
-require("./web/passport-setup");
-
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
 status.client.lastSeen = new Discord.Collection();
 
 //webserver
 function launchWebServer() {
-  const whitelist = process.env.WHITELISTED_DOMAINS
-    ? process.env.WHITELISTED_DOMAINS.split(",")
-    : [];
-  const corsOptions = {
-    origin: (origin, callback) => {
-      if (!origin || whitelist.indexOf(origin) !== -1) {
-        callback(null, true);
-      } else {
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
-    credentials: true,
-  };
-
-  api.use(cors(corsOptions));
-  api.use(
-    session({
-      secret: cookieKey,
-      resave: false,
-      saveUninitialized: true,
-      cookie: { maxAge: 30 * 24 * 60 * 60 * 1000 },
-    })
-  );
-  api.use(passport.initialize());
-  api.use(passport.session());
-
-  api.all("/", (req, res, next) => {
-    res.header("Access-Control-AllowOrigin", "*");
-    res.header("Access-Control-Allow-Headers", "X-Requested-Width");
-    next();
-  });
-  api.use("/auth", require("./web/routers/auth"));
-  api.get("/user", (req, res) => {
-    if (!req.user) {
-      res.redirect(utils.config.webAppDomain + "test");
-    } else {
-      res.redirect(`${utils.config.webAppDomain}?dtoken=${req.user.token}`);
-    }
-  });
-
   function initSocket(s) {
     s.once("disconnect", () => {
       status.client.children.forEach((b) => {
@@ -176,35 +125,20 @@ function launchWebServer() {
         }
       });
     });
-    s.on("guilds", (uToken) => {
-      User.findOne({ token: uToken }, (err, u) => {
-        if (err) return;
-        if (!u) return;
-        else {
-          let guildsOut = [];
-          status.client.children.forEach((b) => {
-            if (u.guilds.member.includes(b.guildID)) {
-              if (u.guilds.admin.includes(b.guildID)) {
-                guildsOut.push(utils.dumbifyBot(b, true));
-                b.adminSocketSubs.set(s.id, s);
-              } else {
-                guildsOut.push(utils.dumbifyBot(b));
-              }
-              b.socketSubs.set(s.id, s);
-            }
-          });
-          s.emit("guilds_res", guildsOut);
+    s.on("guilds", (guildLists) => {
+      let guildsOut = [];
+      status.client.children.forEach((b) => {
+        if (guildLists.member.includes(b.guildID)) {
+          if (guildLists.admin.includes(b.guildID)) {
+            guildsOut.push(utils.dumbifyBot(b, true));
+            b.adminSocketSubs.set(s.id, s);
+          } else {
+            guildsOut.push(utils.dumbifyBot(b));
+          }
+          b.socketSubs.set(s.id, s);
         }
       });
-    });
-    s.on("user", (uToken) => {
-      User.findOne({ token: uToken }, (err, u) => {
-        if (err) return;
-        if (!u) return;
-        else {
-          s.emit("user-res", u);
-        }
-      });
+      s.emit("guilds_res", guildsOut);
     });
     s.on("g_data", (payload) => {
       let bot = status.client.children.find(
@@ -262,36 +196,16 @@ function launchWebServer() {
         cmd(payload.cmd, payload.data);
       }
     });
-    socket.once("handshake_res", (authed, token, dToken = false) => {
-      if (authed && dToken) {
-        User.findOne({ token: dToken }, (err, u) => {
-          if (err) return;
-          if (!u) {
-            socket.emit("handshake_end", false);
-          } else {
-            let oldSocket = status.sockets.find((s) => s.token === token);
-            if (!!oldSocket) {
-              status.sockets.delete(oldSocket.socket.id);
-            }
-            initSocket(socket);
-            status.sockets.set(socket.id, {
-              socket: socket,
-              token: token,
-              dToken: dToken,
-            });
-            socket.emit("handshake_end", true, u);
-          }
-        });
-      } else {
-        socket.emit("handshake_end", false);
-      }
+    socket.once("handshake_res", (tkn, snowflake) => {
+      botAdmin = !!utils.config.botAdmin.includes(snowflake);
+      status.sockets.find((s) => {
+        if (s.tkn === tkn) return status.sockets.delete(s.id);
+      });
+      initSocket(socket);
+      status.sockets.set(socket.id, socket);
+      socket.emit("handshake_end", botAdmin);
     });
     socket.emit("handshake");
-  });
-
-  server.listen(ssl ? 2083 : 5000, () => {
-    const port = server.address().port;
-    log(`API started at port: ${port}`, ["[INFO]", "[WEBSERVER]"]);
   });
 }
 
