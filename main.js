@@ -10,14 +10,8 @@ const certs = {
   cert: fs.readFileSync("/home/speags/ssl/backend.crt"),
 };
 const server = require("https").createServer(certs);
-const SERVER = require("socket.io").Server;
-const io = new SERVER(server, {
-  path: "/apis/voidbot/",
-  cors: {
-    origin: `*`,
-    methods: ["GET", "POST"],
-  },
-});
+const SIO = require("socket.io");
+const io = SIO(server);
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
@@ -206,9 +200,7 @@ function launchWebServer() {
       status.sockets.set(socket.id, socket);
       socket.emit("handshake_end", botAdmin);
     });
-    setTimeout(() => {
-      socket.emit("handshake");
-    }, 3000);
+    socket.emit("handshake");
   });
   server.listen(5000, () => {
     const port = server.address().port;
