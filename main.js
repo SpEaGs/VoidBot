@@ -110,6 +110,7 @@ status.client.lastSeen = new Discord.Collection();
 
 //webserver
 function launchWebServer() {
+  log("Launching websocket server...", ["[INFO]", "[WS]"]);
   function initSocket(s) {
     s.once("disconnect", () => {
       status.client.children.forEach((b) => {
@@ -206,6 +207,10 @@ function launchWebServer() {
       socket.emit("handshake_end", botAdmin);
     });
     socket.emit("handshake");
+  });
+  server.listen(5000, () => {
+    const port = server.address().port;
+    log(`Websocket server listening on port: ${port}`, ["[INFO]", "[WS]"]);
   });
 }
 
