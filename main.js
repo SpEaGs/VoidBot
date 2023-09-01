@@ -181,7 +181,6 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    log("New websocket connection...", ["[WARN]", "[WS]"]);
     socket.once("get_console", (snowflake) => {
       if (utils.config.botAdmin.includes(snowflake)) {
         status.consoleSockets.set(socket.id, socket);
