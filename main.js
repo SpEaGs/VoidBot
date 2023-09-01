@@ -10,8 +10,7 @@ const certs = {
   cert: fs.readFileSync("/home/speags/ssl/backend.crt"),
 };
 
-const api = require("express")();
-const server = require("https").createServer(certs, api);
+const server = require("https").createServer(certs);
 const SIO = require("socket.io");
 const io = SIO(server);
 
