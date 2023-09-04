@@ -201,7 +201,9 @@ function launchWebServer() {
       status.sockets.set(socket.id, socket);
       socket.emit("handshake_end", botAdmin);
     });
-    socket.emit("handshake");
+    socket.on("ready", () => {
+      socket.emit("handshake");
+    });
   });
   server.listen(5000, () => {
     const port = server.address().port;
