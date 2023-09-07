@@ -143,7 +143,7 @@ function launchWebServer() {
           }
           case "console": {
             if (utils.config.botAdmin.includes(snowflake)) {
-              status.consoleSockets.set(socket.id, socket);
+              status.consoleSockets.set(s.id, s);
               payload.console = {
                 backlog: backlog,
                 cmdToggles: utils.config.cmdToggles,
