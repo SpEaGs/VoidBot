@@ -129,17 +129,19 @@ function launchWebServer() {
       scopes.forEach((scope) => {
         switch (scope) {
           case "guilds": {
-            payload.guilds = status.client.children.map((b) => {
-              if (guildLists.member.includes(b.guildID)) {
-                b.socketSubs.set(s.id, s);
-                if (guildLists.admin.includes(b.guildID)) {
-                  b.adminSocketSubs.set(s.id, s);
-                  return utils.dumbifyBot(b, true);
-                } else {
-                  return utils.dumbifyBot(b);
+            payload.guilds = status.client.children
+              .map((b) => {
+                if (guildLists.member.includes(b.guildID)) {
+                  b.socketSubs.set(s.id, s);
+                  if (guildLists.admin.includes(b.guildID)) {
+                    b.adminSocketSubs.set(s.id, s);
+                    return utils.dumbifyBot(b, true);
+                  } else {
+                    return utils.dumbifyBot(b);
+                  }
                 }
-              }
-            });
+              })
+              .filter((b) => !!b);
           }
           case "console": {
             if (utils.config.botAdmin.includes(snowflake)) {
