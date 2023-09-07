@@ -121,20 +121,38 @@ function launchWebServer() {
         }
       });
     });
-    s.on("guilds", (guildLists) => {
-      let guildsOut = [];
-      status.client.children.forEach((b) => {
-        if (guildLists.member.includes(b.guildID)) {
-          if (guildLists.admin.includes(b.guildID)) {
-            guildsOut.push(utils.dumbifyBot(b, true));
-            b.adminSocketSubs.set(s.id, s);
-          } else {
-            guildsOut.push(utils.dumbifyBot(b));
+    s.on("init_data", (snowflake, scopes, guildLists = false) => {
+      let payload = {
+        guilds: false,
+        console: { backlog: false, cmdToggles: false },
+      };
+      scopes.forEach((scope) => {
+        switch (scope) {
+          case "guilds": {
+            payload.guilds = status.client.children.map((b) => {
+              if (guildLists.member.includes(b.guildID)) {
+                b.socketSubs.set(s.id, s);
+                if (guildLists.admin.includes(b.guildID)) {
+                  b.adminSocketSubs.set(s.id, s);
+                  return utils.dumbifyBot(b, true);
+                } else {
+                  return utils.dumbifyBot(b);
+                }
+              }
+            });
           }
-          b.socketSubs.set(s.id, s);
+          case "console": {
+            if (utils.config.botAdmin.includes(snowflake)) {
+              status.consoleSockets.set(socket.id, socket);
+              payload.console = {
+                backlog: backlog,
+                cmdToggles: utils.config.cmdToggles,
+              };
+            }
+          }
         }
+        s.emit("init_data_res", payload);
       });
-      s.emit("guilds_res", guildsOut);
     });
     s.on("g_data", (payload) => {
       let bot = status.client.children.find(
@@ -181,22 +199,13 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
-    socket.once("get_console", (snowflake) => {
-      if (utils.config.botAdmin.includes(snowflake)) {
-        status.consoleSockets.set(socket.id, socket);
-        socket.emit("console", backlog, utils.config.cmdToggles);
-      }
-    });
     socket.on("sysCMD", (payload) => {
       if (utils.config.botAdmin.includes(payload.snowflake)) {
         cmd(payload.cmd, payload.data);
       }
     });
-    socket.once("handshake_res", (tkn, snowflake) => {
+    socket.once("handshake_res", (snowflake) => {
       botAdmin = !!utils.config.botAdmin.includes(snowflake);
-      status.sockets.find((s) => {
-        if (s.tkn === tkn) return status.sockets.delete(s.id);
-      });
       initSocket(socket);
       status.sockets.set(socket.id, socket);
       socket.emit("handshake_end", botAdmin);
