@@ -12,7 +12,7 @@ const certs = {
 
 const server = require("https").createServer(certs);
 const SIO = require("socket.io");
-const io = SIO(server, { path: "/apis/voidbot" });
+const io = SIO(server, { path: "/apis/voidbot/" });
 
 if (process.env.NODE_ENV !== "production") {
   require("dotenv").config();
