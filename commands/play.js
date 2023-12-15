@@ -17,6 +17,8 @@ const { SlashCommandBuilder } = require("discord.js");
 const voice = require("@discordjs/voice");
 const joinCMD = require("./join");
 
+const CacheFile = require("../models/cachefile.js");
+
 let name = "Play";
 let description = "Plays a given YT or SC URL (or from YT search terms).";
 
@@ -363,6 +365,7 @@ async function get_info(url, mem, params) {
   }
   vidInfo.url = url;
   vidInfo.added_by = mem.displayName;
+  console.warn(JSON.stringify(vidInfo, null, 2));
   if (!status.voiceConnection) {
     joinCMD.execute(params);
     status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
@@ -388,6 +391,29 @@ function play(info, status) {
   info.videoDetails.startedAt = Date.now();
   status.nowPlaying = info;
   createStream(status, info);
+}
+
+function makeDispatcherFromFile(info, status) {
+  status.dispatcher = voice.createAudioPlayer({
+    behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
+  });
+  status.dispatcher.playing = true;
+  status.dispatcher.paused = false;
+  status.voiceConnection.subscribe(status.dispatcher);
+  status.dispatcher.play(
+    voice.createAudioResource(`/mnt/raid5/voidbot/audiocache/${info.NOD}`)
+  );
+  status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+    log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guildName}]`]);
+    endDispatcher(status);
+  });
+  status.dispatcher.once("error", (err) => {
+    log(`Audio steam error:\n${err}`, [
+      "[ERR]",
+      "[PLAY]",
+      `[${status.guildName}]`,
+    ]);
+  });
 }
 
 function makeDispatcher(stream, status, source = "YT") {

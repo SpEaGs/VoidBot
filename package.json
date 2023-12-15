@@ -34,7 +34,7 @@
     "ffmpeg-static": "^5.1.0",
     "jsonwebtoken": "^9.0.0",
     "libsodium-wrappers": "^0.7.11",
-    "mongoose": "^6.4.6",
+    "mongoose": "^6.12.3",
     "node-fetch": "^2.6.7",
     "opusscript": "^0.0.8",
     "passport": "^0.6.0",
