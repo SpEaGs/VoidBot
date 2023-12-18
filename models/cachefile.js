@@ -1,5 +1,28 @@
 const db = require("mongoose");
 
-const CacheFile = new db.Schema({});
+const CacheFile = new db.Schema({
+  url: {
+    type: String,
+  },
+  trackSource: {
+    type: String,
+  },
+  duration: {
+    type: Number,
+  },
+  title: {
+    type: String,
+  },
+  imgURL: {
+    type: String,
+  },
+  NOD: {
+    type: String,
+  },
+  lastPlayed: {
+    type: Number,
+  },
+});
 
+CacheFile.index({ title: "text" });
 module.exports = db.model("CacheFile", CacheFile);

@@ -305,38 +305,55 @@ function search(str, mem, params, verbose = true) {
       break;
     }
     case false: {
-      let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
-        url
-      )}&key=${API_KEY}`;
-      if (verbose)
-        status.guild.channels.cache
-          .get(status.defaultTextChannel.id)
-          .send(`${mem} Searching Youtube for \`${url}\`...`);
-      request(requestUrl, (error, response) => {
-        if (error || !response.statusCode == 200) {
-          log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
-          return;
-        }
-        let body = response.body;
-        if (body.items.length == 0) {
-          status.guild.channels.cache
-            .get(status.defaultTextChannel.id)
-            .send(`${mem}I got nothing... try being less specific?`);
-          log(`0 results from search.`, [
-            "[INFO]",
-            "[PLAY]",
-            `[${status.guildName}]`,
-          ]);
-          return;
-        }
-        for (let i of body.items) {
-          if (i.id.kind == "youtube#video") {
-            url = "https://www.youtube.com/watch?v=" + i.id.videoId;
-            get_info(url, mem, params);
-            break;
+      CacheFile.findOne({ $text: { $search: url } })
+        .sort({
+          score: { $meta: "textScore" },
+        })
+        .exec((err, result) => {
+          if (err) {
+          } else {
+            if (result) {
+              if (!!status.dispatcher && status.dispatcher.playing) {
+                addToQueue(result, false, mem, status);
+              } else {
+                play(result, false, mem, status);
+              }
+            } else {
+              let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
+                url
+              )}&key=${API_KEY}`;
+              if (verbose)
+                status.guild.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(`${mem} Searching Youtube for \`${url}\`...`);
+              request(requestUrl, (error, response) => {
+                if (error || !response.statusCode == 200) {
+                  log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
+                  return;
+                }
+                let body = response.body;
+                if (body.items.length == 0) {
+                  status.guild.channels.cache
+                    .get(status.defaultTextChannel.id)
+                    .send(`${mem}I got nothing... try being less specific?`);
+                  log(`0 results from search.`, [
+                    "[INFO]",
+                    "[PLAY]",
+                    `[${status.guildName}]`,
+                  ]);
+                  return;
+                }
+                for (let i of body.items) {
+                  if (i.id.kind == "youtube#video") {
+                    url = "https://www.youtube.com/watch?v=" + i.id.videoId;
+                    get_info(url, mem, params);
+                    break;
+                  }
+                }
+              });
+            }
           }
-        }
-      });
+        });
       break;
     }
   }
@@ -345,52 +362,62 @@ function search(str, mem, params, verbose = true) {
 let errcount = 0;
 async function get_info(url, mem, params) {
   let status = params.bot;
-  let vidInfo = {};
-  if (url.toString().includes("soundcloud.com/")) {
-    vidInfo.videoDetails = await sc.getInfo(url, SC_API_KEY);
-    vidInfo.trackSource = "SC";
-    vidInfo.videoDetails.lengthSeconds = Math.trunc(
-      vidInfo.videoDetails.duration / 1000
-    );
-    vidInfo.videoDetails.title += ` - ${vidInfo.videoDetails.user.username}`;
-    vidInfo.imgURL = vidInfo.videoDetails.artwork_url;
-  } else if (url.toString().includes(".youtube.com/")) {
-    try {
-      vidInfo = await ytdl.getInfo(url);
-    } catch (err) {
-      throw err;
+  const info = new CacheFile({
+    url: url,
+  });
+  let details = {};
+  switch (true) {
+    case url.toString().includes("soundcloud.com/"): {
+      try {
+        details = await sc.getInfo(url, SC_API_KEY);
+      } catch (err) {
+        throw err;
+      }
+      info.trackSource = "SC";
+      info.duration = Math.trunc(details.duration / 1000);
+      info.title = `${details.title} - ${details.user.username}`;
+      info.imgURL = details.artwork_url;
+      break;
     }
-    vidInfo.trackSource = "YT";
-    vidInfo.imgURL = vidInfo.videoDetails.thumbnails.pop().url;
+    case url.toString().includes(".youtube.com/"): {
+      try {
+        details = await ytdl.getInfo(url);
+      } catch (err) {
+        throw err;
+      }
+      info.trackSource = "YT";
+      info.duration = details.videoDetails.lengthSeconds;
+      info.title = details.videoDetails.title;
+      info.imgURL = details.videoDetails.thumbnails.pop().url;
+      break;
+    }
   }
-  vidInfo.url = url;
-  vidInfo.added_by = mem.displayName;
-  console.warn(JSON.stringify(vidInfo, null, 2));
+  info.NOD = `${info._id}.${info.trackSource === "YT" ? "m4a" : "mp3"}`;
   if (!status.voiceConnection) {
     joinCMD.execute(params);
     status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
-      play(vidInfo, status);
+      play(info, details, mem, status);
     });
   } else if (!!status.dispatcher && status.dispatcher.playing) {
-    addToQueue(vidInfo, status);
+    addToQueue(info, details, mem, status);
   } else {
-    play(vidInfo, status);
+    play(info, details, mem, status);
   }
 }
 
-function play(info, status) {
+function play(info, details, mem, status) {
   status.guild.channels.cache
     .get(status.defaultTextChannel.id)
     .send(
-      `Playing song: \`${info.videoDetails.title} [${parseInt(
-        info.videoDetails.lengthSeconds / 60
-      )}:${(info.videoDetails.lengthSeconds % 60)
+      `Playing song: \`${info.title} [${parseInt(info.duration / 60)}:${(
+        info.duration % 60
+      )
         .toString()
-        .padStart(2, "0")}] (added by: ${info.added_by})\``
+        .padStart(2, "0")}] (added by: ${mem})\``
     );
-  info.videoDetails.startedAt = Date.now();
+  info.lastPlayed = Date.now();
   status.nowPlaying = info;
-  createStream(status, info);
+  createStream(info, details, status);
 }
 
 function makeDispatcherFromFile(info, status) {
@@ -416,52 +443,54 @@ function makeDispatcherFromFile(info, status) {
   });
 }
 
-function makeDispatcher(stream, status, source = "YT") {
-  let tag = "mp3";
-  if (source === "YT") tag = "m4a";
-  let filename = `temp${status.guildID}.${tag}`;
+function makeDispatcher(stream, info, status) {
+  let filename = `/mnt/raid5/voidcloud/audiocache/${info.NOD}`;
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
-    status.dispatcher = voice.createAudioPlayer({
-      behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
-    });
-    status.dispatcher.playing = true;
-    status.dispatcher.paused = false;
-    status.voiceConnection.subscribe(status.dispatcher);
-    status.dispatcher.play(voice.createAudioResource(filename));
-    status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-      log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guildName}]`]);
-      endDispatcher(status);
-      fs.unlinkSync(filename);
-    });
-    status.dispatcher.once("error", (err) => {
-      log(`Audio stream error:\n${err}`, [
-        "[ERR]",
-        "[PLAY]",
-        `[${status.guildName}]`,
-      ]);
+    info.save().then(() => {
+      status.dispatcher = voice.createAudioPlayer({
+        behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
+      });
+      status.dispatcher.playing = true;
+      status.dispatcher.paused = false;
+      status.voiceConnection.subscribe(status.dispatcher);
+      status.dispatcher.play(voice.createAudioResource(filename));
+      status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+        log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guildName}]`]);
+        endDispatcher(status);
+      });
+      status.dispatcher.once("error", (err) => {
+        log(`Audio stream error:\n${err}`, [
+          "[ERR]",
+          "[PLAY]",
+          `[${status.guildName}]`,
+        ]);
+      });
     });
   });
 }
 
-function createStream(status, info) {
-  let str;
-  try {
-    switch (info.trackSource) {
-      case "YT": {
-        let stream = ytdl.downloadFromInfo(info, { filter: "audioonly" });
-        makeDispatcher(stream, status);
-        break;
+function createStream(info, details, status) {
+  if (!details) {
+    makeDispatcherFromFile(info, status);
+  } else {
+    try {
+      switch (info.trackSource) {
+        case "YT": {
+          let stream = ytdl.downloadFromInfo(details, { filter: "audioonly" });
+          makeDispatcher(stream, info, status);
+          break;
+        }
+        case "SC": {
+          sc.download(info.url, SC_API_KEY).then((stream) => {
+            makeDispatcher(stream, info, status);
+          });
+          break;
+        }
       }
-      case "SC": {
-        sc.download(info.url, SC_API_KEY).then((stream) => {
-          makeDispatcher(stream, status, "SC");
-        });
-        break;
-      }
+    } catch (err) {
+      log(`Caught audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
     }
-  } catch (err) {
-    log(`Caught audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
   }
   utils.informClients(status, {
     audioQueue: status.audioQueue,
@@ -496,41 +525,39 @@ function playNextInQueue(status) {
     "[PLAY]",
     `[${status.guildName}]`,
   ]);
-  let nextPlay = status.audioQueue[0];
-  if (!nextPlay) {
-    return endDispatcher(status);
-  }
+  if (!status.audioQueue.length) return endDispatcher(status);
+  const { info, details, mem } = status.audioQueue[0];
   status.guild.channels.cache
     .get(status.defaultTextChannel.id)
     .send(
-      `Now Playing: \`${nextPlay.videoDetails.title} [${parseInt(
-        nextPlay.videoDetails.lengthSeconds / 60
-      )}:${(nextPlay.videoDetails.lengthSeconds % 60)
+      `Now Playing: \`${info.title} [${parseInt(info.duration / 60)}:${(
+        info.duration % 60
+      )
         .toString()
-        .padStart(2, "0")}] (added by: ${nextPlay.added_by})\``
+        .padStart(2, "0")}] (added by: ${mem})\``
     );
-  nextPlay.videoDetails.startedAt = Date.now();
+  info.lastPlayed = Date.now();
   status.nowPlaying = nextPlay;
   status.audioQueue.shift();
-  createStream(status, nextPlay);
+  createStream(info, details, status);
 }
 
-function addToQueue(info, status) {
+function addToQueue(info, details, mem, status) {
   status.guild.channels.cache
     .get(status.defaultTextChannel.id)
     .send(
-      `Added \`${info.videoDetails.title} [${parseInt(
-        info.videoDetails.lengthSeconds / 60
-      )}:${(info.videoDetails.lengthSeconds % 60)
+      `Added \`${info.title} [${parseInt(info.duration / 60)}:${(
+        info.duration % 60
+      )
         .toString()
         .padStart(2, "0")}]\` to the queue.`
     );
-  log(`Adding ${info.videoDetails.title} to queue.`, [
+  log(`Adding ${info.title} to queue.`, [
     "[INFO]",
     "[PLAY]",
     `[${status.guildName}]`,
   ]);
   if (!status.audioQueue) status.audioQueue = [];
-  status.audioQueue.push(info);
+  status.audioQueue.push({ info: info, details: details, mem: mem });
   utils.informClients(status, { audioQueue: status.audioQueue });
 }
