@@ -421,6 +421,7 @@ function play(info, details, mem, status) {
 }
 
 function makeDispatcherFromFile(info, status) {
+  console.log("file");
   status.dispatcher = voice.createAudioPlayer({
     behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
   });
@@ -444,6 +445,7 @@ function makeDispatcherFromFile(info, status) {
 }
 
 function makeDispatcher(stream, info, status) {
+  console.log("download");
   let filename = `/mnt/raid5/voidcloud/audiocache/${info.NOD}`;
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
