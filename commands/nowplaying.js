@@ -27,9 +27,9 @@ module.exports = {
     return params.bot.guild.channels.cache
       .get(params.bot.defaultTextChannel.id)
       .send(
-        `${mem} Now Playing: \`${nP.videoDetails.title} [${parseInt(
-          nP.videoDetails.lengthSeconds / 60
-        )}:${(nP.videoDetails.lengthSeconds % 60)
+        `${mem} Now Playing: \`${nP.title} [${parseInt(nP.duration / 60)}:${(
+          nP.duration % 60
+        )
           .toString()
           .padStart(2, "0")}}] (added by: ${nP.added_by})\`\nURL: ${nP.url}`
       );

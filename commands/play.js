@@ -413,10 +413,10 @@ function play(info, details, mem, status) {
         info.duration % 60
       )
         .toString()
-        .padStart(2, "0")}] (added by: ${mem})\``
+        .padStart(2, "0")}] (added by: ${mem.displayName})\``
     );
   info.lastPlayed = Date.now();
-  status.nowPlaying = info;
+  status.nowPlaying = { ...info, added_by: mem.displayName };
   createStream(info, details, status);
 }
 
@@ -534,10 +534,10 @@ function playNextInQueue(status) {
         info.duration % 60
       )
         .toString()
-        .padStart(2, "0")}] (added by: ${mem})\``
+        .padStart(2, "0")}] (added by: ${mem.displayName})\``
     );
   info.lastPlayed = Date.now();
-  status.nowPlaying = nextPlay;
+  status.nowPlaying = { ...info, added_by: mem.displayName };
   status.audioQueue.shift();
   createStream(info, details, status);
 }

@@ -28,9 +28,9 @@ module.exports = {
     for (const item of params.bot.audioQueue) {
       i += 1;
       output.push(
-        `${i}) - \`${item.videoDetails.title} [${parseInt(
-          item.videoDetails.lengthSeconds / 60
-        )}:${(item.videoDetails.lengthSeconds % 60)
+        `${i}) - \`${item.title} [${parseInt(item.duration / 60)}:${(
+          item.duration % 60
+        )
           .toString()
           .padStart(2, "0")}] (added by: ${item.added_by})\``
       );
