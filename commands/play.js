@@ -446,7 +446,7 @@ function makeDispatcherFromFile(info, status) {
 
 function makeDispatcher(stream, info, status) {
   console.log("download");
-  let filename = `/mnt/raid5/voidcloud/audiocache/${info.NOD}`;
+  let filename = `/mnt/raid5/voidbot/audiocache/${info.NOD}`;
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
     info.save().then(() => {
