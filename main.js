@@ -14,6 +14,8 @@ const server = require("https").createServer(certs);
 const SIO = require("socket.io");
 const io = SIO(server, { path: "/apis/voidbot/" });
 
+const CacheFile = require("./models/cachefile.js");
+
 require("dotenv").config();
 require("./connectdb.js");
 
@@ -281,6 +283,22 @@ try {
         }
       });
     }, 1000 * 60 * 5);
+    setInterval(() => {
+      CacheFile.find({}).then((files) => {
+        let totalSize = 0;
+        files.forEach((f) => {
+          const fsize = fs.statSync(
+            `/mnt/raid5/voidcloud/audiocache/${f.NOD}`
+          ).size;
+          totalSize += fsize;
+        });
+        let oldest = {};
+        if (totalSize > 25 * 1024 * 1024 * 1024)
+          oldest = files.reduce((oldest, current) => {
+            return current.lastPlayed < oldest.lastPlayed ? current : oldest;
+          }, files[0]);
+      });
+    }, 1000 * 60 * 60);
 
     status.client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
