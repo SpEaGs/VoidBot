@@ -56,6 +56,7 @@ module.exports = {
   populateUsers: populateUsers,
   informClients: informClients,
   informAdminClients: informAdminClients,
+  informAllClients: informAllClients,
 };
 
 //gets the current date/time and formats it
@@ -371,5 +372,11 @@ function informAdminClients(bot, data) {
   let payload = { guildID: bot.guildID, data: data };
   bot.adminSocketSubs.forEach((s) => {
     s.emit("guild_partial", payload);
+  });
+}
+
+function informAllClients(status, data) {
+  status.client.sockets.forEach((s) => {
+    s.emit("base_data", data);
   });
 }

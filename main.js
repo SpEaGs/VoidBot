@@ -103,6 +103,7 @@ global.log = log;
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
 status.client.lastSeen = new Discord.Collection();
+status.client.sockets = new Discord.Collection();
 
 //webserver
 function launchWebServer() {
@@ -127,6 +128,7 @@ function launchWebServer() {
         guilds: false,
         console: { backlog: false, cmdToggles: false },
       };
+      status.client.sockets.set(s.id, s);
       scopes.forEach((scope) => {
         switch (scope) {
           case "guilds": {
