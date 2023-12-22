@@ -124,39 +124,42 @@ function launchWebServer() {
       });
     });
     s.on("init_data", (snowflake, scopes, guildLists = false) => {
-      let payload = {
-        guilds: false,
-        console: { backlog: false, cmdToggles: false },
-      };
-      status.client.sockets.set(s.id, s);
-      scopes.forEach((scope) => {
-        switch (scope) {
-          case "guilds": {
-            payload.guilds = status.client.children
-              .map((b) => {
-                if (guildLists.member.includes(b.guildID)) {
-                  b.socketSubs.set(s.id, s);
-                  if (guildLists.admin.includes(b.guildID)) {
-                    b.adminSocketSubs.set(s.id, s);
-                    return utils.dumbifyBot(b, true);
-                  } else {
-                    return utils.dumbifyBot(b);
+      CacheFile.find({}).then((audioCache) => {
+        let payload = {
+          guilds: false,
+          console: { backlog: false, cmdToggles: false },
+          audioCache: audioCache,
+        };
+        status.client.sockets.set(s.id, s);
+        scopes.forEach((scope) => {
+          switch (scope) {
+            case "guilds": {
+              payload.guilds = status.client.children
+                .map((b) => {
+                  if (guildLists.member.includes(b.guildID)) {
+                    b.socketSubs.set(s.id, s);
+                    if (guildLists.admin.includes(b.guildID)) {
+                      b.adminSocketSubs.set(s.id, s);
+                      return utils.dumbifyBot(b, true);
+                    } else {
+                      return utils.dumbifyBot(b);
+                    }
                   }
-                }
-              })
-              .filter((b) => !!b);
-          }
-          case "console": {
-            if (utils.config.botAdmin.includes(snowflake)) {
-              status.consoleSockets.set(s.id, s);
-              payload.console = {
-                backlog: backlog,
-                cmdToggles: utils.config.cmdToggles,
-              };
+                })
+                .filter((b) => !!b);
+            }
+            case "console": {
+              if (utils.config.botAdmin.includes(snowflake)) {
+                status.consoleSockets.set(s.id, s);
+                payload.console = {
+                  backlog: backlog,
+                  cmdToggles: utils.config.cmdToggles,
+                };
+              }
             }
           }
-        }
-        s.emit("init_data_res", payload);
+          s.emit("init_data_res", payload);
+        });
       });
     });
     s.on("g_data", (payload) => {

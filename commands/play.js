@@ -454,7 +454,7 @@ function makeDispatcher(stream, info, status) {
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
       utils.informAllClients(status.status, {
-        audioCache: { remove: false, info },
+        audioCache: { remove: false, info: info },
       });
       status.dispatcher.playing = true;
       status.dispatcher.paused = false;
