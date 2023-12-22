@@ -268,16 +268,18 @@ function dumpJSON(filename, data, spaces = 0) {
 
 //returns a simplified version of the given bot object (for sending to web clients)
 function dumbifyBot(bot, admin = false) {
-  let np = {};
   let dumbBot = {
     admin: admin,
     guildID: bot.guildID,
     guildName: bot.guildName,
     nowPlaying: false,
-    audioQueue: [],
-    voiceChannel: false,
+    audioQueue: bot.audioQueue.length > 0 ? bot.audioQueue : [],
+    voiceChannel: bot.voiceChannel
+      ? { id: bot.voiceChannel.id, name: bot.voiceChannel.name }
+      : false,
     voiceChannelArray: bot.voiceChannelArray,
     paused: false,
+    nowPlaying: bot.nowPlaying ? bot.nowPlaying : false,
   };
   if (admin) {
     Object.assign(dumbBot, {
@@ -293,45 +295,6 @@ function dumbifyBot(bot, admin = false) {
       newMemberRole: bot.newMemberRole,
       welcomeMsg: bot.welcomeMsg,
     });
-  }
-  if (bot.voiceChannel) {
-    let vc = {
-      id: bot.voiceChannel.id,
-      name: bot.voiceChannel.name,
-    };
-    dumbBot.voiceChannel = vc;
-  }
-  if (bot.nowPlaying) {
-    let np = {
-      videoDetails: {
-        title: bot.nowPlaying.videoDetails.title,
-        lengthSeconds: bot.nowPlaying.videoDetails.lengthSeconds,
-        startedAt: bot.nowPlaying.videoDetails.startedAt,
-      },
-      trackSource: bot.nowPlaying.trackSource,
-      url: bot.nowPlaying.url,
-      imgURL: bot.nowPlaying.imgURL,
-      added_by: bot.nowPlaying.added_by,
-    };
-    dumbBot.nowPlaying = np;
-    dumbBot.paused = bot.dispatcher.paused;
-  }
-  if (bot.audioQueue.length > 0) {
-    let aq = [];
-    for (let i of bot.audioQueue) {
-      let aqd = {
-        videoDetails: {
-          title: i.videoDetails.title,
-          lengthSeconds: i.videoDetails.lengthSeconds,
-        },
-        trackSource: i.trackSource,
-        url: i.url,
-        imgURL: i.imgURL,
-        added_by: i.added_by,
-      };
-      aq.push(aqd);
-    }
-    dumbBot.audioQueue = aq;
   }
   return dumbBot;
 }
