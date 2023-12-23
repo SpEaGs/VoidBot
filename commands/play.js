@@ -444,6 +444,7 @@ function makeDispatcher(stream, info, status) {
   let filename = `/mnt/raid5/voidbot/audiocache/${info.NOD}`;
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
+    console.log(info);
     info.save().then(() => {
       status.dispatcher = voice.createAudioPlayer({
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
