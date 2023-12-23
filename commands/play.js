@@ -411,7 +411,7 @@ function play(info, details, mem, status) {
         .padStart(2, "0")}] (added by: ${mem.displayName})\``
     );
   info.lastPlayed = Date.now();
-  status.nowPlaying = { ...info, added_by: mem.displayName };
+  status.nowPlaying = { ...info._doc, added_by: mem.displayName };
   createStream(info, details, status);
 }
 
@@ -558,6 +558,6 @@ function addToQueue(info, details, mem, status) {
     `[${status.guildName}]`,
   ]);
   if (!status.audioQueue) status.audioQueue = [];
-  status.audioQueue.push({ info: info, details: details, mem: mem });
+  status.audioQueue.push({ info: info._doc, details: details, mem: mem });
   utils.informClients(status, { audioQueue: status.audioQueue });
 }
