@@ -305,55 +305,50 @@ function search(str, mem, params, verbose = true) {
       break;
     }
     case false: {
-      CacheFile.findOne({ $text: { $search: url } })
-        .sort({
-          score: { $meta: "textScore" },
-        })
-        .exec((err, result) => {
-          if (err) {
-          } else {
-            if (result) {
-              if (!!status.dispatcher && status.dispatcher.playing) {
-                addToQueue(result, false, mem, status);
-              } else {
-                play(result, false, mem, status);
-              }
+      CacheFile.findOne({ $or: [{ title: url }, { url: url }] }).then(
+        (result) => {
+          if (result) {
+            if (!!status.dispatcher && status.dispatcher.playing) {
+              addToQueue(result, false, mem, status);
             } else {
-              let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
-                url
-              )}&key=${API_KEY}`;
-              if (verbose)
+              play(result, false, mem, status);
+            }
+          } else {
+            let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
+              url
+            )}&key=${API_KEY}`;
+            if (verbose)
+              status.guild.channels.cache
+                .get(status.defaultTextChannel.id)
+                .send(`${mem} Searching Youtube for \`${url}\`...`);
+            request(requestUrl, (error, response) => {
+              if (error || !response.statusCode == 200) {
+                log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
+                return;
+              }
+              let body = response.body;
+              if (body.items.length == 0) {
                 status.guild.channels.cache
                   .get(status.defaultTextChannel.id)
-                  .send(`${mem} Searching Youtube for \`${url}\`...`);
-              request(requestUrl, (error, response) => {
-                if (error || !response.statusCode == 200) {
-                  log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
-                  return;
+                  .send(`${mem}I got nothing... try being less specific?`);
+                log(`0 results from search.`, [
+                  "[INFO]",
+                  "[PLAY]",
+                  `[${status.guildName}]`,
+                ]);
+                return;
+              }
+              for (let i of body.items) {
+                if (i.id.kind == "youtube#video") {
+                  url = "https://www.youtube.com/watch?v=" + i.id.videoId;
+                  get_info(url, mem, params);
+                  break;
                 }
-                let body = response.body;
-                if (body.items.length == 0) {
-                  status.guild.channels.cache
-                    .get(status.defaultTextChannel.id)
-                    .send(`${mem}I got nothing... try being less specific?`);
-                  log(`0 results from search.`, [
-                    "[INFO]",
-                    "[PLAY]",
-                    `[${status.guildName}]`,
-                  ]);
-                  return;
-                }
-                for (let i of body.items) {
-                  if (i.id.kind == "youtube#video") {
-                    url = "https://www.youtube.com/watch?v=" + i.id.videoId;
-                    get_info(url, mem, params);
-                    break;
-                  }
-                }
-              });
-            }
+              }
+            });
           }
-        });
+        }
+      );
       break;
     }
   }
