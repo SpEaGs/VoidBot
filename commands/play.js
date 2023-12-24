@@ -541,7 +541,7 @@ function playNextInQueue(status) {
           .padStart(2, "0")}] (added by: ${mem.displayName})\``
       );
     info.lastPlayed = Date.now();
-    status.nowPlaying = { ...info, added_by: mem.displayName };
+    status.nowPlaying = { ...info._doc, added_by: mem.displayName };
     status.audioQueue.shift();
     createStream(info, details, status);
   });
