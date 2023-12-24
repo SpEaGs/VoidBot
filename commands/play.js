@@ -357,9 +357,7 @@ function search(str, mem, params, verbose = true) {
 let errcount = 0;
 async function get_info(url, mem, params) {
   let status = params.bot;
-  const info = new CacheFile({
-    url: url,
-  });
+  const info = { url: url };
   let details = {};
   switch (true) {
     case url.toString().includes("soundcloud.com/"): {
@@ -445,7 +443,8 @@ function makeDispatcher(stream, info, status) {
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
     console.log(info);
-    info.save().then(() => {
+    const dbinfo = new CacheFile(info);
+    dbinfo.save().then(() => {
       status.dispatcher = voice.createAudioPlayer({
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
