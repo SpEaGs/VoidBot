@@ -308,6 +308,15 @@ function search(str, mem, params, verbose = true) {
       CacheFile.findOne({ $or: [{ title: url }, { url: url }] }).then(
         (result) => {
           if (result) {
+            if (!status.voiceConnection) {
+              joinCMD.execute(params);
+              status.voiceConnection.once(
+                voice.VoiceConnectionStatus.Ready,
+                () => {
+                  play(result, false, mem, status);
+                }
+              );
+            }
             if (!!status.dispatcher && status.dispatcher.playing) {
               addToQueue(result, false, mem, status);
             } else {
