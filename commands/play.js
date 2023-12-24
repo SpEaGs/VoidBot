@@ -529,20 +529,22 @@ function playNextInQueue(status) {
     `[${status.guildName}]`,
   ]);
   if (!status.audioQueue.length) return endDispatcher(status);
-  const { info, details, mem } = status.audioQueue[0];
-  status.guild.channels.cache
-    .get(status.defaultTextChannel.id)
-    .send(
-      `Now Playing: \`${info.title} [${parseInt(info.duration / 60)}:${(
-        info.duration % 60
-      )
-        .toString()
-        .padStart(2, "0")}] (added by: ${mem.displayName})\``
-    );
-  info.lastPlayed = Date.now();
-  status.nowPlaying = { ...info, added_by: mem.displayName };
-  status.audioQueue.shift();
-  createStream(info, details, status);
+  const { details, mem } = status.audioQueue[0];
+  CacheFile.findOne({ _id: status.audioQueue[0].info._id }).then((info) => {
+    status.guild.channels.cache
+      .get(status.defaultTextChannel.id)
+      .send(
+        `Now Playing: \`${info.title} [${parseInt(info.duration / 60)}:${(
+          info.duration % 60
+        )
+          .toString()
+          .padStart(2, "0")}] (added by: ${mem.displayName})\``
+      );
+    info.lastPlayed = Date.now();
+    status.nowPlaying = { ...info, added_by: mem.displayName };
+    status.audioQueue.shift();
+    createStream(info, details, status);
+  });
 }
 
 function addToQueue(info, details, mem, status) {
