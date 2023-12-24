@@ -394,7 +394,6 @@ async function get_info(url, mem, params) {
       break;
     }
   }
-  info.NOD = `${info._id}.${info.trackSource === "YT" ? "m4a" : "mp3"}`;
   if (!status.voiceConnection) {
     joinCMD.execute(params);
     status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
@@ -402,6 +401,7 @@ async function get_info(url, mem, params) {
     });
   } else if (!!status.dispatcher && status.dispatcher.playing) {
     const dbinfo = new CacheFile(info);
+    dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
     dbinfo.save().then(() => {
       addToQueue(dbinfo, details, mem, status);
     });
@@ -456,6 +456,7 @@ function makeDispatcher(stream, info, status) {
   stream.on("end", () => {
     console.log(info);
     const dbinfo = new CacheFile(info);
+    dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
     dbinfo.save().then(() => {
       status.dispatcher = voice.createAudioPlayer({
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
