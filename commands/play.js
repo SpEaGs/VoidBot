@@ -392,7 +392,10 @@ async function get_info(url, mem, params) {
       play(info, details, mem, status);
     });
   } else if (!!status.dispatcher && status.dispatcher.playing) {
-    addToQueue(info, details, mem, status);
+    const dbinfo = new CacheFile(info);
+    dbinfo.save().then(() => {
+      addToQueue(dbinfo, details, mem, status);
+    });
   } else {
     play(info, details, mem, status);
   }
