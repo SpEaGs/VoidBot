@@ -394,20 +394,20 @@ async function get_info(url, mem, params) {
       break;
     }
   }
-  if (!status.voiceConnection) {
-    joinCMD.execute(params);
-    status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
-      play(info, details, mem, status);
-    });
-  } else if (!!status.dispatcher && status.dispatcher.playing) {
-    const dbinfo = new CacheFile(info);
-    dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
-    dbinfo.save().then(() => {
+  const dbinfo = new CacheFile(info);
+  dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
+  dbinfo.save().then(() => {
+    if (!status.voiceConnection) {
+      joinCMD.execute(params);
+      status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
+        play(dbinfo, details, mem, status);
+      });
+    } else if (!!status.dispatcher && status.dispatcher.playing) {
       addToQueue(dbinfo, details, mem, status);
-    });
-  } else {
-    play(info, details, mem, status);
-  }
+    } else {
+      play(dbinfo, details, mem, status);
+    }
+  });
 }
 
 function play(info, details, mem, status) {
