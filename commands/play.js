@@ -49,7 +49,15 @@ module.exports = {
     } else {
       s = params.interaction.options.getString("search");
     }
-    search(s, mem, params);
+    try {
+      search(s, mem, params);
+    } catch {
+      return params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(
+          `${mem} There was an uncaught error somewhere. This is usually related to a youtube video being private, age restricted or unavailable in the US.`
+        );
+    }
   },
 };
 
