@@ -297,8 +297,6 @@ try {
         const missingDocs = hardFileList.filter(
           (file) => !files.some((doc) => doc.NOD === file)
         );
-        console.log(files);
-        console.log(missingDocs);
         if (missingDocs.length > 0) {
           missingDocs.forEach((miss) => {
             fs.unlinkSync(`${cachePath}${miss}`);
