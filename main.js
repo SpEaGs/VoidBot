@@ -343,6 +343,9 @@ try {
       });
     };
 
+    cleanUpSockets();
+    cleanUpAudioCache();
+
     setInterval(cleanUpSockets, 1000 * 60 * 5);
     setInterval(cleanUpAudioCache, 1000 * 60 * 60);
 
