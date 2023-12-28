@@ -276,7 +276,7 @@ try {
     });
     utils.populateCmds(status);
 
-    const cleanupSockets = () => {
+    const cleanUpSockets = () => {
       status.consoleSockets.forEach((s) => {
         if (!s.connected) {
           status.consoleSockets.delete(s.id);
@@ -342,7 +342,7 @@ try {
       });
     };
 
-    setInterval(cleanupSockets, 1000 * 60 * 5);
+    setInterval(cleanUpSockets, 1000 * 60 * 5);
     setInterval(cleanUpAudioCache, 1000 * 60 * 60);
 
     status.client.on("interactionCreate", async (interaction) => {
