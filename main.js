@@ -295,7 +295,7 @@ try {
       const hardFileList = fs.readdirSync(cachePath);
       CacheFile.find({}).then((files) => {
         const missingDocs = hardFileList.filter(
-          (file) => !files.some((doc) => doc._id === file.split(".")[0])
+          (file) => !files.some((doc) => doc.NOD === file)
         );
         console.log(files);
         console.log(missingDocs);
