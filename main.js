@@ -301,7 +301,7 @@ try {
         console.log(missingDocs);
         if (missingDocs.length > 0) {
           missingDocs.forEach((miss) => {
-            fs.rmSync(`${cachePath}${miss}`);
+            fs.unlinkSync(`${cachePath}${miss}`);
             log(`Found and removed file missing associated db entry.`, [
               "[INFO]",
               "[AUDIOCACHE]",
@@ -332,7 +332,7 @@ try {
           oldest = files.reduce((oldest, current) => {
             return current.lastPlayed < oldest.lastPlayed ? current : oldest;
           }, files[0]);
-          fs.rmSync(`${cachePath}${oldest.NOD}`);
+          fs.unlinkSync(`${cachePath}${oldest.NOD}`);
           CacheFile.findOneAndRemove({ _id: oldest._id }).then(() => {
             utils.informAllClients(status, {
               audioCache: { remove: true, info: oldest },
