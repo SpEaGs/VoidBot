@@ -290,8 +290,8 @@ try {
     };
 
     const cleanUpAudioCache = () => {
-      log("audioCache Cleanup", ["[WARN]", "[AUDIOCACHE]"]);
-      const cachePath = "/mnt/raid5/voidcloud/audiocache/";
+      log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
+      const cachePath = "/mnt/raid5/voidbot/audiocache/";
       const hardFileList = fs.readdirSync(cachePath);
       CacheFile.find({}).then((files) => {
         const missingDocs = hardFileList.filter(
@@ -340,6 +340,7 @@ try {
             ]);
           });
         }
+        log("Audio cache cleanup done!", ["[INFO]", "[AUDIOCACHE]"]);
       });
     };
 
