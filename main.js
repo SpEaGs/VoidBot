@@ -290,6 +290,7 @@ try {
     };
 
     const cleanUpAudioCache = () => {
+      log("audioCache Cleanup", ["[WARN]", "[AUDIOCACHE]"]);
       const cachePath = "/mnt/raid5/voidcloud/audiocache/";
       const hardFileList = fs.readdirSync(cachePath);
       CacheFile.find({}).then((files) => {
