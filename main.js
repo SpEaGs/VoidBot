@@ -301,7 +301,7 @@ try {
         console.log(missingDocs);
         if (missingDocs.length > 0) {
           missingDocs.forEach((miss) => {
-            //fs.rmSync(`${cachePath}${miss}`);
+            fs.rmSync(`${cachePath}${miss}`);
             log(`Found and removed file missing associated db entry.`, [
               "[INFO]",
               "[AUDIOCACHE]",
@@ -316,7 +316,7 @@ try {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
           } else {
-            /*CacheFile.findOneAndRemove({ _id: f._id }).then(() => {
+            CacheFile.findOneAndRemove({ NOD: f.NOD }).then(() => {
               utils.informAllClients(status, {
                 audioCache: { remove: true, info: f },
               });
@@ -324,7 +324,7 @@ try {
                 "[INFO]",
                 "[AUDIOCACHE]",
               ]);
-            });*/
+            });
           }
         });
         let oldest = {};
