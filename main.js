@@ -297,6 +297,8 @@ try {
         const missingDocs = hardFileList.filter(
           (file) => !files.some((doc) => doc._id === file.split(".")[0])
         );
+        console.log(files);
+        console.log(missingDocs);
         if (missingDocs.length > 0) {
           missingDocs.forEach((miss) => {
             //fs.rmSync(`${cachePath}${miss}`);
@@ -309,6 +311,7 @@ try {
         let totalSize = 0;
         files.forEach((f) => {
           const exists = fs.existsSync(`${cachePath}${f.NOD}`);
+          console.log(exists);
           if (exists) {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
