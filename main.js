@@ -309,7 +309,6 @@ try {
         let totalSize = 0;
         files.forEach((f) => {
           const exists = fs.existsSync(`${cachePath}${f.NOD}`);
-          console.log(exists);
           if (exists) {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
