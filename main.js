@@ -276,7 +276,7 @@ try {
     });
     utils.populateCmds(status);
 
-    setInterval(() => {
+    const cleanupSockets = () => {
       status.consoleSockets.forEach((s) => {
         if (!s.connected) {
           status.consoleSockets.delete(s.id);
@@ -287,23 +287,63 @@ try {
           status.sockets.delete(s.socket.id);
         }
       });
-    }, 1000 * 60 * 5);
-    setInterval(() => {
+    };
+
+    const cleanUpAudioCache = () => {
+      const cachePath = "/mnt/raid5/voidcloud/audiocache/";
+      const hardFileList = fs.readdirSync(cachePath);
       CacheFile.find({}).then((files) => {
+        const missingDocs = hardFileList.filter(
+          (file) => !files.some((doc) => doc._id === file.split(".")[0])
+        );
+        if (missingDocs.length > 0) {
+          missingDocs.forEach((miss) => {
+            fs.rmSync(`${cachePath}${miss}`);
+            log(`Found and removed file missing associated db entry.`, [
+              "[INFO]",
+              "[AUDIOCACHE]",
+            ]);
+          });
+        }
         let totalSize = 0;
         files.forEach((f) => {
-          const fsize = fs.statSync(
-            `/mnt/raid5/voidcloud/audiocache/${f.NOD}`
-          ).size;
-          totalSize += fsize;
+          const exists = fs.existsSync(`${cachePath}${f.NOD}`);
+          if (exists) {
+            const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
+            totalSize += fsize;
+          } else {
+            CacheFile.findOneAndRemove({ _id: f._id }).then(() => {
+              utils.informAllClients(status, {
+                audioCache: { remove: true, info: f },
+              });
+              log(`Found and removed db entry missing associated file.`, [
+                "[INFO]",
+                "[AUDIOCACHE]",
+              ]);
+            });
+          }
         });
         let oldest = {};
-        if (totalSize > 25 * 1024 * 1024 * 1024)
+        if (totalSize > 25 * 1024 * 1024 * 1024) {
           oldest = files.reduce((oldest, current) => {
             return current.lastPlayed < oldest.lastPlayed ? current : oldest;
           }, files[0]);
+          fs.rmSync(`${cachePath}${oldest.NOD}`);
+          CacheFile.findOneAndRemove({ _id: oldest._id }).then(() => {
+            utils.informAllClients(status, {
+              audioCache: { remove: true, info: oldest },
+            });
+            log(`Audio cache full. Removed song: ${oldest.title}`, [
+              "[INFO]",
+              "[AUDIOCACHE]",
+            ]);
+          });
+        }
       });
-    }, 1000 * 60 * 60);
+    };
+
+    setInterval(cleanupSockets, 1000 * 60 * 5);
+    setInterval(cleanUpAudioCache, 1000 * 60 * 60);
 
     status.client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
