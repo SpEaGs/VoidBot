@@ -513,6 +513,7 @@ function cmd(e = "", args = false) {
       break;
     }
     default:
+      log(e, ["[INFO]", "[BROADCAST]"]);
       status.client.cmds
         .get("broadcast")
         .execute({ interaction: { args: { message: e } }, WS: true });
