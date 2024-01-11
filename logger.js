@@ -42,6 +42,8 @@ class Logger {
     if (!!sockets)
       sockets.forEach((s) => {
         s.once("stdout_auth", (snowflake) => {
+          console.log(utils.config.botAdmin);
+          console.log(snowflake);
           if (utils.config.botAdmin.includes(snowflake)) {
             console.log(true);
             s.emit("stdout", lo);
