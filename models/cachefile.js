@@ -16,6 +16,10 @@ const CacheFile = new db.Schema({
   imgURL: {
     type: String,
   },
+  downloaded: {
+    type: Boolean,
+    default: false,
+  },
   NOD: {
     type: String,
   },
