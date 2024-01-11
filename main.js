@@ -1,3 +1,4 @@
+import Logger from "./logger";
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 
@@ -48,57 +49,10 @@ function getStatus() {
   return status;
 }
 
-//log formatting and pipes to log files
-var backlog = [];
-var logger = winston.createLogger({
-  level: "info",
-  format: winston.format.combine(
-    winston.format.json(),
-    winston.format.colorize({
-      all: true,
-      colors: { info: "white", warning: "yellow", error: "red" },
-    })
-  ),
-  transports: [
-    new winston.transports.File({ filename: "error.log", level: "error" }),
-    new winston.transports.File({ filename: "combined.log" }),
-  ],
-});
-logger.add(
-  new winston.transports.Console({
-    format: winston.format.simple(),
-  })
-);
-
-//wraps logger to a function so that console output can also be sent to the UI
-function log(str, tags) {
-  let lo = { timeStamp: utils.getTime(), tags: tags, msg: str };
-  let l = `${lo.timeStamp} ${lo.tags.join(" ")}: ${lo.msg}`;
-  switch (tags[0]) {
-    case "[INFO]": {
-      logger.info(l);
-      break;
-    }
-    case "[WARN]": {
-      logger.warn(l);
-      break;
-    }
-    case "[ERR]": {
-      logger.error(l);
-      break;
-    }
-  }
-  status.consoleSockets.forEach((s) => {
-    s.emit("stdout_check");
-    s.once("stdout_auth", (snowflake) => {
-      if (utils.config.botAdmin.includes(snowflake)) {
-        s.emit("stdout", lo);
-      }
-    });
-  });
-  backlog.push(lo);
-}
-global.log = log;
+//instantiate logging handler & set global functions
+const logger = new Logger();
+global.log = logger.log;
+global.getBacklog = logger.getBacklog;
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
@@ -152,7 +106,7 @@ function launchWebServer() {
               if (utils.config.botAdmin.includes(snowflake)) {
                 status.consoleSockets.set(s.id, s);
                 payload.console = {
-                  backlog: backlog,
+                  backlog: getBacklog(),
                   cmdToggles: utils.config.cmdToggles,
                 };
               }
