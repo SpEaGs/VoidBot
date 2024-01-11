@@ -39,6 +39,9 @@ class Logger {
         break;
       }
     }
+    if (!sockets) {
+      sockets = require("./main.js").consoleSockets;
+    }
     if (!!sockets)
       sockets.forEach((s) => {
         s.once("stdout_auth", (snowflake) => {
