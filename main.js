@@ -1,4 +1,4 @@
-import Logger from "./logger";
+const Logger = require("./logger.js");
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 
