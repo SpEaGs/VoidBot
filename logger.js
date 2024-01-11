@@ -5,7 +5,6 @@ const sockets = require("main.js").consoleSockets;
 let backlog = [];
 class Logger {
   constructor() {
-    super();
     this.pipeline = winston.createLogger({
       level: "info",
       format: winston.format.combine(
