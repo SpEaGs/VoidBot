@@ -39,14 +39,15 @@ class Logger {
         break;
       }
     }
-    sockets.forEach((s) => {
-      s.once("stdout_auth", (snowflake) => {
-        if (utils.config.botAdmin.includes(snowflake)) {
-          s.emit("stdout", lo);
-        }
+    if (!!sockets)
+      sockets.forEach((s) => {
+        s.once("stdout_auth", (snowflake) => {
+          if (utils.config.botAdmin.includes(snowflake)) {
+            s.emit("stdout", lo);
+          }
+        });
+        s.emit("stdout_check");
       });
-      s.emit("stdout_check");
-    });
     backlog.push(lo);
   }
   getBacklog() {
