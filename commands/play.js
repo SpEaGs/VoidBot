@@ -462,6 +462,7 @@ function makeDispatcher(stream, info, status) {
   stream.on("end", () => {
     const dbinfo = new CacheFile(info);
     dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
+    dbinfo.downloaded = true;
     dbinfo.save().then(() => {
       status.dispatcher = voice.createAudioPlayer({
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
