@@ -1,6 +1,6 @@
 const winston = require("winston");
 const utils = require("./utils");
-const sockets = require("main.js").consoleSockets;
+const sockets = require("./main.js").consoleSockets;
 
 let backlog = [];
 class Logger {
