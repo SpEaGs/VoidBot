@@ -237,7 +237,7 @@ try {
         }
       });
       status.sockets.forEach((s) => {
-        if (!s.socket.connected) {
+        if (!s.connected) {
           status.sockets.delete(s.socket.id);
         }
       });
