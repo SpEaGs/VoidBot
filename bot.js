@@ -36,6 +36,7 @@ class Bot extends EventEmitter {
     this.voiceChannelArray = [];
     this.voiceConnection = false;
     this.textChannelArray = [];
+    this.roleArray = [];
     this.audioQueue = [];
     this.nowPlaying = false;
 
