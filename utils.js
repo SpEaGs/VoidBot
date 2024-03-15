@@ -25,6 +25,7 @@ if (!fs.existsSync("./config.json")) {
         ruleTextChannel: false,
         welcomeMsg: false,
         defaultVoiceChannel: false,
+        groupRoles: [],
       },
     },
   };
