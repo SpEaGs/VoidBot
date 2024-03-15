@@ -114,7 +114,7 @@ module.exports = {
         )
     )
     //groupRoles
-    .addSubcommand((subcommand) => {
+    .addSubcommand((subcommand) =>
       subcommand
         .setName("grouprole")
         .setDescription("toggles given role from the group role list")
@@ -123,8 +123,8 @@ module.exports = {
             .setName("role")
             .setDescription("The role to toggle")
             .setRequired(true)
-        );
-    }),
+        )
+    ),
   name: name,
   description: description,
   args: true,
