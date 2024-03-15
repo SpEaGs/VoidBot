@@ -53,7 +53,6 @@ class Bot extends EventEmitter {
         if (!as.connected) this.adminSocketSubs.delete(as.id);
       });
     }, 1000 * 60 * 5);
-    saveConfig();
   }
 }
 
