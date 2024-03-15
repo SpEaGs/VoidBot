@@ -112,7 +112,19 @@ module.exports = {
             .setRequired(true)
             .addChannelTypes(0)
         )
-    ),
+    )
+    //groupRoles
+    .addSubcommand((subcommand) => {
+      subcommand
+        .setName("grouprole")
+        .setDescription("toggles given role from the group role list")
+        .addRoleOption((option) =>
+          option
+            .setName("role")
+            .setDescription("The role to toggle")
+            .setRequired(true)
+        );
+    }),
   name: name,
   description: description,
   args: true,
@@ -187,6 +199,13 @@ module.exports = {
         toReply = `Set the rule text channel to: \`${chan.name}\``;
         params.bot.ruleTextChannel = chan;
         break;
+      }
+      case "grouprole": {
+        toReply = `Toggled the role \`${ro.name}\` from the group roles list`;
+        let i = params.bot.groupRoles.indexOf(ro.id);
+        if (i + 1 > 0) {
+          params.bot.groupRoles.splice(i, 1);
+        } else params.bot.groupRoles.push(ro.id);
       }
     }
     await params.interaction.reply({ content: toReply, ephemeral: true });
