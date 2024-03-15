@@ -22,9 +22,9 @@ class Bot extends EventEmitter {
     const loadConfig = () => {
       let configOut = utils.config.sharding.default;
       if (!utils.config.sharding[this.guildID]) {
-        utils.config.sharding[this.guildID] = Object.assign({}, configOut);
+        utils.config.sharding[this.guildID] = { ...configOut };
       }
-      return Object.assign(configOut, utils.config.sharding[this.guildID]);
+      return { ...configOut, ...utils.config.sharding[this.guildID] };
     };
     const configShard = loadConfig();
 
