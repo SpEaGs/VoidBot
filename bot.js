@@ -39,6 +39,8 @@ class Bot extends EventEmitter {
     this.roleArray = [];
     this.audioQueue = [];
     this.nowPlaying = false;
+    this.socketSubs = [];
+    this.adminSocketSubs = [];
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
