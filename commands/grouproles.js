@@ -76,7 +76,7 @@ module.exports = {
       if (action) {
         params.interaction.member.roles.add(rolesToAction);
       } else {
-        params.interaction.member.roles.remmove(rolesToAction);
+        params.interaction.member.roles.remove(rolesToAction);
       }
       params.interaction.editReply({
         content: `Successfully ${action ? "added" : "removed"} selected roles!`,
