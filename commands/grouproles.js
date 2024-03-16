@@ -54,7 +54,7 @@ module.exports = {
 
     try {
       const rolesSelected = await res.awaitMessageComponent();
-      console.log(JSON.stringify(rolesSelected, null, 2));
+      console.log(rolesSelected);
     } catch (e) {
       console.log(e);
       await params.interaction.editReply({
