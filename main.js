@@ -330,11 +330,6 @@ try {
           );
         } catch {}
       } else {
-        let member = bot.guild.members.cache.get(interaction.member.user.id);
-        let msg = {
-          author: member,
-          member: member,
-        };
         let params = { interaction, bot };
         cmd.execute(params);
         log(`${cmd.name} Command received from ${bot.guildName}`, [
