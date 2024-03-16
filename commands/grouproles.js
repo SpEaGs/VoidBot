@@ -35,6 +35,7 @@ module.exports = {
       .setCustomId("grouproles")
       .setPlaceholder("Select your desired group roles:")
       .setMinValues(1)
+      .setMaxValues(roleOptions.length)
       .addOptions(...roleOptions);
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
 
