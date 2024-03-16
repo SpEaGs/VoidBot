@@ -15,7 +15,17 @@ const description = "Command to add or remove group roles.";
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
-    .setDescription(description),
+    .setDescription(description)
+    .addStringOption((option) =>
+      option
+        .setRequired(true)
+        .setName("action")
+        .setDescription("add or remove")
+        .addChoices(
+          { name: "add", value: "add" },
+          { name: "remove", value: "rem" }
+        )
+    ),
   name: name,
   description: description,
   args: false,
@@ -24,17 +34,25 @@ module.exports = {
   botadmin: false,
   server: true,
   async execute(params) {
+    const action = params.interaction.options.getString("action") === "add";
     const roleOptions = params.bot.groupRoles
       .map((r) => {
         role = utils.findIDRoleFromGuild(r, params.bot.guild);
         const rOption = new StringSelectMenuOptionBuilder()
           .setLabel(role.name)
           .setValue(role.id);
-        return !!params.interaction.member.roles.cache.find(
-          (ro) => ro.id === role.id
-        )
-          ? rOption
-          : null;
+        if (action)
+          return !params.interaction.member.roles.cache.find(
+            (ro) => ro.id === role.id
+          )
+            ? rOption
+            : null;
+        else
+          return !!params.interaction.member.roles.cache.find(
+            (ro) => ro.id === role.id
+          )
+            ? rOption
+            : null;
       })
       .filter((i) => !!i);
     const roleMenu = new StringSelectMenuBuilder()
@@ -50,11 +68,20 @@ module.exports = {
       components: [roleRow],
     });
 
-    const collectorFilter = (i) => i.user.id === params.interaction.user.id;
-
     try {
       const rolesSelected = await res.awaitMessageComponent();
-      console.log(rolesSelected);
+      const rolesToAction = rolesSelected.values.map((role) => {
+        return utils.findIDRoleFromGuild(role, params.bot.guild);
+      });
+      if (action) {
+        params.interaction.member.roles.add(rolesToAction);
+      } else {
+        params.interaction.member.roles.remmove(rolesToAction);
+      }
+      params.interaction.editReply({
+        content: `Successfully ${action ? "added" : "removed"} selected roles!`,
+        components: [],
+      });
     } catch (e) {
       console.log(e);
       await params.interaction.editReply({
