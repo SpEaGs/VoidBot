@@ -341,9 +341,6 @@ try {
           "[INFO]",
           `[${bot.guildName}]`,
         ]);
-        try {
-          await interaction.reply("Command received!");
-        } catch {}
       }
     });
     setTimeout(() => {
