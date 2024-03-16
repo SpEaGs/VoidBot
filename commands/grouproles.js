@@ -29,7 +29,11 @@ module.exports = {
       const rOption = new StringSelectMenuOptionBuilder()
         .setLabel(role.name)
         .setValue(role.id);
-      return rOption;
+      return !!params.interaction.member.roles.cache.find(
+        (ro) => ro.id === role.id
+      )
+        ? rOption
+        : undefined;
     });
     const roleMenu = new StringSelectMenuBuilder()
       .setCustomId("grouproles")
