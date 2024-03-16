@@ -56,6 +56,7 @@ module.exports = {
       const rolesSelected = await res.awaitMessageComponent({
         filter: collectorFilter,
       });
+      console.log(JSON.stringify(rolesSelected, null, 2));
     } catch {
       await params.interaction.editReply({
         content: "No roles selected within one minute. Canceling changes.",
