@@ -53,9 +53,7 @@ module.exports = {
     const collectorFilter = (i) => i.user.id === params.interaction.user.id;
 
     try {
-      const rolesSelected = await res.awaitMessageComponent({
-        filter: collectorFilter,
-      });
+      const rolesSelected = await res.awaitMessageComponent();
       console.log(JSON.stringify(rolesSelected, null, 2));
     } catch {
       await params.interaction.editReply({
