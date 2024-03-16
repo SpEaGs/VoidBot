@@ -27,8 +27,7 @@ module.exports = {
       .setCustomId("grouproles")
       .setPlaceholder("Select your desired group roles:")
       .setMinValues(1)
-      .setMaxValues(20)
-      .setDefaultRoles(params.bot.groupRoles);
+      .setMaxValues(20);
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
 
     const res = await params.interaction.reply({
@@ -41,7 +40,6 @@ module.exports = {
     try {
       const rolesSelected = await res.awaitMessageComponent({
         filter: collectorFilter,
-        time: 60_00,
       });
     } catch {
       await params.interaction.editReply({
