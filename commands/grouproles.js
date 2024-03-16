@@ -24,17 +24,19 @@ module.exports = {
   botadmin: false,
   server: true,
   async execute(params) {
-    const roleOptions = params.bot.groupRoles.map((r) => {
-      role = utils.findIDRoleFromGuild(r, params.bot.guild);
-      const rOption = new StringSelectMenuOptionBuilder()
-        .setLabel(role.name)
-        .setValue(role.id);
-      return !!params.interaction.member.roles.cache.find(
-        (ro) => ro.id === role.id
-      )
-        ? rOption
-        : undefined;
-    });
+    const roleOptions = params.bot.groupRoles
+      .map((r) => {
+        role = utils.findIDRoleFromGuild(r, params.bot.guild);
+        const rOption = new StringSelectMenuOptionBuilder()
+          .setLabel(role.name)
+          .setValue(role.id);
+        return !!params.interaction.member.roles.cache.find(
+          (ro) => ro.id === role.id
+        )
+          ? rOption
+          : null;
+      })
+      .filter((i) => !!i);
     const roleMenu = new StringSelectMenuBuilder()
       .setCustomId("grouproles")
       .setPlaceholder("Select your desired group roles:")
