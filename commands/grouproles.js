@@ -55,7 +55,8 @@ module.exports = {
     try {
       const rolesSelected = await res.awaitMessageComponent();
       console.log(JSON.stringify(rolesSelected, null, 2));
-    } catch {
+    } catch (e) {
+      console.log(e);
       await params.interaction.editReply({
         content: "No roles selected within one minute. Canceling changes.",
         components: [],
