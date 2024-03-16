@@ -2,8 +2,9 @@
 //group roles to apply to themselves.
 const {
   SlashCommandBuilder,
-  RoleSelectMenuBuilder,
+  StringSelectMenuBuilder,
   ActionRowBuilder,
+  StringSelectMenuOptionBuilder,
 } = require("discord.js");
 
 const utils = require("../utils.js");
@@ -23,11 +24,19 @@ module.exports = {
   botadmin: false,
   server: true,
   async execute(params) {
-    const roleMenu = new RoleSelectMenuBuilder()
+    const roleOptions = params.bot.groupRoles.map((r) => {
+      role = utils.findIDRoleFromGuild(r, params.bot.guild);
+      const rOption = new StringSelectMenuOptionBuilder()
+        .setLabel(role.name)
+        .setValue(role.id);
+      return rOption;
+    });
+    const roleMenu = new StringSelectMenuBuilder()
       .setCustomId("grouproles")
       .setPlaceholder("Select your desired group roles:")
       .setMinValues(1)
-      .setMaxValues(20);
+      .setMaxValues(20)
+      .addOptions(...roleOptions);
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
 
     const res = await params.interaction.reply({

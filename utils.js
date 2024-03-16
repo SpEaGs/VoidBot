@@ -46,6 +46,7 @@ module.exports = {
   botAdminCheck: botAdminCheck,
   findMemberFromGuild: findMemberFromGuild,
   findRoleFromGuild: findRoleFromGuild,
+  findIDRoleFromGuild: findIDRoleFromGuild,
   findChanFromGuild: findChanFromGuild,
   populateCmds: populateCmds,
   populateAdmin: populateAdmin,
@@ -135,6 +136,9 @@ function findRoleFromGuild(rolename, guild) {
   return guild.roles.cache.find((role) =>
     role.name.toLowerCase().includes(rolename.toLowerCase())
   );
+}
+function findIDRoleFromGuild(roleid, guild) {
+  return guild.roles.cache.find((role) => role.id === roleid);
 }
 
 //finds a member in a given server from a given username
