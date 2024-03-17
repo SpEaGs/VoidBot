@@ -73,7 +73,8 @@ module.exports = {
         content: `Successfully updated roles for ${target}`,
         components: [],
       });
-    } catch {
+    } catch (e) {
+      console.log(e);
       params.interaction.editReply({
         content: "Command timed out or there was an error",
         components: [],
