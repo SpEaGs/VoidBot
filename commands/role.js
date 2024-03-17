@@ -67,6 +67,8 @@ module.exports = {
             !params.interaction.member.roles.cache.find((ro) => ro.id === r)
         )
       );
+      console.log(remRoles);
+      console.log(addRoles);
       params.interaction.editReply({
         content: `Successfully updated roles for ${target}`,
         components: [],
