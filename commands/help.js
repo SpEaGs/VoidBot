@@ -25,6 +25,7 @@ module.exports = {
   botadmin: false,
   server: false,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let command = params.interaction.options.getString("command");
     if (!command) {
@@ -32,9 +33,13 @@ module.exports = {
       params.bot.status.client.cmds.forEach((c) => {
         commandArray.push(`/${c.name}`);
       });
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} Commands: \`${commandArray.join("`, `")}\``);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} Commands: \`${commandArray.join("`, `")}\``)
+        : params.interaction.editReply({
+            content: `${mem} Commands: \`${commandArray.join("`, `")}\``,
+          });
     }
     if (command === "all") {
       let toReturnArray = [];
@@ -43,20 +48,32 @@ module.exports = {
           `\`/${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`
         );
       });
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} \n${toReturnArray.join(`\n\n`)}`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} \n${toReturnArray.join(`\n\n`)}`)
+        : params.interaction.editReply({
+            content: `${mem} \n${toReturnArray.join(`\n\n`)}`,
+          });
     }
     if (!params.bot.status.client.cmds.has(command)) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} The command you asked for help with doesn\'t exist.`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} The command you asked for help with doesn\'t exist.`)
+        : params.interaction.editReply({
+            content: `${mem} The command you asked for help with doesn\'t exist.`,
+          });
     }
     let cmd = params.bot.status.client.cmds.get(command);
-    return params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(
-        `${mem} \n\`/${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`
-      );
+    return params.WS
+      ? params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(
+            `${mem} \n\`/${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`
+          )
+      : params.interaction.editReply({
+          content: `${mem} \n\`/${cmd.name}\`:\nUsage: ${cmd.usage}\n${cmd.description}`,
+        });
   },
 };

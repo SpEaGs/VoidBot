@@ -33,6 +33,7 @@ module.exports = {
   botadmin: false,
   server: false,
   async execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
@@ -48,12 +49,18 @@ module.exports = {
       rollsOut.push(roll);
     }
 
-    return params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(
-        `${mem} Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(
-          " "
-        )} total: ${total}`
-      );
+    return params.WS
+      ? params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(
+            `${mem} Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(
+              " "
+            )} total: ${total}`
+          )
+      : params.interaction.editReply({
+          content: `${mem} Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(
+            " "
+          )} total: ${total}`,
+        });
   },
 };

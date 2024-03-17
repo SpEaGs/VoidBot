@@ -9,7 +9,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
     .setDescription(description)
-    .addStringOption((option) =>
+    .addUserOption((option) =>
       option
         .setName("user")
         .setDescription("The user to slap.")
@@ -24,12 +24,13 @@ module.exports = {
   server: true,
   execute(params) {
     let mem = params.interaction.member;
-    let slappee = utils.findMemberFromGuild(
-      params.interaction.options.getString("user"),
-      params.bot.guild
-    );
-    params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`);
+    let slappee = params.interaction.options.getUser("user");
+    params.WS
+      ? params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(`${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`)
+      : params.interaction.reply({
+          content: `${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`,
+        });
   },
 };

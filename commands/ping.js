@@ -17,9 +17,13 @@ module.exports = {
   botadmin: false,
   server: false,
   execute(params) {
-    let mem = params.interaction.member;
-    params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} Pong!`);
+    if (!params.WS)
+      params.interaction.reply({
+        content: `${params.interaction.member} Pong!`,
+      });
+    else
+      params.bot.guild.channels.cache
+        .get(params.bot.defaultTextChannel.id)
+        .send(`${params.interaction.member} Pong!`);
   },
 };

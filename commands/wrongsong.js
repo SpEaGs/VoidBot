@@ -26,30 +26,47 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let number;
     if (params.WS) number = params.interaction.args.number;
     else number = params.interaction.options.getInteger("number");
     if (number > params.bot.audioQueue.length) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} The playlist isn't even ${number} songs long...`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} The playlist isn't even ${number} songs long...`)
+        : params.interaction.editReply({
+            content: `${mem} The playlist isn't even ${number} songs long...`,
+          });
     } else if (number < 0) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} That was a negative number...`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} That was a negative number...`)
+        : params.interaction.editReply({
+            content: `${mem} That was a negative number...`,
+          });
     } else if (isNaN(number)) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} That's not a number you fool.`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} That's not a number you fool.`)
+        : params.interaction.editReply({
+            content: `${mem} That's not a number you fool.`,
+          });
     } else {
       let i = number - 1;
       let title = params.bot.audioQueue[i].videoDetails.title;
       params.bot.audioQueue.splice(i, 1);
       utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} Removed \`${title}\` from the queue.`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} Removed \`${title}\` from the queue.`)
+        : params.interaction.editReply({
+            content: `${mem} Removed \`${title}\` from the queue.`,
+          });
     }
   },
 };

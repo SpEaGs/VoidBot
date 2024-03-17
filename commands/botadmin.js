@@ -45,7 +45,11 @@ module.exports = {
   botadmin: true,
   server: true,
   async execute(params) {
-    await params.interaction.followUp({ content: "test", ephemeral: true });
+    if (!params.WS)
+      params.interaction.reply({
+        content: "Command received!",
+        ephemeral: true,
+      });
     let log = global.log;
     let cmd = params.interaction.options.getString("command");
     switch (params.interaction.options.getSubcommand()) {

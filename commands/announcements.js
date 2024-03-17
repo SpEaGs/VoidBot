@@ -26,7 +26,11 @@ module.exports = {
   botadmin: false,
   server: false,
   execute(params) {
-    let log = global.log;
+    if (!params.WS)
+      params.interaction.reply({
+        content: "Command received!",
+        ephemeral: true,
+      });
     let mem = params.interaction.member;
     let action = params.interaction.options.getString("action");
     switch (action) {
@@ -34,21 +38,29 @@ module.exports = {
         mem.roles.add(
           utils.config.sharding[params.bot.guildID].announcementsRole.id
         );
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`
-          );
+        return params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(
+                `${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`
+              )
+          : params.interaction.editReply({
+              content: `${mem} You've successfully opted  IN to ${params.bot.guildName} announcements!`,
+            });
       }
       case "out": {
         mem.roles.remove(
           utils.config.sharding[params.bot.guildID].announcementsRole.id
         );
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`
-          );
+        return params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(
+                `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`
+              )
+          : params.interaction.editReply({
+              content: `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`,
+            });
       }
     }
   },

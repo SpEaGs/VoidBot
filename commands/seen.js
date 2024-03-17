@@ -10,7 +10,7 @@ module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
     .setDescription(description)
-    .addStringOption((option) =>
+    .addUserOption((option) =>
       option
         .setName("user")
         .setDescription("The user to find.")
@@ -24,40 +24,51 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
-    let user = params.interaction.options.getString("user");
-    let target = utils.findMemberFromGuild(user, params.bot.guild);
-    if (!target) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} I couldn't find that member.`);
-    }
+    let target = params.interaction.options.getUser("user");
     let timeDiff = utils.getTimeRaw() - status.client.lastSeen[target.id];
     let seen = utils.msToTime(timeDiff);
     if (!target.presence) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} That user is offline and was last seen ${seen} ago.`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} That user is offline and was last seen ${seen} ago.`)
+        : params.interaction.editReply({
+            content: `${mem} That user is offline and was last seen ${seen} ago.`,
+          });
     }
     switch (target.presence.status) {
       case "online": {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} That user is online right now you fool!`);
+        return params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(`${mem} That user is online right now you fool!`)
+          : params.interaction.editReply({
+              content: `${mem} That user is online right now you fool!`,
+            });
       }
       case "idle": {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} That user is AFK/Idle and was last active ${seen} ago.`
-          );
+        return params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(
+                `${mem} That user is AFK/Idle and was last active ${seen} ago.`
+              )
+          : params.interaction.editReply({
+              content: `${mem} That user is AFK/Idle and was last active ${seen} ago.`,
+            });
       }
       case "dnd": {
-        return params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} That user is set to Do not Disturb and was last available ${seen} ago.`
-          );
+        return params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(
+                `${mem} That user is set to Do not Disturb and was last available ${seen} ago.`
+              )
+          : params.interaction.editReply({
+              content: `${mem} That user is set to Do not Disturb and was last available ${seen} ago.`,
+            });
       }
     }
   },

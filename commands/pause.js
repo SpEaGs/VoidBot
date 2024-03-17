@@ -18,25 +18,34 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     switch (params.bot.dispatcher.paused) {
       case false: {
         params.bot.dispatcher.pause();
         params.bot.dispatcher.paused = true;
-        params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(`${mem} Audio stream paused. Use \`/resume\` to resume.`);
+        params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(`${mem} Audio stream paused. Use \`/resume\` to resume.`)
+          : params.interaction.editReply({
+              content: `${mem} Audio stream paused. Use \`/resume\` to resume.`,
+            });
         utils.informClients(params.bot, {
           paused: params.bot.dispatcher.paused,
         });
         break;
       }
       case true: {
-        params.bot.guild.channels.cache
-          .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} Audio stream is already paused. Use \`/resume\` to resume.`
-          );
+        params.WS
+          ? params.bot.guild.channels.cache
+              .get(params.bot.defaultTextChannel.id)
+              .send(
+                `${mem} Audio stream is already paused. Use \`/resume\` to resume.`
+              )
+          : params.interaction.editReply({
+              content: `${mem} Audio stream is already paused. Use \`/resume\` to resume.`,
+            });
         break;
       }
     }

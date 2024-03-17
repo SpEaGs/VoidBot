@@ -41,7 +41,7 @@ module.exports = {
   server: true,
   playNextInQueue: playNextInQueue,
   execute(params) {
-    let log = global.log;
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let s;
     if (params.WS) {
@@ -52,11 +52,15 @@ module.exports = {
     try {
       search(s, mem, params);
     } catch {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(
-          `${mem} There was an uncaught error somewhere. This is usually related to a youtube video being private, age restricted or unavailable in the US.`
-        );
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(
+              `${mem} There was an uncaught error somewhere. This is usually related to a youtube video being private, age restricted, or unavailable in the US.`
+            )
+        : params.interaction.editReply({
+            content: `${mem} There was an uncaught error somewhere. This is usually related to a youtube video being private, age restricted, or unavailable in the US.`,
+          });
     }
   },
 };
@@ -97,11 +101,15 @@ function search(str, mem, params, verbose = true) {
             if (url.includes("list=:")) {
               plID = getParameterByName("list", url);
               requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
-              status.guild.channels.cache
-                .get(status.defaultTextChannel.id)
-                .send(
-                  `${mem} Hold onto your butts! I've got a playlist inbound...`
-                );
+              params.WS
+                ? status.guild.channels.cache
+                    .get(status.defaultTextChannel.id)
+                    .send(
+                      `${mem} Hold onto your butts! I've got a playlist inbound...`
+                    )
+                : params.interaction.editReply({
+                    content: `${mem} Hold onto your butts! I've got a playlist inbound...`,
+                  });
               request(requestURL, (error, response) => {
                 if (error || !response.statusCode == 200) {
                   log("Error getting playlist info", ["[WARN], [PLAY]"]);
@@ -125,9 +133,13 @@ function search(str, mem, params, verbose = true) {
               break;
             }
           } catch {
-            return status.guild.channels.cache
-              .get(status.defaultTextChannel.id)
-              .send(`${mem} That Youtube link was incomplete or broken.`);
+            return params.WS
+              ? status.guild.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(`${mem} That Youtube link was incomplete or broken.`)
+              : params.interaction.editReply({
+                  content: `${mem} That Youtube link was incomplete or broken.`,
+                });
           }
         }
         case url.includes("spotify.com/"): {
@@ -135,11 +147,15 @@ function search(str, mem, params, verbose = true) {
             switch (true) {
               case url.includes("/album/"): {
                 alID = url.split("/").reverse()[0].split("?"[0]);
-                status.guilds.channels.cache
-                  .get(status.defaultTextChannel.id)
-                  .send(
-                    `${mem} Hold onto your butts! I've got a Spotify album inbound...`
-                  );
+                params.WS
+                  ? status.guilds.channels.cache
+                      .get(status.defaultTextChannel.id)
+                      .send(
+                        `${mem} Hold onto your butts! I've got a Spotify album inbound...`
+                      )
+                  : params.interaction.editReply({
+                      content: `${mem} Hold onto your butts! I've got a Spotify album inbound...`,
+                    });
                 let urlparams = new URLSearchParams();
                 let token;
                 urlparams.append("grant_type", "client_credentials");
@@ -190,11 +206,15 @@ function search(str, mem, params, verbose = true) {
               }
               case url.includes("/playlist/"): {
                 plID = url.split("/").reverse()[0].split("?")[0];
-                status.guild.channels.cache
-                  .get(status.defaultTextChannel.id)
-                  .send(
-                    `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
-                  );
+                params.WS
+                  ? status.guild.channels.cache
+                      .get(status.defaultTextChannel.id)
+                      .send(
+                        `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
+                      )
+                  : params.interaction.editReply({
+                      content: `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`,
+                    });
                 let urlparams = new URLSearchParams();
                 let token;
                 urlparams.append("grant_type", "client_credentials");
@@ -286,16 +306,24 @@ function search(str, mem, params, verbose = true) {
                 break;
               }
               default: {
-                return status.guild.channels.cache
-                  .get(status.defaultTextChannel.id)
-                  .send(`${mem} That was not a supported Spotify link.`);
+                return params.WS
+                  ? status.guild.channels.cache
+                      .get(status.defaultTextChannel.id)
+                      .send(`${mem} That was not a supported Spotify link.`)
+                  : params.interaction.editReply({
+                      content: `${mem} That was not a supported Spotify link.`,
+                    });
               }
             }
             break;
           } catch {
-            return status.guild.channels.cache
-              .get(status.defaultTextChannel.id)
-              .send(`${mem} That Spotify link was incomplete or broken.`);
+            return params.WS
+              ? status.guild.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(`${mem} That Spotify link was incomplete or broken.`)
+              : params.interaction.editReply({
+                  content: `${mem} That Spotify link was incomplete or broken.`,
+                });
           }
         }
         case url.includes("soundcloud.com/"): {
@@ -303,11 +331,15 @@ function search(str, mem, params, verbose = true) {
           break;
         }
         default: {
-          return status.guild.channels.cache
-            .get(status.defaultTextChannel.id)
-            .send(
-              `${mem} That was not a pure Youtube, Soundcloud, or Spotify link.`
-            );
+          return params.WS
+            ? status.guild.channels.cache
+                .get(status.defaultTextChannel.id)
+                .send(
+                  `${mem} That was not a pure Youtube, Soundcloud, or Spotify link.`
+                )
+            : params.interaction.editReply({
+                content: `${mem} That was not a pure Youtube, Soundcloud, or Spotify link.`,
+              });
         }
       }
       break;
@@ -335,9 +367,13 @@ function search(str, mem, params, verbose = true) {
               url
             )}&key=${API_KEY}`;
             if (verbose)
-              status.guild.channels.cache
-                .get(status.defaultTextChannel.id)
-                .send(`${mem} Searching Youtube for \`${url}\`...`);
+              params.WS
+                ? status.guild.channels.cache
+                    .get(status.defaultTextChannel.id)
+                    .send(`${mem} Searching Youtube for \`${url}\`...`)
+                : params.interaction.editReply({
+                    content: `${mem} Searching Youtube for \`${url}\`...`,
+                  });
             request(requestUrl, (error, response) => {
               if (error || !response.statusCode == 200) {
                 log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
@@ -345,9 +381,13 @@ function search(str, mem, params, verbose = true) {
               }
               let body = response.body;
               if (body.items.length == 0) {
-                status.guild.channels.cache
-                  .get(status.defaultTextChannel.id)
-                  .send(`${mem}I got nothing... try being less specific?`);
+                params.WS
+                  ? status.guild.channels.cache
+                      .get(status.defaultTextChannel.id)
+                      .send(`${mem} I got nothing... try being less specific?`)
+                  : params.interaction.editReply({
+                      content: `${mem} I got nothing... try being less specific?`,
+                    });
                 log(`0 results from search.`, [
                   "[INFO]",
                   "[PLAY]",

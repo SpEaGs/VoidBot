@@ -24,6 +24,7 @@ module.exports = {
   botadmin: true,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let client = status.client;
     let message = "";
     if (params.WS) message = params.interaction.args.message;

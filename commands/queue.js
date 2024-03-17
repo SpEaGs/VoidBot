@@ -17,13 +17,18 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     var output = [];
     var i = 0;
     let mem = params.interaction.member;
     if (params.bot.audioQueue.length == 0) {
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} The queue is empty.`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} The queue is empty.`)
+        : params.interaction.editReply({
+            content: `${mem} The queue is empty.`,
+          });
     }
     for (const item of params.bot.audioQueue) {
       i += 1;

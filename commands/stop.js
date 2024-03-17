@@ -19,6 +19,7 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let log = global.log;
     let mem = params.interaction.member;
     if (!params.bot.dispatcher)
@@ -28,9 +29,13 @@ module.exports = {
     try {
       params.bot.audioQueue = [];
       params.bot.dispatcher.stop();
-      params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} Audio stream ended and queue cleared.`);
+      params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} Audio stream ended and queue cleared.`)
+        : params.interaction.editReply({
+            content: `${mem} Audio stream ended and queue cleared.`,
+          });
       params.bot.dispatcher = false;
       params.bot.nowPlaying = false;
     } catch (error) {

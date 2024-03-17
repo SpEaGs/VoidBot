@@ -19,9 +19,14 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
-    params.bot.guild.channels.cache
-      .get(params.bot.defaultTextChannel.id)
-      .send(`${mem} The web UI can be found here: http://${webURL}`);
+    params.WS
+      ? params.bot.guild.channels.cache
+          .get(params.bot.defaultTextChannel.id)
+          .send(`${mem} The web UI can be found here: http://${webURL}`)
+      : params.interaction.editReply({
+          content: `${mem} The web UI can be found here: http://${webURL}`,
+        });
   },
 };

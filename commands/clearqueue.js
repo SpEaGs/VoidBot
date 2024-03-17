@@ -18,14 +18,21 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     if (params.bot.audioQueue && params.bot.audioQueue.length > 0) {
       params.bot.audioQueue = false;
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send("Cleared audio queue.");
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send("Cleared audio queue.")
+        : params.interaction.editReply({ content: "Cleared audio queue." });
     } else
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send("There is nothing in queue...");
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send("There is nothing in queue...")
+        : params.interaction.editReply({
+            content: "There is nothing in queue...",
+          });
   },
 };

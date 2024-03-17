@@ -18,11 +18,16 @@ module.exports = {
   botadmin: false,
   server: true,
   execute(params) {
+    if (!params.WS) params.interaction.reply({ content: "Command received!" });
     if (!params.bot.voiceChannel) {
       let mem = params.interaction.member;
-      return params.bot.guild.channels.cache
-        .get(params.bot.defaultTextChannel.id)
-        .send(`${mem} I'm not in a voice channel...`);
+      return params.WS
+        ? params.bot.guild.channels.cache
+            .get(params.bot.defaultTextChannel.id)
+            .send(`${mem} I'm not in a voice channel...`)
+        : params.interaction.editReply({
+            content: `${mem} I'm not in a voice channel...`,
+          });
     }
     params.bot.audioQueue = [];
     if (!!params.bot.dispatcher) {

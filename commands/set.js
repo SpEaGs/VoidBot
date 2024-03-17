@@ -133,7 +133,11 @@ module.exports = {
   botadmin: false,
   server: true,
   async execute(params) {
-    let log = global.log;
+    if (!params.WS)
+      params.interaction.reply({
+        content: "Command received!",
+        ephemeral: true,
+      });
     let channel = params.interaction.options.getChannel("channel");
     let chan;
     if (!!channel) {
@@ -208,7 +212,7 @@ module.exports = {
         } else params.bot.groupRoles.push(ro.id);
       }
     }
-    await params.interaction.reply({ content: toReply, ephemeral: true });
+    await params.interaction.editReply({ content: toReply });
     utils.saveConfig(params.bot);
     utils.informAdminClients(params.bot, {
       defaultTextChannel: params.bot.defaultTextChannel,
