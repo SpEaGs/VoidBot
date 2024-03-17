@@ -16,8 +16,9 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: true,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     if (!params.bot.audioQueue.length)
       return params.WS
         ? params.bot.guild.channels.cache

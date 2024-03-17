@@ -16,9 +16,9 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: false,
-  execute(params) {
+  async execute(params) {
     if (!params.WS)
-      params.interaction.reply({
+      await params.interaction.reply({
         content: `${params.interaction.member} Pong!`,
       });
     else

@@ -46,7 +46,7 @@ module.exports = {
   server: true,
   async execute(params) {
     if (!params.WS)
-      params.interaction.reply({
+      await params.interaction.reply({
         content: "Command received!",
         ephemeral: true,
       });

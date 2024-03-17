@@ -33,7 +33,8 @@ module.exports = {
   botadmin: false,
   server: false,
   async execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");

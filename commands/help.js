@@ -24,8 +24,9 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: false,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let command = params.interaction.options.getString("command");
     if (!command) {

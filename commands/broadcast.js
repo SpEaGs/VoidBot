@@ -23,8 +23,12 @@ module.exports = {
   admin: false,
   botadmin: true,
   server: true,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({
+        content: "Command received!",
+        ephemeral: true,
+      });
     let client = status.client;
     let message = "";
     if (params.WS) message = params.interaction.args.message;

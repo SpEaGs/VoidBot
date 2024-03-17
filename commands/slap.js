@@ -22,14 +22,14 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: true,
-  execute(params) {
+  async execute(params) {
     let mem = params.interaction.member;
     let slappee = params.interaction.options.getUser("user");
     params.WS
       ? params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(`${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`)
-      : params.interaction.reply({
+      : await params.interaction.reply({
           content: `${mem} I SLAP YOU, ${slappee}, YOU INSOLENT FOOL!!!`,
         });
   },

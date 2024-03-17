@@ -40,8 +40,9 @@ module.exports = {
   botadmin: false,
   server: true,
   playNextInQueue: playNextInQueue,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let s;
     if (params.WS) {

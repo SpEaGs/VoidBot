@@ -31,8 +31,9 @@ module.exports = {
   admin: true,
   botadmin: false,
   server: true,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     const amount = params.interaction.options.getInteger("amount");
     const chan = params.interaction.options.getChannel("channel");

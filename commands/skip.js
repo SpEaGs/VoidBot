@@ -16,8 +16,9 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: true,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     if (!params.bot.dispatcher)
       return params.WS

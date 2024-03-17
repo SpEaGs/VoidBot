@@ -23,8 +23,9 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: true,
-  execute(params) {
-    if (!params.WS) params.interaction.reply({ content: "Command received!" });
+  async execute(params) {
+    if (!params.WS)
+      await params.interaction.reply({ content: "Command received!" });
     let user = params.interaction.options.getString("user");
     let anno = false;
     let welcomeChannel = params.bot.guild.channels.cache.get(
