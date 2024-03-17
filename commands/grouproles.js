@@ -66,10 +66,11 @@ module.exports = {
     const res = await params.interaction.reply({
       content: "select-roles",
       components: [roleRow],
+      ephemeral: true,
     });
 
     try {
-      const rolesSelected = await res.awaitMessageComponent();
+      const rolesSelected = await res.awaitMessageComponent({ time: 60_000 });
       const rolesToAction = rolesSelected.values.map((role) => {
         return utils.findIDRoleFromGuild(role, params.bot.guild);
       });
