@@ -35,11 +35,7 @@ module.exports = {
     });
     const roleMenu = new RoleSelectMenuBuilder()
       .setCustomId("roles")
-      .setPlaceholder(
-        `Select desired roles to ${action ? "add to" : "remove from"} ${
-          target.name
-        }`
-      )
+      .setPlaceholder(`Select desired roles for ${target.name}`)
       .setMinValues(1)
       .addDefaultRoles(targetRoleDefaults);
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
