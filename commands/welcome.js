@@ -26,7 +26,7 @@ module.exports = {
   async execute(params) {
     if (!params.WS)
       await params.interaction.reply({ content: "Command received!" });
-    let user = params.interaction.options.getUser("user");
+    let user = params.interaction.options.getMember("user");
     let anno = false;
     let welcomeChannel = params.bot.guild.channels.cache.get(
       params.bot.welcomeTextChannel.id
@@ -34,7 +34,7 @@ module.exports = {
     if (params.bot.announcementsRole != false) anno = true;
     if (params.bot.ruleTextChannel != false) {
       welcomeChannel.send(
-        utils.welcome(utils.findMemberFromGuild(user, params.bot.guild), anno) +
+        utils.welcome(user, anno) +
           `\nPlease read the rules in ${params.bot.guild.channels.cache
             .get(params.bot.ruleTextChannel.id)
             .toString()}`
