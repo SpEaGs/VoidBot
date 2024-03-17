@@ -31,8 +31,8 @@ module.exports = {
       await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     const chan = params.WS
-      ? params.interaction.options.getChannel("channel")
-      : utils.findChanFromGuild(params.interaction.args.channel, params.bot, 2);
+      ? utils.findChanFromGuild(params.interaction.args.channel, params.bot, 2)
+      : params.interaction.options.getChannel("channel");
     if (!chan) {
       let voiceChannel = params.interaction.member.voice.channel;
       if (!!voiceChannel && voiceChannel === params.bot.voiceChannel)
