@@ -1,15 +1,13 @@
 //Role command. adds/removes given role from given user
 
-const utils = require("../utils.js");
 const {
   SlashCommandBuilder,
   RoleSelectMenuBuilder,
   ActionRowBuilder,
 } = require("discord.js");
 
-let name = "Role";
-let description =
-  "Adds/Removes a(the) given role(s) from a given user. Admin only.";
+let name = "Roles";
+let description = "Sets a user's roles. Admin only.";
 
 module.exports = {
   data: new SlashCommandBuilder()
@@ -18,13 +16,13 @@ module.exports = {
     .addUserOption((option) =>
       option
         .setName("user")
-        .setDescription("The user to add or remove roles from.")
+        .setDescription("The user to set the roles of.")
         .setRequired(true)
     ),
   name: name,
   description: description,
   args: true,
-  usage: `\`/role <add/remove> <user> <role>\``,
+  usage: `\`/roles <user>\``,
   admin: true,
   botadmin: true,
   server: true,
