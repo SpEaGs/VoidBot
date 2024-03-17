@@ -19,6 +19,7 @@ module.exports = {
   async execute(params) {
     if (!params.WS)
       await params.interaction.reply({ content: "Command received!" });
+    let mem = params.interaction.member;
     if (!params.bot.audioQueue.length)
       return params.WS
         ? params.bot.guild.channels.cache
@@ -28,7 +29,6 @@ module.exports = {
             content: `${mem} There's nothing in the queue to shuffle...`,
           });
     params.bot.audioQueue = shuffle(params.bot.audioQueue);
-    let mem = params.interaction.member;
     params.WS
       ? params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
