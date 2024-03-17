@@ -49,7 +49,6 @@ module.exports = {
 
     try {
       const rolesSelected = await res.awaitMessageComponent();
-      console.log(rolesSelected.values);
       const addRoles = [],
         remRoles = [];
       params.bot.guild.roles.cache.forEach((role) => {
@@ -69,8 +68,6 @@ module.exports = {
             !params.interaction.member.roles.cache.find((ro) => ro.id === r)
         )
       );
-      console.log(remRoles);
-      console.log(addRoles);
       params.interaction.editReply({
         content: `Successfully updated roles for ${target}`,
         components: [],
