@@ -37,6 +37,7 @@ module.exports = {
       .setCustomId("roles")
       .setPlaceholder(`Select desired roles for ${target.name}`)
       .setMinValues(1)
+      .setMaxValues(Array.from(params.bot.guild.roles.cache).length)
       .addDefaultRoles(targetRoleDefaults);
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
 
