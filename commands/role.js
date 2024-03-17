@@ -49,6 +49,7 @@ module.exports = {
 
     try {
       const rolesSelected = await res.awaitMessageComponent();
+      console.log(rolesSelected);
       const { addRoles, remRoles } = [];
       params.bot.guild.roles.cache.forEach((role) => {
         if (!!rolesSelected.find((r) => r === role.id)) {
