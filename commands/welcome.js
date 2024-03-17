@@ -26,7 +26,7 @@ module.exports = {
   async execute(params) {
     if (!params.WS)
       await params.interaction.reply({ content: "Command received!" });
-    let user = params.interaction.options.getString("user");
+    let user = params.interaction.options.getUser("user");
     let anno = false;
     let welcomeChannel = params.bot.guild.channels.cache.get(
       params.bot.welcomeTextChannel.id
