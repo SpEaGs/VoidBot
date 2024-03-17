@@ -49,7 +49,7 @@ module.exports = {
 
     try {
       const rolesSelected = await res.awaitMessageComponent();
-      params.interaction.member.roles.set(rolesSelected);
+      params.interaction.member.roles.set(rolesSelected.values);
       params.interaction.editReply({
         content: `Successfully updated roles for ${target}`,
         components: [],
