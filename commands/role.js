@@ -55,8 +55,18 @@ module.exports = {
           addRoles.push(role);
         } else remRoles.push(role);
       });
-      params.interaction.member.roles.remove(remRoles);
-      params.interaction.member.roles.add(addRoles);
+      params.interaction.member.roles.remove(
+        remRoles.filter(
+          (r) =>
+            !!params.interaction.member.roles.cache.find((ro) => ro.id === r)
+        )
+      );
+      params.interaction.member.roles.add(
+        addRoles.filter(
+          (r) =>
+            !params.interaction.member.roles.cache.find((ro) => ro.id === r)
+        )
+      );
       params.interaction.editReply({
         content: `Successfully updated roles for ${target}`,
         components: [],
