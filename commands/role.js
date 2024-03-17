@@ -49,25 +49,7 @@ module.exports = {
 
     try {
       const rolesSelected = await res.awaitMessageComponent();
-      const addRoles = [],
-        remRoles = [];
-      params.bot.guild.roles.cache.forEach((role) => {
-        if (!!rolesSelected.values.find((r) => r === role.id)) {
-          addRoles.push(role);
-        } else remRoles.push(role);
-      });
-      params.interaction.member.roles.remove(
-        remRoles.filter(
-          (r) =>
-            !!params.interaction.member.roles.cache.find((ro) => ro.id === r)
-        )
-      );
-      params.interaction.member.roles.add(
-        addRoles.filter(
-          (r) =>
-            !params.interaction.member.roles.cache.find((ro) => ro.id === r)
-        )
-      );
+      params.interaction.member.roles.set(rolesSelected);
       params.interaction.editReply({
         content: `Successfully updated roles for ${target}`,
         components: [],
