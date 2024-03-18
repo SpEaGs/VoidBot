@@ -24,6 +24,16 @@ module.exports = {
         .setRequired(true)
         .setMinValue(1)
         .setMaxValue(10)
+    )
+    .addStringOption((option) =>
+      option
+        .setName("modifier")
+        .setDescription("Modifier for the roll")
+        .setRequired(false)
+        .addChoices(
+          { name: "advantage", value: "adv" },
+          { name: "disadvantage", value: "dis" }
+        )
     ),
   name: name,
   description: description,
@@ -38,30 +48,69 @@ module.exports = {
     let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
+    let mod = params.interaction.options.getString("modifier");
 
     let i = rolls;
-    let rollsOut = [];
-    let total = 0;
 
-    while (i > 0) {
-      i--;
-      let roll = Math.round(Math.random() * sides);
-      total += roll;
-      rollsOut.push(roll);
+    const roll = () => {
+      let dataOut = { rolls: [], total: 0 };
+      while (i > 0) {
+        i--;
+        let roll = Math.round(Math.random() * sides);
+        total += roll;
+        dataOut.rolls.push(roll);
+      }
+      return dataOut;
+    };
+    let reply = ``;
+    if (!!mod) {
+      switch (mod) {
+        case "adv": {
+          const roll1 = roll();
+          const roll2 = roll();
+          reply = `${mem} Rolled ${rolls} d${sides} with advantage.\nResult: ${
+            rolls > 1
+              ? `[${roll1.rolls.join(", ")}] (total: ${roll1.total})`
+              : roll1.rolls[0]
+          } and ${
+            rolls > 1
+              ? `[${roll2.rolls.join(", ")}] (total: ${roll2.total})`
+              : roll2.rolls[0]
+          }\nYour advantage gives you a final roll of ${
+            roll1.total >= roll2.total ? roll1.total : roll2.total
+          }`;
+        }
+        case "dis": {
+          const roll1 = roll();
+          const roll2 = roll();
+          reply = `${mem} Rolled ${rolls} d${sides} with disadvantage.\nResult: ${
+            rolls > 1
+              ? `[${roll1.rolls.join(", ")}] (total: ${roll1.total})`
+              : roll1.rolls[0]
+          } and ${
+            rolls > 1
+              ? `[${roll2.rolls.join(", ")}] (total: ${roll2.total})`
+              : roll2.rolls[0]
+          }\nYour disadvantage gives you a final roll of ${
+            roll1.total <= roll2.total ? roll1.total : roll2.total
+          }`;
+        }
+      }
+    } else {
+      const roll1 = roll();
+      reply = `${mem} Rolled ${rolls} d${sides}\nResult: ${
+        rolls > 1
+          ? `${roll1.rolls.join(" ")} (total: ${roll1.total})`
+          : roll1.rolls[0]
+      }`;
     }
 
     return params.WS
       ? params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
-          .send(
-            `${mem} Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(
-              " "
-            )} total: ${total}`
-          )
+          .send(reply)
       : params.interaction.editReply({
-          content: `${mem} Rolled ${rolls} d${sides}\nResult: ${rollsOut.join(
-            " "
-          )} total: ${total}`,
+          content: reply,
         });
   },
 };
