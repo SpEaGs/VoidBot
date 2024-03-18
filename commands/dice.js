@@ -78,6 +78,7 @@ module.exports = {
           }\nYour advantage gives you a final roll of ${
             roll1.total >= roll2.total ? roll1.total : roll2.total
           }`;
+          break;
         }
         case "dis": {
           const roll1 = roll();
@@ -93,6 +94,7 @@ module.exports = {
           }\nYour disadvantage gives you a final roll of ${
             roll1.total <= roll2.total ? roll1.total : roll2.total
           }`;
+          break;
         }
       }
     } else {
