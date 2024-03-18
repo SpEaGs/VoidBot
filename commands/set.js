@@ -160,12 +160,12 @@ module.exports = {
     let toReply = "";
     switch (params.interaction.options.getSubcommand()) {
       case "defaulttextchannel": {
-        toReply = `Set the default text channel to: \`${chan.name}\``;
+        toReply = `Set the default text channel to: \`${channel}\``;
         params.bot.defaultTextChannel = chan;
         break;
       }
       case "defaultvoicechannel": {
-        toReply = `Set the default voice channel to: \`${chan.name}\``;
+        toReply = `Set the default voice channel to: \`${channel}\``;
         params.bot.defaultVoiceChannel = chan;
         break;
       }
@@ -175,7 +175,7 @@ module.exports = {
         break;
       }
       case "welcometextchannel": {
-        toReply = `Set the welcome text channel to: \`${chan.name}\``;
+        toReply = `Set the welcome text channel to: \`${channel}\``;
         params.bot.welcomeTextChannel = chan;
         break;
       }
@@ -200,7 +200,7 @@ module.exports = {
         break;
       }
       case "ruletextchannel": {
-        toReply = `Set the rule text channel to: \`${chan.name}\``;
+        toReply = `Set the rule text channel to: \`${channel}\``;
         params.bot.ruleTextChannel = chan;
         break;
       }
