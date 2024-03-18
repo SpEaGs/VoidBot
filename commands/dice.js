@@ -49,13 +49,16 @@ module.exports = {
   botadmin: false,
   server: false,
   async execute(params) {
+    let hide = params.interaction.options.getBoolean("hidden");
     if (!params.WS)
-      await params.interaction.reply({ content: "Command received!" });
+      await params.interaction.reply({
+        content: "Command received!",
+        ephemeral: !!hide,
+      });
     let mem = params.interaction.member;
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
     let mod = params.interaction.options.getString("modifier");
-    let hide = params.interaction.options.getBoolean("hidden");
 
     let i = rolls;
 
@@ -112,14 +115,12 @@ module.exports = {
           : roll1.rolls[0]
       }`;
     }
-    console.log(hide);
     return params.WS
       ? params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
           .send(reply)
       : params.interaction.editReply({
           content: reply,
-          ephemeral: hide ? true : false,
         });
   },
 };
