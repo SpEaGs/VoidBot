@@ -56,9 +56,9 @@ module.exports = {
       let dataOut = { rolls: [], total: 0 };
       while (i > 0) {
         i--;
-        let roll = Math.round(Math.random() * sides);
-        total += roll;
-        dataOut.rolls.push(roll);
+        let ro = Math.round(Math.random() * sides);
+        dataOut.total += ro;
+        dataOut.rolls.push(ro);
       }
       return dataOut;
     };
