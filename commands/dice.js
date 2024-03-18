@@ -39,11 +39,12 @@ module.exports = {
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
 
+    let i = rolls;
     let rollsOut = [];
     let total = 0;
 
-    while (rolls > 0) {
-      rolls--;
+    while (i > 0) {
+      i--;
       let roll = Math.round(Math.random() * sides);
       total += roll;
       rollsOut.push(roll);
