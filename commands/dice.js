@@ -55,8 +55,7 @@ module.exports = {
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
     let mod = params.interaction.options.getString("modifier");
-    let hide =
-      params.interaction.options.getBoolean("hidden") === "true" ? true : false;
+    let hide = params.interaction.options.getBoolean("hidden");
 
     let i = rolls;
 
@@ -120,7 +119,7 @@ module.exports = {
           .send(reply)
       : params.interaction.editReply({
           content: reply,
-          ephemeral: !!hide,
+          ephemeral: hide ? true : false,
         });
   },
 };
