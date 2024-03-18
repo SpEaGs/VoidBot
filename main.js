@@ -3,7 +3,6 @@ const keys = require("./tokens.json");
 const token = keys.TOKEN;
 
 const Discord = require("discord.js");
-const winston = require("winston");
 const fs = require("fs");
 
 const certs = {
