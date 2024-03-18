@@ -57,14 +57,15 @@ module.exports = {
       .filter((i) => !!i);
     const roleMenu = new StringSelectMenuBuilder()
       .setCustomId("grouproles")
-      .setPlaceholder("Select your desired group roles:")
+      .setPlaceholder(
+        `Select the group roles you'd like to ${action ? "add" : "remove"}:`
+      )
       .setMinValues(1)
       .setMaxValues(roleOptions.length)
       .addOptions(...roleOptions);
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
 
     const res = await params.interaction.reply({
-      content: "select-roles",
       components: [roleRow],
       ephemeral: true,
     });

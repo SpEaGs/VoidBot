@@ -40,7 +40,6 @@ module.exports = {
     const roleRow = new ActionRowBuilder().addComponents(roleMenu);
 
     const res = await params.interaction.reply({
-      content: "select-roles",
       components: [roleRow],
       ephemeral: true,
     });
