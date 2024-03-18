@@ -55,7 +55,8 @@ module.exports = {
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
     let mod = params.interaction.options.getString("modifier");
-    let hide = params.interaction.options.getBoolean("hidden");
+    let hide =
+      params.interaction.options.getBoolean("hidden") === "true" ? true : false;
 
     let i = rolls;
 
