@@ -59,8 +59,8 @@ module.exports = {
         let ro = Math.round(Math.random() * sides);
         dataOut.total += ro;
         dataOut.rolls.push(ro);
+        if (i === 0) return dataOut;
       }
-      return dataOut;
     };
     let reply = ``;
     if (!!mod) {
