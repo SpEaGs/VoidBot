@@ -112,7 +112,7 @@ module.exports = {
           : roll1.rolls[0]
       }`;
     }
-
+    console.log(hide);
     return params.WS
       ? params.bot.guild.channels.cache
           .get(params.bot.defaultTextChannel.id)
