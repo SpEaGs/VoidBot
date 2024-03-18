@@ -34,6 +34,12 @@ module.exports = {
           { name: "advantage", value: "adv" },
           { name: "disadvantage", value: "dis" }
         )
+    )
+    .addBooleanOption((option) =>
+      option
+        .setName("hidden")
+        .setDescription("Hide this roll from other users?")
+        .setRequired(false)
     ),
   name: name,
   description: description,
@@ -49,6 +55,7 @@ module.exports = {
     let sides = params.interaction.options.getInteger("sides");
     let rolls = params.interaction.options.getInteger("rolls");
     let mod = params.interaction.options.getString("modifier");
+    let hide = params.interaction.options.getBoolean("hidden");
 
     let i = rolls;
 
@@ -112,6 +119,7 @@ module.exports = {
           .send(reply)
       : params.interaction.editReply({
           content: reply,
+          ephemeral: !!hide,
         });
   },
 };
