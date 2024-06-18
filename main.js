@@ -470,6 +470,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
 
 //discord.js client event for when a user's presence updates.
 status.client.on("presenceUpdate", (oldPresence, newPresence) => {
+  console.warn("presenceUpdate");
   if (!!oldPresence && oldPresence.status == newPresence.status) return;
   if (newPresence.status == "online")
     return status.client.lastSeen.delete(newPresence.user.id);
