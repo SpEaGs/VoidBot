@@ -31,6 +31,7 @@ class Bot extends EventEmitter {
     //init bot vars
     Object.assign(this, configShard);
     this.visAdminRoles = new Discord.Collection();
+    this.voiceStateTimeouts = new Discord.Collection();
     this.dispatcher = false;
     this.voiceChannel = false;
     this.voiceChannelArray = [];
