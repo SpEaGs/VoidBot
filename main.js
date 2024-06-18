@@ -448,7 +448,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         bot.voiceStateTimeouts.delete(newState.member.id);
       }
       if (oldState.channel.members.size == 1 && bot.voiceChannel) {
-        status.client.cmds.get("leave").execute({ bot: bot });
+        status.client.cmds.get("leave").execute({ bot: bot, WS: true });
       }
       return;
     }
