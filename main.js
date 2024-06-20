@@ -55,8 +55,8 @@ global.getBacklog = logger.getBacklog;
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
-status.client.lastSeen = new Discord.Collection();
 status.client.sockets = new Discord.Collection();
+status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
@@ -471,10 +471,13 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
 //discord.js client event for when a user's presence updates.
 status.client.on("presenceUpdate", (oldPresence, newPresence) => {
   if (!!oldPresence && oldPresence.status == newPresence.status) return;
-  if (newPresence.status == "online")
-    return status.client.lastSeen.delete(newPresence.user.id);
+  if (
+    newPresence.status == "online" &&
+    !!status.client.lastSeen[newPresence.user.id]
+  )
+    return delete status.client.lastSeen[newPresence.user.id];
   else
-    return status.client.lastSeen.set(newPresence.user.id, utils.getTimeRaw());
+    return (status.client.lastSeen[newPresence.user.id] = utils.getTimeRaw());
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)
