@@ -183,7 +183,7 @@ function launchWebServer() {
 
 async function initBot(bot) {
   utils.populateAdmin(bot);
-  utils.populateUsers(status, bot);
+  utils.populateUsers(bot);
   bot.guild.channels.cache.forEach((chan) => {
     let cleanChanName = utils.cleanChannelName(chan.name);
     switch (chan.type) {
