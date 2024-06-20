@@ -29,6 +29,7 @@ module.exports = {
     let target = params.bot.guild.members.cache.find(
       (u) => u.id === params.interaction.options.getUser("user").id
     );
+    console.warn(params.bot.status.client.lastSeen[target.id]);
     let timeDiff =
       utils.getTimeRaw() - params.bot.status.client.lastSeen[target.id];
     let seen = utils.msToTime(timeDiff);
