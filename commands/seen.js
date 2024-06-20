@@ -1,6 +1,5 @@
 //Seen command. Gets when a user was last seen
 const utils = require("../utils.js");
-const status = require("../main.js");
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Seen";
@@ -30,18 +29,9 @@ module.exports = {
     let target = params.bot.guild.members.cache.find(
       (u) => u.id === params.interaction.options.getUser("user").id
     );
-    let timeDiff = utils.getTimeRaw() - status.client.lastSeen[target.id];
+    let timeDiff =
+      utils.getTimeRaw() - params.bot.status.client.lastSeen[target.id];
     let seen = utils.msToTime(timeDiff);
-    if (!target.presence) {
-      let res = `${mem} That user is offline and was last seen ${seen} ago.`;
-      return params.WS
-        ? params.bot.guild.channels.cache
-            .get(params.bot.defaultTextChannel.id)
-            .send(res)
-        : params.interaction.editReply({
-            content: res,
-          });
-    }
     switch (target.presence.status) {
       case "online": {
         let res = `${mem} That user is online right now you fool!`;
