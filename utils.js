@@ -179,9 +179,6 @@ function populateAdmin(bot) {
     if (r.permissions.has(PermissionsBitField.Flags.Administrator)) {
       r.members.forEach((u) => {
         bot.visAdminRoles.set(u.id, u);
-        /*if (u.presence.status !== "online") {
-          bot.status.lastSeen[u.id] = 0;
-        }*/
       });
     }
   });
@@ -324,11 +321,9 @@ function msToTime(ms) {
   return timeOut.join(", ");
 }
 
-function populateUsers(status, bot) {
-  let seen = status.client.lastSeen;
+function populateUsers(bot) {
   bot.guild.members.cache.forEach((u) => {
-    if (!seen[u.id] && !!u.presence && u.presence.status !== "online")
-      seen[u.id] = getTimeRaw();
+    if (u.presence.status !== "online") bot.status.client.lastSeen[u.id] = 0;
   });
 }
 
