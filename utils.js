@@ -179,6 +179,9 @@ function populateAdmin(bot) {
     if (r.permissions.has(PermissionsBitField.Flags.Administrator)) {
       r.members.forEach((u) => {
         bot.visAdminRoles.set(u.id, u);
+        if (u.presence.status !== "online") {
+          bot.status.lastSeen[u.id] = 0;
+        }
       });
     }
   });

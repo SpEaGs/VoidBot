@@ -31,7 +31,10 @@ module.exports = {
     );
     let timeDiff =
       utils.getTimeRaw() - params.bot.status.client.lastSeen[target.id];
-    let seen = utils.msToTime(timeDiff);
+    let seen = `${utils.msToTime(timeDiff)} ago`;
+    if (seen < 0) {
+      seen = `sometime before the last restart of this bot.`;
+    }
     switch (target.presence.status) {
       case "online": {
         let res = `${mem} That user is online right now you fool!`;
@@ -44,7 +47,7 @@ module.exports = {
             });
       }
       case "idle": {
-        let res = `${mem} That user is AFK/Idle and was last active ${seen} ago.`;
+        let res = `${mem} That user is AFK/Idle and was last active ${seen}.`;
         return params.WS
           ? params.bot.guild.channels.cache
               .get(params.bot.defaultTextChannel.id)
@@ -54,7 +57,7 @@ module.exports = {
             });
       }
       case "dnd": {
-        let res = `${mem} That user is set to Do not Disturb and was last available ${seen} ago.`;
+        let res = `${mem} That user is set to Do not Disturb and was last available ${seen}.`;
         return params.WS
           ? params.bot.guild.channels.cache
               .get(params.bot.defaultTextChannel.id)
@@ -64,7 +67,7 @@ module.exports = {
             });
       }
       case "offline": {
-        let res = `${mem} That user is Offline/Invisible and was last seen ${seen} ago`;
+        let res = `${mem} That user is Offline/Invisible and was last seen ${seen}.`;
         return params.WS
           ? params.bot.guilds.channels.cache
               .get(params.bot.defaultTextChannel.id)
