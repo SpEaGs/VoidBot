@@ -28,7 +28,7 @@ module.exports = {
       await params.interaction.reply({ content: "Command received!" });
     let mem = params.interaction.member;
     let target = params.interaction.options.getUser("user");
-    console.warn(status.client.lastSeen[target.id]);
+    console.warn(target);
     let timeDiff = utils.getTimeRaw() - status.client.lastSeen[target.id];
     let seen = utils.msToTime(timeDiff);
     if (!target.presence) {
