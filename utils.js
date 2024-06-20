@@ -323,7 +323,8 @@ function msToTime(ms) {
 
 function populateUsers(bot) {
   bot.guild.members.cache.forEach((u) => {
-    if (u.presence.status !== "online") bot.status.client.lastSeen[u.id] = 0;
+    if (!!u.presence && u.presence.status !== "online")
+      bot.status.client.lastSeen[u.id] = 0;
   });
 }
 
