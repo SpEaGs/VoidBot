@@ -17,7 +17,6 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The text channel to set.")
-            .setRequired(true)
             .addChannelTypes(0)
         )
     )
@@ -30,7 +29,6 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The voice channel to set.")
-            .setRequired(true)
             .addChannelTypes(2)
         )
     )
@@ -40,7 +38,7 @@ module.exports = {
         .setName("welcomemessage")
         .setDescription("Turns on or off the welcome message.")
         .addBooleanOption((option) =>
-          option.setName("state").setDescription("on or off").setRequired(true)
+          option.setName("state").setDescription("on or off")
         )
     )
     //welcomeTextChannel
@@ -52,7 +50,6 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The text channel to set.")
-            .setRequired(true)
             .addChannelTypes(0)
         )
     )
@@ -62,7 +59,7 @@ module.exports = {
         .setName("newmember")
         .setDescription("Turns on or off giving new members a default role.")
         .addBooleanOption((option) =>
-          option.setName("state").setDescription("on or off.").setRequired(true)
+          option.setName("state").setDescription("on or off.")
         )
     )
     //newMemberRole
@@ -71,10 +68,7 @@ module.exports = {
         .setName("newmemberrole")
         .setDescription("Sets the role to be given to new members.")
         .addRoleOption((option) =>
-          option
-            .setName("role")
-            .setDescription("The role to be given.")
-            .setRequired(true)
+          option.setName("role").setDescription("The role to be given.")
         )
     )
     //announcements
@@ -83,7 +77,7 @@ module.exports = {
         .setName("announcements")
         .setDescription("Turns on or off giving the announcements role.")
         .addBooleanOption((option) =>
-          option.setName("state").setDescription("on or off").setRequired(true)
+          option.setName("state").setDescription("on or off")
         )
     )
     //announcementsRole
@@ -94,10 +88,7 @@ module.exports = {
           "Sets the role to be given when opting in or out of announcements."
         )
         .addRoleOption((option) =>
-          option
-            .setName("role")
-            .setDescription("The role to be given.")
-            .setRequired(true)
+          option.setName("role").setDescription("The role to be given.")
         )
     )
     //ruleTextChannel
@@ -109,7 +100,6 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The text channel to set.")
-            .setRequired(true)
             .addChannelTypes(0)
         )
     )
@@ -119,10 +109,7 @@ module.exports = {
         .setName("grouprole")
         .setDescription("toggles given role from the group role list")
         .addRoleOption((option) =>
-          option
-            .setName("role")
-            .setDescription("The role to toggle")
-            .setRequired(true)
+          option.setName("role").setDescription("The role to toggle")
         )
     ),
   name: name,
@@ -160,56 +147,126 @@ module.exports = {
     let toReply = "";
     switch (params.interaction.options.getSubcommand()) {
       case "defaulttextchannel": {
-        toReply = `Set the default text channel to: \`${channel}\``;
-        params.bot.defaultTextChannel = chan;
+        toReply = !!chan
+          ? `Set the default text channel to: \`${channel}\``
+          : `Current default text channel: ${utils.findChanFromGuild(
+              params.bot.defaultTextChannel.name,
+              params.bot
+            )}`;
+        params.bot.defaultTextChannel = !!chan
+          ? chan
+          : params.bot.defaultTextChannel;
         break;
       }
       case "defaultvoicechannel": {
-        toReply = `Set the default voice channel to: \`${channel}\``;
-        params.bot.defaultVoiceChannel = chan;
+        toReply = !!chan
+          ? `Set the default voice channel to: \`${channel}\``
+          : `Current default voice channel: ${utils.findChanFromGuild(
+              params.bot.defaultVoiceChannel.name,
+              params.bot
+            )}`;
+        params.bot.defaultVoiceChannel = !!chan
+          ? chan
+          : params.bot.defaultVoiceChannel;
         break;
       }
       case "welcomemessage": {
-        toReply = `Set the welcome message to: \`${state}\``;
-        params.bot.welcomeMsg = state;
+        toReply =
+          state !== undefined
+            ? `Set the welcome message to: \`${
+                state ? "On (True)" : "Off (False)"
+              }\``
+            : `Welcome message is: ${
+                params.bot.welcomeMsg ? "On (True)" : "Off (False)"
+              }`;
+        params.bot.welcomeMsg =
+          state !== undefined ? state : params.bot.welcomeMsg;
         break;
       }
       case "welcometextchannel": {
-        toReply = `Set the welcome text channel to: \`${channel}\``;
-        params.bot.welcomeTextChannel = chan;
+        toReply = !!chan
+          ? `Set the welcome text channel to: \`${channel}\``
+          : `Current welcome text channel: ${utils.findChanFromGuild(
+              params.bot.welcomeTextChannel,
+              params.bot
+            )}`;
+        params.bot.welcomeTextChannel = !!chan
+          ? chan
+          : params.bot.welcomeTextChannel;
         break;
       }
       case "newmember": {
-        toReply = `Set new member role dispensing to: \`${state}\``;
-        params.bot.newMember = state;
+        toReply =
+          state !== undefined
+            ? `Set new member role dispensing to: \`${
+                state ? "On (True)" : "Off (False)"
+              }\``
+            : `New member roles are: ${
+                params.bot.newMember ? "On (True)" : "Off (False)"
+              }`;
+        params.bot.newMember =
+          state !== undefined ? state : params.bot.newMember;
         break;
       }
       case "newmemberrole": {
-        toReply = `Set the new member role to: \`${ro.name}\``;
-        params.bot.newMemberRole = ro;
+        toReply = !!ro
+          ? `Set the new member role to: \`${ro.name}\``
+          : `New member role: ${
+              !!params.bot.newMemberRole
+                ? params.bot.newMemberRole.name
+                : "not set"
+            }`;
+        params.bot.newMemberRole = !!ro ? ro : params.bot.newMemberRole;
         break;
       }
       case "announcements": {
-        toReply = `Set announcements to: \`${state}\``;
-        params.bot.announcements = state;
+        toReply =
+          state !== undefined
+            ? `Set announcements to: \`${state}\``
+            : `Announcement are: ${
+                params.bot.announcements ? "On (True)" : "Off (False)"
+              }`;
+        params.bot.announcements =
+          state !== undefined ? state : params.bot.announcements;
         break;
       }
       case "announcementsrole": {
-        toReply = `Set the announcements role to: \`${ro.name}\``;
-        params.bot.announcementsRole = ro;
+        toReply = !!ro
+          ? `Set the announcements role to: \`${ro.name}\``
+          : `Announcements role: ${
+              !!params.bot.announcementsRole
+                ? params.bot.announcementsRole.name
+                : "not set"
+            }`;
+        params.bot.announcementsRole = !!ro ? ro : params.bot.announcementsRole;
         break;
       }
       case "ruletextchannel": {
-        toReply = `Set the rule text channel to: \`${channel}\``;
-        params.bot.ruleTextChannel = chan;
+        toReply = !!chan
+          ? `Set the rule text channel to: \`${channel}\``
+          : `Current rule text channel: ${utils.findChanFromGuild(
+              params.bot.ruleTextChannel,
+              params.bot
+            )}`;
+        params.bot.ruleTextChannel = !!chan ? chan : params.bot.ruleTextChannel;
         break;
       }
       case "grouprole": {
-        toReply = `Toggled the role \`${ro.name}\` from the group roles list`;
-        let i = params.bot.groupRoles.indexOf(ro.id);
-        if (i + 1 > 0) {
-          params.bot.groupRoles.splice(i, 1);
-        } else params.bot.groupRoles.push(ro.id);
+        toReply = !!ro
+          ? `Toggled the role \`${ro.name}\` from the group roles list`
+          : `Current group roles: ${params.bot.groupRoles
+              .map((ri) => {
+                return `[${
+                  utils.findIDRoleFromGuild(ri, params.bot.guild).name
+                }], `;
+              })
+              .join()}`;
+        if (!!ro) {
+          let i = params.bot.groupRoles.indexOf(ro.id);
+          if (i + 1 > 0) {
+            params.bot.groupRoles.splice(i, 1);
+          } else params.bot.groupRoles.push(ro.id);
+        }
       }
     }
     await params.interaction.editReply({ content: toReply });
