@@ -260,7 +260,7 @@ module.exports = {
                   utils.findIDRoleFromGuild(ri, params.bot.guild).name
                 }], `;
               })
-              .join()}`;
+              .join("")}`;
         if (!!ro) {
           let i = params.bot.groupRoles.indexOf(ro.id);
           if (i + 1 > 0) {
