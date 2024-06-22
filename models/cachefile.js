@@ -20,6 +20,10 @@ const CacheFile = new db.Schema({
     type: Boolean,
     default: false,
   },
+  stats: {
+    type: Object,
+    default: new AudioStats(),
+  },
   NOD: {
     type: String,
   },

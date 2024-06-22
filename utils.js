@@ -59,6 +59,7 @@ module.exports = {
   informClients: informClients,
   informAdminClients: informAdminClients,
   informAllClients: informAllClients,
+  AudioStats: AudioStats,
 };
 
 //gets the current date/time and formats it
@@ -346,4 +347,15 @@ function informAllClients(status, data) {
   status.client.sockets.forEach((s) => {
     s.emit("base_data", data);
   });
+}
+
+class AudioStats extends Object {
+  addedBy = "";
+  lastPlayed = 0;
+  lastPlayedBy = "";
+  timesPlayed = 1;
+  timesPlayedSinceLastReport = 0;
+  constructor() {
+    super();
+  }
 }

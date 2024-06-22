@@ -12,7 +12,10 @@ const certs = {
 
 const server = require("https").createServer(certs);
 const SIO = require("socket.io");
-const io = SIO(server, { path: "/apis/voidbot/" });
+const io = SIO(server, {
+  path: "/apis/voidbot/",
+  transports: ["websocket", "polling"],
+});
 
 const CacheFile = require("./models/cachefile.js");
 
@@ -78,6 +81,13 @@ function launchWebServer() {
     });
     s.on("init_data", (snowflake, scopes, guildLists = false) => {
       CacheFile.find({}).then((audioCache) => {
+        audioCache.forEach(async (cache) => {
+          if (!cache.stats) {
+            cache.stats = new utils.AudioStats();
+            cache.markModified("stats");
+            await cache.save();
+          }
+        });
         let payload = {
           guilds: false,
           console: { backlog: false, cmdToggles: false },
