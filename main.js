@@ -269,6 +269,7 @@ try {
           if (exists && f.downloaded) {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
+            log(f.stats, ["[WARN]", "[DB]"]);
             if (!f.stats) {
               log("addind stats", ["[WARN]", "[DB]"]);
               f.stats = new utils.AudioStats();
