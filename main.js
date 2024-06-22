@@ -170,6 +170,7 @@ function launchWebServer() {
   }
 
   io.on("connection", (socket) => {
+    log("Incoming socket connection...", ["[WARN]", "[MAIN]"]);
     socket.on("sysCMD", (payload) => {
       if (utils.config.botAdmin.includes(payload.snowflake)) {
         cmd(payload.cmd, payload.data);
