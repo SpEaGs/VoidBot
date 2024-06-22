@@ -1,4 +1,5 @@
 const db = require("mongoose");
+const { AudioStats } = require("../utils");
 
 const CacheFile = new db.Schema({
   url: {
