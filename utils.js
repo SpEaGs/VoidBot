@@ -34,6 +34,17 @@ if (!fs.existsSync("./config.json")) {
   config = require("./config.json");
 }
 
+class AudioStats extends Object {
+  addedBy = "";
+  lastPlayed = 0;
+  lastPlayedBy = "";
+  timesPlayed = 1;
+  timesPlayedSinceLastReport = 0;
+  constructor() {
+    super();
+  }
+}
+
 module.exports = {
   config: config,
   saveConfig: saveConfig,
@@ -347,15 +358,4 @@ function informAllClients(status, data) {
   status.client.sockets.forEach((s) => {
     s.emit("base_data", data);
   });
-}
-
-class AudioStats extends Object {
-  addedBy = "";
-  lastPlayed = 0;
-  lastPlayedBy = "";
-  timesPlayed = 1;
-  timesPlayedSinceLastReport = 0;
-  constructor() {
-    super();
-  }
 }
