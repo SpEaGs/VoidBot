@@ -270,7 +270,7 @@ try {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
             log("addind stats", ["[WARN]", "[DB]"]);
-            f.stats = new utils.AudioStats();
+            f.stats.lastPlayed = f.lastPlayed;
             f.markModified("stats");
             await f.save();
           } else {
