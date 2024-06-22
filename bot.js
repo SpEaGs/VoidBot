@@ -32,6 +32,8 @@ class Bot extends EventEmitter {
     Object.assign(this, configShard);
     this.visAdminRoles = new Discord.Collection();
     this.voiceStateTimeouts = new Discord.Collection();
+    this.socketSubs = new Discord.Collection();
+    this.adminSocketSubs = new Discord.Collection();
     this.dispatcher = false;
     this.voiceChannel = false;
     this.voiceChannelArray = [];
@@ -40,8 +42,6 @@ class Bot extends EventEmitter {
     this.roleArray = [];
     this.audioQueue = [];
     this.nowPlaying = false;
-    this.socketSubs = [];
-    this.adminSocketSubs = [];
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
