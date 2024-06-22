@@ -81,13 +81,6 @@ function launchWebServer() {
     });
     s.on("init_data", (snowflake, scopes, guildLists = false) => {
       CacheFile.find({}).then((audioCache) => {
-        audioCache.forEach(async (cache) => {
-          if (!cache.stats) {
-            cache.stats = new utils.AudioStats();
-            cache.markModified("stats");
-            await cache.save();
-          }
-        });
         let payload = {
           guilds: false,
           console: { backlog: false, cmdToggles: false },
@@ -271,11 +264,16 @@ try {
           });
         }
         let totalSize = 0;
-        files.forEach((f) => {
+        files.forEach(async (f) => {
           const exists = fs.existsSync(`${cachePath}${f.NOD}`);
           if (exists && f.downloaded) {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
+            if (!f.stats) {
+              f.stats = new utils.AudioStats();
+              f.markModified("stats");
+              await f.save();
+            }
           } else {
             CacheFile.findOneAndRemove({ NOD: f.NOD }).then(() => {
               utils.informAllClients(status, {
