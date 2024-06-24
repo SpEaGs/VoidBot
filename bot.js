@@ -42,10 +42,20 @@ class Bot extends EventEmitter {
     this.roleArray = [];
     this.audioQueue = [];
     this.nowPlaying = false;
+    this.audioStats = {
+      plays: 0,
+      mostPlayedAllTime: "",
+      userMostAdded: "",
+      mostPlayedSinceLastReport: "",
+      playsSinceLastReport: 0,
+    };
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
     utils.config.sharding[this.guildID].guildName = this.guildName;
+
+    if (!utils.config.sharding[this.guildID].audioStats)
+      utils.config.sharding[this.guildID].audioStats = this.audioStats;
 
     //save config & clear disconnected websockets at intervals: 5min
     utils.saveConfig(this);

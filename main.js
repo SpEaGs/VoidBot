@@ -264,15 +264,11 @@ try {
           });
         }
         let totalSize = 0;
-        files.forEach(async (f) => {
+        files.forEach((f) => {
           const exists = fs.existsSync(`${cachePath}${f.NOD}`);
           if (exists && f.downloaded) {
             const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
             totalSize += fsize;
-            log("addind stats", ["[WARN]", "[DB]"]);
-            f.stats.lastPlayed = f.lastPlayed;
-            f.markModified("stats");
-            await f.save();
           } else {
             CacheFile.findOneAndRemove({ NOD: f.NOD }).then(() => {
               utils.informAllClients(status, {
@@ -288,7 +284,9 @@ try {
         let oldest = {};
         if (totalSize > 25 * 1024 * 1024 * 1024) {
           oldest = files.reduce((oldest, current) => {
-            return current.lastPlayed < oldest.lastPlayed ? current : oldest;
+            return current.stats.lastPlayed < oldest.stats.lastPlayed
+              ? current
+              : oldest;
           }, files[0]);
           fs.unlinkSync(`${cachePath}${oldest.NOD}`);
           CacheFile.findOneAndRemove({ _id: oldest._id }).then(() => {

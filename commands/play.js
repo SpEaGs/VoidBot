@@ -443,6 +443,7 @@ async function get_info(url, mem, params) {
       break;
     }
   }
+  info.stats.addedBy = mem.id;
   const dbinfo = new CacheFile(info);
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
   dbinfo.save().then(() => {
@@ -469,9 +470,17 @@ function play(info, details, mem, status) {
         .toString()
         .padStart(2, "0")}] (added by: ${mem.displayName})\``
     );
-  info.lastPlayed = Date.now();
-  status.nowPlaying = { ...info._doc, added_by: mem.displayName };
-  createStream(info, details, status);
+  info.stats.lastPlayed = Date.now();
+  info.stats.lastPlayedBy = mem.id;
+  info.stats.timesPlayed += 1;
+  info.stats.timesPlayedSinceLastReport += 1;
+  if (!info.stats.addedBy) info.stats.addedBy = mem.id;
+  info.save().then(() => {
+    status.nowPlaying = { ...info._doc, added_by: mem.displayName };
+    status.audioStats.plays += 1;
+    status.audioStats.playsSinceLastReport += 1;
+    createStream(info, details, status);
+  });
 }
 
 function makeDispatcherFromFile(info, status) {
@@ -597,10 +606,18 @@ function playNextInQueue(status) {
           .toString()
           .padStart(2, "0")}] (added by: ${mem.displayName})\``
       );
-    info.lastPlayed = Date.now();
-    status.nowPlaying = { ...info._doc, added_by: mem.displayName };
-    status.audioQueue.shift();
-    createStream(info, details, status);
+    info.stats.lastPlayed = Date.now();
+    info.stats.lastPlayedBy = mem.id;
+    info.stats.timesPlayed += 1;
+    info.stats.timesPlayedSinceLastReport += 1;
+    if (!info.stats.addedBy) info.stats.addedBy = mem.id;
+    info.save().then(() => {
+      status.nowPlaying = { ...info._doc, added_by: mem.displayName };
+      status.audioQueue.shift();
+      status.audioStats.plays += 1;
+      status.audioStats.playsSinceLastReport += 1;
+      createStream(info, details, status);
+    });
   });
 }
 

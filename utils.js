@@ -26,6 +26,13 @@ if (!fs.existsSync("./config.json")) {
         welcomeMsg: false,
         defaultVoiceChannel: false,
         groupRoles: [],
+        audioStats: {
+          plays: 0,
+          mostPlayedAllTime: "",
+          userMostAdded: "",
+          mostPlayedSinceLastReport: "",
+          playsSinceLastReport: 0,
+        },
       },
     },
   };
@@ -271,6 +278,7 @@ function saveConfig(bot) {
   config.sharding[bot.guildID].welcomeTextChannel = bot.welcomeTextChannel;
   config.sharding[bot.guildID].welcomeMsg = bot.welcomeMsg;
   config.sharding[bot.guildID].ruleTextChannel = bot.ruleTextChannel;
+  config.sharding[bot.guildID].audioStats = bot.audioStats;
   dumpJSON("./config.json", config, 2);
 }
 
