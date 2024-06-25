@@ -109,7 +109,7 @@ module.exports = {
       });
       audioCache.forEach(async (f) => {
         f.stats.timesPlayedSinceLastReport = 0;
-        f.markModified(stats);
+        f.markModified("stats");
         await f.save();
       });
     });
