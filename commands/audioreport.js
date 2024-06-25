@@ -107,8 +107,7 @@ module.exports = {
                 ? `@${mostAdded[0]}`
                 : "User not in this server"
             }`;
-          log(toSend.length, ["[WARN]", "[audioreport]"]);
-          //client.channels.cache.get(child.defaultTextChannel.id).send();
+          client.channels.cache.get(child.defaultTextChannel.id).send(toSend);
         }
       });
       audioCache.forEach(async (f) => {
