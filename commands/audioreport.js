@@ -80,7 +80,7 @@ module.exports = {
                     .join(", ")
                 : mostPlaySinceLastReport[0].title
             }\n-Played ${
-              mostPlaySinceLastReport[0].stats.playsSinceLastReport
+              mostPlaySinceLastReport[0].stats.timesPlayedSinceLastReport
             }` +
             `\nAll time most played file(s): ${
               mostPlay.length > 1
@@ -91,7 +91,7 @@ module.exports = {
                     .slice(0, 3)
                     .join(", ")
                 : mostPlay[0].title
-            }\n-Played ${mostPlay[0].stats.plays}` +
+            }\n-Played ${mostPlay[0].stats.timesPlayed}` +
             `\nAll time most files added by: ${
               mostAdded.length > 1
                 ? mostAdded
@@ -106,9 +106,8 @@ module.exports = {
                 ? `@${mostAdded[0]}`
                 : "User not in this server"
             }`;
-          log(mostPlaySinceLastReport, ["[WARN]", "[audioreport]"]);
-          log(mostPlay, ["[WARN]", "[audioreport]"]);
-          //client.channels.cache.get(child.defaultTextChannel.id).send(toSend);
+          //log(toSend, ["[WARN]", "[audioreport]"]);
+          client.channels.cache.get(child.defaultTextChannel.id).send(toSend);
         }
       });
       audioCache.forEach(async (f) => {
