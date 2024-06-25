@@ -415,7 +415,7 @@ function search(str, mem, params, verbose = true) {
 let errcount = 0;
 async function get_info(url, mem, params) {
   let status = params.bot;
-  const info = { url: url };
+  const info = { url: url, stats: new utils.AudioStats() };
   let details = {};
   switch (true) {
     case url.toString().includes("soundcloud.com/"): {
