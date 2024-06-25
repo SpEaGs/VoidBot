@@ -28,6 +28,7 @@ module.exports = {
     CacheFile.find({}).then((audioCache) => {
       let mostPlay, mostPlaySinceLastReport, userCount;
       audioCache.forEach((cf) => {
+        if (cf.stats.addedBy === "") cf.stats.addedBy = client.user.id;
         if (!!userCount[cf.stats.addedBy]) userCount[cf.stats.addedBy] += 1;
         else userCount[cf.stats.addedBy] = 1;
         if (!!mostPlay && mostPlay[0].stats.timesPlayed < cf.stats.timesPlayed)
