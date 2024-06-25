@@ -34,31 +34,35 @@ module.exports = {
         if (cf.stats.addedBy === "") cf.stats.addedBy = client.user.id;
         if (!!userCount[cf.stats.addedBy]) userCount[cf.stats.addedBy] += 1;
         else userCount[cf.stats.addedBy] = 1;
-        if (!!mostPlay && mostPlay[0].stats.timesPlayed < cf.stats.timesPlayed)
+        if (
+          mostPlay.length > 0 &&
+          mostPlay[0].stats.timesPlayed < cf.stats.timesPlayed
+        )
           mostPlay = [cf];
         else if (
-          !!mostPlay &&
+          mostPlay.length > 0 &&
           mostPlay[0].stats.timesPlayed === cf.stats.timesPlayed
         )
           mostPlay.push(cf);
-        else if (!mostPlay) mostPlay = [cf];
+        else if (mostPlay.length === 0) mostPlay.push(cf);
         if (
-          !!mostPlaySinceLastReport &&
+          mostPlaySinceLastReport.length > 0 &&
           mostPlaySinceLastReport[0].stats.timesPlayedSinceLastReport <
             cf.stats.timesPlayedSinceLastReport
         )
           mostPlaySinceLastReport = [cf];
         else if (
-          !!mostPlaySinceLastReport &&
+          mostPlaySinceLastReport.length > 0 &&
           mostPlaySinceLastReport[0].stats.timesPlayedSinceLastReport ===
             cf.stats.timesPlayedSinceLastReport
         )
           mostPlaySinceLastReport.push(cf);
-        else if (!mostPlaySinceLastReport) mostPlaySinceLastReport = [cf];
+        else if (mostPlaySinceLastReport.length === 0)
+          mostPlaySinceLastReport = [cf];
       });
-      let mostAdded;
+      let mostAdded = [];
       Object.keys(userCount).forEach((k) => {
-        if (!mostAdded) mostAdded = [k];
+        if (mostAdded.length === 0) mostAdded.push(k);
         else if (userCount[mostAdded[0]] < userCount[k]) mostAdded = [k];
         else if (userCount[mostAdded[0]] === userCount[k]) mostAdded.push(k);
       });
