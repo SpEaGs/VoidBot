@@ -30,7 +30,6 @@ module.exports = {
         mostPlaySinceLastReport = [],
         userCount = {};
       audioCache.forEach((cf) => {
-        log(cf, ["[WARN]", "[audioreport]"]);
         if (cf.stats.addedBy === "") cf.stats.addedBy = client.user.id;
         if (!!userCount[cf.stats.addedBy]) userCount[cf.stats.addedBy] += 1;
         else userCount[cf.stats.addedBy] = 1;
@@ -72,7 +71,7 @@ module.exports = {
             `An audio stats report was requested. Here we go!:` +
               `\nServer plays since last report: ${child.audioStats.playsSinceLastReport}` +
               `\nMost played file(s) since last report: ${
-                mostPlaysSinceLastReport.length > 1
+                mostPlaySinceLastReport.length > 1
                   ? mostPlaySinceLastReport
                       .map((play) => {
                         return play.title;
