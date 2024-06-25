@@ -76,8 +76,9 @@ module.exports = {
                     .map((play) => {
                       return play.title;
                     })
+                    .slice(0, 3)
                     .join(", ")
-                : mostPlaysSinceLastReport[0].title
+                : mostPlaySinceLastReport[0].title
             }\n-Played ${
               mostPlaySinceLastReport[0].stats.playsSinceLastReport
             }` +
@@ -88,6 +89,7 @@ module.exports = {
                     .map((play) => {
                       return play.title;
                     })
+                    .slice(0, 3)
                     .join(", ")
                 : mostPlay[0].title
             }\n-Played ${mostPlay[0].stats.plays}` +
@@ -99,6 +101,7 @@ module.exports = {
                         ? `@${add}`
                         : "User not in this server";
                     })
+                    .slice(0, 3)
                     .join(", ")
                 : child.guild.members.cache.get(mostAdded[0])
                 ? `@${mostAdded[0]}`
