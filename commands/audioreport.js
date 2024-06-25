@@ -69,8 +69,8 @@ module.exports = {
         if (!!child.defaultTextChannel) {
           toSend =
             `An audio stats report was requested. Here we go!:` +
-            `\nServer plays since last report: ${child.audioStats.playsSinceLastReport}` +
-            `\nMost played file(s) since last report: ${
+            `\nServer plays since last report: \`${child.audioStats.playsSinceLastReport}\`` +
+            `\nMost played file(s) since last report: \`${
               mostPlaySinceLastReport.length > 1
                 ? mostPlaySinceLastReport
                     .map((play) => {
@@ -79,10 +79,10 @@ module.exports = {
                     .slice(0, 3)
                     .join(", ")
                 : mostPlaySinceLastReport[0].title
-            }\n-Played ${
+            }\`\n-Played: \`${
               mostPlaySinceLastReport[0].stats.timesPlayedSinceLastReport
-            }` +
-            `\nAll time most played file(s): ${
+            } times\`` +
+            `\nAll time most played file(s): \`${
               mostPlay.length > 1
                 ? mostPlay
                     .map((play) => {
@@ -91,21 +91,21 @@ module.exports = {
                     .slice(0, 3)
                     .join(", ")
                 : mostPlay[0].title
-            }\n-Played ${mostPlay[0].stats.timesPlayed}` +
-            `\nAll time most files added by: ${
+            }\`\n-Played \`${mostPlay[0].stats.timesPlayed} times\`` +
+            `\nAll time most files added by: \`${
               mostAdded.length > 1
                 ? mostAdded
                     .map((add) => {
                       return child.guild.members.cache.get(add)
-                        ? `@${add}`
+                        ? child.guild.members.cache.get(add)
                         : "User not in this server";
                     })
                     .slice(0, 3)
                     .join(", ")
                 : child.guild.members.cache.get(mostAdded[0])
-                ? `@${mostAdded[0]}`
+                ? child.guild.members.cache.get(mostAdded[0])
                 : "User not in this server"
-            }`;
+            }\``;
           //log(toSend, ["[WARN]", "[audioreport]"]);
           client.channels.cache.get(child.defaultTextChannel.id).send(toSend);
         }
