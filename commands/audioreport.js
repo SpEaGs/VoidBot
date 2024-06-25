@@ -67,44 +67,45 @@ module.exports = {
       });
       client.children.forEach((child) => {
         if (!!child.defaultTextChannel) {
-          client.channels.cache.get(child.defaultTextChannel.id).send(
+          toSend =
             `An audio stats report was requested. Here we go!:` +
-              `\nServer plays since last report: ${child.audioStats.playsSinceLastReport}` +
-              `\nMost played file(s) since last report: ${
-                mostPlaySinceLastReport.length > 1
-                  ? mostPlaySinceLastReport
-                      .map((play) => {
-                        return play.title;
-                      })
-                      .join(", ")
-                  : mostPlaysSinceLastReport[0].title
-              }\n-Played ${
-                mostPlaySinceLastReport[0].stats.playsSinceLastReport
-              }` +
-              `\nAll time total plays: ${child.audioStats.plays}` +
-              `\nAll time most played file(s): ${
-                mostPlay.length > 1
-                  ? mostPlay
-                      .map((play) => {
-                        return play.title;
-                      })
-                      .join(", ")
-                  : mostPlay[0].title
-              }\n-Played ${mostPlay[0].stats.plays}` +
-              `\nAll time most files added by: ${
-                mostAdded.length > 1
-                  ? mostAdded
-                      .map((add) => {
-                        return child.guild.members.cache.get(add)
-                          ? `@${add}`
-                          : "User not in this server";
-                      })
-                      .join(", ")
-                  : child.guild.members.cache.get(mostAdded[0])
-                  ? `@${mostAdded[0]}`
-                  : "User not in this server"
-              }`
-          );
+            `\nServer plays since last report: ${child.audioStats.playsSinceLastReport}` +
+            `\nMost played file(s) since last report: ${
+              mostPlaySinceLastReport.length > 1
+                ? mostPlaySinceLastReport
+                    .map((play) => {
+                      return play.title;
+                    })
+                    .join(", ")
+                : mostPlaysSinceLastReport[0].title
+            }\n-Played ${
+              mostPlaySinceLastReport[0].stats.playsSinceLastReport
+            }` +
+            `\nAll time total plays: ${child.audioStats.plays}` +
+            `\nAll time most played file(s): ${
+              mostPlay.length > 1
+                ? mostPlay
+                    .map((play) => {
+                      return play.title;
+                    })
+                    .join(", ")
+                : mostPlay[0].title
+            }\n-Played ${mostPlay[0].stats.plays}` +
+            `\nAll time most files added by: ${
+              mostAdded.length > 1
+                ? mostAdded
+                    .map((add) => {
+                      return child.guild.members.cache.get(add)
+                        ? `@${add}`
+                        : "User not in this server";
+                    })
+                    .join(", ")
+                : child.guild.members.cache.get(mostAdded[0])
+                ? `@${mostAdded[0]}`
+                : "User not in this server"
+            }`;
+          log(toSend, ["[WARN]", "[audioreport]"]);
+          //client.channels.cache.get(child.defaultTextChannel.id).send();
         }
       });
       audioCache.forEach(async (f) => {
