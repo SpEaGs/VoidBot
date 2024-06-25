@@ -26,7 +26,9 @@ module.exports = {
       });
     const log = global.log;
     CacheFile.find({}).then((audioCache) => {
-      let mostPlay, mostPlaySinceLastReport, userCount;
+      let mostPlay = [],
+        mostPlaySinceLastReport = [],
+        userCount = {};
       audioCache.forEach((cf) => {
         log(cf, ["[WARN]", "[audioreport]"]);
         if (cf.stats.addedBy === "") cf.stats.addedBy = client.user.id;
