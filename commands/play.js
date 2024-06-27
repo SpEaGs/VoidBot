@@ -346,67 +346,69 @@ function search(str, mem, params, verbose = true) {
       break;
     }
     case false: {
-      CacheFile.findOne({ $or: [{ title: url }, { url: url }] }).then(
-        (result) => {
-          if (result) {
-            if (!status.voiceConnection) {
-              joinCMD.execute(params);
-              status.voiceConnection.once(
-                voice.VoiceConnectionStatus.Ready,
-                () => {
-                  play(result, false, mem, status);
-                }
-              );
-            }
-            if (!!status.dispatcher && status.dispatcher.playing) {
-              addToQueue(result, false, mem, status);
-            } else {
-              play(result, false, mem, status);
-            }
+      CacheFile.findOne({ url: url }).then(async (result) => {
+        if (!result) {
+          log("url not found. searching for title...", ["[WARN]", "[play]"]);
+          result = await CacheFile.findOne({ $text: { $search: url } });
+        }
+        if (result) {
+          if (!status.voiceConnection) {
+            joinCMD.execute(params);
+            status.voiceConnection.once(
+              voice.VoiceConnectionStatus.Ready,
+              () => {
+                play(result, false, mem, status);
+              }
+            );
+          }
+          if (!!status.dispatcher && status.dispatcher.playing) {
+            addToQueue(result, false, mem, status);
           } else {
-            let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
-              url
-            )}&key=${API_KEY}`;
-            if (verbose)
+            play(result, false, mem, status);
+          }
+        } else {
+          let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
+            url
+          )}&key=${API_KEY}`;
+          if (verbose)
+            params.WS
+              ? status.guild.channels.cache
+                  .get(status.defaultTextChannel.id)
+                  .send(`${mem} Searching Youtube for \`${url}\`...`)
+              : params.interaction.editReply({
+                  content: `${mem} Searching Youtube for \`${url}\`...`,
+                });
+          request(requestUrl, (error, response) => {
+            if (error || !response.statusCode == 200) {
+              log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
+              return;
+            }
+            let body = response.body;
+            if (body.items.length == 0) {
               params.WS
                 ? status.guild.channels.cache
                     .get(status.defaultTextChannel.id)
-                    .send(`${mem} Searching Youtube for \`${url}\`...`)
+                    .send(`${mem} I got nothing... try being less specific?`)
                 : params.interaction.editReply({
-                    content: `${mem} Searching Youtube for \`${url}\`...`,
+                    content: `${mem} I got nothing... try being less specific?`,
                   });
-            request(requestUrl, (error, response) => {
-              if (error || !response.statusCode == 200) {
-                log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
-                return;
+              log(`0 results from search.`, [
+                "[INFO]",
+                "[PLAY]",
+                `[${status.guildName}]`,
+              ]);
+              return;
+            }
+            for (let i of body.items) {
+              if (i.id.kind == "youtube#video") {
+                url = "https://www.youtube.com/watch?v=" + i.id.videoId;
+                get_info(url, mem, params);
+                break;
               }
-              let body = response.body;
-              if (body.items.length == 0) {
-                params.WS
-                  ? status.guild.channels.cache
-                      .get(status.defaultTextChannel.id)
-                      .send(`${mem} I got nothing... try being less specific?`)
-                  : params.interaction.editReply({
-                      content: `${mem} I got nothing... try being less specific?`,
-                    });
-                log(`0 results from search.`, [
-                  "[INFO]",
-                  "[PLAY]",
-                  `[${status.guildName}]`,
-                ]);
-                return;
-              }
-              for (let i of body.items) {
-                if (i.id.kind == "youtube#video") {
-                  url = "https://www.youtube.com/watch?v=" + i.id.videoId;
-                  get_info(url, mem, params);
-                  break;
-                }
-              }
-            });
-          }
+            }
+          });
         }
-      );
+      });
       break;
     }
   }
