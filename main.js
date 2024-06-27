@@ -20,7 +20,6 @@ const io = SIO(server, {
 const CacheFile = require("./models/cachefile.js");
 
 require("dotenv").config();
-const { db } = require("./connectdb.js");
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
@@ -43,6 +42,7 @@ module.exports = {
   webAppDomain: utils.config.webAppDomain,
   sockets: new Discord.Collection(),
   consoleSockets: new Discord.Collection(),
+  db: require("./connectdb.js").db,
 };
 
 const status = require("./main.js");
