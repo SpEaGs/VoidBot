@@ -246,8 +246,41 @@ try {
       });
     };
 
-    const cleanUpAudioCache = () => {
+    const cleanUpAudioCache = async () => {
       log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
+      const pipeline = [
+        {
+          $group: {
+            _id: "$title",
+            count: { $sum: 1 },
+            docs: {
+              $push: {
+                _id: "$_id",
+                timestamp: "$stats.lastPlayed",
+                title: "$title",
+              },
+            },
+          },
+        },
+        {
+          $match: {
+            count: { $gt: 1 },
+          },
+        },
+      ];
+      const dupes = await CacheFile.aggregate(pipeline).toArray();
+
+      for (const grp of dupes) {
+        const [first, ...rest] = grp.docs.sort(
+          (a, b) => b.timestamp - a.timestamp
+        );
+        log(
+          `Found duplicate entries of: "${first.title}". Removing older entries...`,
+          ["[INFO]", "[AUDIOCACHE]"]
+        );
+        await CacheFile.deleteMany({ _id: { $in: rest.map((d) => d._id) } });
+      }
+
       const cachePath = "/mnt/raid5/voidbot/audiocache/";
       const hardFileList = fs.readdirSync(cachePath);
       CacheFile.find({}).then((files) => {
