@@ -348,7 +348,6 @@ function search(str, mem, params, verbose = true) {
     case false: {
       CacheFile.findOne({ url: url }).then(async (result) => {
         if (!result) {
-          log("url not found. searching for title...", ["[WARN]", "[play]"]);
           result = await CacheFile.findOne({ $text: { $search: url } });
         }
         if (result) {
