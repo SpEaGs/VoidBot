@@ -233,118 +233,6 @@ try {
     });
     utils.populateCmds(status);
 
-    const cleanUpSockets = () => {
-      status.consoleSockets.forEach((s) => {
-        if (!s.connected) {
-          status.consoleSockets.delete(s.id);
-        }
-      });
-      status.sockets.forEach((s) => {
-        if (!s.connected) {
-          status.sockets.delete(s.id);
-        }
-      });
-    };
-
-    const cleanUpAudioCache = async () => {
-      log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
-      const pipeline = [
-        {
-          $group: {
-            _id: "$title",
-            count: { $sum: 1 },
-            docs: {
-              $push: {
-                _id: "$_id",
-                timestamp: "$stats.lastPlayed",
-                title: "$title",
-              },
-            },
-          },
-        },
-        {
-          $match: {
-            count: { $gt: 1 },
-          },
-        },
-      ];
-      const dupes = await db
-        .collection("cachefiles")
-        .aggregate(pipeline)
-        .toArray();
-
-      for (const grp of dupes) {
-        const [first, ...rest] = grp.docs.sort(
-          (a, b) => b.timestamp - a.timestamp
-        );
-        log(
-          `Found duplicate entries of: "${first.title}". Removing older entries...`,
-          ["[INFO]", "[AUDIOCACHE]"]
-        );
-        await CacheFile.deleteMany({ _id: { $in: rest.map((d) => d._id) } });
-      }
-
-      const cachePath = "/mnt/raid5/voidbot/audiocache/";
-      const hardFileList = fs.readdirSync(cachePath);
-      CacheFile.find({}).then((files) => {
-        const missingDocs = hardFileList.filter(
-          (file) => !files.some((doc) => doc.NOD === file)
-        );
-        if (missingDocs.length > 0) {
-          missingDocs.forEach((miss) => {
-            fs.unlinkSync(`${cachePath}${miss}`);
-            log(`Found and removed file missing associated db entry.`, [
-              "[INFO]",
-              "[AUDIOCACHE]",
-            ]);
-          });
-        }
-        let totalSize = 0;
-        files.forEach((f) => {
-          const exists = fs.existsSync(`${cachePath}${f.NOD}`);
-          if (exists && f.downloaded) {
-            const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
-            totalSize += fsize;
-          } else {
-            CacheFile.findOneAndRemove({ NOD: f.NOD }).then(() => {
-              utils.informAllClients(status, {
-                audioCache: { remove: true, info: f },
-              });
-              log(`Found and removed db entry missing associated file.`, [
-                "[INFO]",
-                "[AUDIOCACHE]",
-              ]);
-            });
-          }
-        });
-        let oldest = {};
-        if (totalSize > 25 * 1024 * 1024 * 1024) {
-          oldest = files.reduce((oldest, current) => {
-            return current.stats.lastPlayed < oldest.stats.lastPlayed
-              ? current
-              : oldest;
-          }, files[0]);
-          fs.unlinkSync(`${cachePath}${oldest.NOD}`);
-          CacheFile.findOneAndRemove({ _id: oldest._id }).then(() => {
-            utils.informAllClients(status, {
-              audioCache: { remove: true, info: oldest },
-            });
-            log(`Audio cache full. Removed song: ${oldest.title}`, [
-              "[INFO]",
-              "[AUDIOCACHE]",
-            ]);
-          });
-        }
-        log("Audio cache cleanup done!", ["[INFO]", "[AUDIOCACHE]"]);
-      });
-    };
-
-    cleanUpSockets();
-    cleanUpAudioCache();
-
-    setInterval(cleanUpSockets, 1000 * 60 * 5);
-    setInterval(cleanUpAudioCache, 1000 * 60 * 60);
-
     status.client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
       let bot = status.client.children.get(interaction.guildId);
@@ -597,4 +485,12 @@ process.on("uncaughtException", (err) => {
   } catch {}
 });
 
+utils.cleanUpSockets(status);
+utils.cleanUpAudioCache(status);
+setInterval(() => {
+  utils.cleanUpSockets(status);
+}, 1000 * 60 * 5);
+setInterval(() => {
+  utils.cleanUpAudioCache(status);
+}, 1000 * 60 * 60);
 clientLogin(token);
