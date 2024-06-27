@@ -20,7 +20,7 @@ const io = SIO(server, {
 const CacheFile = require("./models/cachefile.js");
 
 require("dotenv").config();
-require("./connectdb.js");
+const db = require("./connectdb.js");
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
@@ -268,7 +268,10 @@ try {
           },
         },
       ];
-      const dupes = await CacheFile.aggregate(pipeline).toArray();
+      const dupes = await db
+        .collection("cachefiles")
+        .aggregate(pipeline)
+        .toArray();
 
       for (const grp of dupes) {
         const [first, ...rest] = grp.docs.sort(
