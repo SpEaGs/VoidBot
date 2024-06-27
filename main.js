@@ -20,7 +20,7 @@ const io = SIO(server, {
 const CacheFile = require("./models/cachefile.js");
 
 require("dotenv").config();
-const db = require("./connectdb.js");
+const { db } = require("./connectdb.js");
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
