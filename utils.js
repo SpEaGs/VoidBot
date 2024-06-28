@@ -449,11 +449,14 @@ async function cleanUpAudioCache(status) {
         const [first, ...dupes] = docs;
         const dupeIds = dupes.map((doc) => doc._id);
         CacheFile.deleteMany({ _id: { $in: dupeIds } }).then(() => {
+          dupes.forEach((dupe) => {
+            fs.unlinkSync(`${cachePath}${dupe.NOD}`);
+          });
           log(
             `Found and removed ${
               dupes.length > 1
-                ? `${dupes.length} duplicate entries`
-                : `${dupes.length} duplicate entry`
+                ? `${dupes.length} duplicate entries & files`
+                : `${dupes.length} duplicate entry & file`
             } for: "${title}"`,
             ["[INFO]", "[AUDIOCACHE]"]
           );
