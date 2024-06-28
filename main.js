@@ -20,6 +20,7 @@ const io = SIO(server, {
 const CacheFile = require("./models/cachefile.js");
 
 require("dotenv").config();
+require("./connectdb.js");
 
 const utils = require("./utils.js");
 const Bot = require("./bot.js");
@@ -270,15 +271,6 @@ try {
       launchWebServer();
     }, 200);
 
-    utils.cleanUpSockets(status);
-    utils.cleanUpAudioCache(status);
-    setInterval(() => {
-      utils.cleanUpSockets(status);
-    }, 1000 * 60 * 5);
-    setInterval(() => {
-      utils.cleanUpAudioCache(status);
-    }, 1000 * 60 * 60);
-
     log("VoidBot Ready! Hello World!", ["[INFO]", "[MAIN]"]);
   });
 } catch (error) {
@@ -492,4 +484,13 @@ process.on("uncaughtException", (err) => {
     }, 3000);
   } catch {}
 });
+
+utils.cleanUpSockets(status);
+utils.cleanUpAudioCache(status);
+setInterval(() => {
+  utils.cleanUpSockets(status);
+}, 1000 * 60 * 5);
+setInterval(() => {
+  utils.cleanUpAudioCache(status);
+}, 1000 * 60 * 60);
 clientLogin(token);
