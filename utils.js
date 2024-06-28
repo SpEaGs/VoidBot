@@ -448,11 +448,12 @@ async function cleanUpAudioCache(status) {
         docs.sort((a, b) => b.stats.lastPlayed - a.stats.lastPlayed);
         const [first, ...dupes] = docs;
         const dupeIds = dupes.map((doc) => doc._id);
-        CacheFile.deleteMany({ _id: { $in: dupeIds } });
-        log(
-          `Found and removed ${dupes.length} duplicate entrie(s) for: "${title}"`,
-          ["[INFO]", "[AUDIOCACHE]"]
-        );
+        CacheFile.deleteMany({ _id: { $in: dupeIds } }).then(() => {
+          log(
+            `Found and removed ${dupes.length} duplicate entrie(s) for: "${title}"`,
+            ["[INFO]", "[AUDIOCACHE]"]
+          );
+        });
       }
     }
     log("Audio cache cleanup done!", ["[INFO]", "[AUDIOCACHE]"]);
