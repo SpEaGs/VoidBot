@@ -6,13 +6,10 @@ const connect = async () => {
     .connect(url)
     .then((database) => {
       log("Connected to DB", ["[INFO]", "[DB]"]);
-      return db.connection;
     })
     .catch((err) => {
       log(`Error connecting to DB:\n ${err}`, ["[ERR]", "[DB]"]);
     });
 };
 
-module.exports = {
-  db: connect(),
-};
+db.connect();

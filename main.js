@@ -42,7 +42,6 @@ module.exports = {
   webAppDomain: utils.config.webAppDomain,
   sockets: new Discord.Collection(),
   consoleSockets: new Discord.Collection(),
-  db: require("./connectdb.js").db,
 };
 
 const status = require("./main.js");
