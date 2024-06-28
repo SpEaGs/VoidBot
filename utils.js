@@ -385,6 +385,7 @@ function cleanUpSockets(status) {
 
 async function cleanUpAudioCache(status) {
   log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
+  const CacheFile = require("./models/cachefile");
   const pipeline = [
     {
       $group: {
