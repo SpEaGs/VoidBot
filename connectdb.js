@@ -12,4 +12,4 @@ const connect = async () => {
     });
 };
 
-db.connect();
+connect();
