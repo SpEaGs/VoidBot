@@ -194,7 +194,7 @@ function populateAdmin(bot) {
   log(`Populating list of admin roles...`, [
     "[INFO]",
     "[UTILS]",
-    `[${bot.guildName}]`,
+    `[${bot.guild.name}]`,
   ]);
   bot.guild.roles.cache.forEach((r) => {
     if (r.permissions.has(PermissionsBitField.Flags.Administrator)) {
@@ -206,7 +206,7 @@ function populateAdmin(bot) {
   log(`Admin role population done!`, [
     "[INFO]",
     "[UTILS]",
-    `[${bot.guildName}]`,
+    `[${bot.guild.name}]`,
   ]);
 }
 
@@ -270,7 +270,7 @@ function cleanChannelName(name) {
 
 //saves given bot's settings to config file
 function saveConfig(bot) {
-  config.sharding[bot.guildID].guildName = bot.guildName;
+  config.sharding[bot.guildID].guildName = bot.guild.name;
   config.sharding[bot.guildID].defaultVoiceChannel = bot.defaultVoiceChannel;
   config.sharding[bot.guildID].announcements = bot.announcements;
   config.sharding[bot.guildID].announcementsRole = bot.announcementsRole;
@@ -298,7 +298,7 @@ function dumbifyBot(bot, admin = false) {
   let dumbBot = {
     admin: admin,
     guildID: bot.guildID,
-    guildName: bot.guildName,
+    guildName: bot.guild.name,
     nowPlaying: false,
     audioQueue: bot.audioQueue.length > 0 ? bot.audioQueue : [],
     voiceChannel: bot.voiceChannel

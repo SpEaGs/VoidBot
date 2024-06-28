@@ -12,9 +12,8 @@ class Bot extends EventEmitter {
     this.guild = guild;
     this.status = status;
     this.guildID = this.guild.id;
-    this.guildName = this.guild.name;
     this.fs = require("fs");
-    log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guildName}]`]);
+    log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guild.name}]`]);
 
     //load stored config defaults & load shard specific config on top
     //this should automatically update any existing config with new entries
@@ -52,7 +51,7 @@ class Bot extends EventEmitter {
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
-    utils.config.sharding[this.guildID].guildName = this.guildName;
+    utils.config.sharding[this.guildID].guildName = this.guild.name;
 
     if (!utils.config.sharding[this.guildID].audioStats)
       utils.config.sharding[this.guildID].audioStats = this.audioStats;
