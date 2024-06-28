@@ -236,7 +236,7 @@ function populateCmds(status) {
         await rest.put(
           Routes.applicationGuildCommands(
             status.client.application.id,
-            b.guildID
+            b.guild.id
           ),
           { body: cmdReg }
         );
@@ -270,17 +270,17 @@ function cleanChannelName(name) {
 
 //saves given bot's settings to config file
 function saveConfig(bot) {
-  config.sharding[bot.guildID].guildName = bot.guild.name;
-  config.sharding[bot.guildID].defaultVoiceChannel = bot.defaultVoiceChannel;
-  config.sharding[bot.guildID].announcements = bot.announcements;
-  config.sharding[bot.guildID].announcementsRole = bot.announcementsRole;
-  config.sharding[bot.guildID].newMember = bot.newMember;
-  config.sharding[bot.guildID].newMemberRole = bot.newMemberRole;
-  config.sharding[bot.guildID].defaultTextChannel = bot.defaultTextChannel;
-  config.sharding[bot.guildID].welcomeTextChannel = bot.welcomeTextChannel;
-  config.sharding[bot.guildID].welcomeMsg = bot.welcomeMsg;
-  config.sharding[bot.guildID].ruleTextChannel = bot.ruleTextChannel;
-  config.sharding[bot.guildID].audioStats = bot.audioStats;
+  config.sharding[bot.guild.id].guildName = bot.guild.name;
+  config.sharding[bot.guild.id].defaultVoiceChannel = bot.defaultVoiceChannel;
+  config.sharding[bot.guild.id].announcements = bot.announcements;
+  config.sharding[bot.guild.id].announcementsRole = bot.announcementsRole;
+  config.sharding[bot.guild.id].newMember = bot.newMember;
+  config.sharding[bot.guild.id].newMemberRole = bot.newMemberRole;
+  config.sharding[bot.guild.id].defaultTextChannel = bot.defaultTextChannel;
+  config.sharding[bot.guild.id].welcomeTextChannel = bot.welcomeTextChannel;
+  config.sharding[bot.guild.id].welcomeMsg = bot.welcomeMsg;
+  config.sharding[bot.guild.id].ruleTextChannel = bot.ruleTextChannel;
+  config.sharding[bot.guild.id].audioStats = bot.audioStats;
   dumpJSON("./config.json", config, 2);
 }
 
@@ -297,7 +297,7 @@ function dumpJSON(filename, data, spaces = 0) {
 function dumbifyBot(bot, admin = false) {
   let dumbBot = {
     admin: admin,
-    guildID: bot.guildID,
+    guildID: bot.guild.id,
     guildName: bot.guild.name,
     nowPlaying: false,
     audioQueue: bot.audioQueue.length > 0 ? bot.audioQueue : [],
@@ -351,14 +351,14 @@ function populateUsers(bot) {
 }
 
 function informClients(bot, data) {
-  let payload = { guildID: bot.guildID, data: data };
+  let payload = { guildID: bot.guild.id, data: data };
   bot.socketSubs.forEach((s) => {
     s.emit("guild_partial", payload);
   });
 }
 
 function informAdminClients(bot, data) {
-  let payload = { guildID: bot.guildID, data: data };
+  let payload = { guildID: bot.guild.id, data: data };
   bot.adminSocketSubs.forEach((s) => {
     s.emit("guild_partial", payload);
   });

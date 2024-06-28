@@ -11,7 +11,6 @@ class Bot extends EventEmitter {
     let log = global.log;
     this.guild = guild;
     this.status = status;
-    this.guildID = this.guild.id;
     this.fs = require("fs");
     log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guild.name}]`]);
 
@@ -20,15 +19,18 @@ class Bot extends EventEmitter {
     //that are added to the defaults
     const loadConfig = () => {
       let configOut = utils.config.sharding.default;
-      if (!utils.config.sharding[this.guildID]) {
-        utils.config.sharding[this.guildID] = { ...configOut };
+      if (!utils.config.sharding[this.guild.id]) {
+        utils.config.sharding[this.guild.id] = { ...configOut };
       }
-      return { ...configOut, ...utils.config.sharding[this.guildID] };
+      return {
+        ...configOut,
+        ...utils.config.sharding[this.guild.id],
+        guildName: undefined,
+      };
     };
-    const configShard = loadConfig();
 
     //init bot vars
-    Object.assign(this, configShard);
+    Object.assign(this, loadConfig());
     this.visAdminRoles = new Discord.Collection();
     this.voiceStateTimeouts = new Discord.Collection();
     this.socketSubs = new Discord.Collection();
@@ -51,10 +53,10 @@ class Bot extends EventEmitter {
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
-    utils.config.sharding[this.guildID].guildName = this.guild.name;
+    utils.config.sharding[this.guild.id].guildName = this.guild.name;
 
-    if (!utils.config.sharding[this.guildID].audioStats)
-      utils.config.sharding[this.guildID].audioStats = this.audioStats;
+    if (!utils.config.sharding[this.guild.id].audioStats)
+      utils.config.sharding[this.guild.id].audioStats = this.audioStats;
 
     //save config & clear disconnected websockets at intervals: 5min
     utils.saveConfig(this);

@@ -36,30 +36,30 @@ module.exports = {
     switch (action) {
       case "in": {
         mem.roles.add(
-          utils.config.sharding[params.bot.guildID].announcementsRole.id
+          utils.config.sharding[params.bot.guild.id].announcementsRole.id
         );
         return params.WS
           ? params.bot.guild.channels.cache
               .get(params.bot.defaultTextChannel.id)
               .send(
-                `${mem} You've successfully opted IN to ${params.bot.guildName} announcements!`
+                `${mem} You've successfully opted IN to ${params.bot.guild.name} announcements!`
               )
           : params.interaction.editReply({
-              content: `${mem} You've successfully opted  IN to ${params.bot.guildName} announcements!`,
+              content: `${mem} You've successfully opted  IN to ${params.bot.guild.name} announcements!`,
             });
       }
       case "out": {
         mem.roles.remove(
-          utils.config.sharding[params.bot.guildID].announcementsRole.id
+          utils.config.sharding[params.bot.guild.id].announcementsRole.id
         );
         return params.WS
           ? params.bot.guild.channels.cache
               .get(params.bot.defaultTextChannel.id)
               .send(
-                `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`
+                `${mem} You've successfully opted OUT of ${params.bot.guild.name} announcements!`
               )
           : params.interaction.editReply({
-              content: `${mem} You've successfully opted OUT of ${params.bot.guildName} announcements!`,
+              content: `${mem} You've successfully opted OUT of ${params.bot.guild.name} announcements!`,
             });
       }
     }

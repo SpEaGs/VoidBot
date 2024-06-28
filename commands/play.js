@@ -394,7 +394,7 @@ function search(str, mem, params, verbose = true) {
               log(`0 results from search.`, [
                 "[INFO]",
                 "[PLAY]",
-                `[${status.guildName}]`,
+                `[${status.guild.name}]`,
               ]);
               return;
             }
@@ -495,14 +495,14 @@ function makeDispatcherFromFile(info, status) {
     voice.createAudioResource(`/mnt/raid5/voidbot/audiocache/${info.NOD}`)
   );
   status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-    log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guildName}]`]);
+    log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guild.name}]`]);
     endDispatcher(status);
   });
   status.dispatcher.once("error", (err) => {
     log(`Audio steam error:\n${err}`, [
       "[ERR]",
       "[PLAY]",
-      `[${status.guildName}]`,
+      `[${status.guild.name}]`,
     ]);
   });
 }
@@ -526,14 +526,14 @@ function makeDispatcher(stream, info, status) {
       status.voiceConnection.subscribe(status.dispatcher);
       status.dispatcher.play(voice.createAudioResource(filename));
       status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-        log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guildName}]`]);
+        log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guild.name}]`]);
         endDispatcher(status);
       });
       status.dispatcher.once("error", (err) => {
         log(`Audio stream error:\n${err}`, [
           "[ERR]",
           "[PLAY]",
-          `[${status.guildName}]`,
+          `[${status.guild.name}]`,
         ]);
       });
     });
@@ -593,7 +593,7 @@ function playNextInQueue(status) {
   log(`Playing next in queue - length:${status.audioQueue.length}`, [
     "[INFO]",
     "[PLAY]",
-    `[${status.guildName}]`,
+    `[${status.guild.name}]`,
   ]);
   if (!status.audioQueue.length) return endDispatcher(status);
   const { details, mem } = status.audioQueue[0];
@@ -635,7 +635,7 @@ function addToQueue(info, details, mem, status) {
   log(`Adding ${info.title} to queue.`, [
     "[INFO]",
     "[PLAY]",
-    `[${status.guildName}]`,
+    `[${status.guild.name}]`,
   ]);
   if (!status.audioQueue) status.audioQueue = [];
   status.audioQueue.push({ info: info._doc, details: details, mem: mem });

@@ -92,9 +92,9 @@ function launchWebServer() {
             case "guilds": {
               payload.guilds = status.client.children
                 .map((b) => {
-                  if (guildLists.member.includes(b.guildID)) {
+                  if (guildLists.member.includes(b.guild.id)) {
                     b.socketSubs.set(s.id, s);
-                    if (guildLists.admin.includes(b.guildID)) {
+                    if (guildLists.admin.includes(b.guild.id)) {
                       b.adminSocketSubs.set(s.id, s);
                       return utils.dumbifyBot(b, true);
                     } else {
@@ -120,7 +120,7 @@ function launchWebServer() {
     });
     s.on("g_data", (payload) => {
       let bot = status.client.children.find(
-        (bot) => bot.guildID === payload.id
+        (bot) => bot.guild.id === payload.id
       );
       if (payload.data) {
         for (let i of Object.keys(payload.data)) {
@@ -152,9 +152,9 @@ function launchWebServer() {
         default:
           if (payload.aData) paramsOut.interaction.args = payload.aData;
           let cmd = status.client.cmds.get(payload.action);
-          log(`${cmd.name} Command received from ${bot.guildName}`, [
+          log(`${cmd.name} Command received from ${bot.guild.name}`, [
             "[INFO]",
-            `[${bot.guildName}]`,
+            `[${bot.guild.name}]`,
           ]);
           cmd.execute(paramsOut);
           break;
@@ -260,9 +260,9 @@ try {
       } else {
         let params = { interaction, bot };
         cmd.execute(params);
-        log(`${cmd.name} Command received from ${bot.guildName}`, [
+        log(`${cmd.name} Command received from ${bot.guild.name}`, [
           "[INFO]",
-          `[${bot.guildName}]`,
+          `[${bot.guild.name}]`,
         ]);
       }
     });
@@ -281,14 +281,14 @@ try {
 status.client.on("guildCreate", async (guild) => {
   let guildOut = await status.client.guilds.fetch(guild.id);
   let newBot = new Bot.Bot(guildOut, status);
-  log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guildName}]`]);
+  log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guild.name}]`]);
   status.client.children.set(guild.id, newBot);
   setTimeout(() => {
     initBot(newBot);
     log("Initialization complete!", [
       "[INFO]",
       "[MAIN]",
-      `[${newBot.guildName}]`,
+      `[${newBot.guild.name}]`,
     ]);
   }, 400);
 });
@@ -299,7 +299,7 @@ status.client.on("guildDelete", (guild) => {
   log("Server removed. Deleting config and data.", [
     "[INFO]",
     "[MAIN]",
-    `[${bot.guildName}]`,
+    `[${bot.guild.name}]`,
   ]);
   status.client.children.delete(guild.id);
   delete utils.config.sharding[guild.id];
@@ -312,7 +312,7 @@ status.client.on("guildMemberAdd", (member) => {
   log(`New member joined. Welcome message set to: ${bot.welcomeMsg}`, [
     "[INFO]",
     "[MAIN]",
-    `[${bot.guildName}]`,
+    `[${bot.guild.name}]`,
   ]);
   try {
     if (!bot.welcomeMsg) return;
@@ -328,7 +328,7 @@ status.client.on("guildMemberAdd", (member) => {
     log(`Error handling guildMemberAdd event:\n` + error, [
       "[WARN]",
       "[MAIN]",
-      `[${bot.guildName}]`,
+      `[${bot.guild.name}]`,
     ]);
   }
 });
@@ -336,7 +336,7 @@ status.client.on("guildMemberAdd", (member) => {
 //discord.js client event for when a member leaves a server
 status.client.on("guildMemberRemove", (member) => {
   let bot = status.client.children.get(member.guild.id);
-  log("A member left the server.", ["[INFO]", "[MAIN]", `[${bot.guildName}]`]);
+  log("A member left the server.", ["[INFO]", "[MAIN]", `[${bot.guild.name}]`]);
   try {
     if (bot.welcomeMsg == false) return;
     if (bot.welcomeTextChannel != false) {
@@ -348,7 +348,7 @@ status.client.on("guildMemberRemove", (member) => {
     log(`Error handling guildMemberRemove event:\n` + error, [
       "[WARN]",
       "[MAIN]",
-      `[${bot.guildName}]`,
+      `[${bot.guild.name}]`,
     ]);
   }
 });
@@ -392,7 +392,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
     log(`Error handling voiceStateUpdate event"\n` + error, [
       "[WARN]",
       "[MAIN]",
-      `[${bot.guildName}]`,
+      `[${bot.guild.name}]`,
     ]);
   }
 });
