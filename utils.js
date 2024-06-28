@@ -405,8 +405,7 @@ async function cleanUpAudioCache(status) {
       },
     },
   ];
-  const db = require("mongoose");
-  const dupes = await db.collection("cachefiles").aggregate(pipeline).toArray();
+  const dupes = await CacheFile.aggregate(pipeline).toArray();
 
   for (const grp of dupes) {
     const [first, ...rest] = grp.docs.sort((a, b) => b.timestamp - a.timestamp);
