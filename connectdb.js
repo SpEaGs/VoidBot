@@ -12,4 +12,4 @@ const connect = async () => {
     });
 };
 
-connect();
+await connect();
