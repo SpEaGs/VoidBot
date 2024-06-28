@@ -386,37 +386,6 @@ function cleanUpSockets(status) {
 async function cleanUpAudioCache(status) {
   log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
   const CacheFile = require("./models/cachefile");
-  const pipeline = [
-    {
-      $group: {
-        _id: "$title",
-        count: { $sum: 1 },
-        docs: {
-          $push: {
-            _id: "$_id",
-            timestamp: "$stats.lastPlayed",
-            title: "$title",
-          },
-        },
-      },
-    },
-    {
-      $match: {
-        count: { $gt: 1 },
-      },
-    },
-  ];
-  const dupes = await CacheFile.aggregate(pipeline).exec();
-
-  for (const grp of dupes) {
-    const [first, ...rest] = grp.docs.sort((a, b) => b.timestamp - a.timestamp);
-    log(
-      `Found duplicate entries of: "${first.title}". Removing older entries...`,
-      ["[INFO]", "[AUDIOCACHE]"]
-    );
-    await CacheFile.deleteMany({ _id: { $in: rest.map((d) => d._id) } });
-  }
-
   const cachePath = "/mnt/raid5/voidbot/audiocache/";
   const hardFileList = fs.readdirSync(cachePath);
   CacheFile.find({}).then((files) => {
@@ -467,6 +436,24 @@ async function cleanUpAudioCache(status) {
           "[AUDIOCACHE]",
         ]);
       });
+    }
+    const groupedByTitle = files.reduce((acc, doc) => {
+      if (!acc[doc.title]) acc[doc.title] = [];
+      acc[doc.title].push(doc);
+      return acc;
+    }, {});
+    for (const title in groupedByTitle) {
+      const docs = groupedByTitle[title];
+      if (docs.length > 1) {
+        docs.sort((a, b) => b.stats.lastPlayed - a.stats.lastPlayed);
+        const [first, ...dupes] = docs;
+        const dupeIds = dupes.map((doc) => doc._id);
+        CacheFile.deleteMany({ _id: { $in: dupeIds } });
+        log(
+          `Found and removed ${dupes.length} duplicate entrie(s) for: "${title}"`,
+          ["[INFO]", "[AUDIOCACHE]"]
+        );
+      }
     }
     log("Audio cache cleanup done!", ["[INFO]", "[AUDIOCACHE]"]);
   });
