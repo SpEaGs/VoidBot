@@ -406,7 +406,7 @@ async function cleanUpAudioCache(status) {
       },
     },
   ];
-  const dupes = await CacheFile.aggregate(pipeline).toArray();
+  const dupes = await CacheFile.aggregate(pipeline);
 
   for (const grp of dupes) {
     const [first, ...rest] = grp.docs.sort((a, b) => b.timestamp - a.timestamp);
