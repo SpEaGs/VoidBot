@@ -3,6 +3,8 @@ const { Routes, PermissionsBitField } = require("discord.js");
 const { REST } = require("@discordjs/rest");
 const { TOKEN } = require("./tokens.json");
 
+const { log, warn, err } = require("./logger");
+
 //init config (create with defaults if not exists)
 let config = {};
 if (!fs.existsSync("./config.json")) {
@@ -191,11 +193,7 @@ function findChanFromGuild(channel, bot, chanType = 0) {
 
 //populates an internal list of admin for a given server
 function populateAdmin(bot) {
-  log(`Populating list of admin roles...`, [
-    "[INFO]",
-    "[UTILS]",
-    `[${bot.guild.name}]`,
-  ]);
+  log(`Populating list of admin roles...`, ["[UTILS]", `[${bot.guild.name}]`]);
   bot.guild.roles.cache.forEach((r) => {
     if (r.permissions.has(PermissionsBitField.Flags.Administrator)) {
       r.members.forEach((u) => {
@@ -203,17 +201,13 @@ function populateAdmin(bot) {
       });
     }
   });
-  log(`Admin role population done!`, [
-    "[INFO]",
-    "[UTILS]",
-    `[${bot.guild.name}]`,
-  ]);
+  log(`Admin role population done!`, ["[UTILS]", `[${bot.guild.name}]`]);
 }
 
 //populates an internal list of commands
 function populateCmds(status) {
   let cmdReg = [];
-  log("Populating commands list...", ["[INFO]", "[UTILS]"]);
+  log("Populating commands list...", ["[UTILS]"]);
   let cmdFiles = fs.readdirSync("./commands/");
 
   status.client.cmds.clear();
@@ -225,13 +219,13 @@ function populateCmds(status) {
       config.cmdToggles.push({ name: command.name.toLowerCase(), state: true });
     cmdReg.push(command.data.toJSON());
     status.client.cmds.set(command.name.toLowerCase(), command);
-    log(`Found command: ${command.name}`, ["[INFO]", "[UTILS]"]);
+    log(`Found command: ${command.name}`, ["[UTILS]"]);
   }
   dumpJSON("./config.json", config, 2);
   const rest = new REST({ version: "10" }).setToken(TOKEN);
   (async () => {
     try {
-      log("Sending slash command data...", ["[INFO]", "[UTILS]"]);
+      log("Sending slash command data...", ["[UTILS]"]);
       status.client.children.forEach(async (b) => {
         await rest.put(
           Routes.applicationGuildCommands(
@@ -241,13 +235,13 @@ function populateCmds(status) {
           { body: cmdReg }
         );
       });
-      log("Slash commands updated successfully!", ["[INFO]", "[UTILS]"]);
-    } catch (err) {
-      log("Error sending updates for slash commands.", ["[ERR]", "[UTILS]"]);
-      log(err, ["[ERR]", "[UTILS]"]);
+      log("Slash commands updated successfully!", ["[UTILS]"]);
+    } catch (error) {
+      err("Error sending updates for slash commands.", ["[UTILS]"]);
+      err(error, ["[UTILS]"]);
     }
   })();
-  log("Command population done!", ["[INFO]", "[UTILS]"]);
+  log("Command population done!", ["[UTILS]"]);
 }
 
 //checks internal list of commands for a given alias
@@ -286,9 +280,9 @@ function saveConfig(bot) {
 
 //dumps a given object's JSON to a json file
 function dumpJSON(filename, data, spaces = 0) {
-  fs.writeFile(filename, JSON.stringify(data, null, spaces), (err) => {
-    if (err) {
-      log(`Error dumping JSON to file:\n${err}`, ["[ERR]", "[UTILS]"]);
+  fs.writeFile(filename, JSON.stringify(data, null, spaces), (error) => {
+    if (error) {
+      err(`Error dumping JSON to file:\n${error}`, ["[UTILS]"]);
     }
   });
 }
@@ -384,7 +378,7 @@ function cleanUpSockets(status) {
 }
 
 async function cleanUpAudioCache(status) {
-  log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
+  log("Cleaning audio cache...", ["[AUDIOCACHE]"]);
   const CacheFile = require("./models/cachefile");
   const cachePath = "/mnt/raid5/voidbot/audiocache/";
   const hardFileList = fs.readdirSync(cachePath);
@@ -396,7 +390,6 @@ async function cleanUpAudioCache(status) {
       missingDocs.forEach((miss) => {
         fs.unlinkSync(`${cachePath}${miss}`);
         log(`Found and removed file missing associated db entry.`, [
-          "[INFO]",
           "[AUDIOCACHE]",
         ]);
       });
@@ -413,7 +406,6 @@ async function cleanUpAudioCache(status) {
             audioCache: { remove: true, info: f },
           });
           log(`Found and removed db entry missing associated file.`, [
-            "[INFO]",
             "[AUDIOCACHE]",
           ]);
         });
@@ -432,7 +424,6 @@ async function cleanUpAudioCache(status) {
           audioCache: { remove: true, info: oldest },
         });
         log(`Audio cache full. Removed song: ${oldest.title}`, [
-          "[INFO]",
           "[AUDIOCACHE]",
         ]);
       });
@@ -458,11 +449,11 @@ async function cleanUpAudioCache(status) {
                 ? `${dupes.length} duplicate entries & files`
                 : `${dupes.length} duplicate entry & file`
             } for: "${title}"`,
-            ["[INFO]", "[AUDIOCACHE]"]
+            ["[AUDIOCACHE]"]
           );
         });
       }
     }
-    log("Audio cache cleanup done!", ["[INFO]", "[AUDIOCACHE]"]);
+    log("Audio cache cleanup done!", ["[AUDIOCACHE]"]);
   });
 }

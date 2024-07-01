@@ -1,6 +1,8 @@
 const utils = require("../utils.js");
 const { SlashCommandBuilder } = require("discord.js");
 
+const { log, warn, err } = require("../logger");
+
 let name = "Botadmin";
 let description = "Provides various subcommands for bot admin.";
 
@@ -50,11 +52,10 @@ module.exports = {
         content: "Command received!",
         ephemeral: true,
       });
-    let log = global.log;
     let cmd = params.interaction.options.getString("command");
     switch (params.interaction.options.getSubcommand()) {
       case "togglecmd": {
-        log(`Toggling command: ${cmd}`, ["[WARN]", "[BOTADMIN]"]);
+        warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
         toggleBool(utils.config.cmdToggles.find((i) => i.name === cmd).state);
         return utils.dumpJSON("../config.json", utils.config, 2);
       }

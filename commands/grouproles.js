@@ -7,6 +7,8 @@ const {
   StringSelectMenuOptionBuilder,
 } = require("discord.js");
 
+const { log, warn, err } = require("../logger");
+
 const utils = require("../utils.js");
 
 const name = "Grouproles";
@@ -85,7 +87,7 @@ module.exports = {
         components: [],
       });
     } catch (e) {
-      console.log(e);
+      warn(e, ["[INTERACTION]"]);
       await params.interaction.editReply({
         content: "No roles selected within one minute. Canceling changes.",
         components: [],

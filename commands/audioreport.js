@@ -7,6 +7,8 @@ const { client } = require("../main");
 const name = "Audioreport";
 const description = "Gets some statistics about the bot's audio activities.";
 
+const { log, warn, err } = require("../logger");
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
@@ -106,7 +108,6 @@ module.exports = {
                 ? child.guild.members.cache.get(mostAdded[0])
                 : "User not in this server"
             }\``;
-          //log(toSend, ["[WARN]", "[audioreport]"]);
           client.channels.cache.get(child.defaultTextChannel.id).send(toSend);
         }
       });

@@ -38,7 +38,7 @@ module.exports = {
       params.bot.dispatcher = false;
       params.bot.nowPlaying = false;
     } catch (error) {
-      log(`Error skipping song:\n${error}`, ["[ERR]", "[SKIP]"]);
+      warn(`Error skipping song:\n${error}`, ["[SKIP]"]);
     }
   },
 };

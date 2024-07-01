@@ -6,6 +6,8 @@ const {
   ActionRowBuilder,
 } = require("discord.js");
 
+const { log, warn, err } = require("../logger");
+
 let name = "Roles";
 let description = "Sets a user's roles. Admin only.";
 
@@ -52,7 +54,7 @@ module.exports = {
         components: [],
       });
     } catch (e) {
-      console.log(e);
+      warn(e, ["[INTERACTION]"]);
       params.interaction.editReply({
         content: "Command timed out or there was an error",
         components: [],

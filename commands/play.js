@@ -9,6 +9,8 @@ const request = require("superagent");
 const utils = require("../utils.js");
 const { fs } = require("../main.js");
 
+const { log, warn, err } = require("../logger");
+
 const API_KEY = require("../tokens.json").TOKEN_YT;
 const SC_API_KEY = require("../tokens.json").TOKEN_SC;
 const SP_CLIENT_ID = require("../tokens.json").SP_CLIENT_ID;
@@ -78,7 +80,7 @@ function getParameterByName(name, url) {
 function worker(status, taskList = [], interval = 1000) {
   if (interval > 1000) interval = 1000;
   if (!status.dispatcher) interval = 3000;
-  log("remaining: " + taskList.length, ["[INFO]", "[PLAY-Worker]"]);
+  log("remaining: " + taskList.length, ["[PLAY-Worker]"]);
   taskList[0]();
   taskList.shift();
   if (!!taskList.length) {
@@ -113,7 +115,7 @@ function search(str, mem, params, verbose = true) {
                   });
               request(requestURL, (error, response) => {
                 if (error || !response.statusCode == 200) {
-                  log("Error getting playlist info", ["[WARN], [PLAY]"]);
+                  warn("Error getting playlist info", ["[PLAY]"]);
                   return;
                 }
                 response.body.items.forEach((i) => {
@@ -196,8 +198,7 @@ function search(str, mem, params, verbose = true) {
                             return;
                           })
                           .catch((err) => {
-                            log(`Error getting spotify album info: ${err}`, [
-                              "[WARN]",
+                            warn(`Error getting spotify album info: ${err}`, [
                               "[PLAY]",
                             ]);
                           });
@@ -255,8 +256,7 @@ function search(str, mem, params, verbose = true) {
                         return;
                       })
                       .catch((err) => {
-                        log(`Error getting spotify playlist info: ${err}`, [
-                          "[WARN]",
+                        warn(`Error getting spotify playlist info: ${err}`, [
                           "[PLAY]",
                         ]);
                       });
@@ -298,8 +298,7 @@ function search(str, mem, params, verbose = true) {
                         return;
                       })
                       .catch((err) => {
-                        log(`Error getting spotify song info: ${err}`, [
-                          "[WARN]",
+                        warn(`Error getting spotify song info: ${err}`, [
                           "[PLAY]",
                         ]);
                       });
@@ -379,7 +378,7 @@ function search(str, mem, params, verbose = true) {
                 });
           request(requestUrl, (error, response) => {
             if (error || !response.statusCode == 200) {
-              log(`Error getting video info`, ["[WARN]", "[PLAY]"]);
+              warn(`Error getting video info`, ["[PLAY]"]);
               return;
             }
             let body = response.body;
@@ -392,7 +391,6 @@ function search(str, mem, params, verbose = true) {
                     content: `${mem} I got nothing... try being less specific?`,
                   });
               log(`0 results from search.`, [
-                "[INFO]",
                 "[PLAY]",
                 `[${status.guild.name}]`,
               ]);
@@ -495,15 +493,11 @@ function makeDispatcherFromFile(info, status) {
     voice.createAudioResource(`/mnt/raid5/voidbot/audiocache/${info.NOD}`)
   );
   status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-    log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guild.name}]`]);
+    warn("Voice Idle.", ["[PLAY]", `[${status.guild.name}]`]);
     endDispatcher(status);
   });
   status.dispatcher.once("error", (err) => {
-    log(`Audio steam error:\n${err}`, [
-      "[ERR]",
-      "[PLAY]",
-      `[${status.guild.name}]`,
-    ]);
+    warn(`Audio steam error:\n${err}`, ["[PLAY]", `[${status.guild.name}]`]);
   });
 }
 
@@ -526,12 +520,11 @@ function makeDispatcher(stream, info, status) {
       status.voiceConnection.subscribe(status.dispatcher);
       status.dispatcher.play(voice.createAudioResource(filename));
       status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-        log("Voice Idle.", ["[WARN]", "[PLAY]", `[${status.guild.name}]`]);
+        warn("Voice Idle.", ["[PLAY]", `[${status.guild.name}]`]);
         endDispatcher(status);
       });
       status.dispatcher.once("error", (err) => {
-        log(`Audio stream error:\n${err}`, [
-          "[ERR]",
+        warn(`Audio stream error:\n${err}`, [
           "[PLAY]",
           `[${status.guild.name}]`,
         ]);
@@ -559,7 +552,7 @@ function createStream(info, details, status) {
         }
       }
     } catch (err) {
-      log(`Caught audio stream error:\n${err}`, ["[ERR]", "[PLAY]"]);
+      warn(`Caught audio stream error:\n${err}`, ["[PLAY]"]);
     }
   }
   utils.informClients(status, {
@@ -591,7 +584,6 @@ function endDispatcher(status) {
 
 function playNextInQueue(status) {
   log(`Playing next in queue - length:${status.audioQueue.length}`, [
-    "[INFO]",
     "[PLAY]",
     `[${status.guild.name}]`,
   ]);
@@ -632,11 +624,7 @@ function addToQueue(info, details, mem, status) {
         .toString()
         .padStart(2, "0")}]\` to the queue.`
     );
-  log(`Adding ${info.title} to queue.`, [
-    "[INFO]",
-    "[PLAY]",
-    `[${status.guild.name}]`,
-  ]);
+  log(`Adding ${info.title} to queue.`, ["[PLAY]", `[${status.guild.name}]`]);
   if (!status.audioQueue) status.audioQueue = [];
   status.audioQueue.push({ info: info._doc, details: details, mem: mem });
   utils.informClients(status, { audioQueue: status.audioQueue });

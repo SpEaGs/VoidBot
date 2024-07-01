@@ -1,4 +1,4 @@
-const Logger = require("./logger.js");
+const { log, warn, err, getBacklog } = require("./logger");
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 
@@ -52,9 +52,6 @@ function getStatus() {
 }
 
 //instantiate logging handler & set global functions
-const logger = new Logger();
-global.log = logger.log;
-global.getBacklog = logger.getBacklog;
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
@@ -63,7 +60,7 @@ status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
-  log("Launching websocket server...", ["[INFO]", "[WS]"]);
+  log("Launching websocket server...", ["[WS]"]);
   function initSocket(s) {
     s.once("disconnect", () => {
       status.client.children.forEach((b) => {
@@ -153,7 +150,6 @@ function launchWebServer() {
           if (payload.aData) paramsOut.interaction.args = payload.aData;
           let cmd = status.client.cmds.get(payload.action);
           log(`${cmd.name} Command received from ${bot.guild.name}`, [
-            "[INFO]",
             `[${bot.guild.name}]`,
           ]);
           cmd.execute(paramsOut);
@@ -180,7 +176,7 @@ function launchWebServer() {
   });
   server.listen(5000, () => {
     const port = server.address().port;
-    log(`Websocket server listening on port: ${port}`, ["[INFO]", "[WS]"]);
+    log(`Websocket server listening on port: ${port}`, ["[WS]"]);
   });
 }
 
@@ -228,7 +224,7 @@ try {
       let newBot = new Bot.Bot(g, status);
       initBot(newBot);
       status.client.children.set(g.id, newBot);
-      log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
+      log("Initialization complete!", ["[MAIN]", `[${g.name}]`]);
     });
     utils.populateCmds(status);
 
@@ -261,7 +257,6 @@ try {
         let params = { interaction, bot };
         cmd.execute(params);
         log(`${cmd.name} Command received from ${bot.guild.name}`, [
-          "[INFO]",
           `[${bot.guild.name}]`,
         ]);
       }
@@ -270,10 +265,10 @@ try {
       launchWebServer();
     }, 200);
 
-    log("VoidBot Ready! Hello World!", ["[INFO]", "[MAIN]"]);
+    log("VoidBot Ready! Hello World!", ["[MAIN]"]);
   });
 } catch (error) {
-  log(`Error initializing client:\n` + error, ["[ERR]", "[MAIN]"]);
+  err(`Error initializing client:\n` + error, ["[MAIN]"]);
   process.exit(1);
 }
 
@@ -281,15 +276,11 @@ try {
 status.client.on("guildCreate", async (guild) => {
   let guildOut = await status.client.guilds.fetch(guild.id);
   let newBot = new Bot.Bot(guildOut, status);
-  log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guild.name}]`]);
+  log("New server added.", ["[MAIN]", `[${newBot.guild.name}]`]);
   status.client.children.set(guild.id, newBot);
   setTimeout(() => {
     initBot(newBot);
-    log("Initialization complete!", [
-      "[INFO]",
-      "[MAIN]",
-      `[${newBot.guild.name}]`,
-    ]);
+    log("Initialization complete!", ["[MAIN]", `[${newBot.guild.name}]`]);
   }, 400);
 });
 
@@ -297,7 +288,6 @@ status.client.on("guildCreate", async (guild) => {
 status.client.on("guildDelete", (guild) => {
   let bot = status.client.children.get(guild.id);
   log("Server removed. Deleting config and data.", [
-    "[INFO]",
     "[MAIN]",
     `[${bot.guild.name}]`,
   ]);
@@ -310,7 +300,6 @@ status.client.on("guildDelete", (guild) => {
 status.client.on("guildMemberAdd", (member) => {
   let bot = status.client.children.get(member.guild.id);
   log(`New member joined. Welcome message set to: ${bot.welcomeMsg}`, [
-    "[INFO]",
     "[MAIN]",
     `[${bot.guild.name}]`,
   ]);
@@ -325,8 +314,7 @@ status.client.on("guildMemberAdd", (member) => {
       member.roles.add(bot.newMemberRole.id);
     }
   } catch (error) {
-    log(`Error handling guildMemberAdd event:\n` + error, [
-      "[WARN]",
+    warn(`Error handling guildMemberAdd event:\n` + error, [
       "[MAIN]",
       `[${bot.guild.name}]`,
     ]);
@@ -336,7 +324,7 @@ status.client.on("guildMemberAdd", (member) => {
 //discord.js client event for when a member leaves a server
 status.client.on("guildMemberRemove", (member) => {
   let bot = status.client.children.get(member.guild.id);
-  log("A member left the server.", ["[INFO]", "[MAIN]", `[${bot.guild.name}]`]);
+  log("A member left the server.", ["[MAIN]", `[${bot.guild.name}]`]);
   try {
     if (bot.welcomeMsg == false) return;
     if (bot.welcomeTextChannel != false) {
@@ -345,8 +333,7 @@ status.client.on("guildMemberRemove", (member) => {
         .send(utils.sendoff(member));
     }
   } catch (error) {
-    log(`Error handling guildMemberRemove event:\n` + error, [
-      "[WARN]",
+    warn(`Error handling guildMemberRemove event:\n` + error, [
       "[MAIN]",
       `[${bot.guild.name}]`,
     ]);
@@ -389,8 +376,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
     );
     if (!oldState.channel) return;
   } catch (error) {
-    log(`Error handling voiceStateUpdate event"\n` + error, [
-      "[WARN]",
+    warn(`Error handling voiceStateUpdate event"\n` + error, [
       "[MAIN]",
       `[${bot.guild.name}]`,
     ]);
@@ -436,7 +422,7 @@ function cmd(e = "", args = false) {
       break;
     }
     default:
-      log(e, ["[INFO]", "[BROADCAST]"]);
+      log(e, ["[BROADCAST]"]);
       status.client.cmds
         .get("broadcast")
         .execute({ interaction: { args: { message: e } }, WS: true });
@@ -449,28 +435,25 @@ function cmd(e = "", args = false) {
 let loginAtt = 0;
 function clientLogin(t) {
   loginAtt++;
-  log(`Logging in... attempt: ${loginAtt}`, ["[INFO]", "[MAIN]"]);
+  log(`Logging in... attempt: ${loginAtt}`, ["[MAIN]"]);
   try {
     status.client.login(t);
-    log(`Login successful!`, ["[INFO]", "[MAIN]"]);
+    log(`Login successful!`, ["[MAIN]"]);
   } catch (error) {
     if (loginAtt <= 5) {
-      log(`Error logging in client. Trying again in 5s...`, [
-        "[WARN]",
-        "[MAIN]",
-      ]);
+      warn(`Error logging in client. Trying again in 5s...`, ["[MAIN]"]);
       setTimeout(function () {
         clientLogin(t);
       }, 5000);
-    } else log(`Error logging in client:\n` + error, ["[ERR]", "[MAIN]"]);
+    } else err(`Error logging in client:\n` + error, ["[MAIN]"]);
   }
 }
 
 process.on("uncaughtException", (err) => {
   if (err.captureStackTrace) err.captureStackTrace();
-  log(
+  err(
     `Uncaught exception:\n${err.name} position: ${err.lineNumber}:${err.columnNumber}\n${err.message}\n${err.stack}`,
-    ["[ERR]", "[CRITICAL]"]
+    ["[CRITICAL]"]
   );
   utils.dumpJSON("ERR_DUMP.json", err, 2);
   try {

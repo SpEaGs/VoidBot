@@ -4,15 +4,16 @@ const EventEmitter = require("events");
 const utils = require("./utils.js");
 const token = require("./tokens.json").TOKEN;
 
+const { log, warn, err } = require("./logger.js");
+
 class Bot extends EventEmitter {
   constructor(guild, status) {
     super();
     //init base vars
-    let log = global.log;
     this.guild = guild;
     this.status = status;
     this.fs = require("fs");
-    log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guild.name}]`]);
+    log(`Bot Initializing...`, ["[BOT]", `[${this.guild.name}]`]);
 
     //load stored config defaults & load shard specific config on top
     //this should automatically update any existing config with new entries
