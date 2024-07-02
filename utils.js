@@ -53,11 +53,13 @@ class utils {
           },
         },
       };
-      dumpJSON("config.json", this.config, 2);
+      this.dumpJSON("config.json", this.config, 2);
     } else {
       this.config = require("./config.json");
     }
     this.getTime = this.getTime.bind(this);
+    this.populateCmds = this.populateCmds.bind(this);
+    this.saveConfig = this.saveConfig.bind(this);
   }
   //gets the current date/time and formats it
   getTime() {
@@ -202,7 +204,7 @@ class utils {
       status.client.cmds.set(command.name.toLowerCase(), command);
       log(`Found command: ${command.name}`, ["[UTILS]"]);
     }
-    dumpJSON("./config.json", this.config, 2);
+    this.dumpJSON("./config.json", this.config, 2);
     const rest = new REST({ version: "10" }).setToken(TOKEN);
     (async () => {
       try {
@@ -260,7 +262,7 @@ class utils {
     this.config.sharding[bot.guild.id].welcomeMsg = bot.welcomeMsg;
     this.config.sharding[bot.guild.id].ruleTextChannel = bot.ruleTextChannel;
     this.config.sharding[bot.guild.id].audioStats = bot.audioStats;
-    dumpJSON("./config.json", this.config, 2);
+    this.dumpJSON("./config.json", this.config, 2);
   }
 
   //dumps a given object's JSON to a json file
