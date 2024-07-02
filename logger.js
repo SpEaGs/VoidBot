@@ -36,7 +36,7 @@ class Logger {
     });
   }
   handleLog(lo) {
-    const ls = `${lo.timeStamp} [${level}] ${lo.tags.join(" ")}: ${lo.msg}`;
+    const ls = `${lo.timeStamp} [${lo.level}] ${lo.tags.join(" ")}: ${lo.msg}`;
     this.pipeline[lo.level.toLowerCase()](ls);
     if (!!sockets) this.sendSocketLog(lo);
     this.backlog.push(lo);
