@@ -54,8 +54,6 @@ class AudioStats extends Object {
   }
 }
 
-module.exports = new utils();
-
 class utils {
   AudioStats = AudioStats;
   //gets the current date/time and formats it
@@ -438,3 +436,5 @@ class utils {
     });
   }
 }
+
+module.exports = new utils();
