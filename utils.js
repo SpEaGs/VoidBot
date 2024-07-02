@@ -20,6 +20,9 @@ class AudioStats extends Object {
 
 class utils {
   AudioStats = AudioStats;
+  log = log;
+  warn = warn;
+  err = err;
   constructor() {
     this.config = {};
     if (!fs.existsSync("./config.json")) {
@@ -58,8 +61,10 @@ class utils {
       this.config = require("./config.json");
     }
     this.getTime = this.getTime.bind(this);
+    this.populateAdmin = this.populateAdmin.bind(this);
     this.populateCmds = this.populateCmds.bind(this);
     this.saveConfig = this.saveConfig.bind(this);
+    this.cleanUpAudioCache = this.cleanUpAudioCache.bind(this);
   }
   //gets the current date/time and formats it
   getTime() {
@@ -170,7 +175,7 @@ class utils {
 
   //populates an internal list of admin for a given server
   populateAdmin(bot) {
-    log(`Populating list of admin roles...`, [
+    this.log(`Populating list of admin roles...`, [
       "[UTILS]",
       `[${bot.guild.name}]`,
     ]);
@@ -181,13 +186,13 @@ class utils {
         });
       }
     });
-    log(`Admin role population done!`, ["[UTILS]", `[${bot.guild.name}]`]);
+    this.log(`Admin role population done!`, ["[UTILS]", `[${bot.guild.name}]`]);
   }
 
   //populates an internal list of commands
   populateCmds(status) {
     let cmdReg = [];
-    log("Populating commands list...", ["[UTILS]"]);
+    this.log("Populating commands list...", ["[UTILS]"]);
     let cmdFiles = fs.readdirSync("./commands/");
 
     status.client.cmds.clear();
@@ -202,13 +207,13 @@ class utils {
         });
       cmdReg.push(command.data.toJSON());
       status.client.cmds.set(command.name.toLowerCase(), command);
-      log(`Found command: ${command.name}`, ["[UTILS]"]);
+      this.log(`Found command: ${command.name}`, ["[UTILS]"]);
     }
     this.dumpJSON("./config.json", this.config, 2);
     const rest = new REST({ version: "10" }).setToken(TOKEN);
     (async () => {
       try {
-        log("Sending slash command data...", ["[UTILS]"]);
+        this.log("Sending slash command data...", ["[UTILS]"]);
         status.client.children.forEach(async (b) => {
           await rest.put(
             Routes.applicationGuildCommands(
@@ -218,13 +223,13 @@ class utils {
             { body: cmdReg }
           );
         });
-        log("Slash commands updated successfully!", ["[UTILS]"]);
+        this.log("Slash commands updated successfully!", ["[UTILS]"]);
       } catch (error) {
         err("Error sending updates for slash commands.", ["[UTILS]"]);
         err(error, ["[UTILS]"]);
       }
     })();
-    log("Command population done!", ["[UTILS]"]);
+    this.log("Command population done!", ["[UTILS]"]);
   }
 
   //checks internal list of commands for a given alias
@@ -365,7 +370,7 @@ class utils {
   }
 
   async cleanUpAudioCache(status) {
-    log("Cleaning audio cache...", ["[AUDIOCACHE]"]);
+    this.log("Cleaning audio cache...", ["[AUDIOCACHE]"]);
     const CacheFile = require("./models/cachefile");
     const cachePath = "/mnt/raid5/voidbot/audiocache/";
     const hardFileList = fs.readdirSync(cachePath);
@@ -376,7 +381,7 @@ class utils {
       if (missingDocs.length > 0) {
         missingDocs.forEach((miss) => {
           fs.unlinkSync(`${cachePath}${miss}`);
-          log(`Found and removed file missing associated db entry.`, [
+          this.log(`Found and removed file missing associated db entry.`, [
             "[AUDIOCACHE]",
           ]);
         });
@@ -392,7 +397,7 @@ class utils {
             utils.informAllClients(status, {
               audioCache: { remove: true, info: f },
             });
-            log(`Found and removed db entry missing associated file.`, [
+            this.log(`Found and removed db entry missing associated file.`, [
               "[AUDIOCACHE]",
             ]);
           });
@@ -410,7 +415,7 @@ class utils {
           utils.informAllClients(status, {
             audioCache: { remove: true, info: oldest },
           });
-          log(`Audio cache full. Removed song: ${oldest.title}`, [
+          this.log(`Audio cache full. Removed song: ${oldest.title}`, [
             "[AUDIOCACHE]",
           ]);
         });
@@ -430,7 +435,7 @@ class utils {
             dupes.forEach((dupe) => {
               fs.unlinkSync(`${cachePath}${dupe.NOD}`);
             });
-            log(
+            this.log(
               `Found and removed ${
                 dupes.length > 1
                   ? `${dupes.length} duplicate entries & files`
@@ -441,7 +446,7 @@ class utils {
           });
         }
       }
-      log("Audio cache cleanup done!", ["[AUDIOCACHE]"]);
+      this.log("Audio cache cleanup done!", ["[AUDIOCACHE]"]);
     });
   }
 }
