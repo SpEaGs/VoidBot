@@ -53,9 +53,9 @@ class utils {
           },
         },
       };
-      dumpJSON("config.json", config, 2);
+      dumpJSON("config.json", this.config, 2);
     } else {
-      config = require("./config.json");
+      this.config = require("./config.json");
     }
   }
   //gets the current date/time and formats it
@@ -79,7 +79,7 @@ class utils {
 
   //handles the welcome message when a new member joins a server
   welcome(mem, bot) {
-    let welcome = `${config.welcomeMsgPre} Welcome ${mem.toString()} to ${
+    let welcome = `${this.config.welcomeMsgPre} Welcome ${mem.toString()} to ${
       mem.guild.name
     }!${
       !!bot.ruleTextChannel
@@ -97,7 +97,7 @@ class utils {
 
   //handles the sendoff message when a member leaves a server
   sendoff(mem) {
-    let toReturn = `${config.sendoffMsgPre} ${mem.user.username} has left the server.`;
+    let toReturn = `${this.config.sendoffMsgPre} ${mem.user.username} has left the server.`;
     return toReturn;
   }
 
@@ -119,7 +119,7 @@ class utils {
   //checks if a given user has admin permissions over the bot
   botAdminCheck(id) {
     let toReturn = false;
-    for (let u of config.botAdmin) {
+    for (let u of this.config.botAdmin) {
       if (u === id) {
         toReturn = true;
         break;
@@ -189,11 +189,11 @@ class utils {
 
     status.client.cmds.clear();
 
-    config.cmdToggles = [];
+    this.config.cmdToggles = [];
     for (let file of cmdFiles) {
       let command = require(`./commands/${file}`);
       if (command.name.toLowerCase() !== "botadmin")
-        config.cmdToggles.push({
+        this.config.cmdToggles.push({
           name: command.name.toLowerCase(),
           state: true,
         });
@@ -201,7 +201,7 @@ class utils {
       status.client.cmds.set(command.name.toLowerCase(), command);
       log(`Found command: ${command.name}`, ["[UTILS]"]);
     }
-    dumpJSON("./config.json", config, 2);
+    dumpJSON("./config.json", this.config, 2);
     const rest = new REST({ version: "10" }).setToken(TOKEN);
     (async () => {
       try {
@@ -244,18 +244,22 @@ class utils {
 
   //saves given bot's settings to config file
   saveConfig(bot) {
-    config.sharding[bot.guild.id].guildName = bot.guild.name;
-    config.sharding[bot.guild.id].defaultVoiceChannel = bot.defaultVoiceChannel;
-    config.sharding[bot.guild.id].announcements = bot.announcements;
-    config.sharding[bot.guild.id].announcementsRole = bot.announcementsRole;
-    config.sharding[bot.guild.id].newMember = bot.newMember;
-    config.sharding[bot.guild.id].newMemberRole = bot.newMemberRole;
-    config.sharding[bot.guild.id].defaultTextChannel = bot.defaultTextChannel;
-    config.sharding[bot.guild.id].welcomeTextChannel = bot.welcomeTextChannel;
-    config.sharding[bot.guild.id].welcomeMsg = bot.welcomeMsg;
-    config.sharding[bot.guild.id].ruleTextChannel = bot.ruleTextChannel;
-    config.sharding[bot.guild.id].audioStats = bot.audioStats;
-    dumpJSON("./config.json", config, 2);
+    this.config.sharding[bot.guild.id].guildName = bot.guild.name;
+    this.config.sharding[bot.guild.id].defaultVoiceChannel =
+      bot.defaultVoiceChannel;
+    this.config.sharding[bot.guild.id].announcements = bot.announcements;
+    this.config.sharding[bot.guild.id].announcementsRole =
+      bot.announcementsRole;
+    this.config.sharding[bot.guild.id].newMember = bot.newMember;
+    this.config.sharding[bot.guild.id].newMemberRole = bot.newMemberRole;
+    this.config.sharding[bot.guild.id].defaultTextChannel =
+      bot.defaultTextChannel;
+    this.config.sharding[bot.guild.id].welcomeTextChannel =
+      bot.welcomeTextChannel;
+    this.config.sharding[bot.guild.id].welcomeMsg = bot.welcomeMsg;
+    this.config.sharding[bot.guild.id].ruleTextChannel = bot.ruleTextChannel;
+    this.config.sharding[bot.guild.id].audioStats = bot.audioStats;
+    dumpJSON("./config.json", this.config, 2);
   }
 
   //dumps a given object's JSON to a json file
