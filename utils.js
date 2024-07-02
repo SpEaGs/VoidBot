@@ -6,42 +6,6 @@ const { TOKEN } = require("./tokens.json");
 const { log, warn, err } = require("./logger");
 
 //init config (create with defaults if not exists)
-let config = {};
-if (!fs.existsSync("./config.json")) {
-  config = {
-    pubIP: false,
-    welcomeMsgPre: "A new pawn for my schemes!?!?",
-    sendoffMsgPre: "Aww... there goes another pawn...",
-    botAdmin: ["125759724707774464", "125758417934483456"],
-    webAppDomain: "https://speags.com/voidbot/",
-    cmdToggles: [],
-    sharding: {
-      default: {
-        guildName: "",
-        announcements: false,
-        announcementsRole: false,
-        newMember: false,
-        newMemberRole: false,
-        defaultTextChannel: false,
-        welcomeTextChannel: false,
-        ruleTextChannel: false,
-        welcomeMsg: false,
-        defaultVoiceChannel: false,
-        groupRoles: [],
-        audioStats: {
-          plays: 0,
-          mostPlayedAllTime: "",
-          userMostAdded: "",
-          mostPlayedSinceLastReport: "",
-          playsSinceLastReport: 0,
-        },
-      },
-    },
-  };
-  dumpJSON("config.json", config, 2);
-} else {
-  config = require("./config.json");
-}
 
 class AudioStats extends Object {
   addedBy = "";
@@ -56,6 +20,44 @@ class AudioStats extends Object {
 
 class utils {
   AudioStats = AudioStats;
+  constructor() {
+    this.config = {};
+    if (!fs.existsSync("./config.json")) {
+      this.config = {
+        pubIP: false,
+        welcomeMsgPre: "A new pawn for my schemes!?!?",
+        sendoffMsgPre: "Aww... there goes another pawn...",
+        botAdmin: ["125759724707774464", "125758417934483456"],
+        webAppDomain: "https://speags.com/voidbot/",
+        cmdToggles: [],
+        sharding: {
+          default: {
+            guildName: "",
+            announcements: false,
+            announcementsRole: false,
+            newMember: false,
+            newMemberRole: false,
+            defaultTextChannel: false,
+            welcomeTextChannel: false,
+            ruleTextChannel: false,
+            welcomeMsg: false,
+            defaultVoiceChannel: false,
+            groupRoles: [],
+            audioStats: {
+              plays: 0,
+              mostPlayedAllTime: "",
+              userMostAdded: "",
+              mostPlayedSinceLastReport: "",
+              playsSinceLastReport: 0,
+            },
+          },
+        },
+      };
+      dumpJSON("config.json", config, 2);
+    } else {
+      config = require("./config.json");
+    }
+  }
   //gets the current date/time and formats it
   getTime() {
     let cTime = new Date(Date.now());
