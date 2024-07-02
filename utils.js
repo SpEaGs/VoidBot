@@ -365,6 +365,7 @@ class utils {
   }
 
   cleanUpAudioCache(status) {
+    console.log(typeof log);
     log("Cleaning audio cache...", ["[AUDIOCACHE]"]);
     const CacheFile = require("./models/cachefile");
     const cachePath = "/mnt/raid5/voidbot/audiocache/";
