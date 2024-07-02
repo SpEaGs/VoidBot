@@ -1,4 +1,4 @@
-const { log, warn, err, getBacklog } = require("./logger");
+const { log, warn, err, getBacklog } = require("./logger.js");
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 

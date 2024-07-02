@@ -5,8 +5,6 @@ const { TOKEN } = require("./tokens.json");
 
 const { log, warn, err } = require("./logger.js");
 
-//init config (create with defaults if not exists)
-
 class AudioStats extends Object {
   addedBy = "";
   lastPlayed = 0;
@@ -21,6 +19,7 @@ class AudioStats extends Object {
 class utils {
   AudioStats = AudioStats;
   constructor() {
+    //init config (create with defaults if not exists)
     this.config = {};
     if (!fs.existsSync("./config.json")) {
       this.config = {
@@ -59,6 +58,7 @@ class utils {
     }
     this.getTime = this.getTime.bind(this);
     this.populateCmds = this.populateCmds.bind(this);
+    this.cleanUpAudioCache = this.cleanUpAudioCache.bind(this);
     this.saveConfig = this.saveConfig.bind(this);
   }
   //gets the current date/time and formats it
@@ -389,7 +389,7 @@ class utils {
           totalSize += fsize;
         } else {
           CacheFile.findOneAndRemove({ NOD: f.NOD }).then(() => {
-            utils.informAllClients(status, {
+            this.informAllClients(status, {
               audioCache: { remove: true, info: f },
             });
             log(`Found and removed db entry missing associated file.`, [
@@ -407,7 +407,7 @@ class utils {
         }, files[0]);
         fs.unlinkSync(`${cachePath}${oldest.NOD}`);
         CacheFile.findOneAndRemove({ _id: oldest._id }).then(() => {
-          utils.informAllClients(status, {
+          this.informAllClients(status, {
             audioCache: { remove: true, info: oldest },
           });
           log(`Audio cache full. Removed song: ${oldest.title}`, [
