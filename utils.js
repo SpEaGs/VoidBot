@@ -57,15 +57,16 @@ class utils {
     } else {
       this.config = require("./config.json");
     }
+    this.getTime = this.getTime.bind(this);
   }
   //gets the current date/time and formats it
   getTime() {
     let cTime = new Date(Date.now());
-    let timeStr = `[${zeroify(cTime.getMonth() + 1)}/${zeroify(
+    let timeStr = `[${this.zeroify(cTime.getMonth() + 1)}/${this.zeroify(
       cTime.getDate()
-    )} ${zeroify(cTime.getHours())}:${zeroify(cTime.getMinutes())}:${zeroify(
-      cTime.getSeconds()
-    )}]`;
+    )} ${this.zeroify(cTime.getHours())}:${this.zeroify(
+      cTime.getMinutes()
+    )}:${this.zeroify(cTime.getSeconds())}]`;
     return timeStr;
   }
   getTimeRaw() {
