@@ -449,13 +449,13 @@ function clientLogin(t) {
   }
 }
 
-process.on("uncaughtException", (err) => {
-  if (err.captureStackTrace) err.captureStackTrace();
+process.on("uncaughtException", (error) => {
+  if (error.captureStackTrace) error.captureStackTrace();
   err(
-    `Uncaught exception:\n${err.name} position: ${err.lineNumber}:${err.columnNumber}\n${err.message}\n${err.stack}`,
+    `Uncaught exception:\n${error.name} position: ${error.lineNumber}:${error.columnNumber}\n${error.message}\n${error.stack}`,
     ["[CRITICAL]"]
   );
-  utils.dumpJSON("ERR_DUMP.json", err, 2);
+  utils.dumpJSON("ERR_DUMP.json", error, 2);
   try {
     status.client.children.forEach((bot) => {
       utils.saveConfig(bot);
