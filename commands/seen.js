@@ -1,6 +1,7 @@
 //Seen command. Gets when a user was last seen
 const utils = require("../utils.js");
 const { SlashCommandBuilder } = require("discord.js");
+const { getTimeRaw } = require("../logger.js");
 
 let name = "Seen";
 let description = "Gets how long ago a user was last online/active.";
@@ -29,8 +30,7 @@ module.exports = {
     let target = params.bot.guild.members.cache.find(
       (u) => u.id === params.interaction.options.getUser("user").id
     );
-    let timeDiff =
-      utils.getTimeRaw() - params.bot.status.client.lastSeen[target.id];
+    let timeDiff = getTimeRaw() - params.bot.status.client.lastSeen[target.id];
     let seen = `${utils.msToTime(timeDiff)} ago`;
     if (seen < 0) {
       seen = `sometime before the last restart of this bot.`;

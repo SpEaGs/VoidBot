@@ -1,5 +1,4 @@
 const winston = require("winston");
-const utils = require("./utils");
 const sockets = require("./main.js").consoleSockets;
 
 class Logger {
@@ -20,15 +19,33 @@ class Logger {
         new winston.transports.Console({ format: winston.format.simple() }),
       ],
     });
+    this.getTime = this.getTime.bind(this);
     this.handleLog = this.handleLog.bind(this);
     this.log = this.log.bind(this);
     this.warn = this.warn.bind(this);
     this.err = this.err.bind(this);
   }
+  getTime() {
+    let cTime = new Date(Date.now());
+    let timeStr = `[${this.zeroify(cTime.getMonth() + 1)}/${this.zeroify(
+      cTime.getDate()
+    )} ${this.zeroify(cTime.getHours())}:${this.zeroify(
+      cTime.getMinutes()
+    )}:${this.zeroify(cTime.getSeconds())}]`;
+    return timeStr;
+  }
+  getTimeRaw() {
+    return new Date().getTime();
+  }
+  zeroify(num) {
+    if (num < 10) {
+      return `0${num}`;
+    } else return `${num}`;
+  }
   sendSocketLog(lo) {
     sockets.forEach((s) => {
       s.once("stdout_auth", (snowflake) => {
-        if (utils.config.botAdmin.includes(snowflake)) {
+        if (lo.botAdmin.includes(snowflake)) {
           s.emit("stdout", lo);
         }
       });
@@ -38,12 +55,12 @@ class Logger {
   handleLog(lo) {
     const ls = `${lo.timeStamp} [${lo.level}] ${lo.tags.join(" ")}: ${lo.msg}`;
     this.pipeline[lo.level.toLowerCase()](ls);
-    if (!!sockets) this.sendSocketLog(lo);
+    //if (!!sockets) this.sendSocketLog(lo);
     this.backlog.push(lo);
   }
   log(str, tags) {
     this.handleLog({
-      timeStamp: utils.getTime(),
+      timeStamp: this.getTime(),
       tags,
       msg: str,
       level: "INFO",
@@ -51,7 +68,7 @@ class Logger {
   }
   warn(str, tags) {
     this.handleLog({
-      timeStamp: utils.getTime(),
+      timeStamp: this.getTime(),
       tags,
       msg: str,
       level: "WARN",
@@ -59,7 +76,7 @@ class Logger {
   }
   err(str, tags) {
     this.handleLog({
-      timeStamp: utils.getTime(),
+      timeStamp: this.getTime(),
       tags,
       msg: str,
       level: "ERROR",

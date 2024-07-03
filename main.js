@@ -1,4 +1,4 @@
-const { log, warn, err, getBacklog } = require("./logger.js");
+const { log, warn, err, getBacklog, getTimeRaw } = require("./logger.js");
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 
@@ -391,8 +391,7 @@ status.client.on("presenceUpdate", (oldPresence, newPresence) => {
     !!status.client.lastSeen[newPresence.user.id]
   )
     return delete status.client.lastSeen[newPresence.user.id];
-  else
-    return (status.client.lastSeen[newPresence.user.id] = utils.getTimeRaw());
+  else return (status.client.lastSeen[newPresence.user.id] = getTimeRaw());
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)

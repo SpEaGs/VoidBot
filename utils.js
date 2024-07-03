@@ -61,24 +61,6 @@ class utils {
     this.cleanUpAudioCache = this.cleanUpAudioCache.bind(this);
     this.saveConfig = this.saveConfig.bind(this);
   }
-  //gets the current date/time and formats it
-  getTime() {
-    let cTime = new Date(Date.now());
-    let timeStr = `[${this.zeroify(cTime.getMonth() + 1)}/${this.zeroify(
-      cTime.getDate()
-    )} ${this.zeroify(cTime.getHours())}:${this.zeroify(
-      cTime.getMinutes()
-    )}:${this.zeroify(cTime.getSeconds())}]`;
-    return timeStr;
-  }
-  getTimeRaw() {
-    return new Date().getTime();
-  }
-  zeroify(num) {
-    if (num < 10) {
-      return `0${num}`;
-    } else return `${num}`;
-  }
 
   //handles the welcome message when a new member joins a server
   welcome(mem, bot) {
