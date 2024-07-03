@@ -221,7 +221,7 @@ class utils {
   //cleans a channel name (parses a given string to escape any apostrophe found)
   cleanChannelName(name) {
     if (name.includes("'")) {
-      cleanName = name.split("'").join("\\'");
+      let cleanName = name.split("'").join("\\'");
       return cleanName;
     } else return name;
   }
