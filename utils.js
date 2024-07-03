@@ -56,7 +56,6 @@ class utils {
     } else {
       this.config = require("./config.json");
     }
-    this.getTime = this.getTime.bind(this);
     this.populateCmds = this.populateCmds.bind(this);
     this.cleanUpAudioCache = this.cleanUpAudioCache.bind(this);
     this.saveConfig = this.saveConfig.bind(this);
