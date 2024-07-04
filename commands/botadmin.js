@@ -11,7 +11,7 @@ const cmdChoices = config.cmdToggles.map((i) => {
   return { name: i.name, value: i.name };
 });
 
-warn(JSON.stringify(cmdChoices, null, 2), ["[BOTADMIN]"]);
+utils.dumpJSON("cmdChoices.txt", cmdChoices, 2);
 
 module.exports = {
   data: new SlashCommandBuilder()
