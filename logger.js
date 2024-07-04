@@ -53,7 +53,9 @@ class Logger {
     });
   }
   handleLog(lo) {
-    const ls = `${lo.timeStamp} [${lo.level}] ${lo.tags.join(" ")}: ${lo.msg}`;
+    const ls = `${lo.timeStamp} [${lo.level}] ${lo.tags.join(" ")}: ${lo.msg}${
+      lo.error ? `\n${lo.error}` : ``
+    }`;
     this.pipeline[lo.level.toLowerCase()](ls);
     //if (!!sockets) this.sendSocketLog(lo);
     this.backlog.push(lo);
@@ -66,20 +68,22 @@ class Logger {
       level: "INFO",
     });
   }
-  warn(str, tags) {
+  warn(str, tags, error = false) {
     this.handleLog({
       timeStamp: this.getTime(),
       tags,
       msg: str,
       level: "WARN",
+      error,
     });
   }
-  err(str, tags) {
+  err(str, tags, error = false) {
     this.handleLog({
       timeStamp: this.getTime(),
       tags,
       msg: str,
       level: "ERROR",
+      error,
     });
   }
   getBacklog() {

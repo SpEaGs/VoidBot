@@ -1,7 +1,6 @@
 //WebUI command. Sends a link to the Bot's WebUI dashboard.
 
-const utils = require("../utils.js");
-const webURL = utils.config.webURL;
+const webURL = require("../cfg.js").webURL;
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Webui";

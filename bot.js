@@ -2,6 +2,7 @@ const Discord = require("discord.js");
 const EventEmitter = require("events");
 
 const utils = require("./utils.js");
+const config = require("./cfg.js");
 const token = require("./tokens.json").TOKEN;
 
 const { log, warn, err } = require("./logger.js");
@@ -19,13 +20,13 @@ class Bot extends EventEmitter {
     //this should automatically update any existing config with new entries
     //that are added to the defaults
     const loadConfig = () => {
-      let configOut = utils.config.sharding.default;
-      if (!utils.config.sharding[this.guild.id]) {
-        utils.config.sharding[this.guild.id] = { ...configOut };
+      let configOut = config.sharding.default;
+      if (!config.sharding[this.guild.id]) {
+        config.sharding[this.guild.id] = { ...configOut };
       }
       return {
         ...configOut,
-        ...utils.config.sharding[this.guild.id],
+        ...config.sharding[this.guild.id],
         guildName: undefined,
       };
     };
@@ -54,15 +55,15 @@ class Bot extends EventEmitter {
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
-    utils.config.sharding[this.guild.id].guildName = this.guild.name;
+    config.sharding[this.guild.id].guildName = this.guild.name;
 
-    if (!utils.config.sharding[this.guild.id].audioStats)
-      utils.config.sharding[this.guild.id].audioStats = this.audioStats;
+    if (!config.sharding[this.guild.id].audioStats)
+      config.sharding[this.guild.id].audioStats = this.audioStats;
 
     //save config & clear disconnected websockets at intervals: 5min
-    utils.saveConfig(this);
+    config.save(this);
     setInterval(() => {
-      utils.saveConfig(this);
+      config.save(this);
       this.socketSubs.forEach((s) => {
         if (!s.connected) this.socketSubs.delete(s.id);
       });

@@ -23,6 +23,7 @@ require("dotenv").config();
 require("./connectdb.js");
 
 const utils = require("./utils.js");
+const config = require("./cfg.js");
 const Bot = require("./bot.js");
 const intents = new Discord.IntentsBitField([
   Discord.IntentsBitField.Flags.Guilds,
@@ -40,7 +41,7 @@ module.exports = {
   systemUIPopulated: false,
   settingsUIPopulated: false,
   getStatus: getStatus,
-  webAppDomain: utils.config.webAppDomain,
+  webAppDomain: config.webAppDomain,
   sockets: new Discord.Collection(),
   consoleSockets: new Discord.Collection(),
 };
@@ -102,11 +103,11 @@ function launchWebServer() {
                 .filter((b) => !!b);
             }
             case "console": {
-              if (utils.config.botAdmin.includes(snowflake)) {
+              if (config.botAdmin.includes(snowflake)) {
                 status.consoleSockets.set(s.id, s);
                 payload.console = {
                   backlog: getBacklog(),
-                  cmdToggles: utils.config.cmdToggles,
+                  cmdToggles: config.cmdToggles,
                 };
               }
             }
@@ -126,12 +127,12 @@ function launchWebServer() {
         switch (payload.admin) {
           case true: {
             utils.informAdminClients(bot, payload.data);
-            utils.saveConfig(bot);
+            config.save(bot);
             break;
           }
           case false: {
             utils.informClients(bot, payload.data);
-            utils.saveConfig(bot);
+            config.save(bot);
             break;
           }
         }
@@ -160,12 +161,12 @@ function launchWebServer() {
 
   io.on("connection", (socket) => {
     socket.on("sysCMD", (payload) => {
-      if (utils.config.botAdmin.includes(payload.snowflake)) {
+      if (config.botAdmin.includes(payload.snowflake)) {
         cmd(payload.cmd, payload.data);
       }
     });
     socket.once("handshake_res", (snowflake) => {
-      botAdmin = !!utils.config.botAdmin.includes(snowflake);
+      botAdmin = !!config.botAdmin.includes(snowflake);
       initSocket(socket);
       status.sockets.set(socket.id, socket);
       socket.emit("handshake_end", botAdmin);
@@ -240,7 +241,7 @@ try {
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
       if (
-        !utils.config.cmdToggles.find(
+        !config.cmdToggles.find(
           (i) => i.name === interaction.commandName.toLowerCase()
         ).state
       ) {
@@ -292,8 +293,8 @@ status.client.on("guildDelete", (guild) => {
     `[${bot.guild.name}]`,
   ]);
   status.client.children.delete(guild.id);
-  delete utils.config.sharding[guild.id];
-  utils.dumpJSON("config.json", utils.config, 2);
+  delete config.sharding[guild.id];
+  utils.dumpJSON("config.json", config, 2);
 });
 
 //discord.js client event for new members joining a server
@@ -412,11 +413,10 @@ function cmd(e = "", args = false) {
       process.exit(0);
     }
     case "togglecmd": {
-      utils.config.cmdToggles.find((i) => i.name === args.name).state =
-        args.state;
-      utils.dumpJSON("./config.json", utils.config, 2);
+      config.cmdToggles.find((i) => i.name === args.name).state = args.state;
+      utils.dumpJSON("./config.json", config, 2);
       status.consoleSockets.forEach((s) => {
-        s.emit("cmdList", utils.config.cmdToggles);
+        s.emit("cmdList", config.cmdToggles);
       });
       break;
     }
@@ -457,7 +457,7 @@ process.on("uncaughtException", (error) => {
   utils.dumpJSON("ERR_DUMP.json", error, 2);
   try {
     status.client.children.forEach((bot) => {
-      utils.saveConfig(bot);
+      config.save(bot);
     });
     status.client.destroy();
     setTimeout(() => {

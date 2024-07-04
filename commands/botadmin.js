@@ -1,4 +1,5 @@
 const utils = require("../utils.js");
+const config = require("../cfg.js");
 const { SlashCommandBuilder } = require("discord.js");
 
 const { log, warn, err } = require("../logger");
@@ -6,7 +7,7 @@ const { log, warn, err } = require("../logger");
 let name = "Botadmin";
 let description = "Provides various subcommands for bot admin.";
 
-const cmdChoices = utils.config.cmdToggles.map((i) => {
+const cmdChoices = config.cmdToggles.map((i) => {
   return { name: i.name, value: i.name };
 });
 
@@ -56,8 +57,8 @@ module.exports = {
     switch (params.interaction.options.getSubcommand()) {
       case "togglecmd": {
         warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
-        toggleBool(utils.config.cmdToggles.find((i) => i.name === cmd).state);
-        return utils.dumpJSON("../config.json", utils.config, 2);
+        toggleBool(config.cmdToggles.find((i) => i.name === cmd).state);
+        return utils.dumpJSON("../config.json", config, 2);
       }
       case "refreshcmds": {
         return utils.populateCmds(params.bot.status);

@@ -1,4 +1,5 @@
 const utils = require("../utils");
+const config = require("../cfg.js");
 const { SlashCommandBuilder } = require("discord.js");
 
 let name = "Set";
@@ -270,7 +271,7 @@ module.exports = {
       }
     }
     await params.interaction.editReply({ content: toReply });
-    utils.saveConfig(params.bot);
+    config.save(params.bot);
     utils.informAdminClients(params.bot, {
       defaultTextChannel: params.bot.defaultTextChannel,
       defaultVoiceChannel: params.bot.defaultVoiceChannel,
