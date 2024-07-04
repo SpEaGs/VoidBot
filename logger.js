@@ -1,5 +1,6 @@
 const winston = require("winston");
 const sockets = require("./main.js").consoleSockets;
+let botAdmin = require("./config.json").botAdmin;
 
 class Logger {
   constructor() {
@@ -45,7 +46,7 @@ class Logger {
   sendSocketLog(lo) {
     sockets.forEach((s) => {
       s.once("stdout_auth", (snowflake) => {
-        if (lo.botAdmin.includes(snowflake)) {
+        if (botAdmin.includes(snowflake)) {
           s.emit("stdout", lo);
         }
       });
@@ -57,7 +58,7 @@ class Logger {
       lo.error ? `\n${lo.error}` : ``
     }`;
     this.pipeline[lo.level.toLowerCase()](ls);
-    //if (!!sockets) this.sendSocketLog(lo);
+    if (!!sockets) this.sendSocketLog(lo);
     this.backlog.push(lo);
   }
   log(str, tags) {
@@ -88,6 +89,9 @@ class Logger {
   }
   getBacklog() {
     return this.backlog;
+  }
+  reloadBotAdmin() {
+    botAdmin = require("./config.json").botAdmin;
   }
 }
 

@@ -136,19 +136,27 @@ class utils {
 
     status.client.cmds.clear();
 
-    config.cmdToggles = [];
-    for (let file of cmdFiles) {
+    if (!config.cmdToggles) config.cmdToggles = [];
+    let newCMD = false;
+    cmdFiles.forEach((file) => {
       let command = require(`./commands/${file}`);
-      if (command.name.toLowerCase() !== "botadmin")
-        config.cmdToggles.push({
-          name: command.name.toLowerCase(),
-          state: true,
-        });
-      cmdReg.push(command.data.toJSON());
-      status.client.cmds.set(command.name.toLowerCase(), command);
-      log(`Found command: ${command.name}`, ["[UTILS]"]);
-    }
-    this.dumpJSON("./config.json", config, 2);
+      if (command.name.toLowerCase() !== "botadmin") {
+        let cmd = config.cmdToggles.find(
+          (c) => c.name === command.name.toLowerCase()
+        );
+        if (!cmd) {
+          newCMD = true;
+          config.cmdToggles.push({
+            name: command.name.toLowerCase(),
+            state: true,
+          });
+        }
+        cmdReg.push(command.data.toJSON());
+        status.client.cmds.set(command.name.toLowerCase(), command);
+        log(`Found command: ${command.name}`, ["[UTILS]"]);
+      }
+    });
+    if (newCMD) config.save();
     const rest = new REST({ version: "10" }).setToken(TOKEN);
     (async () => {
       try {
