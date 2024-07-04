@@ -58,7 +58,7 @@ module.exports = {
       case "togglecmd": {
         warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
         toggleBool(config.cmdToggles.find((i) => i.name === cmd).state);
-        return utils.dumpJSON("../config.json", config, 2);
+        return config.save();
       }
       case "refreshcmds": {
         return utils.populateCmds(params.bot.status);

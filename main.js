@@ -294,7 +294,7 @@ status.client.on("guildDelete", (guild) => {
   ]);
   status.client.children.delete(guild.id);
   delete config.sharding[guild.id];
-  utils.dumpJSON("config.json", config, 2);
+  config.save();
 });
 
 //discord.js client event for new members joining a server
@@ -414,7 +414,7 @@ function cmd(e = "", args = false) {
     }
     case "togglecmd": {
       config.cmdToggles.find((i) => i.name === args.name).state = args.state;
-      utils.dumpJSON("./config.json", config, 2);
+      config.save();
       status.consoleSockets.forEach((s) => {
         s.emit("cmdList", config.cmdToggles);
       });

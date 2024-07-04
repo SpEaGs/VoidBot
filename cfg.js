@@ -46,18 +46,20 @@ class Config {
     this.save = this.save.bind(this);
     this.reload = this.reload.bind(this);
   }
-  save(bot) {
-    this.sharding[bot.guild.id].guildName = bot.guild.name;
-    this.sharding[bot.guild.id].defaultVoiceChannel = bot.defaultVoiceChannel;
-    this.sharding[bot.guild.id].announcements = bot.announcements;
-    this.sharding[bot.guild.id].announcementsRole = bot.announcementsRole;
-    this.sharding[bot.guild.id].newMember = bot.newMember;
-    this.sharding[bot.guild.id].newMemberRole = bot.newMemberRole;
-    this.sharding[bot.guild.id].defaultTextChannel = bot.defaultTextChannel;
-    this.sharding[bot.guild.id].welcomeTextChannel = bot.welcomeTextChannel;
-    this.sharding[bot.guild.id].welcomeMsg = bot.welcomeMsg;
-    this.sharding[bot.guild.id].ruleTextChannel = bot.ruleTextChannel;
-    this.sharding[bot.guild.id].audioStats = bot.audioStats;
+  save(bot = false) {
+    if (!!bot) {
+      this.sharding[bot.guild.id].guildName = bot.guild.name;
+      this.sharding[bot.guild.id].defaultVoiceChannel = bot.defaultVoiceChannel;
+      this.sharding[bot.guild.id].announcements = bot.announcements;
+      this.sharding[bot.guild.id].announcementsRole = bot.announcementsRole;
+      this.sharding[bot.guild.id].newMember = bot.newMember;
+      this.sharding[bot.guild.id].newMemberRole = bot.newMemberRole;
+      this.sharding[bot.guild.id].defaultTextChannel = bot.defaultTextChannel;
+      this.sharding[bot.guild.id].welcomeTextChannel = bot.welcomeTextChannel;
+      this.sharding[bot.guild.id].welcomeMsg = bot.welcomeMsg;
+      this.sharding[bot.guild.id].ruleTextChannel = bot.ruleTextChannel;
+      this.sharding[bot.guild.id].audioStats = bot.audioStats;
+    }
     fs.writeFile(
       "./config.json",
       JSON.stringify(
