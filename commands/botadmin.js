@@ -11,6 +11,8 @@ const cmdChoices = config.cmdToggles.map((i) => {
   return { name: i.name, value: i.name };
 });
 
+warn(cmdChoices, ["[BOTADMIN]"]);
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
