@@ -78,7 +78,8 @@ module.exports = {
             "[BOTADMIN]",
           ]);
           warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
-          toggleBool(config.cmdToggles.find((i) => i.name === cmd).state);
+          let toToggle = config.cmdToggles.find((i) => i.name === cmd);
+          toToggle.state = !toToggle.state;
           params.interaction.editReply({
             content: `Toggling ${cmd}`,
             components: [],
