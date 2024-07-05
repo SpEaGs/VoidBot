@@ -74,7 +74,7 @@ module.exports = {
         });
         try {
           const cmdSelected = await res.awaitMessageComponent({ time: 60_000 })
-            .values[0];
+            .value;
           params.interaction.editReply({
             content: `Toggling ${cmdSelected}`,
             components: [],
