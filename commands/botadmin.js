@@ -1,33 +1,23 @@
 const utils = require("../utils.js");
 const config = require("../cfg.js");
-const { SlashCommandBuilder } = require("discord.js");
+const {
+  SlashCommandBuilder,
+  StringSelectMenuOptionBuilder,
+  StringSelectMenuBuilder,
+  ActionRowBuilder,
+} = require("discord.js");
 
 const { log, warn, err } = require("../logger");
 
 let name = "Botadmin";
 let description = "Provides various subcommands for bot admin.";
 
-const cmdChoices = config.cmdToggles.map((i) => {
-  return { name: i.name, value: i.name };
-});
-
-warn(JSON.stringify(cmdChoices).length, ["[BOTADMIN]"]);
-
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
     .setDescription(description)
     .addSubcommand((subcommand) =>
-      subcommand
-        .setName("togglecmd")
-        .setDescription("Toggles a given command")
-        .addStringOption((option) =>
-          option
-            .setName("command")
-            .setDescription("Command to toggle")
-            .setRequired(true)
-            .addChoices(...cmdChoices)
-        )
+      subcommand.setName("togglecmd").setDescription("Toggles a given command")
     )
     .addSubcommand((subcommand) =>
       subcommand
@@ -55,12 +45,52 @@ module.exports = {
         content: "Command received!",
         ephemeral: true,
       });
-    let cmd = params.interaction.options.getString("command");
     switch (params.interaction.options.getSubcommand()) {
       case "togglecmd": {
-        warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
-        toggleBool(config.cmdToggles.find((i) => i.name === cmd).state);
-        return config.save();
+        const chunkedChoices = [];
+        let chunk = 0;
+        config.cmdToggles.forEach((i) => {
+          if (chunkedChoices[chunk].length == 25) chunk += 1;
+          chunkedChoices[chunk].push(
+            new StringSelectMenuOptionBuilder()
+              .setLabel(`${i.name} ${i.state ? "(enabled)" : "(disabled)"}`)
+              .setValue(i.name)
+          );
+        });
+
+        const menus = [];
+        chunkedChoices.forEach((chnk) => {
+          menus.push(
+            new StringSelectMenuBuilder()
+              .setCustomId("cmd")
+              .setPlaceholder("Select a command to toggle")
+              .addOptions(...chnk)
+          );
+        });
+        const cmdRow = new ActionRowBuilder().addComponents(...menus);
+        const res = await params.interaction.editReply({
+          content: "",
+          components: [cmdRow],
+        });
+        try {
+          const cmdSelected = await res.awaitMessageComponent({ time: 60_000 })
+            .values[0];
+          params.interaction.editReply({
+            content: `Toggling ${cmdSelected}`,
+            components: [],
+          });
+          warn(`Toggling command: ${cmdSelected}`, ["[BOTADMIN]"]);
+          toggleBool(
+            config.cmdToggles.find((i) => i.name === cmdSelected).state
+          );
+          return config.save();
+        } catch (e) {
+          warn(e, ["[INTERACTION]"]);
+          await params.interaction.editReply({
+            content: "No command selected within one minute. Canceling...",
+            components: [],
+          });
+        }
       }
       case "refreshcmds": {
         return utils.populateCmds(params.bot.status);
