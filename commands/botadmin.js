@@ -75,7 +75,9 @@ module.exports = {
           const cmdSelected = await res.awaitMessageComponent({ time: 60_000 });
           const cmd = cmdSelected.values[0];
           warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
-          toggleBool(config.cmdToggles.find((i) => i.name === cmd).state);
+          toggleBool(
+            config.cmdToggles.find((i) => i.name === cmd.toLowerCase()).state
+          );
           params.interaction.editReply({
             content: `Toggling ${cmd}`,
             components: [],
