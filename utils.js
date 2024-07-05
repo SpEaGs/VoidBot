@@ -151,10 +151,10 @@ class utils {
             state: true,
           });
         }
-        cmdReg.push(command.data.toJSON());
-        status.client.cmds.set(command.name.toLowerCase(), command);
-        log(`Found command: ${command.name}`, ["[UTILS]"]);
       }
+      cmdReg.push(command.data.toJSON());
+      status.client.cmds.set(command.name.toLowerCase(), command);
+      log(`Found command: ${command.name}`, ["[UTILS]"]);
     });
     if (newCMD) config.save();
     const rest = new REST({ version: "10" }).setToken(TOKEN);
