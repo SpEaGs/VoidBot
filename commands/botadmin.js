@@ -73,12 +73,11 @@ module.exports = {
         });
         try {
           const cmdSelected = await res.awaitMessageComponent({ time: 60_000 });
-          warn(`Toggling command: ${cmdSelected}`, ["[BOTADMIN]"]);
-          toggleBool(
-            config.cmdToggles.find((i) => i.name === cmdSelected).state
-          );
+          const cmd = cmdSelected.values[0];
+          warn(`Toggling command: ${cmd}`, ["[BOTADMIN]"]);
+          toggleBool(config.cmdToggles.find((i) => i.name === cmd).state);
           params.interaction.editReply({
-            content: `Toggling ${cmdSelected}`,
+            content: `Toggling ${cmd}`,
             components: [],
           });
           return config.save();
