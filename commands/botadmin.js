@@ -59,6 +59,8 @@ module.exports = {
           );
         });
 
+        warn(JSON.stringify(chunkedChoices, null, 2), ["[BOTADMIN]"]);
+
         const menus = [];
         chunkedChoices.forEach((chnk, i) => {
           menus.push(
