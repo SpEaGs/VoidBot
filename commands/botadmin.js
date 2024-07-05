@@ -60,19 +60,17 @@ module.exports = {
           if (chunkedChoices[chunk].length == 25) chunk += 1;
         });
 
-        const menus = [];
-        Object.values(chunkedChoices).forEach((chnk, i) => {
-          menus.push(
+        const cmdRows = chunkedChoices.map((chnk, i) => {
+          return new ActionRowBuilder().addComponents(
             new StringSelectMenuBuilder()
-              .setCustomId(`cmd${i + i}`)
-              .setPlaceholder(`Select a command to toggle.(page ${i + 1}`)
+              .setCustomId(`cmd${i + 1}`)
+              .setPlaceholder(`Select a command to toggle. (page ${i + 1})`)
               .addOptions(...chnk)
           );
         });
-        const cmdRow = new ActionRowBuilder().addComponents(...menus);
         const res = await params.interaction.editReply({
           content: "",
-          components: [cmdRow],
+          components: cmdRows,
         });
         try {
           const cmdSelected = await res.awaitMessageComponent({ time: 60_000 })
