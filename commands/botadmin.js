@@ -50,7 +50,7 @@ module.exports = {
         const chunkedChoices = [];
         let chunk = 0;
         config.cmdToggles.forEach((i) => {
-          if (!chunkedChoices[chunk]) chunkedChoices[chunk] = [];
+          if (!chunkedChoices[chunk]) chunkedChoices[chunk] = new Array();
           if (chunkedChoices[chunk].length == 25) chunk += 1;
           chunkedChoices[chunk].push(
             new StringSelectMenuOptionBuilder()
