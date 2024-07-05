@@ -59,11 +59,11 @@ module.exports = {
         });
 
         const menus = [];
-        chunkedChoices.forEach((chnk) => {
+        chunkedChoices.forEach((chnk, i) => {
           menus.push(
             new StringSelectMenuBuilder()
               .setCustomId("cmd")
-              .setPlaceholder("Select a command to toggle")
+              .setPlaceholder(`Select a command to toggle.(page ${i + 1}`)
               .addOptions(...chnk)
           );
         });
