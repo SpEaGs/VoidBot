@@ -52,13 +52,13 @@ module.exports = {
         config.cmdToggles.forEach((i) => {
           if (!chunkedChoices[`p${chunk}`])
             chunkedChoices[`p${chunk}`] = new Array();
-          if (chunkedChoices[`p${chunk}`].length == 25) chunk += 1;
           warn(JSON.stringify(chunkedChoices, null, 2), ["[BOTADMIN]"]);
           chunkedChoices[`p${chunk}`].push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`${i.name} ${i.state ? "(enabled)" : "(disabled)"}`)
               .setValue(i.name)
           );
+          if (chunkedChoices[`p${chunk}`].length == 25) chunk += 1;
         });
 
         const menus = [];
