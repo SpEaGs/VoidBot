@@ -241,6 +241,7 @@ try {
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
       if (
+        cmd !== "botadmin" &&
         !config.cmdToggles.find(
           (i) => i.name === interaction.commandName.toLowerCase()
         ).state
