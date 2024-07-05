@@ -109,8 +109,3 @@ module.exports = {
     }
   },
 };
-
-function toggleBool(bool) {
-  bool = !bool;
-  return bool;
-}
