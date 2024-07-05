@@ -47,25 +47,24 @@ module.exports = {
       });
     switch (params.interaction.options.getSubcommand()) {
       case "togglecmd": {
-        const chunkedChoices = {};
+        const chunkedChoices = [];
         let chunk = 0;
         config.cmdToggles.forEach((i) => {
-          if (!chunkedChoices[`p${chunk}`])
-            chunkedChoices[`p${chunk}`] = new Array();
+          if (!chunkedChoices[chunk]) chunkedChoices[chunk] = new Array();
           warn(JSON.stringify(chunkedChoices, null, 2), ["[BOTADMIN]"]);
-          chunkedChoices[`p${chunk}`].push(
+          chunkedChoices[chunk].push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`${i.name} ${i.state ? "(enabled)" : "(disabled)"}`)
               .setValue(i.name)
           );
-          if (chunkedChoices[`p${chunk}`].length == 25) chunk += 1;
+          if (chunkedChoices[chunk].length == 25) chunk += 1;
         });
 
         const menus = [];
         Object.values(chunkedChoices).forEach((chnk, i) => {
           menus.push(
             new StringSelectMenuBuilder()
-              .setCustomId("cmd")
+              .setCustomId(`cmd${i + i}`)
               .setPlaceholder(`Select a command to toggle.(page ${i + 1}`)
               .addOptions(...chnk)
           );
