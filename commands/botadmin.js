@@ -72,8 +72,7 @@ module.exports = {
           components: cmdRows,
         });
         try {
-          const cmdSelected = await res.awaitMessageComponent({ time: 60_000 })
-            .value;
+          const cmdSelected = await res.awaitMessageComponent({ time: 60_000 });
           warn(`Toggling command: ${cmdSelected}`, ["[BOTADMIN]"]);
           toggleBool(
             config.cmdToggles.find((i) => i.name === cmdSelected).state
