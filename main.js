@@ -240,9 +240,8 @@ try {
 
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
-      warn(cmd, ["[MAIN]"]);
       if (
-        cmd !== "botadmin" &&
+        interaction.commandName.toLowerCase() !== "botadmin" &&
         !config.cmdToggles.find(
           (i) => i.name === interaction.commandName.toLowerCase()
         ).state
