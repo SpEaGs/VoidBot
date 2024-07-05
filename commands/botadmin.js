@@ -51,7 +51,6 @@ module.exports = {
         let chunk = 0;
         config.cmdToggles.forEach((i) => {
           if (!chunkedChoices[chunk]) chunkedChoices[chunk] = new Array();
-          warn(JSON.stringify(chunkedChoices, null, 2), ["[BOTADMIN]"]);
           chunkedChoices[chunk].push(
             new StringSelectMenuOptionBuilder()
               .setLabel(`${i.name} ${i.state ? "(enabled)" : "(disabled)"}`)
@@ -75,14 +74,14 @@ module.exports = {
         try {
           const cmdSelected = await res.awaitMessageComponent({ time: 60_000 })
             .value;
-          params.interaction.editReply({
-            content: `Toggling ${cmdSelected}`,
-            components: [],
-          });
           warn(`Toggling command: ${cmdSelected}`, ["[BOTADMIN]"]);
           toggleBool(
             config.cmdToggles.find((i) => i.name === cmdSelected).state
           );
+          params.interaction.editReply({
+            content: `Toggling ${cmdSelected}`,
+            components: [],
+          });
           return config.save();
         } catch (e) {
           warn(e, ["[INTERACTION]"]);
