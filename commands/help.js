@@ -43,6 +43,9 @@ module.exports = {
       );
       if (chunkedChoices[chunk].length == 25) chunk++;
     });
+    chunkedChoices[chunkedChoices.length - 1].push(
+      new StringSelectMenuOptionBuilder().setLabel("all").setValue("*")
+    );
     const cmdRows = chunkedChoices.map((chnk, i) => {
       return new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
@@ -58,7 +61,7 @@ module.exports = {
     try {
       const selected = await res.awaitMessageComponent({ time: 120_000 });
       const sel = selected.values[0];
-      if (sel === "all") {
+      if (sel === "*") {
         const usageArr = params.bot.status.client.cmds
           .map((c) => {
             return `\`/${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`;
