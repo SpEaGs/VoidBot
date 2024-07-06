@@ -62,15 +62,36 @@ module.exports = {
       const selected = await res.awaitMessageComponent({ time: 120_000 });
       const sel = selected.values[0];
       if (sel === "*") {
-        const usageArr = params.bot.status.client.cmds
+        const uChunks = [];
+        let uchunk = 0;
+        params.bot.status.client.cmds.forEach((c) => {
+          if (!uChunks[uchunk]) uChunks[uchunk] = "";
+          uChunks[
+            uchunk
+          ] += `\`/${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`;
+          if (uChunks[uchunk].length >= 1750) uchunk++;
+        });
+        const usageAll = params.bot.status.client.cmds
           .map((c) => {
             return `\`/${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`;
           })
           .join(`\n\n`);
-        return await params.interaction.editReply({
-          content: usageArr,
-          components: [],
-        });
+        if (uChunks.length > 1) {
+          await params.interaction.editReply({
+            content: uChunks[0],
+            components: [],
+          });
+          let counter = 1;
+          uChunks.forEach(async (ch, i) => {
+            if (i === counter) await params.interaction.followUp(ch);
+            counter++;
+          });
+          return;
+        } else
+          return await params.interaction.editReply({
+            content: uChunks,
+            components: [],
+          });
       } else {
         const cmd = params.bot.status.client.cmds.get(sel);
         return await params.interaction.editReply({
