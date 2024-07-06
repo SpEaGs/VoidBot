@@ -35,7 +35,7 @@ module.exports = {
   name: name,
   description: description,
   args: true,
-  usage: `\`/botadmin <command> <args>`,
+  usage: `\`/botadmin <command> <args>\``,
   admin: false,
   botadmin: true,
   server: true,

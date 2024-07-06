@@ -68,7 +68,7 @@ module.exports = {
           if (!uChunks[uchunk]) uChunks[uchunk] = "";
           uChunks[
             uchunk
-          ] += `\`/${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`;
+          ] += `\n\`/${c.name}\`:\n    Usage: ${c.usage}\n    ${c.description}`;
           if (uChunks[uchunk].length >= 1750) uchunk++;
         });
         const usageAll = params.bot.status.client.cmds
