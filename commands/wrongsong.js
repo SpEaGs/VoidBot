@@ -35,6 +35,7 @@ module.exports = {
         .get(params.bot.defaultTextChannel.id)
         .send(`${mem} Removed \`${title}\` from the queue.`);
     } else {
+      await params.interaction.reply({ content: "Command received!" });
       const truncQueue = params.bot.audioQueue.slice(0, 25);
       const songRow = new ActionRowBuilder().addComponents(
         new StringSelectMenuBuilder()
