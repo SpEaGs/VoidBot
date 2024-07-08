@@ -225,7 +225,7 @@ module.exports = {
       }
       case "announcements": {
         toReply =
-          state !== undefined || state !== null
+          state !== undefined || state !== null || state !== "null"
             ? `Set announcements to: \`${state}\``
             : `Announcements are: ${
                 params.bot.announcements ? "`On (True)`" : "`Off (False)`"
