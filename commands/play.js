@@ -562,7 +562,10 @@ function createStream(info, details, status) {
 }
 
 function endDispatcher(status) {
-  if (status.audioQueue && status.audioQueue.length === 0) {
+  if (
+    (status.audioQueue && status.audioQueue.length === 0) ||
+    !status.audioQueue
+  ) {
     try {
       status.dispatcher.stop();
     } catch {}
