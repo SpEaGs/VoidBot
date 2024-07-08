@@ -175,7 +175,7 @@ module.exports = {
       }
       case "welcomemessage": {
         toReply =
-          state !== undefined
+          state !== undefined || state !== null
             ? `Set the welcome message to: \`${
                 state ? "`On (True)`" : "`Off (False)`"
               }\``
@@ -183,7 +183,7 @@ module.exports = {
                 params.bot.welcomeMsg ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.welcomeMsg =
-          state !== undefined ? state : params.bot.welcomeMsg;
+          state !== undefined || state !== null ? state : params.bot.welcomeMsg;
         break;
       }
       case "welcometextchannel": {
@@ -201,7 +201,7 @@ module.exports = {
       }
       case "newmember": {
         toReply =
-          state !== undefined
+          state !== undefined || state !== null
             ? `Set new member role dispensing to: \`${
                 state ? "`On (True)`" : "`Off (False)`"
               }\``
@@ -209,7 +209,7 @@ module.exports = {
                 params.bot.newMember ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.newMember =
-          state !== undefined ? state : params.bot.newMember;
+          state !== undefined || state !== null ? state : params.bot.newMember;
         break;
       }
       case "newmemberrole": {
@@ -225,13 +225,15 @@ module.exports = {
       }
       case "announcements": {
         toReply =
-          state !== undefined
+          state !== undefined || state !== null
             ? `Set announcements to: \`${state}\``
-            : `Announcement are: ${
+            : `Announcements are: ${
                 params.bot.announcements ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.announcements =
-          state !== undefined ? state : params.bot.announcements;
+          state !== undefined || state !== null
+            ? state
+            : params.bot.announcements;
         break;
       }
       case "announcementsrole": {
