@@ -63,7 +63,7 @@ module.exports = {
         utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
         return await params.interaction.editReply({
           content: `Removed \`${title}\` from the queue.${
-            params.bot.audioQueue.length === 0 ? `\nAudio queue empty.` : ``
+            params.bot.audioQueue.length === 0 ? `\nAudio queue is empty.` : ``
           }`,
           components: [],
         });
