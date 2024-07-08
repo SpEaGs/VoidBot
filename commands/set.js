@@ -149,13 +149,12 @@ module.exports = {
     switch (params.interaction.options.getSubcommand()) {
       case "defaulttextchannel": {
         toReply = !!chan
-          ? `Set the default text channel to: \`${channel.name}\``
-          : `Current default text channel: \`${
-              utils.findChanFromGuild(
-                params.bot.defaultTextChannel.name,
-                params.bot
-              ).name
-            }\``;
+          ? `Set the default text channel to: ${channel}`
+          : `Current default text channel: ${utils.findChanFromGuild(
+              params.bot.defaultTextChannel.name,
+              params.bot,
+              ChannelType.GuildText
+            )}`;
         params.bot.defaultTextChannel = !!chan
           ? chan
           : params.bot.defaultTextChannel;
@@ -163,13 +162,12 @@ module.exports = {
       }
       case "defaultvoicechannel": {
         toReply = !!chan
-          ? `Set the default voice channel to: \`${channel.name}\``
-          : `Current default voice channel: \`${
-              utils.findChanFromGuild(
-                params.bot.defaultVoiceChannel.name,
-                params.bot
-              ).name
-            }\``;
+          ? `Set the default voice channel to: ${channel}`
+          : `Current default voice channel: ${utils.findChanFromGuild(
+              params.bot.defaultVoiceChannel.name,
+              params.bot,
+              ChannelType.GuildVoice
+            )}`;
         params.bot.defaultVoiceChannel = !!chan
           ? chan
           : params.bot.defaultVoiceChannel;
@@ -190,11 +188,12 @@ module.exports = {
       }
       case "welcometextchannel": {
         toReply = !!chan
-          ? `Set the welcome text channel to: \`${channel.name}\``
-          : `Current welcome text channel: \`${
-              utils.findChanFromGuild(params.bot.welcomeTextChannel, params.bot)
-                .name
-            }\``;
+          ? `Set the welcome text channel to: ${channel}`
+          : `Current welcome text channel: ${utils.findChanFromGuild(
+              params.bot.welcomeTextChannel.name,
+              params.bot,
+              ChannelType.GuildText
+            )}`;
         params.bot.welcomeTextChannel = !!chan
           ? chan
           : params.bot.welcomeTextChannel;
@@ -249,10 +248,13 @@ module.exports = {
       case "ruletextchannel": {
         toReply = !!chan
           ? `Set the rule text channel to: \`${channel.name}\``
-          : `Current rule text channel: \`${
-              utils.findChanFromGuild(params.bot.ruleTextChannel, params.bot)
-                .name
-            }\``;
+          : `Current rule text channel: ${
+              utils.findChanFromGuild(
+                params.bot.ruleTextChannel.name,
+                params.bot,
+                ChannelType.GuildText
+              ).name
+            }`;
         params.bot.ruleTextChannel = !!chan ? chan : params.bot.ruleTextChannel;
         break;
       }

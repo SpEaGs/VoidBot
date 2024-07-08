@@ -1,5 +1,5 @@
 const fs = require("fs");
-const { Routes, PermissionsBitField } = require("discord.js");
+const { Routes, PermissionsBitField, ChannelType } = require("discord.js");
 const { REST } = require("@discordjs/rest");
 const { TOKEN } = require("./tokens.json");
 const config = require("./cfg.js");
@@ -93,7 +93,8 @@ class utils {
   }
 
   //finds a channel in a given server from a given channel name
-  findChanFromGuild(channel, bot, chanType = 0) {
+  //returns the set defaults for that server if the channel name isn't found
+  findChanFromGuild(channel, bot, chanType = ChannelType.GuildText) {
     let chan = bot.guild.channels.cache.find((c) => {
       if (
         c.name.toLowerCase().includes(channel.toLowerCase()) &&
@@ -104,9 +105,9 @@ class utils {
     if (!!chan) return chan;
     else {
       switch (chanType) {
-        case 0:
+        case ChannelType.GuildText:
           return bot.guild.channels.cache.get(bot.defaultTextChannel.id);
-        case 2:
+        case ChannelType.GuildVoice:
           return bot.guild.channels.cache.get(bot.defaultVoiceChannel.id);
       }
     }
