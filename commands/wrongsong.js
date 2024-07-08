@@ -42,10 +42,10 @@ module.exports = {
           .setCustomId("song")
           .setPlaceholder("Select a song from the first 25 in the queue")
           .addOptions(
-            ...truncQueue.map((qi) => {
+            ...truncQueue.map((qi, i) => {
               return new StringSelectMenuOptionBuilder()
-                .setLabel(qi.info.title)
-                .setValue(qi.info.title);
+                .setLabel(`${qi.info.title}__${i}`)
+                .setValue(`${qi.info.title}__${i}`);
             })
           )
       );
@@ -55,7 +55,7 @@ module.exports = {
       });
       try {
         const selected = await res.awaitMessageComponent({ time: 60_000 });
-        const title = selected.values[0];
+        const title = selected.values[0].split("__")[0];
         const index = params.bot.audioQueue.findIndex(
           (song) => song.info.title === title
         );
