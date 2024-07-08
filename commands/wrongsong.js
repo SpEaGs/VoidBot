@@ -26,7 +26,7 @@ module.exports = {
     const mem = params.interaction.member;
     if (params.WS) {
       const index = params.interaction.args.number - 1;
-      const title = params.bot.audioQueue[index].videoDetails.title;
+      const title = params.bot.audioQueue[index].details.title;
       params.bot.audioQueue.splice(index, 1);
       utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
       return params.bot.guild.channels.cache
@@ -41,8 +41,8 @@ module.exports = {
           .addOptions(
             ...truncQueue.map((qi) => {
               return new StringSelectMenuOptionBuilder()
-                .setLabel(qi.videoDetails.title)
-                .setValue(qi.videoDetails.title);
+                .setLabel(qi.details.title)
+                .setValue(qi.details.title);
             })
           )
       );
@@ -54,7 +54,7 @@ module.exports = {
         const selected = await res.awaitMessageComponent({ time: 60_000 });
         const title = selected.values[0];
         const index = params.bot.audioQueue.findIndex(
-          (song) => song.videoDetails.title === title
+          (song) => song.details.title === title
         );
         params.bot.audioQueue.splice(index, 1);
         utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
