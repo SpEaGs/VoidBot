@@ -34,11 +34,11 @@ module.exports = {
     for (const item of params.bot.audioQueue) {
       i += 1;
       output.push(
-        `${i}) - \`${item.title} [${parseInt(item.duration / 60)}:${(
-          item.duration % 60
+        `${i}) - \`${item.info.title} [${parseInt(item.info.duration / 60)}:${(
+          item.info.duration % 60
         )
           .toString()
-          .padStart(2, "0")}] (added by: ${item.added_by})\``
+          .padStart(2, "0")}] (added by: ${item.info.added_by})\``
       );
       if (output.length === 10) {
         params.bot.guild.channels.cache
