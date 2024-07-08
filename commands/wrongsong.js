@@ -44,7 +44,7 @@ module.exports = {
           .addOptions(
             ...truncQueue.map((qi, i) => {
               return new StringSelectMenuOptionBuilder()
-                .setLabel(`${qi.info.title}__${i}`)
+                .setLabel(`${i + 1}) ${qi.info.title}`)
                 .setValue(`${qi.info.title}__${i}`);
             })
           )
