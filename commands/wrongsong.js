@@ -1,5 +1,7 @@
 //Wrongsong command. Used to remove a song from the queue.
 
+const { log, warn, err } = require("../logger.js");
+
 const utils = require("../utils.js");
 const {
   SlashCommandBuilder,
