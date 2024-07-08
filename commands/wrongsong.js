@@ -63,6 +63,7 @@ module.exports = {
         utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
         return await params.interaction.editReply({
           content: `Removed \`${title}\` from the queue.`,
+          components: [],
         });
       } catch (e) {
         warn(e, ["[INTERACTION]"]);
