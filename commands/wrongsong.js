@@ -28,7 +28,7 @@ module.exports = {
     const mem = params.interaction.member;
     if (params.WS) {
       const index = params.interaction.args.number - 1;
-      const title = params.bot.audioQueue[index].details.title;
+      const title = params.bot.audioQueue[index].info.title;
       params.bot.audioQueue.splice(index, 1);
       utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
       return params.bot.guild.channels.cache
@@ -42,10 +42,9 @@ module.exports = {
           .setPlaceholder("Select a song from the first 25 in the queue")
           .addOptions(
             ...truncQueue.map((qi) => {
-              warn(JSON.stringify(qi, null, 2), ["[WRONGSONG]"]);
               return new StringSelectMenuOptionBuilder()
-                .setLabel(qi.details.title)
-                .setValue(qi.details.title);
+                .setLabel(qi.info.title)
+                .setValue(qi.info.title);
             })
           )
       );
@@ -57,7 +56,7 @@ module.exports = {
         const selected = await res.awaitMessageComponent({ time: 60_000 });
         const title = selected.values[0];
         const index = params.bot.audioQueue.findIndex(
-          (song) => song.details.title === title
+          (song) => song.info.title === title
         );
         params.bot.audioQueue.splice(index, 1);
         utils.informClients(params.bot, { audioQueue: params.bot.audioQueue });
