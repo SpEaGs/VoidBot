@@ -1,6 +1,6 @@
 const utils = require("../utils");
 const config = require("../cfg.js");
-const { SlashCommandBuilder } = require("discord.js");
+const { SlashCommandBuilder, ChannelType } = require("discord.js");
 
 let name = "Set";
 let description = "Sets given bot settings to the given values. Admin only.";
@@ -18,7 +18,7 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The text channel to set.")
-            .addChannelTypes(0)
+            .addChannelTypes(ChannelType.GuildText)
         )
     )
     //defaultVoiceChannel
@@ -30,7 +30,7 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The voice channel to set.")
-            .addChannelTypes(2)
+            .addChannelTypes(ChannelType.GuildVoice)
         )
     )
     //welcomeMessage
@@ -51,7 +51,7 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The text channel to set.")
-            .addChannelTypes(0)
+            .addChannelTypes(ChannelType.GuildText)
         )
     )
     //newMember
@@ -101,7 +101,7 @@ module.exports = {
           option
             .setName("channel")
             .setDescription("The text channel to set.")
-            .addChannelTypes(0)
+            .addChannelTypes(ChannelType.GuildText)
         )
     )
     //groupRoles
@@ -149,11 +149,13 @@ module.exports = {
     switch (params.interaction.options.getSubcommand()) {
       case "defaulttextchannel": {
         toReply = !!chan
-          ? `Set the default text channel to: \`${channel}\``
-          : `Current default text channel: ${utils.findChanFromGuild(
-              params.bot.defaultTextChannel.name,
-              params.bot
-            )}`;
+          ? `Set the default text channel to: \`${channel.name}\``
+          : `Current default text channel: \`${
+              utils.findChanFromGuild(
+                params.bot.defaultTextChannel.name,
+                params.bot
+              ).name
+            }\``;
         params.bot.defaultTextChannel = !!chan
           ? chan
           : params.bot.defaultTextChannel;
@@ -161,11 +163,13 @@ module.exports = {
       }
       case "defaultvoicechannel": {
         toReply = !!chan
-          ? `Set the default voice channel to: \`${channel}\``
-          : `Current default voice channel: ${utils.findChanFromGuild(
-              params.bot.defaultVoiceChannel.name,
-              params.bot
-            )}`;
+          ? `Set the default voice channel to: \`${channel.name}\``
+          : `Current default voice channel: \`${
+              utils.findChanFromGuild(
+                params.bot.defaultVoiceChannel.name,
+                params.bot
+              ).name
+            }\``;
         params.bot.defaultVoiceChannel = !!chan
           ? chan
           : params.bot.defaultVoiceChannel;
@@ -175,10 +179,10 @@ module.exports = {
         toReply =
           state !== undefined
             ? `Set the welcome message to: \`${
-                state ? "On (True)" : "Off (False)"
+                state ? "`On (True)`" : "`Off (False)`"
               }\``
             : `Welcome message is: ${
-                params.bot.welcomeMsg ? "On (True)" : "Off (False)"
+                params.bot.welcomeMsg ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.welcomeMsg =
           state !== undefined ? state : params.bot.welcomeMsg;
@@ -186,11 +190,11 @@ module.exports = {
       }
       case "welcometextchannel": {
         toReply = !!chan
-          ? `Set the welcome text channel to: \`${channel}\``
-          : `Current welcome text channel: ${utils.findChanFromGuild(
-              params.bot.welcomeTextChannel,
-              params.bot
-            )}`;
+          ? `Set the welcome text channel to: \`${channel.name}\``
+          : `Current welcome text channel: \`${
+              utils.findChanFromGuild(params.bot.welcomeTextChannel, params.bot)
+                .name
+            }\``;
         params.bot.welcomeTextChannel = !!chan
           ? chan
           : params.bot.welcomeTextChannel;
@@ -200,10 +204,10 @@ module.exports = {
         toReply =
           state !== undefined
             ? `Set new member role dispensing to: \`${
-                state ? "On (True)" : "Off (False)"
+                state ? "`On (True)`" : "`Off (False)`"
               }\``
             : `New member roles are: ${
-                params.bot.newMember ? "On (True)" : "Off (False)"
+                params.bot.newMember ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.newMember =
           state !== undefined ? state : params.bot.newMember;
@@ -212,11 +216,11 @@ module.exports = {
       case "newmemberrole": {
         toReply = !!ro
           ? `Set the new member role to: \`${ro.name}\``
-          : `New member role: ${
+          : `New member role: \`${
               !!params.bot.newMemberRole
                 ? params.bot.newMemberRole.name
                 : "not set"
-            }`;
+            }\``;
         params.bot.newMemberRole = !!ro ? ro : params.bot.newMemberRole;
         break;
       }
@@ -225,7 +229,7 @@ module.exports = {
           state !== undefined
             ? `Set announcements to: \`${state}\``
             : `Announcement are: ${
-                params.bot.announcements ? "On (True)" : "Off (False)"
+                params.bot.announcements ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.announcements =
           state !== undefined ? state : params.bot.announcements;
@@ -234,21 +238,21 @@ module.exports = {
       case "announcementsrole": {
         toReply = !!ro
           ? `Set the announcements role to: \`${ro.name}\``
-          : `Announcements role: ${
+          : `Announcements role: \`${
               !!params.bot.announcementsRole
                 ? params.bot.announcementsRole.name
                 : "not set"
-            }`;
+            }\``;
         params.bot.announcementsRole = !!ro ? ro : params.bot.announcementsRole;
         break;
       }
       case "ruletextchannel": {
         toReply = !!chan
-          ? `Set the rule text channel to: \`${channel}\``
-          : `Current rule text channel: ${utils.findChanFromGuild(
-              params.bot.ruleTextChannel,
-              params.bot
-            )}`;
+          ? `Set the rule text channel to: \`${channel.name}\``
+          : `Current rule text channel: \`${
+              utils.findChanFromGuild(params.bot.ruleTextChannel, params.bot)
+                .name
+            }\``;
         params.bot.ruleTextChannel = !!chan ? chan : params.bot.ruleTextChannel;
         break;
       }
@@ -257,11 +261,11 @@ module.exports = {
           ? `Toggled the role \`${ro.name}\` from the group roles list`
           : `Current group roles: ${params.bot.groupRoles
               .map((ri) => {
-                return `[${
+                return `\`[${
                   utils.findIDRoleFromGuild(ri, params.bot.guild).name
-                }], `;
+                }]\``;
               })
-              .join("")}`;
+              .join(", ")}`;
         if (!!ro) {
           let i = params.bot.groupRoles.indexOf(ro.id);
           if (i + 1 > 0) {
