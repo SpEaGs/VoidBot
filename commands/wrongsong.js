@@ -40,6 +40,7 @@ module.exports = {
           .setPlaceholder("Select a song from the first 25 in the queue")
           .addOptions(
             ...truncQueue.map((qi) => {
+              warn(JSON.stringify(qi, null, 2), ["[WRONGSONG]"]);
               return new StringSelectMenuOptionBuilder()
                 .setLabel(qi.details.title)
                 .setValue(qi.details.title);
