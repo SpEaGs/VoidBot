@@ -38,7 +38,7 @@ module.exports = {
           item.info.duration % 60
         )
           .toString()
-          .padStart(2, "0")}] (added by: ${item.mem})\``
+          .padStart(2, "0")}] (added by: ${item.mem.displayName})\``
       );
       if (output.length === 10) {
         params.bot.guild.channels.cache
