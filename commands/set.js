@@ -164,7 +164,7 @@ module.exports = {
         toReply = !!chan
           ? `Set the default voice channel to: ${channel}`
           : `Current default voice channel: ${utils.findChanFromGuild(
-              params.bot.defaultVoiceChannel.name,null
+              params.bot.defaultVoiceChannel.name,
               params.bot,
               ChannelType.GuildVoice
             )}`;
