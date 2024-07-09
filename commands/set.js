@@ -274,7 +274,7 @@ module.exports = {
         }
       }
     }
-    await params.interaction.editReply({ content: toReply });
+    if (!params.WS) await params.interaction.editReply({ content: toReply });
     config.save(params.bot);
     utils.informAdminClients(params.bot, {
       defaultTextChannel: params.bot.defaultTextChannel,
