@@ -13,7 +13,7 @@ const certs = {
 const server = require("https").createServer(certs);
 const SIO = require("socket.io");
 const io = SIO(server, {
-  path: "/apis/voidbot/",
+  path: "/apis/voidbot",
   transports: ["websocket", "polling"],
 });
 
