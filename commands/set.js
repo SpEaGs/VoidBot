@@ -164,7 +164,7 @@ module.exports = {
         toReply = !!chan
           ? `Set the default voice channel to: ${channel}`
           : `Current default voice channel: ${utils.findChanFromGuild(
-              params.bot.defaultVoiceChannel.name,
+              params.bot.defaultVoiceChannel.name,null
               params.bot,
               ChannelType.GuildVoice
             )}`;
@@ -261,9 +261,9 @@ module.exports = {
           ? `Toggled the role \`${ro.name}\` from the group roles list`
           : `Current group roles: ${params.bot.groupRoles
               .map((ri) => {
-                return `\`[${
+                return `\`${
                   utils.findIDRoleFromGuild(ri, params.bot.guild).name
-                }]\``;
+                }\``;
               })
               .join(", ")}`;
         if (!!ro) {
