@@ -225,13 +225,13 @@ module.exports = {
       }
       case "announcements": {
         toReply =
-          state !== "null"
+          state !== null
             ? `Set announcements to: \`${state}\``
             : `Announcements are: ${
                 params.bot.announcements ? "`On (True)`" : "`Off (False)`"
               }`;
         params.bot.announcements =
-          state !== "null" ? state : params.bot.announcements;
+          state !== null ? state : params.bot.announcements;
         break;
       }
       case "announcementsrole": {
