@@ -350,13 +350,10 @@ function search(str, mem, params, verbose = true) {
         }
         if (result) {
           if (!params.bot.voiceConnection) {
-            await joinCMD.execute(params);
-            params.bot.voiceConnection.once(
-              voice.VoiceConnectionStatus.Ready,
-              () => {
-                play(result, false, mem, params.bot);
-              }
-            );
+            const connection = await joinCMD.execute(params);
+            connection.once(voice.VoiceConnectionStatus.Ready, () => {
+              play(result, false, mem, params.bot);
+            });
           }
           if (!!params.bot.dispatcher && params.bot.dispatcher.playing) {
             addToQueue(result, false, mem, params.bot);
