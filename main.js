@@ -158,9 +158,6 @@ function launchWebServer() {
       }
     });
   }
-  io.on("error", (e) => {
-    warn("Websocket error.", ["[WEBSOCKET]"], e);
-  });
   io.on("connection", (socket) => {
     socket.on("sysCMD", (payload) => {
       if (config.botAdmin.includes(payload.snowflake)) {
