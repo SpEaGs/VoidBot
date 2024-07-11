@@ -350,7 +350,7 @@ function search(str, mem, params, verbose = true) {
         }
         if (result) {
           if (!params.bot.voiceConnection) {
-            const connection = await joinCMD.execute(params);
+            const connection = joinCMD.execute(params);
             connection.once(voice.VoiceConnectionStatus.Ready, () => {
               play(result, false, mem, params.bot);
             });
@@ -439,7 +439,7 @@ async function get_info(url, mem, params) {
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
   dbinfo.save().then(async () => {
     if (!params.bot.voiceConnection) {
-      const connection = await joinCMD.execute(params);
+      const connection = joinCMD.execute(params);
       connection.once(voice.VoiceConnectionStatus.Ready, () => {
         play(dbinfo, details, mem, params.bot);
       });
