@@ -9,6 +9,17 @@ let name = "Join";
 let description =
   "Makes the bot join the given voice channel, or, if none given, the voice channel the user is in.";
 
+function joinVoice(voiceChannel, bot) {
+  bot.voiceConnection = voice.joinVoiceChannel({
+    channelId: voiceChannel.id,
+    guildId: voiceChannel.guild.id,
+    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
+  });
+  bot.voiceChannel = voiceChannel;
+  utils.informClients(bot, { voiceChannel: bot.voiceChannel });
+  return bot.voiceConnection;
+}
+
 module.exports = {
   data: new SlashCommandBuilder()
     .setName(name.toLowerCase())
@@ -27,6 +38,7 @@ module.exports = {
   admin: false,
   botadmin: false,
   server: true,
+  joinVoice,
   async execute(params) {
     if (!params.WS)
       try {
@@ -75,14 +87,3 @@ module.exports = {
     return joinVoice(chan, params.bot);
   },
 };
-
-function joinVoice(voiceChannel, bot) {
-  bot.voiceConnection = voice.joinVoiceChannel({
-    channelId: voiceChannel.id,
-    guildId: voiceChannel.guild.id,
-    adapterCreator: voiceChannel.guild.voiceAdapterCreator,
-  });
-  bot.voiceChannel = voiceChannel;
-  utils.informClients(bot, { voiceChannel: bot.voiceChannel });
-  return bot.voiceConnection;
-}
