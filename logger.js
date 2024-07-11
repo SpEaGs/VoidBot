@@ -25,6 +25,7 @@ class Logger {
     this.log = this.log.bind(this);
     this.warn = this.warn.bind(this);
     this.err = this.err.bind(this);
+    this.getBacklog = this.getBacklog.bind(this);
   }
   getTime() {
     let cTime = new Date(Date.now());
