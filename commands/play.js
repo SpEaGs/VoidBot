@@ -351,7 +351,7 @@ function search(str, mem, params, verbose = true) {
         }
         if (result) {
           if (!status.voiceConnection) {
-            joinCMD.execute(params);
+            await joinCMD.execute(params);
             status.voiceConnection.once(
               voice.VoiceConnectionStatus.Ready,
               () => {
@@ -445,9 +445,9 @@ async function get_info(url, mem, params) {
   info.stats.addedBy = mem.id;
   const dbinfo = new CacheFile(info);
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
-  dbinfo.save().then(() => {
+  dbinfo.save().then(async () => {
     if (!status.voiceConnection) {
-      joinCMD.execute(params);
+      await joinCMD.execute(params);
       status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
         play(dbinfo, details, mem, status);
       });
