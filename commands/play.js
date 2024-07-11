@@ -359,8 +359,7 @@ function search(str, mem, params, verbose = true) {
             connection.once(voice.VoiceConnectionStatus.Ready, () => {
               play(result, false, mem, params.bot);
             });
-          }
-          if (!!params.bot.dispatcher && params.bot.dispatcher.playing) {
+          } else if (!!params.bot.dispatcher && params.bot.dispatcher.playing) {
             addToQueue(result, false, mem, params.bot);
           } else {
             play(result, false, mem, params.bot);
