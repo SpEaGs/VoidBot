@@ -349,8 +349,11 @@ function search(str, mem, params, verbose = true) {
           result = await CacheFile.findOne({ $text: { $search: url } });
         }
         if (result) {
-          if (!params.bot.voiceConnection) {
-            const connection = joinCMD.execute(params);
+          if (!params.bot.voiceConnection && !!params.bot.defaultVoiceChannel) {
+            const connection = joinCMD.joinVoice(
+              params.bot.defaultVoiceChannel,
+              params.bot
+            );
             connection.once(voice.VoiceConnectionStatus.Ready, () => {
               play(result, false, mem, params.bot);
             });
@@ -438,8 +441,11 @@ async function get_info(url, mem, params) {
   const dbinfo = new CacheFile(info);
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
   dbinfo.save().then(async () => {
-    if (!params.bot.voiceConnection) {
-      const connection = joinCMD.execute(params);
+    if (!params.bot.voiceConnection && !!params.bot.defaultVoiceChannel) {
+      const connection = joinCMD.joinVoice(
+        params.bot.defaultVoiceChannel,
+        params.bot
+      );
       connection.once(voice.VoiceConnectionStatus.Ready, () => {
         play(dbinfo, details, mem, params.bot);
       });
