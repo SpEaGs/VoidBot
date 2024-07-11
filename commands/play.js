@@ -104,8 +104,8 @@ function search(str, mem, params, verbose = true) {
               plID = getParameterByName("list", url);
               requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
               params.WS
-                ? bot.guild.channels.cache
-                    .get(bot.defaultTextChannel.id)
+                ? params.bot.guild.channels.cache
+                    .get(params.bot.defaultTextChannel.id)
                     .send(
                       `${mem} Hold onto your butts! I've got a playlist inbound...`
                     )
@@ -127,7 +127,7 @@ function search(str, mem, params, verbose = true) {
                     );
                   });
                 });
-                worker(bot, tasks);
+                worker(params.bot, tasks);
               });
               break;
             } else {
@@ -136,8 +136,8 @@ function search(str, mem, params, verbose = true) {
             }
           } catch {
             return params.WS
-              ? bot.guild.channels.cache
-                  .get(bot.defaultTextChannel.id)
+              ? params.bot.guild.channels.cache
+                  .get(params.bot.defaultTextChannel.id)
                   .send(`${mem} That Youtube link was incomplete or broken.`)
               : params.interaction.editReply({
                   content: `${mem} That Youtube link was incomplete or broken.`,
@@ -150,8 +150,8 @@ function search(str, mem, params, verbose = true) {
               case url.includes("/album/"): {
                 alID = url.split("/").reverse()[0].split("?"[0]);
                 params.WS
-                  ? bot.guilds.channels.cache
-                      .get(bot.defaultTextChannel.id)
+                  ? params.bot.guilds.channels.cache
+                      .get(params.bot.defaultTextChannel.id)
                       .send(
                         `${mem} Hold onto your butts! I've got a Spotify album inbound...`
                       )
@@ -193,7 +193,7 @@ function search(str, mem, params, verbose = true) {
                                 false
                               );
                             });
-                            worker(bot, tasks);
+                            worker(params.bot, tasks);
                             return;
                           })
                           .catch((err) => {
@@ -208,8 +208,8 @@ function search(str, mem, params, verbose = true) {
               case url.includes("/playlist/"): {
                 plID = url.split("/").reverse()[0].split("?")[0];
                 params.WS
-                  ? bot.guild.channels.cache
-                      .get(bot.defaultTextChannel.id)
+                  ? params.bot.guild.channels.cache
+                      .get(params.bot.defaultTextChannel.id)
                       .send(
                         `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
                       )
@@ -251,7 +251,7 @@ function search(str, mem, params, verbose = true) {
                             );
                           });
                         });
-                        worker(bot, tasks);
+                        worker(params.bot, tasks);
                         return;
                       })
                       .catch((err) => {
@@ -306,8 +306,8 @@ function search(str, mem, params, verbose = true) {
               }
               default: {
                 return params.WS
-                  ? bot.guild.channels.cache
-                      .get(bot.defaultTextChannel.id)
+                  ? params.bot.guild.channels.cache
+                      .get(params.bot.defaultTextChannel.id)
                       .send(`${mem} That was not a supported Spotify link.`)
                   : params.interaction.editReply({
                       content: `${mem} That was not a supported Spotify link.`,
@@ -317,8 +317,8 @@ function search(str, mem, params, verbose = true) {
             break;
           } catch {
             return params.WS
-              ? bot.guild.channels.cache
-                  .get(bot.defaultTextChannel.id)
+              ? params.bot.guild.channels.cache
+                  .get(params.bot.defaultTextChannel.id)
                   .send(`${mem} That Spotify link was incomplete or broken.`)
               : params.interaction.editReply({
                   content: `${mem} That Spotify link was incomplete or broken.`,
@@ -331,8 +331,8 @@ function search(str, mem, params, verbose = true) {
         }
         default: {
           return params.WS
-            ? bot.guild.channels.cache
-                .get(bot.defaultTextChannel.id)
+            ? params.bot.guild.channels.cache
+                .get(params.bot.defaultTextChannel.id)
                 .send(
                   `${mem} That was not a pure Youtube, Soundcloud, or Spotify link.`
                 )
@@ -349,16 +349,19 @@ function search(str, mem, params, verbose = true) {
           result = await CacheFile.findOne({ $text: { $search: url } });
         }
         if (result) {
-          if (!bot.voiceConnection) {
+          if (!params.bot.voiceConnection) {
             await joinCMD.execute(params);
-            bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
-              play(result, false, mem, bot);
-            });
+            params.bot.voiceConnection.once(
+              voice.VoiceConnectionStatus.Ready,
+              () => {
+                play(result, false, mem, params.bot);
+              }
+            );
           }
-          if (!!bot.dispatcher && bot.dispatcher.playing) {
-            addToQueue(result, false, mem, bot);
+          if (!!params.bot.dispatcher && params.bot.dispatcher.playing) {
+            addToQueue(result, false, mem, params.bot);
           } else {
-            play(result, false, mem, bot);
+            play(result, false, mem, params.bot);
           }
         } else {
           let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
@@ -366,8 +369,8 @@ function search(str, mem, params, verbose = true) {
           )}&key=${API_KEY}`;
           if (verbose)
             params.WS
-              ? bot.guild.channels.cache
-                  .get(bot.defaultTextChannel.id)
+              ? params.bot.guild.channels.cache
+                  .get(params.bot.defaultTextChannel.id)
                   .send(`${mem} Searching Youtube for \`${url}\`...`)
               : params.interaction.editReply({
                   content: `${mem} Searching Youtube for \`${url}\`...`,
@@ -380,8 +383,8 @@ function search(str, mem, params, verbose = true) {
             let body = response.body;
             if (body.items.length == 0) {
               params.WS
-                ? bot.guild.channels.cache
-                    .get(bot.defaultTextChannel.id)
+                ? params.bot.guild.channels.cache
+                    .get(params.bot.defaultTextChannel.id)
                     .send(`${mem} I got nothing... try being less specific?`)
                 : params.interaction.editReply({
                     content: `${mem} I got nothing... try being less specific?`,
