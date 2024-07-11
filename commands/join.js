@@ -3,6 +3,7 @@
 const utils = require("../utils.js");
 const { SlashCommandBuilder } = require("discord.js");
 const voice = require("@discordjs/voice");
+const { log, warn, err } = require("../logger.js");
 
 let name = "Join";
 let description =
@@ -28,7 +29,15 @@ module.exports = {
   server: true,
   async execute(params) {
     if (!params.WS)
-      await params.interaction.reply({ content: "Command received!" });
+      try {
+        await params.interaction.reply({ content: "Command received!" });
+      } catch (e) {
+        warn(
+          "Interaction reply failed. Likely this command was called from /play.",
+          ["[JOIN]"],
+          e
+        );
+      }
     let mem = params.interaction.member;
     const chan = params.WS
       ? utils.findChanFromGuild(params.interaction.args.channel, params.bot, 2)
