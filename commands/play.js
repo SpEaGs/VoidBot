@@ -77,21 +77,20 @@ function getParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, " "));
 }
 
-function worker(status, taskList = [], interval = 1000) {
+function worker(bot, taskList = [], interval = 1000) {
   if (interval > 1000) interval = 1000;
-  if (!status.dispatcher) interval = 3000;
+  if (!bot.dispatcher) interval = 3000;
   log("remaining: " + taskList.length, ["[PLAY-Worker]"]);
   taskList[0]();
   taskList.shift();
   if (!!taskList.length) {
     setTimeout(() => {
-      worker(status, taskList, interval);
+      worker(bot, taskList, interval);
     }, interval);
   }
 }
 
 function search(str, mem, params, verbose = true) {
-  let status = params.bot;
   let url = str;
   switch (url.includes("http")) {
     case true: {
@@ -105,8 +104,8 @@ function search(str, mem, params, verbose = true) {
               plID = getParameterByName("list", url);
               requestURL = `https://www.googleapis.com/youtube/v3/playlistItems?part=snippet&maxResults=20&key=${API_KEY}&playlistId=${plID}`;
               params.WS
-                ? status.guild.channels.cache
-                    .get(status.defaultTextChannel.id)
+                ? bot.guild.channels.cache
+                    .get(bot.defaultTextChannel.id)
                     .send(
                       `${mem} Hold onto your butts! I've got a playlist inbound...`
                     )
@@ -128,7 +127,7 @@ function search(str, mem, params, verbose = true) {
                     );
                   });
                 });
-                worker(status, tasks);
+                worker(bot, tasks);
               });
               break;
             } else {
@@ -137,8 +136,8 @@ function search(str, mem, params, verbose = true) {
             }
           } catch {
             return params.WS
-              ? status.guild.channels.cache
-                  .get(status.defaultTextChannel.id)
+              ? bot.guild.channels.cache
+                  .get(bot.defaultTextChannel.id)
                   .send(`${mem} That Youtube link was incomplete or broken.`)
               : params.interaction.editReply({
                   content: `${mem} That Youtube link was incomplete or broken.`,
@@ -151,8 +150,8 @@ function search(str, mem, params, verbose = true) {
               case url.includes("/album/"): {
                 alID = url.split("/").reverse()[0].split("?"[0]);
                 params.WS
-                  ? status.guilds.channels.cache
-                      .get(status.defaultTextChannel.id)
+                  ? bot.guilds.channels.cache
+                      .get(bot.defaultTextChannel.id)
                       .send(
                         `${mem} Hold onto your butts! I've got a Spotify album inbound...`
                       )
@@ -194,7 +193,7 @@ function search(str, mem, params, verbose = true) {
                                 false
                               );
                             });
-                            worker(status, tasks);
+                            worker(bot, tasks);
                             return;
                           })
                           .catch((err) => {
@@ -209,8 +208,8 @@ function search(str, mem, params, verbose = true) {
               case url.includes("/playlist/"): {
                 plID = url.split("/").reverse()[0].split("?")[0];
                 params.WS
-                  ? status.guild.channels.cache
-                      .get(status.defaultTextChannel.id)
+                  ? bot.guild.channels.cache
+                      .get(bot.defaultTextChannel.id)
                       .send(
                         `${mem} Hold onto your butts! I've got a Spotify playlist inbound...`
                       )
@@ -252,7 +251,7 @@ function search(str, mem, params, verbose = true) {
                             );
                           });
                         });
-                        worker(status, tasks);
+                        worker(bot, tasks);
                         return;
                       })
                       .catch((err) => {
@@ -307,8 +306,8 @@ function search(str, mem, params, verbose = true) {
               }
               default: {
                 return params.WS
-                  ? status.guild.channels.cache
-                      .get(status.defaultTextChannel.id)
+                  ? bot.guild.channels.cache
+                      .get(bot.defaultTextChannel.id)
                       .send(`${mem} That was not a supported Spotify link.`)
                   : params.interaction.editReply({
                       content: `${mem} That was not a supported Spotify link.`,
@@ -318,8 +317,8 @@ function search(str, mem, params, verbose = true) {
             break;
           } catch {
             return params.WS
-              ? status.guild.channels.cache
-                  .get(status.defaultTextChannel.id)
+              ? bot.guild.channels.cache
+                  .get(bot.defaultTextChannel.id)
                   .send(`${mem} That Spotify link was incomplete or broken.`)
               : params.interaction.editReply({
                   content: `${mem} That Spotify link was incomplete or broken.`,
@@ -332,8 +331,8 @@ function search(str, mem, params, verbose = true) {
         }
         default: {
           return params.WS
-            ? status.guild.channels.cache
-                .get(status.defaultTextChannel.id)
+            ? bot.guild.channels.cache
+                .get(bot.defaultTextChannel.id)
                 .send(
                   `${mem} That was not a pure Youtube, Soundcloud, or Spotify link.`
                 )
@@ -350,19 +349,16 @@ function search(str, mem, params, verbose = true) {
           result = await CacheFile.findOne({ $text: { $search: url } });
         }
         if (result) {
-          if (!status.voiceConnection) {
+          if (!bot.voiceConnection) {
             await joinCMD.execute(params);
-            status.voiceConnection.once(
-              voice.VoiceConnectionStatus.Ready,
-              () => {
-                play(result, false, mem, status);
-              }
-            );
+            bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
+              play(result, false, mem, bot);
+            });
           }
-          if (!!status.dispatcher && status.dispatcher.playing) {
-            addToQueue(result, false, mem, status);
+          if (!!bot.dispatcher && bot.dispatcher.playing) {
+            addToQueue(result, false, mem, bot);
           } else {
-            play(result, false, mem, status);
+            play(result, false, mem, bot);
           }
         } else {
           let requestUrl = `https://www.googleapis.com/youtube/v3/search?part=snippet&q=${escape(
@@ -370,8 +366,8 @@ function search(str, mem, params, verbose = true) {
           )}&key=${API_KEY}`;
           if (verbose)
             params.WS
-              ? status.guild.channels.cache
-                  .get(status.defaultTextChannel.id)
+              ? bot.guild.channels.cache
+                  .get(bot.defaultTextChannel.id)
                   .send(`${mem} Searching Youtube for \`${url}\`...`)
               : params.interaction.editReply({
                   content: `${mem} Searching Youtube for \`${url}\`...`,
@@ -384,16 +380,13 @@ function search(str, mem, params, verbose = true) {
             let body = response.body;
             if (body.items.length == 0) {
               params.WS
-                ? status.guild.channels.cache
-                    .get(status.defaultTextChannel.id)
+                ? bot.guild.channels.cache
+                    .get(bot.defaultTextChannel.id)
                     .send(`${mem} I got nothing... try being less specific?`)
                 : params.interaction.editReply({
                     content: `${mem} I got nothing... try being less specific?`,
                   });
-              log(`0 results from search.`, [
-                "[PLAY]",
-                `[${status.guild.name}]`,
-              ]);
+              log(`0 results from search.`, ["[PLAY]", `[${bot.guild.name}]`]);
               return;
             }
             for (let i of body.items) {
@@ -413,7 +406,6 @@ function search(str, mem, params, verbose = true) {
 
 let errcount = 0;
 async function get_info(url, mem, params) {
-  let status = params.bot;
   const info = { url: url, stats: new utils.AudioStats() };
   let details = {};
   switch (true) {
@@ -446,22 +438,22 @@ async function get_info(url, mem, params) {
   const dbinfo = new CacheFile(info);
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
   dbinfo.save().then(async () => {
-    if (!status.voiceConnection) {
+    if (!params.bot.voiceConnection) {
       await joinCMD.execute(params);
-      status.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
-        play(dbinfo, details, mem, status);
+      params.bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
+        play(dbinfo, details, mem, params.bot);
       });
-    } else if (!!status.dispatcher && status.dispatcher.playing) {
-      addToQueue(dbinfo, details, mem, status);
+    } else if (!!params.bot.dispatcher && params.bot.dispatcher.playing) {
+      addToQueue(dbinfo, details, mem, params.bot);
     } else {
-      play(dbinfo, details, mem, status);
+      play(dbinfo, details, mem, params.bot);
     }
   });
 }
 
-function play(info, details, mem, status) {
-  status.guild.channels.cache
-    .get(status.defaultTextChannel.id)
+function play(info, details, mem, bot) {
+  bot.guild.channels.cache
+    .get(bot.defaultTextChannel.id)
     .send(
       `Playing song: \`${info.title} [${parseInt(info.duration / 60)}:${(
         info.duration % 60
@@ -475,33 +467,33 @@ function play(info, details, mem, status) {
   info.stats.timesPlayedSinceLastReport += 1;
   if (!info.stats.addedBy) info.stats.addedBy = mem.id;
   info.save().then(() => {
-    status.nowPlaying = { ...info._doc, added_by: mem.displayName };
-    status.audioStats.plays += 1;
-    status.audioStats.playsSinceLastReport += 1;
-    createStream(info, details, status);
+    bot.nowPlaying = { ...info._doc, added_by: mem.displayName };
+    bot.audioStats.plays += 1;
+    bot.audioStats.playsSinceLastReport += 1;
+    createStream(info, details, bot);
   });
 }
 
-function makeDispatcherFromFile(info, status) {
-  status.dispatcher = voice.createAudioPlayer({
+function makeDispatcherFromFile(info, bot) {
+  bot.dispatcher = voice.createAudioPlayer({
     behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
   });
-  status.dispatcher.playing = true;
-  status.dispatcher.paused = false;
-  status.voiceConnection.subscribe(status.dispatcher);
-  status.dispatcher.play(
+  bot.dispatcher.playing = true;
+  bot.dispatcher.paused = false;
+  bot.voiceConnection.subscribe(bot.dispatcher);
+  bot.dispatcher.play(
     voice.createAudioResource(`/mnt/raid5/voidbot/audiocache/${info.NOD}`)
   );
-  status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-    warn("Voice Idle.", ["[PLAY]", `[${status.guild.name}]`]);
-    endDispatcher(status);
+  bot.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+    warn("Voice Idle.", ["[PLAY]", `[${bot.guild.name}]`]);
+    endDispatcher(bot);
   });
-  status.dispatcher.once("error", (err) => {
-    warn(`Audio steam error:\n${err}`, ["[PLAY]", `[${status.guild.name}]`]);
+  bot.dispatcher.once("error", (err) => {
+    warn(`Audio steam error:\n${err}`, ["[PLAY]", `[${bot.guild.name}]`]);
   });
 }
 
-function makeDispatcher(stream, info, status) {
+function makeDispatcher(stream, info, bot) {
   let filename = `/mnt/raid5/voidbot/audiocache/${info.NOD}`;
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
@@ -509,44 +501,41 @@ function makeDispatcher(stream, info, status) {
     dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
     dbinfo.downloaded = true;
     dbinfo.save().then(() => {
-      status.dispatcher = voice.createAudioPlayer({
+      bot.dispatcher = voice.createAudioPlayer({
         behaviors: { noSubscriber: voice.NoSubscriberBehavior.Stop },
       });
-      utils.informAllClients(status.status, {
+      utils.informAllClients(bot.status, {
         audioCache: { remove: false, info: info },
       });
-      status.dispatcher.playing = true;
-      status.dispatcher.paused = false;
-      status.voiceConnection.subscribe(status.dispatcher);
-      status.dispatcher.play(voice.createAudioResource(filename));
-      status.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
-        warn("Voice Idle.", ["[PLAY]", `[${status.guild.name}]`]);
-        endDispatcher(status);
+      bot.dispatcher.playing = true;
+      bot.dispatcher.paused = false;
+      bot.voiceConnection.subscribe(bot.dispatcher);
+      bot.dispatcher.play(voice.createAudioResource(filename));
+      bot.dispatcher.once(voice.AudioPlayerStatus.Idle, () => {
+        warn("Voice Idle.", ["[PLAY]", `[${bot.guild.name}]`]);
+        endDispatcher(bot);
       });
-      status.dispatcher.once("error", (err) => {
-        warn(`Audio stream error:\n${err}`, [
-          "[PLAY]",
-          `[${status.guild.name}]`,
-        ]);
+      bot.dispatcher.once("error", (err) => {
+        warn(`Audio stream error:\n${err}`, ["[PLAY]", `[${bot.guild.name}]`]);
       });
     });
   });
 }
 
-function createStream(info, details, status) {
+function createStream(info, details, bot) {
   if (!details) {
-    makeDispatcherFromFile(info, status);
+    makeDispatcherFromFile(info, bot);
   } else {
     try {
       switch (info.trackSource) {
         case "YT": {
           let stream = ytdl.downloadFromInfo(details, { filter: "audioonly" });
-          makeDispatcher(stream, info, status);
+          makeDispatcher(stream, info, bot);
           break;
         }
         case "SC": {
           sc.download(info.url, SC_API_KEY).then((stream) => {
-            makeDispatcher(stream, info, status);
+            makeDispatcher(stream, info, bot);
           });
           break;
         }
@@ -555,46 +544,43 @@ function createStream(info, details, status) {
       warn(`Caught audio stream error:\n${err}`, ["[PLAY]"]);
     }
   }
-  utils.informClients(status, {
-    audioQueue: status.audioQueue,
-    nowPlaying: status.nowPlaying,
+  utils.informClients(bot, {
+    audioQueue: bot.audioQueue,
+    nowPlaying: bot.nowPlaying,
   });
 }
 
-function endDispatcher(status) {
-  if (
-    (status.audioQueue && status.audioQueue.length === 0) ||
-    !status.audioQueue
-  ) {
+function endDispatcher(bot) {
+  if ((bot.audioQueue && bot.audioQueue.length === 0) || !bot.audioQueue) {
     try {
-      status.dispatcher.stop();
+      bot.dispatcher.stop();
     } catch {}
-    status.dispatcher = false;
-    status.nowPlaying = false;
-    utils.informClients(status, {
-      audioQueue: status.audioQueue,
+    bot.dispatcher = false;
+    bot.nowPlaying = false;
+    utils.informClients(bot, {
+      audioQueue: bot.audioQueue,
       nowPlaying: false,
       paused: false,
     });
-    status.guild.channels.cache
-      .get(status.defaultTextChannel.id)
+    bot.guild.channels.cache
+      .get(bot.defaultTextChannel.id)
       .send("Audio queue is empty.");
     return;
   } else {
-    playNextInQueue(status);
+    playNextInQueue(bot);
   }
 }
 
-function playNextInQueue(status) {
-  log(`Playing next in queue - length:${status.audioQueue.length}`, [
+function playNextInQueue(bot) {
+  log(`Playing next in queue - length:${bot.audioQueue.length}`, [
     "[PLAY]",
-    `[${status.guild.name}]`,
+    `[${bot.guild.name}]`,
   ]);
-  if (!status.audioQueue.length) return endDispatcher(status);
-  const { details, mem } = status.audioQueue[0];
-  CacheFile.findOne({ _id: status.audioQueue[0].info._id }).then((info) => {
-    status.guild.channels.cache
-      .get(status.defaultTextChannel.id)
+  if (!bot.audioQueue.length) return endDispatcher(bot);
+  const { details, mem } = bot.audioQueue[0];
+  CacheFile.findOne({ _id: bot.audioQueue[0].info._id }).then((info) => {
+    bot.guild.channels.cache
+      .get(bot.defaultTextChannel.id)
       .send(
         `Now Playing: \`${info.title} [${parseInt(info.duration / 60)}:${(
           info.duration % 60
@@ -608,18 +594,18 @@ function playNextInQueue(status) {
     info.stats.timesPlayedSinceLastReport += 1;
     if (!info.stats.addedBy) info.stats.addedBy = mem.id;
     info.save().then(() => {
-      status.nowPlaying = { ...info._doc, added_by: mem.displayName };
-      status.audioQueue.shift();
-      status.audioStats.plays += 1;
-      status.audioStats.playsSinceLastReport += 1;
-      createStream(info, details, status);
+      bot.nowPlaying = { ...info._doc, added_by: mem.displayName };
+      bot.audioQueue.shift();
+      bot.audioStats.plays += 1;
+      bot.audioStats.playsSinceLastReport += 1;
+      createStream(info, details, bot);
     });
   });
 }
 
-function addToQueue(info, details, mem, status) {
-  status.guild.channels.cache
-    .get(status.defaultTextChannel.id)
+function addToQueue(info, details, mem, bot) {
+  bot.guild.channels.cache
+    .get(bot.defaultTextChannel.id)
     .send(
       `Added \`${info.title} [${parseInt(info.duration / 60)}:${(
         info.duration % 60
@@ -627,8 +613,8 @@ function addToQueue(info, details, mem, status) {
         .toString()
         .padStart(2, "0")}]\` to the queue.`
     );
-  log(`Adding ${info.title} to queue.`, ["[PLAY]", `[${status.guild.name}]`]);
-  if (!status.audioQueue) status.audioQueue = [];
-  status.audioQueue.push({ info: info._doc, details: details, mem: mem });
-  utils.informClients(status, { audioQueue: status.audioQueue });
+  log(`Adding ${info.title} to queue.`, ["[PLAY]", `[${bot.guild.name}]`]);
+  if (!bot.audioQueue) bot.audioQueue = [];
+  bot.audioQueue.push({ info: info._doc, details: details, mem: mem });
+  utils.informClients(bot, { audioQueue: bot.audioQueue });
 }
