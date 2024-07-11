@@ -88,8 +88,9 @@ class Logger {
       error,
     });
   }
-  getBacklog() {
-    return this.backlog;
+  getBacklog(count = 0) {
+    if (count === 0) return this.backlog;
+    else return this.backlog.slice(this.backlog.length - (count + 1), count);
   }
   reloadBotAdmin() {
     botAdmin = require("./config.json").botAdmin;
