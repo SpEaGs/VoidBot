@@ -72,7 +72,7 @@ module.exports = {
         : params.interaction.editReply({
             content: `${mem} I'm already in that voice channel...`,
           });
-    joinVoice(chan, params.bot);
+    return joinVoice(chan, params.bot);
   },
 };
 
@@ -84,4 +84,5 @@ function joinVoice(voiceChannel, bot) {
   });
   bot.voiceChannel = voiceChannel;
   utils.informClients(bot, { voiceChannel: bot.voiceChannel });
+  return bot.voiceConnection;
 }

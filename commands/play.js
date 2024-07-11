@@ -442,8 +442,8 @@ async function get_info(url, mem, params) {
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
   dbinfo.save().then(async () => {
     if (!params.bot.voiceConnection) {
-      await joinCMD.execute(params);
-      params.bot.voiceConnection.once(voice.VoiceConnectionStatus.Ready, () => {
+      const connection = await joinCMD.execute(params);
+      connection.once(voice.VoiceConnectionStatus.Ready, () => {
         play(dbinfo, details, mem, params.bot);
       });
     } else if (!!params.bot.dispatcher && params.bot.dispatcher.playing) {
