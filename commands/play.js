@@ -350,11 +350,13 @@ function search(str, mem, params, verbose = true) {
         }
         if (result) {
           if (!params.bot.voiceConnection && !!params.bot.defaultVoiceChannel) {
-            const channel = utils.findChanFromGuild(
-              params.bot.defaultVoiceChannel.name,
-              params.bot,
-              ChannelType.GuildVoice
-            );
+            const channel = !!params.interaction.member.voice.channel
+              ? params.interaction.member.voice.channel
+              : utils.findChanFromGuild(
+                  params.bot.defaultVoiceChannel.name,
+                  params.bot,
+                  ChannelType.GuildVoice
+                );
             const connection = joinCMD.joinVoice(channel, params.bot);
             connection.once(voice.VoiceConnectionStatus.Ready, () => {
               play(result, false, mem, params.bot);
@@ -443,11 +445,13 @@ async function get_info(url, mem, params) {
   dbinfo.NOD = `${dbinfo._id}.${dbinfo.trackSource === "YT" ? "m4a" : "mp3"}`;
   dbinfo.save().then(async () => {
     if (!params.bot.voiceConnection && !!params.bot.defaultVoiceChannel) {
-      const channel = utils.findChanFromGuild(
-        params.bot.defaultVoiceChannel.name,
-        params.bot,
-        ChannelType.GuildVoice
-      );
+      const channel = !!params.interaction.member.voice.channel
+        ? params.interaction.member.voice.channel
+        : utils.findChanFromGuild(
+            params.bot.defaultVoiceChannel.name,
+            params.bot,
+            ChannelType.GuildVoice
+          );
       const connection = joinCMD.joinVoice(channel, params.bot);
       connection.once(voice.VoiceConnectionStatus.Ready, () => {
         play(dbinfo, details, mem, params.bot);
