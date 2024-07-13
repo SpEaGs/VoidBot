@@ -24,7 +24,7 @@ module.exports = {
     let log = global.log;
     let mem = params.interaction.member;
     if (!params.bot.dispatcher)
-      return params.bot.guild.channels
+      return params.bot.guild.channels.cache
         .get(params.bot.defaultTextChannel.id)
         .send("I'm not playing anything...");
     try {
