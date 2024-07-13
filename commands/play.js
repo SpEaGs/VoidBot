@@ -508,6 +508,9 @@ function makeDispatcherFromFile(info, bot) {
 
 function makeDispatcher(stream, info, bot) {
   let filename = `/mnt/raid5/voidbot/audiocache/${info.NOD}`;
+  stream.on("error", (e) => {
+    warn("Audio stream error", ["[PLAY]"], e);
+  });
   stream.pipe(fs.createWriteStream(filename));
   stream.on("end", () => {
     const dbinfo = new CacheFile(info);
