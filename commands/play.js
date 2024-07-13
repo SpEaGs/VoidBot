@@ -1,7 +1,7 @@
 //Play command. Plays given youtube or soundcloud URL (or searches youtube with given terms) in the voice channel of
 //the command sender (or default if none)
 
-const ytdl = require("ytdl-core");
+const ytdl = require("@distube/ytdl-core");
 const sc = require("soundcloud-downloader").default;
 const fetch = require("node-fetch");
 const request = require("superagent");
