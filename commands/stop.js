@@ -40,7 +40,7 @@ module.exports = {
       params.bot.dispatcher = false;
       params.bot.nowPlaying = false;
     } catch (error) {
-      log(`Error stopping music:\n${error}`, ["[ERR]", "[STOP]"]);
+      warn(`Error stopping music:\n${error}`, ["[STOP]"]);
     }
     utils.informClients(params.bot, {
       audioQueue: params.bot.audioQueue,

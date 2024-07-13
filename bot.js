@@ -2,35 +2,41 @@ const Discord = require("discord.js");
 const EventEmitter = require("events");
 
 const utils = require("./utils.js");
+const config = require("./cfg.js");
 const token = require("./tokens.json").TOKEN;
+
+const { log, warn, err } = require("./logger.js");
 
 class Bot extends EventEmitter {
   constructor(guild, status) {
     super();
     //init base vars
-    let log = global.log;
     this.guild = guild;
     this.status = status;
-    this.guildID = this.guild.id;
-    this.guildName = this.guild.name;
     this.fs = require("fs");
-    log(`Bot Initializing...`, ["[INFO]", "[BOT]", `[${this.guildName}]`]);
+    log(`Bot Initializing...`, ["[BOT]", `[${this.guild.name}]`]);
 
     //load stored config defaults & load shard specific config on top
     //this should automatically update any existing config with new entries
     //that are added to the defaults
     const loadConfig = () => {
-      let configOut = utils.config.sharding.default;
-      if (!utils.config.sharding[this.guildID]) {
-        utils.config.sharding[this.guildID] = { ...configOut };
+      let configOut = config.sharding.default;
+      if (!config.sharding[this.guild.id]) {
+        config.sharding[this.guild.id] = { ...configOut };
       }
-      return { ...configOut, ...utils.config.sharding[this.guildID] };
+      return {
+        ...configOut,
+        ...config.sharding[this.guild.id],
+        guildName: undefined,
+      };
     };
-    const configShard = loadConfig();
 
     //init bot vars
-    Object.assign(this, configShard);
+    Object.assign(this, loadConfig());
     this.visAdminRoles = new Discord.Collection();
+    this.voiceStateTimeouts = new Discord.Collection();
+    this.socketSubs = new Discord.Collection();
+    this.adminSocketSubs = new Discord.Collection();
     this.dispatcher = false;
     this.voiceChannel = false;
     this.voiceChannelArray = [];
@@ -39,17 +45,25 @@ class Bot extends EventEmitter {
     this.roleArray = [];
     this.audioQueue = [];
     this.nowPlaying = false;
-    this.socketSubs = [];
-    this.adminSocketSubs = [];
+    this.audioStats = {
+      plays: 0,
+      mostPlayedAllTime: "",
+      userMostAdded: "",
+      mostPlayedSinceLastReport: "",
+      playsSinceLastReport: 0,
+    };
 
     //update config object with current guild name (guild name can change at any
     //time while the ID is always the same)
-    utils.config.sharding[this.guildID].guildName = this.guildName;
+    config.sharding[this.guild.id].guildName = this.guild.name;
+
+    if (!config.sharding[this.guild.id].audioStats)
+      config.sharding[this.guild.id].audioStats = this.audioStats;
 
     //save config & clear disconnected websockets at intervals: 5min
-    utils.saveConfig(this);
+    config.save(this);
     setInterval(() => {
-      utils.saveConfig(this);
+      config.save(this);
       this.socketSubs.forEach((s) => {
         if (!s.connected) this.socketSubs.delete(s.id);
       });

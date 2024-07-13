@@ -1,4 +1,5 @@
 const db = require("mongoose");
+const { AudioStats } = require("../utils");
 
 const CacheFile = new db.Schema({
   url: {
@@ -19,6 +20,10 @@ const CacheFile = new db.Schema({
   downloaded: {
     type: Boolean,
     default: false,
+  },
+  stats: {
+    type: Object,
+    default: new AudioStats(),
   },
   NOD: {
     type: String,

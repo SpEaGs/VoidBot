@@ -1,10 +1,10 @@
 const winston = require("winston");
-const utils = require("./utils");
-var sockets = require("./main.js").consoleSockets;
+const sockets = require("./main.js").consoleSockets;
+let botAdmin = require("./config.json").botAdmin;
 
-let backlog = [];
 class Logger {
   constructor() {
+    this.backlog = [];
     this.pipeline = winston.createLogger({
       level: "info",
       format: winston.format.combine(
@@ -20,45 +20,81 @@ class Logger {
         new winston.transports.Console({ format: winston.format.simple() }),
       ],
     });
+    this.getTime = this.getTime.bind(this);
+    this.handleLog = this.handleLog.bind(this);
     this.log = this.log.bind(this);
+    this.warn = this.warn.bind(this);
+    this.err = this.err.bind(this);
+    this.getBacklog = this.getBacklog.bind(this);
+  }
+  getTime() {
+    let cTime = new Date(Date.now());
+    let timeStr = `[${this.zeroify(cTime.getMonth() + 1)}/${this.zeroify(
+      cTime.getDate()
+    )} ${this.zeroify(cTime.getHours())}:${this.zeroify(
+      cTime.getMinutes()
+    )}:${this.zeroify(cTime.getSeconds())}]`;
+    return timeStr;
+  }
+  getTimeRaw() {
+    return new Date().getTime();
+  }
+  zeroify(num) {
+    if (num < 10) {
+      return `0${num}`;
+    } else return `${num}`;
+  }
+  sendSocketLog(lo) {
+    sockets.forEach((s) => {
+      s.once("stdout_auth", (snowflake) => {
+        if (botAdmin.includes(snowflake)) {
+          s.emit("stdout", lo);
+        }
+      });
+      s.emit("stdout_check");
+    });
+  }
+  handleLog(lo) {
+    const ls = `${lo.timeStamp} [${lo.level}] ${lo.tags.join(" ")}: ${lo.msg}${
+      lo.error ? `\n${lo.error}` : ``
+    }`;
+    this.pipeline[lo.level.toLowerCase()](ls);
+    if (!!sockets) this.sendSocketLog(lo);
+    this.backlog.push(lo);
   }
   log(str, tags) {
-    let lo = { timeStamp: utils.getTime(), tags: tags, msg: str };
-    let ls = `${lo.timeStamp} ${lo.tags.join(" ")}: ${lo.msg}`;
-    switch (true) {
-      case tags.includes("[INFO]"): {
-        this.pipeline.info(ls);
-        break;
-      }
-      case tags.includes("[WARN]"): {
-        this.pipeline.warn(ls);
-        break;
-      }
-      case tags.includes("[ERR]"): {
-        this.pipeline.error(ls);
-        break;
-      }
-    }
-    if (!sockets) {
-      sockets = require("./main.js").consoleSockets;
-    }
-    if (!!sockets)
-      sockets.forEach((s) => {
-        s.once("stdout_auth", (snowflake) => {
-          console.log(utils.config.botAdmin);
-          console.log(snowflake);
-          if (utils.config.botAdmin.includes(snowflake)) {
-            console.log(true);
-            s.emit("stdout", lo);
-          }
-        });
-        s.emit("stdout_check");
-      });
-    backlog.push(lo);
+    this.handleLog({
+      timeStamp: this.getTime(),
+      tags,
+      msg: str,
+      level: "INFO",
+    });
   }
-  getBacklog() {
-    return backlog;
+  warn(str, tags, error = false) {
+    this.handleLog({
+      timeStamp: this.getTime(),
+      tags,
+      msg: str,
+      level: "WARN",
+      error,
+    });
+  }
+  err(str, tags, error = false) {
+    this.handleLog({
+      timeStamp: this.getTime(),
+      tags,
+      msg: str,
+      level: "ERROR",
+      error,
+    });
+  }
+  getBacklog(count = 0) {
+    if (count === 0) return this.backlog;
+    else return this.backlog.slice(this.backlog.length - (count + 1), count);
+  }
+  reloadBotAdmin() {
+    botAdmin = require("./config.json").botAdmin;
   }
 }
 
-module.exports = Logger;
+module.exports = new Logger();

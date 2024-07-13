@@ -1,9 +1,8 @@
-const Logger = require("./logger.js");
+const { log, warn, err, getBacklog, getTimeRaw } = require("./logger.js");
 const keys = require("./tokens.json");
 const token = keys.TOKEN;
 
 const Discord = require("discord.js");
-const winston = require("winston");
 const fs = require("fs");
 
 const certs = {
@@ -13,7 +12,10 @@ const certs = {
 
 const server = require("https").createServer(certs);
 const SIO = require("socket.io");
-const io = SIO(server, { path: "/apis/voidbot/" });
+const io = SIO(server, {
+  path: "/apis/voidbot/",
+  transports: ["websocket", "polling"],
+});
 
 const CacheFile = require("./models/cachefile.js");
 
@@ -21,6 +23,7 @@ require("dotenv").config();
 require("./connectdb.js");
 
 const utils = require("./utils.js");
+const config = require("./cfg.js");
 const Bot = require("./bot.js");
 const intents = new Discord.IntentsBitField([
   Discord.IntentsBitField.Flags.Guilds,
@@ -38,7 +41,7 @@ module.exports = {
   systemUIPopulated: false,
   settingsUIPopulated: false,
   getStatus: getStatus,
-  webAppDomain: utils.config.webAppDomain,
+  webAppDomain: config.webAppDomain,
   sockets: new Discord.Collection(),
   consoleSockets: new Discord.Collection(),
 };
@@ -50,18 +53,15 @@ function getStatus() {
 }
 
 //instantiate logging handler & set global functions
-const logger = new Logger();
-global.log = logger.log;
-global.getBacklog = logger.getBacklog;
 
 status.client.children = new Discord.Collection();
 status.client.cmds = new Discord.Collection();
-status.client.lastSeen = new Discord.Collection();
 status.client.sockets = new Discord.Collection();
+status.client.lastSeen = {};
 
 //webserver
 function launchWebServer() {
-  log("Launching websocket server...", ["[INFO]", "[WS]"]);
+  log("Launching websocket server...", ["[WS]"]);
   function initSocket(s) {
     s.once("disconnect", () => {
       status.client.children.forEach((b) => {
@@ -90,9 +90,9 @@ function launchWebServer() {
             case "guilds": {
               payload.guilds = status.client.children
                 .map((b) => {
-                  if (guildLists.member.includes(b.guildID)) {
+                  if (guildLists.member.includes(b.guild.id)) {
                     b.socketSubs.set(s.id, s);
-                    if (guildLists.admin.includes(b.guildID)) {
+                    if (guildLists.admin.includes(b.guild.id)) {
                       b.adminSocketSubs.set(s.id, s);
                       return utils.dumbifyBot(b, true);
                     } else {
@@ -103,11 +103,11 @@ function launchWebServer() {
                 .filter((b) => !!b);
             }
             case "console": {
-              if (utils.config.botAdmin.includes(snowflake)) {
+              if (config.botAdmin.includes(snowflake)) {
                 status.consoleSockets.set(s.id, s);
                 payload.console = {
-                  backlog: getBacklog(),
-                  cmdToggles: utils.config.cmdToggles,
+                  backlog: getBacklog(100),
+                  cmdToggles: config.cmdToggles,
                 };
               }
             }
@@ -118,7 +118,7 @@ function launchWebServer() {
     });
     s.on("g_data", (payload) => {
       let bot = status.client.children.find(
-        (bot) => bot.guildID === payload.id
+        (bot) => bot.guild.id === payload.id
       );
       if (payload.data) {
         for (let i of Object.keys(payload.data)) {
@@ -127,12 +127,12 @@ function launchWebServer() {
         switch (payload.admin) {
           case true: {
             utils.informAdminClients(bot, payload.data);
-            utils.saveConfig(bot);
+            config.save(bot);
             break;
           }
           case false: {
             utils.informClients(bot, payload.data);
-            utils.saveConfig(bot);
+            config.save(bot);
             break;
           }
         }
@@ -150,24 +150,22 @@ function launchWebServer() {
         default:
           if (payload.aData) paramsOut.interaction.args = payload.aData;
           let cmd = status.client.cmds.get(payload.action);
-          log(`${cmd.name} Command received from ${bot.guildName}`, [
-            "[INFO]",
-            `[${bot.guildName}]`,
+          log(`${cmd.name} Command received from ${bot.guild.name}`, [
+            `[${bot.guild.name}]`,
           ]);
           cmd.execute(paramsOut);
           break;
       }
     });
   }
-
   io.on("connection", (socket) => {
     socket.on("sysCMD", (payload) => {
-      if (utils.config.botAdmin.includes(payload.snowflake)) {
+      if (config.botAdmin.includes(payload.snowflake)) {
         cmd(payload.cmd, payload.data);
       }
     });
     socket.once("handshake_res", (snowflake) => {
-      botAdmin = !!utils.config.botAdmin.includes(snowflake);
+      botAdmin = !!config.botAdmin.includes(snowflake);
       initSocket(socket);
       status.sockets.set(socket.id, socket);
       socket.emit("handshake_end", botAdmin);
@@ -178,13 +176,13 @@ function launchWebServer() {
   });
   server.listen(5000, () => {
     const port = server.address().port;
-    log(`Websocket server listening on port: ${port}`, ["[INFO]", "[WS]"]);
+    log(`Websocket server listening on port: ${port}`, ["[WS]"]);
   });
 }
 
 async function initBot(bot) {
   utils.populateAdmin(bot);
-  utils.populateUsers(status, bot);
+  utils.populateUsers(bot);
   bot.guild.channels.cache.forEach((chan) => {
     let cleanChanName = utils.cleanChannelName(chan.name);
     switch (chan.type) {
@@ -226,83 +224,9 @@ try {
       let newBot = new Bot.Bot(g, status);
       initBot(newBot);
       status.client.children.set(g.id, newBot);
-      log("Initialization complete!", ["[INFO]", "[MAIN]", `[${g.name}]`]);
+      log("Initialization complete!", ["[MAIN]", `[${g.name}]`]);
     });
     utils.populateCmds(status);
-
-    const cleanUpSockets = () => {
-      status.consoleSockets.forEach((s) => {
-        if (!s.connected) {
-          status.consoleSockets.delete(s.id);
-        }
-      });
-      status.sockets.forEach((s) => {
-        if (!s.connected) {
-          status.sockets.delete(s.id);
-        }
-      });
-    };
-
-    const cleanUpAudioCache = () => {
-      log("Cleaning audio cache...", ["[INFO]", "[AUDIOCACHE]"]);
-      const cachePath = "/mnt/raid5/voidbot/audiocache/";
-      const hardFileList = fs.readdirSync(cachePath);
-      CacheFile.find({}).then((files) => {
-        const missingDocs = hardFileList.filter(
-          (file) => !files.some((doc) => doc.NOD === file)
-        );
-        if (missingDocs.length > 0) {
-          missingDocs.forEach((miss) => {
-            fs.unlinkSync(`${cachePath}${miss}`);
-            log(`Found and removed file missing associated db entry.`, [
-              "[INFO]",
-              "[AUDIOCACHE]",
-            ]);
-          });
-        }
-        let totalSize = 0;
-        files.forEach((f) => {
-          const exists = fs.existsSync(`${cachePath}${f.NOD}`);
-          if (exists && f.downloaded) {
-            const fsize = fs.statSync(`${cachePath}${f.NOD}`).size;
-            totalSize += fsize;
-          } else {
-            CacheFile.findOneAndRemove({ NOD: f.NOD }).then(() => {
-              utils.informAllClients(status, {
-                audioCache: { remove: true, info: f },
-              });
-              log(`Found and removed db entry missing associated file.`, [
-                "[INFO]",
-                "[AUDIOCACHE]",
-              ]);
-            });
-          }
-        });
-        let oldest = {};
-        if (totalSize > 25 * 1024 * 1024 * 1024) {
-          oldest = files.reduce((oldest, current) => {
-            return current.lastPlayed < oldest.lastPlayed ? current : oldest;
-          }, files[0]);
-          fs.unlinkSync(`${cachePath}${oldest.NOD}`);
-          CacheFile.findOneAndRemove({ _id: oldest._id }).then(() => {
-            utils.informAllClients(status, {
-              audioCache: { remove: true, info: oldest },
-            });
-            log(`Audio cache full. Removed song: ${oldest.title}`, [
-              "[INFO]",
-              "[AUDIOCACHE]",
-            ]);
-          });
-        }
-        log("Audio cache cleanup done!", ["[INFO]", "[AUDIOCACHE]"]);
-      });
-    };
-
-    cleanUpSockets();
-    cleanUpAudioCache();
-
-    setInterval(cleanUpSockets, 1000 * 60 * 5);
-    setInterval(cleanUpAudioCache, 1000 * 60 * 60);
 
     status.client.on("interactionCreate", async (interaction) => {
       if (!interaction.isChatInputCommand()) return;
@@ -316,7 +240,8 @@ try {
       //get and run command
       let cmd = status.client.cmds.get(interaction.commandName.toLowerCase());
       if (
-        !utils.config.cmdToggles.find(
+        interaction.commandName.toLowerCase() !== "botadmin" &&
+        !config.cmdToggles.find(
           (i) => i.name === interaction.commandName.toLowerCase()
         ).state
       ) {
@@ -332,9 +257,8 @@ try {
       } else {
         let params = { interaction, bot };
         cmd.execute(params);
-        log(`${cmd.name} Command received from ${bot.guildName}`, [
-          "[INFO]",
-          `[${bot.guildName}]`,
+        log(`${cmd.name} Command received from ${bot.guild.name}`, [
+          `[${bot.guild.name}]`,
         ]);
       }
     });
@@ -342,10 +266,10 @@ try {
       launchWebServer();
     }, 200);
 
-    log("VoidBot Ready! Hello World!", ["[INFO]", "[MAIN]"]);
+    log("VoidBot Ready! Hello World!", ["[MAIN]"]);
   });
 } catch (error) {
-  log(`Error initializing client:\n` + error, ["[ERR]", "[MAIN]"]);
+  err(`Error initializing client:\n` + error, ["[MAIN]"]);
   process.exit(1);
 }
 
@@ -353,15 +277,11 @@ try {
 status.client.on("guildCreate", async (guild) => {
   let guildOut = await status.client.guilds.fetch(guild.id);
   let newBot = new Bot.Bot(guildOut, status);
-  log("New server added.", ["[INFO]", "[MAIN]", `[${newBot.guildName}]`]);
+  log("New server added.", ["[MAIN]", `[${newBot.guild.name}]`]);
   status.client.children.set(guild.id, newBot);
   setTimeout(() => {
     initBot(newBot);
-    log("Initialization complete!", [
-      "[INFO]",
-      "[MAIN]",
-      `[${newBot.guildName}]`,
-    ]);
+    log("Initialization complete!", ["[MAIN]", `[${newBot.guild.name}]`]);
   }, 400);
 });
 
@@ -369,22 +289,20 @@ status.client.on("guildCreate", async (guild) => {
 status.client.on("guildDelete", (guild) => {
   let bot = status.client.children.get(guild.id);
   log("Server removed. Deleting config and data.", [
-    "[INFO]",
     "[MAIN]",
-    `[${bot.guildName}]`,
+    `[${bot.guild.name}]`,
   ]);
   status.client.children.delete(guild.id);
-  delete utils.config.sharding[guild.id];
-  utils.dumpJSON("config.json", utils.config, 2);
+  delete config.sharding[guild.id];
+  config.save();
 });
 
 //discord.js client event for new members joining a server
 status.client.on("guildMemberAdd", (member) => {
   let bot = status.client.children.get(member.guild.id);
   log(`New member joined. Welcome message set to: ${bot.welcomeMsg}`, [
-    "[INFO]",
     "[MAIN]",
-    `[${bot.guildName}]`,
+    `[${bot.guild.name}]`,
   ]);
   try {
     if (!bot.welcomeMsg) return;
@@ -397,10 +315,9 @@ status.client.on("guildMemberAdd", (member) => {
       member.roles.add(bot.newMemberRole.id);
     }
   } catch (error) {
-    log(`Error handling guildMemberAdd event:\n` + error, [
-      "[WARN]",
+    warn(`Error handling guildMemberAdd event:\n` + error, [
       "[MAIN]",
-      `[${bot.guildName}]`,
+      `[${bot.guild.name}]`,
     ]);
   }
 });
@@ -408,7 +325,7 @@ status.client.on("guildMemberAdd", (member) => {
 //discord.js client event for when a member leaves a server
 status.client.on("guildMemberRemove", (member) => {
   let bot = status.client.children.get(member.guild.id);
-  log("A member left the server.", ["[INFO]", "[MAIN]", `[${bot.guildName}]`]);
+  log("A member left the server.", ["[MAIN]", `[${bot.guild.name}]`]);
   try {
     if (bot.welcomeMsg == false) return;
     if (bot.welcomeTextChannel != false) {
@@ -417,10 +334,9 @@ status.client.on("guildMemberRemove", (member) => {
         .send(utils.sendoff(member));
     }
   } catch (error) {
-    log(`Error handling guildMemberRemove event:\n` + error, [
-      "[WARN]",
+    warn(`Error handling guildMemberRemove event:\n` + error, [
       "[MAIN]",
-      `[${bot.guildName}]`,
+      `[${bot.guild.name}]`,
     ]);
   }
 });
@@ -449,7 +365,7 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
         bot.voiceStateTimeouts.delete(newState.member.id);
       }
       if (oldState.channel.members.size == 1 && bot.voiceChannel) {
-        status.client.cmds.get("leave").execute({ bot: bot });
+        status.client.cmds.get("leave").execute({ bot: bot, WS: true });
       }
       return;
     }
@@ -461,10 +377,9 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
     );
     if (!oldState.channel) return;
   } catch (error) {
-    log(`Error handling voiceStateUpdate event"\n` + error, [
-      "[WARN]",
+    warn(`Error handling voiceStateUpdate event"\n` + error, [
       "[MAIN]",
-      `[${bot.guildName}]`,
+      `[${bot.guild.name}]`,
     ]);
   }
 });
@@ -472,10 +387,12 @@ status.client.on("voiceStateUpdate", (oldState, newState) => {
 //discord.js client event for when a user's presence updates.
 status.client.on("presenceUpdate", (oldPresence, newPresence) => {
   if (!!oldPresence && oldPresence.status == newPresence.status) return;
-  if (newPresence.status == "online")
-    return status.client.lastSeen.delete(newPresence.user.id);
-  else
-    return status.client.lastSeen.set(newPresence.user.id, utils.getTimeRaw());
+  if (
+    newPresence.status == "online" &&
+    !!status.client.lastSeen[newPresence.user.id]
+  )
+    return delete status.client.lastSeen[newPresence.user.id];
+  else return (status.client.lastSeen[newPresence.user.id] = getTimeRaw());
 });
 
 //UI & backend communication event handlers (not really sure how else to word this)
@@ -496,16 +413,15 @@ function cmd(e = "", args = false) {
       process.exit(0);
     }
     case "togglecmd": {
-      utils.config.cmdToggles.find((i) => i.name === args.name).state =
-        args.state;
-      utils.dumpJSON("./config.json", utils.config, 2);
+      config.cmdToggles.find((i) => i.name === args.name).state = args.state;
+      config.save();
       status.consoleSockets.forEach((s) => {
-        s.emit("cmdList", utils.config.cmdToggles);
+        s.emit("cmdList", config.cmdToggles);
       });
       break;
     }
     default:
-      log(e, ["[INFO]", "[BROADCAST]"]);
+      log(e, ["[BROADCAST]"]);
       status.client.cmds
         .get("broadcast")
         .execute({ interaction: { args: { message: e } }, WS: true });
@@ -518,33 +434,30 @@ function cmd(e = "", args = false) {
 let loginAtt = 0;
 function clientLogin(t) {
   loginAtt++;
-  log(`Logging in... attempt: ${loginAtt}`, ["[INFO]", "[MAIN]"]);
+  log(`Logging in... attempt: ${loginAtt}`, ["[MAIN]"]);
   try {
     status.client.login(t);
-    log(`Login successful!`, ["[INFO]", "[MAIN]"]);
+    log(`Login successful!`, ["[MAIN]"]);
   } catch (error) {
     if (loginAtt <= 5) {
-      log(`Error logging in client. Trying again in 5s...`, [
-        "[WARN]",
-        "[MAIN]",
-      ]);
+      warn(`Error logging in client. Trying again in 5s...`, ["[MAIN]"]);
       setTimeout(function () {
         clientLogin(t);
       }, 5000);
-    } else log(`Error logging in client:\n` + error, ["[ERR]", "[MAIN]"]);
+    } else err(`Error logging in client:\n` + error, ["[MAIN]"]);
   }
 }
 
-process.on("uncaughtException", (err) => {
-  if (err.captureStackTrace) err.captureStackTrace();
-  log(
-    `Uncaught exception:\n${err.name} position: ${err.lineNumber}:${err.columnNumber}\n${err.message}\n${err.stack}`,
-    ["[ERR]", "[CRITICAL]"]
+process.on("uncaughtException", (error) => {
+  if (error.captureStackTrace) error.captureStackTrace();
+  err(
+    `Uncaught exception:\n${error.name} position: ${error.lineNumber}:${error.columnNumber}\n${error.message}\n${error.stack}`,
+    ["[CRITICAL]"]
   );
-  utils.dumpJSON("ERR_DUMP.json", err, 2);
+  utils.dumpJSON("ERR_DUMP.json", error, 2);
   try {
     status.client.children.forEach((bot) => {
-      utils.saveConfig(bot);
+      config.save(bot);
     });
     status.client.destroy();
     setTimeout(() => {
@@ -553,4 +466,12 @@ process.on("uncaughtException", (err) => {
   } catch {}
 });
 
+utils.cleanUpSockets(status);
+utils.cleanUpAudioCache(status);
+setInterval(() => {
+  utils.cleanUpSockets(status);
+}, 1000 * 60 * 5);
+setInterval(() => {
+  utils.cleanUpAudioCache(status);
+}, 1000 * 60 * 60);
 clientLogin(token);
