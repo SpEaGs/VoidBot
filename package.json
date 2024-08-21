@@ -23,7 +23,7 @@
   "dependencies": {
     "@discordjs/rest": "^1.6.0",
     "@discordjs/voice": "^0.15.0",
-    "@distube/ytdl-core": "^4.13.5",
+    "@distube/ytdl-core": "^4.14.4",
     "@oauth-everything/passport-discord": "^1.0.2",
     "body-parser": "^1.20.0",
     "cors": "^2.8.5",
